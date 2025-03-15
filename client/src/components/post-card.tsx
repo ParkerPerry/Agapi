@@ -21,7 +21,6 @@ interface PostCardProps {
       aiFollowerId: number;
       aiFollower?: AiFollower;
       parentId?: number;
-      isUserReply?: boolean;
       createdAt: Date;
     }>;
   };
@@ -105,32 +104,6 @@ function Comment({
   const commentReplies = replies.filter(reply => reply.parentId === comment.id);
   const hasReplies = commentReplies.length > 0;
 
-  if (comment.isUserReply) {
-    return (
-      <div className={`space-y-4 ${level > 0 ? 'ml-8 border-l-2 pl-4' : ''}`}>
-        <div className="flex items-start space-x-4">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback>U</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <p className="text-sm font-medium mb-1">You</p>
-            <p className="text-sm">{comment.content}</p>
-          </div>
-        </div>
-
-        {commentReplies.map(aiReply => (
-          <Comment
-            key={aiReply.id}
-            comment={aiReply}
-            postId={postId}
-            replies={replies}
-            level={level + 1}
-          />
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div className={`space-y-4 ${level > 0 ? 'ml-8 border-l-2 pl-4' : ''}`}>
       <div className="flex items-start space-x-4">
@@ -181,14 +154,30 @@ function Comment({
         </div>
       )}
 
-      {showReplies && commentReplies.map(reply => (
-        <Comment
-          key={reply.id}
-          comment={reply}
-          postId={postId}
-          replies={replies}
-          level={level + 1}
-        />
+      {showReplies && commentReplies.map((reply, index) => (
+        <div key={reply.id} className="space-y-4">
+          {/* Show the user's reply */}
+          <div className="ml-8 flex items-start space-x-4">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback>U</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <p className="text-sm font-medium mb-1">You</p>
+              <p className="text-sm">{reply.content}</p>
+            </div>
+          </div>
+
+          {/* Show AI's response to the user's reply if it exists */}
+          {replies.filter(r => r.parentId === reply.id).map(aiReply => (
+            <Comment
+              key={aiReply.id}
+              comment={aiReply}
+              postId={postId}
+              replies={replies}
+              level={level + 1}
+            />
+          ))}
+        </div>
       ))}
     </div>
   );

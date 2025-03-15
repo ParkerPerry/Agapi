@@ -38,10 +38,9 @@ export const aiInteractions = pgTable("ai_interactions", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").references(() => posts.id),
   aiFollowerId: integer("ai_follower_id").references(() => aiFollowers.id),
-  parentId: integer("parent_id").references(() => aiInteractions.id),
   type: text("type", { enum: ["like", "comment"] }).notNull(),
   content: text("content"),
-  isUserReply: boolean("is_user_reply").default(false),
+  parentId: integer("parent_id"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
