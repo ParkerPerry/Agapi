@@ -3,8 +3,14 @@ import { users, posts, aiFollowers, aiInteractions } from "@shared/schema";
 import session from "express-session";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
-import connectPg from "connect-pg-simple";
+import connectPgSimple from "connect-pg-simple";
 import { pool } from "./db";
+
+const PostgresqlStore = connectPgSimple(session);
+export const sessionStore = new PostgresqlStore({
+  pool,
+  createTableIfMissing: true,
+});
 
 const PostgresSessionStore = connectPg(session);
 
