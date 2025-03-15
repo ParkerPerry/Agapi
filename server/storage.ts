@@ -1,119 +1,112 @@
 import { InsertUser, User, Post, AiFollower, AiInteraction } from "@shared/schema";
+import { users, posts, aiFollowers, aiInteractions } from "@shared/schema";
 import session from "express-session";
-import createMemoryStore from "memorystore";
+import { eq } from "drizzle-orm";
+import { db } from "./db";
+import connectPg from "connect-pg-simple";
+import { pool } from "./db";
 
-const MemoryStore = createMemoryStore(session);
+const PostgresSessionStore = connectPg(session);
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   createPost(userId: number, content: string): Promise<Post>;
   getPost(id: number): Promise<Post | undefined>;
   getUserPosts(userId: number): Promise<Post[]>;
-  
+
   getAiFollowers(userId: number): Promise<AiFollower[]>;
   createAiFollower(userId: number, follower: Omit<AiFollower, "id" | "userId">): Promise<AiFollower>;
-  
+
   createAiInteraction(interaction: Omit<AiInteraction, "id" | "createdAt">): Promise<AiInteraction>;
   getPostInteractions(postId: number): Promise<AiInteraction[]>;
 
   sessionStore: session.Store;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private posts: Map<number, Post>;
-  private aiFollowers: Map<number, AiFollower>;
-  private aiInteractions: Map<number, AiInteraction>;
-  private currentId: number;
+export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
 
   constructor() {
-    this.users = new Map();
-    this.posts = new Map();
-    this.aiFollowers = new Map();
-    this.aiInteractions = new Map();
-    this.currentId = 1;
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000,
+    this.sessionStore = new PostgresSessionStore({
+      pool,
+      createTableIfMissing: true,
     });
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db.insert(users).values(insertUser).returning();
     return user;
   }
 
   async createPost(userId: number, content: string): Promise<Post> {
-    const id = this.currentId++;
-    const post: Post = {
-      id,
-      userId,
-      content,
-      createdAt: new Date(),
-    };
-    this.posts.set(id, post);
+    const [post] = await db
+      .insert(posts)
+      .values({ userId, content })
+      .returning();
     return post;
   }
 
   async getPost(id: number): Promise<Post | undefined> {
-    return this.posts.get(id);
+    const [post] = await db.select().from(posts).where(eq(posts.id, id));
+    return post;
   }
 
   async getUserPosts(userId: number): Promise<Post[]> {
-    return Array.from(this.posts.values())
-      .filter((post) => post.userId === userId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    return await db
+      .select()
+      .from(posts)
+      .where(eq(posts.userId, userId))
+      .orderBy(posts.createdAt);
   }
 
   async getAiFollowers(userId: number): Promise<AiFollower[]> {
-    return Array.from(this.aiFollowers.values()).filter(
-      (follower) => follower.userId === userId,
-    );
+    return await db
+      .select()
+      .from(aiFollowers)
+      .where(eq(aiFollowers.userId, userId));
   }
 
   async createAiFollower(
     userId: number,
     follower: Omit<AiFollower, "id" | "userId">,
   ): Promise<AiFollower> {
-    const id = this.currentId++;
-    const aiFollower: AiFollower = { ...follower, id, userId };
-    this.aiFollowers.set(id, aiFollower);
+    const [aiFollower] = await db
+      .insert(aiFollowers)
+      .values({ ...follower, userId })
+      .returning();
     return aiFollower;
   }
 
   async createAiInteraction(
     interaction: Omit<AiInteraction, "id" | "createdAt">,
   ): Promise<AiInteraction> {
-    const id = this.currentId++;
-    const aiInteraction: AiInteraction = {
-      ...interaction,
-      id,
-      createdAt: new Date(),
-    };
-    this.aiInteractions.set(id, aiInteraction);
+    const [aiInteraction] = await db
+      .insert(aiInteractions)
+      .values(interaction)
+      .returning();
     return aiInteraction;
   }
 
   async getPostInteractions(postId: number): Promise<AiInteraction[]> {
-    return Array.from(this.aiInteractions.values())
-      .filter((interaction) => interaction.postId === postId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    return await db
+      .select()
+      .from(aiInteractions)
+      .where(eq(aiInteractions.postId, postId))
+      .orderBy(aiInteractions.createdAt);
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
