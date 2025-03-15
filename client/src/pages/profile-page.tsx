@@ -113,19 +113,66 @@ export default function ProfilePage() {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
                 {followers?.map((follower) => (
-                  <div key={follower.id} className="flex items-center space-x-4 p-4 border rounded-lg">
-                    <Avatar>
-                      <img src={follower.avatarUrl} alt={follower.name} />
-                      <AvatarFallback>
-                        {follower.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-medium">{follower.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {follower.personality}
-                      </p>
+                  <div key={follower.id} className="flex flex-col space-y-4 p-4 border rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <Avatar>
+                        <img src={follower.avatarUrl} alt={follower.name} />
+                        <AvatarFallback>
+                          {follower.name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-medium">{follower.name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {follower.personality}
+                        </p>
+                      </div>
                     </div>
+
+                    {follower.background && (
+                      <div className="space-y-2 mt-2">
+                        <p className="text-sm">{follower.background}</p>
+
+                        {follower.interests && follower.interests.length > 0 && (
+                          <div>
+                            <p className="text-sm font-medium">Interests:</p>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              {follower.interests.map((interest, i) => (
+                                <span
+                                  key={i}
+                                  className="text-xs bg-secondary px-2 py-1 rounded-full"
+                                >
+                                  {interest}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {follower.communicationStyle && (
+                          <p className="text-sm">
+                            <span className="font-medium">Communication style: </span>
+                            {follower.communicationStyle}
+                          </p>
+                        )}
+
+                        {follower.interactionPreferences && (
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium">Interaction Preferences:</p>
+                            <div className="space-y-1 pl-2">
+                              <p className="text-sm">
+                                <span className="text-green-600">Likes:</span>{" "}
+                                {follower.interactionPreferences.likes.join(", ")}
+                              </p>
+                              <p className="text-sm">
+                                <span className="text-red-600">Dislikes:</span>{" "}
+                                {follower.interactionPreferences.dislikes.join(", ")}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

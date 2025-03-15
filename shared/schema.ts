@@ -25,6 +25,13 @@ export const aiFollowers = pgTable("ai_followers", {
   name: text("name").notNull(),
   personality: text("personality").notNull(),
   avatarUrl: text("avatar_url").notNull(),
+  background: text("background"),
+  interests: text("interests").array(),
+  communicationStyle: text("communication_style"),
+  interactionPreferences: json("interaction_preferences").$type<{
+    likes: string[];
+    dislikes: string[];
+  }>(),
 });
 
 export const aiInteractions = pgTable("ai_interactions", {
