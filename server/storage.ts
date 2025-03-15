@@ -32,8 +32,11 @@ export class DatabaseStorage implements IStorage {
   constructor() {
     const PostgresStore = connectPgSimple(session);
     this.sessionStore = new PostgresStore({
-      pool,
+      pool: pool,
+      tableName: 'session',
       createTableIfMissing: true,
+      // Add error handler to prevent unhandled errors
+      errorLog: (error) => console.error('Session store error:', error)
     });
   }
 

@@ -29,11 +29,18 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // Import MemoryStore for development environment
+  const MemoryStore = require('memorystore')(session);
+  
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "development_secret",
     resave: false,
     saveUninitialized: false,
-    store: storage.sessionStore,
+    store: process.env.NODE_ENV === "production" 
+      ? storage.sessionStore 
+      : new MemoryStore({
+          checkPeriod: 86400000 // prune expired entries every 24h
+        }),
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
