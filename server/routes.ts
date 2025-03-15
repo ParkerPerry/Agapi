@@ -159,13 +159,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const aiResponse = await generateAIResponse(
       content,
       aiFollower.personality,
+      parentInteraction.content, 
     );
 
     if (aiResponse.confidence > 0.7) {
       const interaction = await storage.createAiInteraction({
         postId,
         aiFollowerId: aiFollower.id,
-        type: "comment",
+        type: "reply", 
         content: aiResponse.content || null,
         parentId,
       });

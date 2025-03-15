@@ -4,7 +4,7 @@ import OpenAI from "openai";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 interface AIResponse {
-  type: "like" | "comment";
+  type: "like" | "comment" | "reply";
   content?: string;
   confidence: number;
 }
@@ -62,25 +62,33 @@ export async function generateAIBackground(
 export async function generateAIResponse(
   postContent: string,
   personality: string,
+  previousMessage?: string,
 ): Promise<AIResponse> {
   try {
+    const contextPrompt = previousMessage 
+      ? `You are in a conversation thread. Someone said: "${previousMessage}". Now respond to: "${postContent}"`
+      : `Please analyze this post and respond: ${postContent}`;
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
           content: `You are an AI follower with the following personality: ${personality}. 
-            Analyze the post and decide whether to like it or comment on it.
+            ${previousMessage 
+              ? "You are continuing a conversation thread. Maintain context and reply directly to the previous message." 
+              : "Analyze the post and decide whether to like it or comment on it."}
             Your response must be in JSON format with the following structure:
             {
-              "type": "like" or "comment",
-              "content": "comment text if type is comment",
+              "type": ${previousMessage ? '"reply"' : '"like" or "comment"'},
+              "content": "your response text",
               "confidence": number between 0 and 1
-            }`,
+            }
+            Keep responses concise and natural, focusing on continuing the conversation in a meaningful way.`,
         },
         {
           role: "user",
-          content: `Please analyze this post and respond in JSON format: ${postContent}`,
+          content: contextPrompt,
         },
       ],
       response_format: { type: "json_object" },
@@ -92,7 +100,7 @@ export async function generateAIResponse(
 
     const result = JSON.parse(response.choices[0].message.content);
     return {
-      type: result.type,
+      type: previousMessage ? "reply" : result.type,
       content: result.content,
       confidence: Math.max(0, Math.min(1, result.confidence)),
     };
