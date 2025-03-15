@@ -29,30 +29,28 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export async function setupAuth(app: Express) {
-  // Import MemoryStore for development environment
+  // Always use MemoryStore for now to isolate session issues
   const memorystore = (await import('memorystore')).default;
   const MemoryStore = memorystore(session);
-  
+
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "development_secret",
-    resave: false,
+    resave: true, // Changed to true to ensure session is saved
     saveUninitialized: false,
-    store: process.env.NODE_ENV === "production" 
-      ? storage.sessionStore 
-      : new MemoryStore({
-          checkPeriod: 86400000 // prune expired entries every 24h
-        }),
+    store: new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    }),
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: 'lax'
     },
-    name: 'sid' // Change session cookie name from default 'connect.sid'
+    name: 'sid'
   };
 
   if (app.get('env') === 'production') {
-    app.set('trust proxy', 1); // trust first proxy
+    app.set('trust proxy', 1);
   }
 
   app.use(session(sessionSettings));
@@ -111,7 +109,10 @@ export async function setupAuth(app: Express) {
   app.post("/api/logout", (req, res, next) => {
     req.logout((err) => {
       if (err) return next(err);
-      res.sendStatus(200);
+      req.session.destroy((err) => {
+        if (err) return next(err);
+        res.sendStatus(200);
+      });
     });
   });
 

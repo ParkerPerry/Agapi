@@ -32,14 +32,15 @@ export class DatabaseStorage implements IStorage {
   constructor() {
     const PostgresStore = connectPgSimple(session);
     this.sessionStore = new PostgresStore({
-      pool: pool,
+      pool,
       tableName: 'session',
       createTableIfMissing: true,
-      // Add proper error handling and pruning configuration
-      errorLog: console.error,
-      pruneSessionInterval: 60 * 60 * 1000, // Prune every hour
-      // Add proper promise support for callbacks
-      Promise: global.Promise
+      // Configure session pruning
+      pruneSessionInterval: 24 * 60 * 60 * 1000, // Prune every 24 hours
+      // Error logging
+      errorLog: (err: Error) => {
+        console.error('Session store error:', err);
+      }
     });
   }
 
