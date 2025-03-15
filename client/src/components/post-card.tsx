@@ -20,12 +20,18 @@ interface PostCardProps {
       content?: string;
       aiFollowerId: number;
       aiFollower?: AiFollower;
+      parentId?: number;
       createdAt: Date;
     }>;
   };
 }
 
-function ReplyForm({ postId, commentId, aiFollowerName }: { postId: number; commentId: number; aiFollowerName: string }) {
+function ReplyForm({ postId, commentId, aiFollowerName, onReply }: { 
+  postId: number; 
+  commentId: number; 
+  aiFollowerName: string;
+  onReply: () => void;
+}) {
   const { user } = useAuth();
   const form = useForm({
     defaultValues: {
@@ -44,6 +50,7 @@ function ReplyForm({ postId, commentId, aiFollowerName }: { postId: number; comm
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
       form.reset();
+      onReply();
     },
   });
 
@@ -51,7 +58,7 @@ function ReplyForm({ postId, commentId, aiFollowerName }: { postId: number; comm
     <Form {...form}>
       <form 
         onSubmit={form.handleSubmit((data) => replyMutation.mutate(data))}
-        className="flex items-center space-x-2 pl-12"
+        className="flex items-center space-x-2"
       >
         <FormField
           control={form.control}
@@ -79,6 +86,75 @@ function ReplyForm({ postId, commentId, aiFollowerName }: { postId: number; comm
   );
 }
 
+function Comment({ 
+  comment, 
+  postId, 
+  replies, 
+  level = 0 
+}: { 
+  comment: PostCardProps["post"]["interactions"][0];
+  postId: number;
+  replies: PostCardProps["post"]["interactions"];
+  level?: number;
+}) {
+  const [isReplying, setIsReplying] = useState(false);
+
+  // Get replies to this comment
+  const commentReplies = replies.filter(reply => reply.parentId === comment.id);
+
+  return (
+    <div className={`space-y-4 ${level > 0 ? 'ml-8 border-l-2 pl-4' : ''}`}>
+      <div className="flex items-start space-x-4">
+        <Avatar className="h-8 w-8">
+          {comment.aiFollower?.avatarUrl && (
+            <img 
+              src={comment.aiFollower.avatarUrl} 
+              alt={comment.aiFollower?.name || 'AI'} 
+              className="h-full w-full object-cover"
+            />
+          )}
+          <AvatarFallback>{comment.aiFollower?.name?.[0] || 'AI'}</AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
+          <p className="text-sm font-medium mb-1">{comment.aiFollower?.name || 'AI'}</p>
+          <p className="text-sm">{comment.content}</p>
+          {!isReplying && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="mt-2"
+              onClick={() => setIsReplying(true)}
+            >
+              Reply
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {isReplying && (
+        <div className="ml-8">
+          <ReplyForm 
+            postId={postId} 
+            commentId={comment.id} 
+            aiFollowerName={comment.aiFollower?.name || 'AI'}
+            onReply={() => setIsReplying(false)}
+          />
+        </div>
+      )}
+
+      {commentReplies.map(reply => (
+        <Comment 
+          key={reply.id} 
+          comment={reply} 
+          postId={postId}
+          replies={replies}
+          level={level + 1}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function PostCard({ post }: PostCardProps) {
   const [interactions, setInteractions] = useState(post.interactions);
 
@@ -98,7 +174,7 @@ export function PostCard({ post }: PostCardProps) {
   }, [post.id]);
 
   const likes = interactions.filter((i) => i.type === "like").length;
-  const comments = interactions.filter((i) => i.type === "comment");
+  const comments = interactions.filter((i) => i.type === "comment" && !i.parentId);
 
   return (
     <Card>
@@ -126,31 +202,14 @@ export function PostCard({ post }: PostCardProps) {
             <span className="text-sm">{comments.length}</span>
           </div>
         </div>
-        <div className="space-y-4">
-          {comments.map((comment) => (
-            <div key={comment.id} className="space-y-4">
-              <div className="flex items-start space-x-4">
-                <Avatar className="h-8 w-8">
-                  {comment.aiFollower?.avatarUrl && (
-                    <img 
-                      src={comment.aiFollower.avatarUrl} 
-                      alt={comment.aiFollower?.name || 'AI'} 
-                      className="h-full w-full object-cover"
-                    />
-                  )}
-                  <AvatarFallback>{comment.aiFollower?.name?.[0] || 'AI'}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <p className="text-sm font-medium mb-1">{comment.aiFollower?.name || 'AI'}</p>
-                  <p className="text-sm">{comment.content}</p>
-                </div>
-              </div>
-              <ReplyForm 
-                postId={post.id} 
-                commentId={comment.id} 
-                aiFollowerName={comment.aiFollower?.name || 'AI'} 
-              />
-            </div>
+        <div className="space-y-6">
+          {comments.map(comment => (
+            <Comment 
+              key={comment.id} 
+              comment={comment}
+              postId={post.id}
+              replies={interactions}
+            />
           ))}
         </div>
       </CardFooter>
