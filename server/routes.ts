@@ -97,6 +97,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(404).json({ message: "AI follower not found" });
     }
 
+    // Save the user's reply first
+    const userReply = await storage.createAiInteraction({
+      postId,
+      aiFollowerId: aiFollower.id,
+      type: "comment",
+      content,
+      parentId,
+      isUserReply: true,
+    });
+
     // Generate AI response to the user's reply
     const aiResponse = await generateAIResponse(
       content,
@@ -109,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         aiFollowerId: aiFollower.id,
         type: "comment",
         content: aiResponse.content,
-        parentId,
+        parentId: userReply.id, // Link AI response to user's reply
       });
 
       const fullInteraction = {
@@ -118,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       broadcastInteraction(fullInteraction);
-      res.status(201).json(fullInteraction);
+      res.status(201).json({ userReply, aiResponse: fullInteraction });
     } else {
       res.status(400).json({ message: "AI couldn't generate a confident response" });
     }
