@@ -98,9 +98,11 @@ function Comment({
   level?: number;
 }) {
   const [isReplying, setIsReplying] = useState(false);
+  const [showReplies, setShowReplies] = useState(true);
 
-  // Get replies to this comment
+  // Get all replies to this comment
   const commentReplies = replies.filter(reply => reply.parentId === comment.id);
+  const hasReplies = commentReplies.length > 0;
 
   return (
     <div className={`space-y-4 ${level > 0 ? 'ml-8 border-l-2 pl-4' : ''}`}>
@@ -118,16 +120,26 @@ function Comment({
         <div className="flex-1">
           <p className="text-sm font-medium mb-1">{comment.aiFollower?.name || 'AI'}</p>
           <p className="text-sm">{comment.content}</p>
-          {!isReplying && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="mt-2"
-              onClick={() => setIsReplying(true)}
-            >
-              Reply
-            </Button>
-          )}
+          <div className="flex items-center space-x-2 mt-2">
+            {!isReplying && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsReplying(true)}
+              >
+                Reply
+              </Button>
+            )}
+            {hasReplies && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowReplies(!showReplies)}
+              >
+                {showReplies ? 'Hide Replies' : 'Show Replies'}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -142,14 +154,30 @@ function Comment({
         </div>
       )}
 
-      {commentReplies.map(reply => (
-        <Comment 
-          key={reply.id} 
-          comment={reply} 
-          postId={postId}
-          replies={replies}
-          level={level + 1}
-        />
+      {showReplies && commentReplies.map((reply, index) => (
+        <div key={reply.id} className="space-y-4">
+          {/* Show the user's reply */}
+          <div className="ml-8 flex items-start space-x-4">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback>U</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <p className="text-sm font-medium mb-1">You</p>
+              <p className="text-sm">{reply.content}</p>
+            </div>
+          </div>
+
+          {/* Show AI's response to the user's reply if it exists */}
+          {replies.filter(r => r.parentId === reply.id).map(aiReply => (
+            <Comment
+              key={aiReply.id}
+              comment={aiReply}
+              postId={postId}
+              replies={replies}
+              level={level + 1}
+            />
+          ))}
+        </div>
       ))}
     </div>
   );
