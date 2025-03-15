@@ -8,7 +8,7 @@ import { parse as parseCookie } from "cookie";
 import { promisify } from "util";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  setupAuth(app);
+  await setupAuth(app);
 
   const httpServer = createServer(app);
   const wss = new WebSocketServer({ 

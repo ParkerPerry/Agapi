@@ -28,9 +28,9 @@ async function comparePasswords(supplied: string, stored: string) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
-export function setupAuth(app: Express) {
+export async function setupAuth(app: Express) {
   // Import MemoryStore for development environment
-  import memorystore from 'memorystore';
+  const memorystore = (await import('memorystore')).default;
   const MemoryStore = memorystore(session);
   
   const sessionSettings: session.SessionOptions = {
