@@ -25,15 +25,62 @@ interface PostCardProps {
   };
 }
 
-export function PostCard({ post }: PostCardProps) {
+function ReplyForm({ postId, commentId, aiFollowerName }: { postId: number; commentId: number; aiFollowerName: string }) {
   const { user } = useAuth();
-  const [interactions, setInteractions] = useState(post.interactions);
-
   const form = useForm({
     defaultValues: {
       content: "",
     },
   });
+
+  const replyMutation = useMutation({
+    mutationFn: async ({ content }: { content: string }) => {
+      const res = await apiRequest("POST", `/api/posts/${postId}/reply`, {
+        content,
+        parentId: commentId,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
+      form.reset();
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form 
+        onSubmit={form.handleSubmit((data) => replyMutation.mutate(data))}
+        className="flex items-center space-x-2 pl-12"
+      >
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormControl>
+                <Input 
+                  {...field} 
+                  placeholder={`Reply to ${aiFollowerName}...`}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <Button 
+          type="submit" 
+          size="icon"
+          disabled={replyMutation.isPending}
+        >
+          <Send className="h-4 w-4" />
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
+export function PostCard({ post }: PostCardProps) {
+  const [interactions, setInteractions] = useState(post.interactions);
 
   useEffect(() => {
     const socket = createWebSocket();
@@ -49,20 +96,6 @@ export function PostCard({ post }: PostCardProps) {
       socket.close();
     };
   }, [post.id]);
-
-  const replyMutation = useMutation({
-    mutationFn: async ({ content, parentId }: { content: string; parentId: number }) => {
-      const res = await apiRequest("POST", `/api/posts/${post.id}/reply`, {
-        content,
-        parentId,
-      });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
-      form.reset();
-    },
-  });
 
   const likes = interactions.filter((i) => i.type === "like").length;
   const comments = interactions.filter((i) => i.type === "comment");
@@ -94,12 +127,16 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         <div className="space-y-4">
-          {comments.map((comment, i) => (
-            <div key={i} className="space-y-4">
+          {comments.map((comment) => (
+            <div key={comment.id} className="space-y-4">
               <div className="flex items-start space-x-4">
                 <Avatar className="h-8 w-8">
                   {comment.aiFollower?.avatarUrl && (
-                    <img src={comment.aiFollower.avatarUrl} alt={comment.aiFollower?.name || 'AI'} />
+                    <img 
+                      src={comment.aiFollower.avatarUrl} 
+                      alt={comment.aiFollower?.name || 'AI'} 
+                      className="h-full w-full object-cover"
+                    />
                   )}
                   <AvatarFallback>{comment.aiFollower?.name?.[0] || 'AI'}</AvatarFallback>
                 </Avatar>
@@ -108,36 +145,11 @@ export function PostCard({ post }: PostCardProps) {
                   <p className="text-sm">{comment.content}</p>
                 </div>
               </div>
-              <Form {...form}>
-                <form 
-                  onSubmit={form.handleSubmit((data) => 
-                    replyMutation.mutate({ content: data.content, parentId: comment.id })
-                  )}
-                  className="flex items-center space-x-2 pl-12"
-                >
-                  <FormField
-                    control={form.control}
-                    name="content"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Input 
-                            {...field} 
-                            placeholder={`Reply to ${comment.aiFollower?.name || 'AI'}...`}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <Button 
-                    type="submit" 
-                    size="icon"
-                    disabled={replyMutation.isPending}
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </form>
-              </Form>
+              <ReplyForm 
+                postId={post.id} 
+                commentId={comment.id} 
+                aiFollowerName={comment.aiFollower?.name || 'AI'} 
+              />
             </div>
           ))}
         </div>

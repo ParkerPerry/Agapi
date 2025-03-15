@@ -23,22 +23,34 @@ export default function ProfilePage() {
     enabled: !!userId,
   });
 
+  function generateUniqueAvatarUrl() {
+    const randomSeed = Math.random().toString(36).substring(7);
+    return `https://api.dicebear.com/7.x/bottts/svg?seed=${randomSeed}`;
+  }
+
   const form = useForm({
     defaultValues: {
       name: "",
       personality: "",
-      avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${Math.random()}`,
+      avatarUrl: generateUniqueAvatarUrl(),
     },
   });
 
   const createFollowerMutation = useMutation({
     mutationFn: async (data: { name: string; personality: string; avatarUrl: string }) => {
-      const res = await apiRequest("POST", "/api/followers", data);
+      const res = await apiRequest("POST", "/api/followers", {
+        ...data,
+        avatarUrl: generateUniqueAvatarUrl(), // Generate new URL on submit
+      });
       return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
-      form.reset();
+      form.reset({
+        name: "",
+        personality: "",
+        avatarUrl: generateUniqueAvatarUrl(), // Generate new URL for next form
+      });
     },
   });
 
@@ -73,8 +85,8 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>Personality</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            {...field} 
+                          <Textarea
+                            {...field}
                             placeholder="Describe the follower's personality (e.g., 'Enthusiastic tech nerd who loves blockchain')"
                           />
                         </FormControl>
