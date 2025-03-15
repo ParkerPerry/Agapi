@@ -18,7 +18,7 @@ interface PostCardProps {
       id: number;
       type: "like" | "comment";
       content?: string;
-      aiFollowerId: number;
+      aiFollowerId?: number;
       aiFollower?: AiFollower;
       parentId?: number;
       createdAt: Date;
@@ -56,29 +56,19 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) => replyMutation.mutate(data))}
-        className="flex items-center space-x-2"
-      >
+      <form onSubmit={form.handleSubmit((data) => replyMutation.mutate(data))} className="flex items-center space-x-2">
         <FormField
           control={form.control}
           name="content"
           render={({ field }) => (
             <FormItem className="flex-1">
               <FormControl>
-                <Input
-                  {...field}
-                  placeholder={`Reply to ${aiFollowerName}...`}
-                />
+                <Input {...field} placeholder={`Reply to ${aiFollowerName}...`} />
               </FormControl>
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          size="icon"
-          disabled={replyMutation.isPending}
-        >
+        <Button type="submit" size="icon" disabled={replyMutation.isPending}>
           <Send className="h-4 w-4" />
         </Button>
       </form>
@@ -100,32 +90,33 @@ function Comment({
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
 
-  // Get all replies to this comment
   const commentReplies = replies.filter((reply) => reply.parentId === comment.id);
   const hasReplies = commentReplies.length > 0;
+
+  const isAIComment = !!comment.aiFollowerId;
 
   return (
     <div className={`space-y-4 ${level > 0 ? "ml-8 border-l-2 pl-4" : ""}`}>
       <div className="flex items-start space-x-4">
         <Avatar className="h-8 w-8">
-          {comment.aiFollower?.avatarUrl && (
+          {isAIComment && comment.aiFollower?.avatarUrl && (
             <img
               src={comment.aiFollower.avatarUrl}
-              alt={comment.aiFollower?.name || "AI"}
+              alt={comment.aiFollower.name}
               className="h-full w-full object-cover"
             />
           )}
           <AvatarFallback>
-            {comment.aiFollower ? (comment.aiFollower.name[0] || "AI") : "U"}
+            {isAIComment ? comment.aiFollower?.name[0] || 'AI' : 'U'}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <p className="text-sm font-medium mb-1">
-            {comment.aiFollower ? comment.aiFollower.name : "You"}
+            {isAIComment ? comment.aiFollower?.name || 'AI' : 'You'}
           </p>
           <p className="text-sm">{comment.content}</p>
           <div className="flex items-center space-x-2 mt-2">
-            {!isReplying && (
+            {!isReplying && isAIComment && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -158,16 +149,15 @@ function Comment({
         </div>
       )}
 
-      {showReplies &&
-        commentReplies.map((reply) => (
-          <Comment
-            key={reply.id}
-            comment={reply}
-            postId={postId}
-            replies={replies}
-            level={level + 1}
-          />
-        ))}
+      {showReplies && commentReplies.map((reply) => (
+        <Comment
+          key={reply.id}
+          comment={reply}
+          postId={postId}
+          replies={replies}
+          level={level + 1}
+        />
+      ))}
     </div>
   );
 }
