@@ -5,7 +5,7 @@ import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { generateAIResponse, generateAIBackground } from "./openai";
 import { parse as parseCookie } from "cookie";
-import { promisify } from "util";
+import { getSession } from "./sessionStore";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
@@ -18,15 +18,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         // Parse the session cookie
         const cookies = parseCookie(info.req.headers.cookie || '');
-        const sid = cookies['sid']; // Using the same name as in auth.ts
+        const sid = cookies['sid'];
 
         if (!sid) {
           done(false, 401, 'Unauthorized: No session cookie');
           return;
         }
 
-        // Get session from storage
-        const session = await storage.sessionStore.get(sid);
+        // Get session from shared session store
+        const session = await getSession(sid);
 
         if (!session?.passport?.user) {
           done(false, 401, 'Unauthorized: Invalid session');
@@ -43,7 +43,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Handle WebSocket connections
   wss.on('connection', (ws, req) => {
     const session = (req as any).session;
     const userId = session?.passport?.user;
@@ -90,7 +89,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             aiFollowerId: follower.id,
             type: aiResponse.type || 'comment',
             content: aiResponse.content || null,
-            parentId: null, // Explicitly set parentId for top-level comments
+            parentId: null,
           });
 
           // Include AI follower details in the broadcast

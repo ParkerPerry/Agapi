@@ -6,6 +6,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
+import { sessionStore } from "./sessionStore";
 
 declare global {
   namespace Express {
@@ -29,17 +30,11 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export async function setupAuth(app: Express) {
-  // Always use MemoryStore for now to isolate session issues
-  const memorystore = (await import('memorystore')).default;
-  const MemoryStore = memorystore(session);
-
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "development_secret",
-    resave: true, // Changed to true to ensure session is saved
+    resave: true,
     saveUninitialized: false,
-    store: new MemoryStore({
-      checkPeriod: 86400000 // prune expired entries every 24h
-    }),
+    store: sessionStore,
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,

@@ -1,10 +1,7 @@
 import { InsertUser, User, Post, AiFollower, AiInteraction } from "@shared/schema";
 import { users, posts, aiFollowers, aiInteractions } from "@shared/schema";
-import session from "express-session";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
-import connectPgSimple from "connect-pg-simple";
-import { pool } from "./db";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -22,28 +19,9 @@ export interface IStorage {
   createAiInteraction(interaction: Omit<AiInteraction, "id" | "createdAt">): Promise<AiInteraction>;
   getInteraction(id: number): Promise<AiInteraction | undefined>;
   getPostInteractions(postId: number): Promise<AiInteraction[]>;
-
-  sessionStore: session.Store;
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.Store;
-
-  constructor() {
-    const PostgresStore = connectPgSimple(session);
-    this.sessionStore = new PostgresStore({
-      pool,
-      tableName: 'session',
-      createTableIfMissing: true,
-      // Configure session pruning
-      pruneSessionInterval: 24 * 60 * 60 * 1000, // Prune every 24 hours
-      // Error logging
-      errorLog: (err: Error) => {
-        console.error('Session store error:', err);
-      }
-    });
-  }
-
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
