@@ -6,8 +6,6 @@ import { db } from "./db";
 import connectPgSimple from "connect-pg-simple";
 import { pool } from "./db";
 
-const PostgresSessionStore = connectPgSimple(session);
-
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -32,7 +30,8 @@ export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
 
   constructor() {
-    this.sessionStore = new PostgresSessionStore({
+    const PostgresStore = connectPgSimple(session);
+    this.sessionStore = new PostgresStore({
       pool,
       createTableIfMissing: true,
     });
