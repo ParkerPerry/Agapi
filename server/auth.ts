@@ -30,7 +30,8 @@ async function comparePasswords(supplied: string, stored: string) {
 
 export function setupAuth(app: Express) {
   // Import MemoryStore for development environment
-  const MemoryStore = require('memorystore')(session);
+  import memorystore from 'memorystore';
+  const MemoryStore = memorystore(session);
   
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "development_secret",
