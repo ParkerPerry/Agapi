@@ -26,9 +26,9 @@ interface PostCardProps {
   };
 }
 
-function ReplyForm({ postId, commentId, aiFollowerName, onReply }: { 
-  postId: number; 
-  commentId: number; 
+function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
+  postId: number;
+  commentId: number;
   aiFollowerName: string;
   onReply: () => void;
 }) {
@@ -56,7 +56,7 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
 
   return (
     <Form {...form}>
-      <form 
+      <form
         onSubmit={form.handleSubmit((data) => replyMutation.mutate(data))}
         className="flex items-center space-x-2"
       >
@@ -66,16 +66,16 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
           render={({ field }) => (
             <FormItem className="flex-1">
               <FormControl>
-                <Input 
-                  {...field} 
+                <Input
+                  {...field}
                   placeholder={`Reply to ${aiFollowerName}...`}
                 />
               </FormControl>
             </FormItem>
           )}
         />
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           size="icon"
           disabled={replyMutation.isPending}
         >
@@ -86,12 +86,12 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
   );
 }
 
-function Comment({ 
-  comment, 
-  postId, 
-  replies, 
-  level = 0 
-}: { 
+function Comment({
+  comment,
+  postId,
+  replies,
+  level = 0,
+}: {
   comment: PostCardProps["post"]["interactions"][0];
   postId: number;
   replies: PostCardProps["post"]["interactions"];
@@ -101,30 +101,34 @@ function Comment({
   const [showReplies, setShowReplies] = useState(true);
 
   // Get all replies to this comment
-  const commentReplies = replies.filter(reply => reply.parentId === comment.id);
+  const commentReplies = replies.filter((reply) => reply.parentId === comment.id);
   const hasReplies = commentReplies.length > 0;
 
   return (
-    <div className={`space-y-4 ${level > 0 ? 'ml-8 border-l-2 pl-4' : ''}`}>
+    <div className={`space-y-4 ${level > 0 ? "ml-8 border-l-2 pl-4" : ""}`}>
       <div className="flex items-start space-x-4">
         <Avatar className="h-8 w-8">
           {comment.aiFollower?.avatarUrl && (
-            <img 
-              src={comment.aiFollower.avatarUrl} 
-              alt={comment.aiFollower?.name || 'AI'} 
+            <img
+              src={comment.aiFollower.avatarUrl}
+              alt={comment.aiFollower?.name || "AI"}
               className="h-full w-full object-cover"
             />
           )}
-          <AvatarFallback>{comment.aiFollower?.name?.[0] || 'AI'}</AvatarFallback>
+          <AvatarFallback>
+            {comment.aiFollower ? (comment.aiFollower.name[0] || "AI") : "U"}
+          </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <p className="text-sm font-medium mb-1">{comment.aiFollower?.name || 'AI'}</p>
+          <p className="text-sm font-medium mb-1">
+            {comment.aiFollower ? comment.aiFollower.name : "You"}
+          </p>
           <p className="text-sm">{comment.content}</p>
           <div className="flex items-center space-x-2 mt-2">
             {!isReplying && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setIsReplying(true)}
               >
                 Reply
@@ -136,7 +140,7 @@ function Comment({
                 size="sm"
                 onClick={() => setShowReplies(!showReplies)}
               >
-                {showReplies ? 'Hide Replies' : 'Show Replies'}
+                {showReplies ? "Hide Replies" : "Show Replies"}
               </Button>
             )}
           </div>
@@ -145,40 +149,25 @@ function Comment({
 
       {isReplying && (
         <div className="ml-8">
-          <ReplyForm 
-            postId={postId} 
-            commentId={comment.id} 
-            aiFollowerName={comment.aiFollower?.name || 'AI'}
+          <ReplyForm
+            postId={postId}
+            commentId={comment.id}
+            aiFollowerName={comment.aiFollower?.name || "AI"}
             onReply={() => setIsReplying(false)}
           />
         </div>
       )}
 
-      {showReplies && commentReplies.map((reply, index) => (
-        <div key={reply.id} className="space-y-4">
-          {/* Show the user's reply */}
-          <div className="ml-8 flex items-start space-x-4">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <p className="text-sm font-medium mb-1">You</p>
-              <p className="text-sm">{reply.content}</p>
-            </div>
-          </div>
-
-          {/* Show AI's response to the user's reply if it exists */}
-          {replies.filter(r => r.parentId === reply.id).map(aiReply => (
-            <Comment
-              key={aiReply.id}
-              comment={aiReply}
-              postId={postId}
-              replies={replies}
-              level={level + 1}
-            />
-          ))}
-        </div>
-      ))}
+      {showReplies &&
+        commentReplies.map((reply) => (
+          <Comment
+            key={reply.id}
+            comment={reply}
+            postId={postId}
+            replies={replies}
+            level={level + 1}
+          />
+        ))}
     </div>
   );
 }
@@ -202,7 +191,9 @@ export function PostCard({ post }: PostCardProps) {
   }, [post.id]);
 
   const likes = interactions.filter((i) => i.type === "like").length;
-  const comments = interactions.filter((i) => i.type === "comment" && !i.parentId);
+  const comments = interactions.filter(
+    (i) => i.type === "comment" && !i.parentId
+  );
 
   return (
     <Card>
@@ -212,7 +203,7 @@ export function PostCard({ post }: PostCardProps) {
         </Avatar>
         <div>
           <p className="text-sm text-muted-foreground">
-            {new Date(post.createdAt).toLocaleDateString()}
+            {new Date(post.createdAt?.toString() || "").toLocaleDateString()}
           </p>
         </div>
       </CardHeader>
@@ -231,9 +222,9 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         <div className="space-y-6">
-          {comments.map(comment => (
-            <Comment 
-              key={comment.id} 
+          {comments.map((comment) => (
+            <Comment
+              key={comment.id}
               comment={comment}
               postId={post.id}
               replies={interactions}

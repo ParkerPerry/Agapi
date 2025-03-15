@@ -4,12 +4,63 @@ import { WebSocketServer } from "ws";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { generateAIResponse, generateAIBackground } from "./openai";
+import { parse as parseCookie } from "cookie";
+import { promisify } from "util";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
   const httpServer = createServer(app);
-  const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+  const wss = new WebSocketServer({ 
+    server: httpServer, 
+    path: "/ws",
+    verifyClient: async (info, done) => {
+      try {
+        // Parse the session cookie
+        const cookies = parseCookie(info.req.headers.cookie || '');
+        const sid = cookies['sid']; // Using the same name as in auth.ts
+
+        if (!sid) {
+          done(false, 401, 'Unauthorized: No session cookie');
+          return;
+        }
+
+        // Get session from storage
+        const session = await storage.sessionStore.get(sid);
+
+        if (!session?.passport?.user) {
+          done(false, 401, 'Unauthorized: Invalid session');
+          return;
+        }
+
+        // Attach session to request for later use
+        (info.req as any).session = session;
+        done(true);
+      } catch (error) {
+        console.error('WebSocket authentication error:', error);
+        done(false, 500, 'Internal server error');
+      }
+    }
+  });
+
+  // Handle WebSocket connections
+  wss.on('connection', (ws, req) => {
+    const session = (req as any).session;
+    const userId = session?.passport?.user;
+
+    ws.on('error', console.error);
+
+    // Keep the connection alive
+    const pingInterval = setInterval(() => {
+      if (ws.readyState === ws.OPEN) {
+        ws.ping();
+      }
+    }, 30000);
+
+    ws.on('close', () => {
+      clearInterval(pingInterval);
+    });
+  });
 
   // Broadcast AI interactions to all connected clients
   function broadcastInteraction(interaction: any) {
@@ -37,8 +88,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const interaction = await storage.createAiInteraction({
             postId: post.id,
             aiFollowerId: follower.id,
-            type: aiResponse.type,
-            content: aiResponse.content,
+            type: aiResponse.type || 'comment',
+            content: aiResponse.content || null,
+            parentId: null, // Explicitly set parentId for top-level comments
           });
 
           // Include AI follower details in the broadcast
@@ -65,10 +117,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       posts.map(async (post) => {
         const interactions = await storage.getPostInteractions(post.id);
         const interactionsWithFollowers = await Promise.all(
-          interactions.map(async (interaction) => ({
-            ...interaction,
-            aiFollower: await storage.getAiFollower(interaction.aiFollowerId),
-          }))
+          interactions.map(async (interaction) => {
+            const aiFollower = interaction.aiFollowerId ? 
+              await storage.getAiFollower(interaction.aiFollowerId) 
+              : null;
+            return {
+              ...interaction,
+              aiFollower,
+            };
+          })
         );
         return {
           ...post,
@@ -92,7 +149,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(404).json({ message: "Parent interaction not found" });
     }
 
-    const aiFollower = await storage.getAiFollower(parentInteraction.aiFollowerId);
+    const aiFollower = parentInteraction.aiFollowerId ? 
+      await storage.getAiFollower(parentInteraction.aiFollowerId)
+      : null;
     if (!aiFollower) {
       return res.status(404).json({ message: "AI follower not found" });
     }
@@ -108,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         postId,
         aiFollowerId: aiFollower.id,
         type: "comment",
-        content: aiResponse.content,
+        content: aiResponse.content || null,
         parentId,
       });
 

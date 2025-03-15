@@ -34,9 +34,19 @@ export function setupAuth(app: Express) {
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax'
+    },
+    name: 'sid' // Change session cookie name from default 'connect.sid'
   };
 
-  app.set("trust proxy", 1);
+  if (app.get('env') === 'production') {
+    app.set('trust proxy', 1); // trust first proxy
+  }
+
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
