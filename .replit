@@ -14,7 +14,7 @@ localPort = 5000
 externalPort = 80
 
 [workflows]
-runButton = "Start with MemoryStore"
+runButton = "Start App with ES Modules"
 
 [[workflows.workflow]]
 name = "Project"
@@ -42,6 +42,15 @@ waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Start with MemoryStore"
+author = 18570664
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "NODE_ENV=development npm run dev"
+
+[[workflows.workflow]]
+name = "Start App with ES Modules"
 author = 18570664
 mode = "sequential"
 
