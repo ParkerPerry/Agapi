@@ -1,6 +1,7 @@
 import { pgTable, text, serial, integer, boolean, timestamp, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -30,10 +31,27 @@ export const aiInteractions = pgTable("ai_interactions", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").references(() => posts.id),
   aiFollowerId: integer("ai_follower_id").references(() => aiFollowers.id),
-  type: text("type").notNull(), // 'like' | 'comment'
+  parentId: integer("parent_id").references(() => aiInteractions.id),
+  type: text("type", { enum: ["like", "comment"] }).notNull(),
   content: text("content"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+// Define relations
+export const aiInteractionsRelations = relations(aiInteractions, ({ one }) => ({
+  parent: one(aiInteractions, {
+    fields: [aiInteractions.parentId],
+    references: [aiInteractions.id],
+  }),
+  aiFollower: one(aiFollowers, {
+    fields: [aiInteractions.aiFollowerId],
+    references: [aiFollowers.id],
+  }),
+  post: one(posts, {
+    fields: [aiInteractions.postId],
+    references: [posts.id],
+  }),
+}));
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,

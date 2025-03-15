@@ -18,9 +18,11 @@ export interface IStorage {
   getUserPosts(userId: number): Promise<Post[]>;
 
   getAiFollowers(userId: number): Promise<AiFollower[]>;
+  getAiFollower(id: number): Promise<AiFollower | undefined>;
   createAiFollower(userId: number, follower: Omit<AiFollower, "id" | "userId">): Promise<AiFollower>;
 
   createAiInteraction(interaction: Omit<AiInteraction, "id" | "createdAt">): Promise<AiInteraction>;
+  getInteraction(id: number): Promise<AiInteraction | undefined>;
   getPostInteractions(postId: number): Promise<AiInteraction[]>;
 
   sessionStore: session.Store;
@@ -79,6 +81,14 @@ export class DatabaseStorage implements IStorage {
       .where(eq(aiFollowers.userId, userId));
   }
 
+  async getAiFollower(id: number): Promise<AiFollower | undefined> {
+    const [follower] = await db
+      .select()
+      .from(aiFollowers)
+      .where(eq(aiFollowers.id, id));
+    return follower;
+  }
+
   async createAiFollower(
     userId: number,
     follower: Omit<AiFollower, "id" | "userId">,
@@ -88,6 +98,14 @@ export class DatabaseStorage implements IStorage {
       .values({ ...follower, userId })
       .returning();
     return aiFollower;
+  }
+
+  async getInteraction(id: number): Promise<AiInteraction | undefined> {
+    const [interaction] = await db
+      .select()
+      .from(aiInteractions)
+      .where(eq(aiInteractions.id, id));
+    return interaction;
   }
 
   async createAiInteraction(
