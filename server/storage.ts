@@ -35,10 +35,11 @@ export class DatabaseStorage implements IStorage {
       pool: pool,
       tableName: 'session',
       createTableIfMissing: true,
-      // Add error handler to prevent unhandled errors
-      errorLog: (error) => console.error('Session store error:', error),
-      // Add callback handler to fix "fn is not a function" error
-      pruneSessionInterval: false // Disable automatic pruning to avoid callback issues
+      // Add proper error handling and pruning configuration
+      errorLog: console.error,
+      pruneSessionInterval: 60 * 60 * 1000, // Prune every hour
+      // Add proper promise support for callbacks
+      Promise: global.Promise
     });
   }
 
