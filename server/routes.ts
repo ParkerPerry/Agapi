@@ -114,21 +114,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const posts = await storage.getUserPosts(parseInt(req.params.userId));
     const postsWithInteractions = await Promise.all(
       posts.map(async (post) => {
+        // Get all interactions for this post
         const interactions = await storage.getPostInteractions(post.id);
-        const interactionsWithFollowers = await Promise.all(
+
+        // Create a map to store interactions by their ID
+        const interactionMap = new Map();
+
+        // First pass: create interaction objects with their AI follower info
+        await Promise.all(
           interactions.map(async (interaction) => {
             const aiFollower = interaction.aiFollowerId ? 
               await storage.getAiFollower(interaction.aiFollowerId) 
               : null;
-            return {
+
+            interactionMap.set(interaction.id, {
               ...interaction,
               aiFollower,
-            };
+              replies: []
+            });
           })
         );
+
+        // Second pass: organize into threads
+        const threadedInteractions = [];
+        interactions.forEach(interaction => {
+          const interactionWithData = interactionMap.get(interaction.id);
+
+          if (interaction.parentId === null) {
+            // This is a top-level interaction
+            threadedInteractions.push(interactionWithData);
+          } else {
+            // This is a reply, add it to its parent's replies array
+            const parent = interactionMap.get(interaction.parentId);
+            if (parent) {
+              parent.replies.push(interactionWithData);
+            }
+          }
+        });
+
+        // Sort replies by timestamp within each thread
+        threadedInteractions.forEach(interaction => {
+          interaction.replies.sort((a, b) => 
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        });
+
         return {
           ...post,
-          interactions: interactionsWithFollowers,
+          interactions: threadedInteractions
         };
       })
     );
@@ -171,13 +204,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
         parentId,
       });
 
-      const fullInteraction = {
-        ...interaction,
-        aiFollower,
-      };
+      // Get the complete thread structure
+      const allInteractions = await storage.getPostInteractions(postId);
+      const interactionMap = new Map();
 
-      broadcastInteraction(fullInteraction);
-      res.status(201).json(fullInteraction);
+      // Build the interaction map with AI follower info
+      await Promise.all(
+        allInteractions.map(async (inter) => {
+          const follower = inter.aiFollowerId ? 
+            await storage.getAiFollower(inter.aiFollowerId) 
+            : null;
+
+          interactionMap.set(inter.id, {
+            ...inter,
+            aiFollower: follower,
+            replies: []
+          });
+        })
+      );
+
+      // Organize into threads
+      const threadedInteractions = [];
+      allInteractions.forEach(inter => {
+        const interWithData = interactionMap.get(inter.id);
+
+        if (inter.parentId === null) {
+          threadedInteractions.push(interWithData);
+        } else {
+          const parent = interactionMap.get(inter.parentId);
+          if (parent) {
+            parent.replies.push(interWithData);
+          }
+        }
+      });
+
+      // Sort replies by timestamp
+      threadedInteractions.forEach(inter => {
+        inter.replies.sort((a, b) => 
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      });
+
+      // Return the full thread containing our new reply
+      const parentThread = threadedInteractions.find(
+        inter => inter.id === parentId || inter.replies.some(reply => reply.id === parentId)
+      );
+
+      broadcastInteraction({
+        type: 'thread-update',
+        postId,
+        thread: parentThread
+      });
+
+      res.status(201).json(parentThread);
     } else {
       res.status(400).json({ message: "AI couldn't generate a confident response" });
     }
