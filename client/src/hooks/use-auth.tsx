@@ -20,6 +20,7 @@ type AuthContextType = {
 type LoginData = Pick<InsertUser, "username" | "password">;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const {
@@ -38,10 +39,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
-      // Create a new WebSocket connection when user is authenticated.  This is moved here from the original code to ensure it runs after a successful login.
-      import("@/lib/websocket").then(({ createWebSocket }) => {
-        createWebSocket();
-      });
     },
     onError: (error: Error) => {
       toast({

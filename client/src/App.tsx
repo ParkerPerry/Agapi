@@ -26,18 +26,16 @@ function MainApp() {
   const { user } = useAuth();
 
   useEffect(() => {
-    let socket: WebSocket | null = null;
-
+    // Only create WebSocket connection when user is authenticated
     if (user) {
-      socket = createWebSocket();
-    }
-
-    return () => {
-      if (socket) {
+      console.log('User authenticated, creating WebSocket connection');
+      createWebSocket();
+      return () => {
+        console.log('Cleaning up WebSocket connection');
         closeWebSocket();
-      }
-    };
-  }, [user]);
+      };
+    }
+  }, [user?.id]); // Only recreate when user ID changes
 
   return (
     <>

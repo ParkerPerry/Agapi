@@ -24,9 +24,15 @@ function getWebSocketUrl(): string {
 }
 
 export function createWebSocket(): WebSocket | null {
-  if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-    console.log('WebSocket connection already exists');
-    return ws;
+  if (ws) {
+    // If we have an existing connection, check its state
+    if (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN) {
+      console.log('WebSocket connection already exists and is active');
+      return ws;
+    }
+    // If the connection is closing or closed, clean up first
+    console.log('Cleaning up existing WebSocket connection');
+    clearWebSocketState();
   }
 
   try {
@@ -138,6 +144,7 @@ function clearWebSocketState() {
     clearTimeout(reconnectTimeout);
     reconnectTimeout = null;
   }
+  LISTENERS.clear();
 }
 
 export function subscribeToWebSocket(type: string, callback: (data: any) => void): () => void {
