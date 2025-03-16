@@ -6,18 +6,18 @@ import { Bell, Home, User, LogOut } from "lucide-react";
 
 export function NavBar() {
   const { user, logoutMutation } = useAuth();
-  
+
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <span className="hidden font-bold sm:inline-block">
-              SocialAI
+              CircleTube
             </span>
           </Link>
         </div>
-        
+
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <nav className="flex items-center space-x-4">
@@ -26,17 +26,17 @@ export function NavBar() {
                   <Home className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
               </Link>
-              
+
               <Button variant="ghost" size="icon">
                 <Bell className="h-[1.2rem] w-[1.2rem]" />
               </Button>
-              
+
               <Link href={`/profile/${user?.id}`}>
                 <Button variant="ghost" size="icon">
                   <User className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
               </Link>
-              
+
               <Button 
                 variant="ghost" 
                 size="icon"
@@ -46,7 +46,7 @@ export function NavBar() {
               </Button>
             </nav>
           </div>
-          
+
           <Avatar className="h-8 w-8">
             <AvatarFallback>
               {user?.username.charAt(0).toUpperCase()}
