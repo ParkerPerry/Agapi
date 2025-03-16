@@ -164,6 +164,7 @@ function Comment({
 
 export function PostCard({ post }: PostCardProps) {
   const [interactions, setInteractions] = useState(post.interactions);
+  const { user } = useAuth();
 
   useEffect(() => {
     // Subscribe to real-time updates for this post
@@ -194,6 +195,57 @@ export function PostCard({ post }: PostCardProps) {
       unsubscribe();
     };
   }, [post.id]);
+
+  // Subscribe to thread updates
+  useEffect(() => {
+    if (!post?.id) return;
+
+    console.log(`Subscribing to WebSocket updates for post ${post.id}`);
+    const unsubscribe = subscribeToWebSocket('thread-update', (data) => {
+      console.log('Received thread update via WebSocket:', data);
+      if (data.postId === post.id && data.thread) {
+        queryClient.setQueryData(['posts', user?.id], (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return oldData.map((p: any) => {
+            if (p.id === post.id) {
+              // Find if this thread already exists in interactions
+              const threadExists = p.interactions.some((i: any) => i.id === data.thread.id);
+
+              if (threadExists) {
+                // Replace the existing thread
+                return {
+                  ...p,
+                  interactions: p.interactions.map((i: any) => {
+                    if (i.id === data.thread.id) {
+                      return data.thread;
+                    }
+                    return i;
+                  })
+                };
+              } else {
+                // Add new thread to interactions
+                return {
+                  ...p,
+                  interactions: [...p.interactions, data.thread]
+                };
+              }
+            }
+            return p;
+          });
+        });
+
+        // Invalidate query to ensure we get the latest data
+        queryClient.invalidateQueries(['posts', user?.id]);
+      }
+    });
+
+    return () => {
+      console.log(`Unsubscribing from WebSocket updates for post ${post.id}`);
+      unsubscribe();
+    };
+  }, [post.id, queryClient, user?.id]);
+
 
   const likes = interactions.filter((i) => i.type === "like").length;
   const comments = interactions.filter(

@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
-      // Create a new WebSocket connection when user is authenticated
+      // Create a new WebSocket connection when user is authenticated.  This is moved here from the original code to ensure it runs after a successful login.
       import("@/lib/websocket").then(({ createWebSocket }) => {
         createWebSocket();
       });

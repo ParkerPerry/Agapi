@@ -7,29 +7,7 @@ import { Post } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 
-// WebSocket implementation
-let websocket;
-const createWebSocket = () => {
-  if (websocket) {
-    return; // WebSocket already initialized
-  }
-  websocket = new WebSocket('ws://localhost:8080'); // Replace with your WebSocket URL
-  websocket.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      // Handle WebSocket messages here.  This example just logs the data.
-      console.log('WebSocket message received:', data);
-      //Implement logic to update UI based on data
-    } catch (error) {
-      console.error("Error parsing WebSocket message:", error);
-    }
-  };
-  websocket.onclose = () => {
-    console.log("WebSocket connection closed");
-    // Optionally attempt to reconnect
-  };
-  websocket.onerror = (error) => console.error("WebSocket error:", error);
-};
+// Use the shared WebSocket implementation from lib/websocket.ts
 
 const closeWebSocket = () => {
     if (websocket) {

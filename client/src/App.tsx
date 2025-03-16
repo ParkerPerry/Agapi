@@ -25,7 +25,20 @@ function Router() {
 function App() {
   // Initialize WebSocket connection when app loads
   useEffect(() => {
-    createWebSocket();
+    // Initialize WebSocket only if user is authenticated
+    const checkAndConnectWebSocket = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        createWebSocket();
+      }
+    };
+    
+    checkAndConnectWebSocket();
+    
+    // Clean up WebSocket on unmount
+    return () => {
+      // No need to explicitly close - the WebSocket module handles reconnection
+    };
   }, []);
 
   return (
