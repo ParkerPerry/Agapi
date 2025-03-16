@@ -8,7 +8,7 @@ import AuthPage from "@/pages/auth-page";
 import ProfilePage from "@/pages/profile-page";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
-import { createWebSocket } from "@/lib/websocket";
+import { createWebSocket, closeWebSocket } from "@/lib/websocket";
 import { useEffect } from "react";
 
 function Router() {
@@ -26,14 +26,17 @@ function MainApp() {
   const { user } = useAuth();
 
   useEffect(() => {
+    let socket: WebSocket | null = null;
+
     if (user) {
-      const ws = createWebSocket();
-      return () => {
-        if (ws) {
-          ws.close();
-        }
-      };
+      socket = createWebSocket();
     }
+
+    return () => {
+      if (socket) {
+        closeWebSocket();
+      }
+    };
   }, [user]);
 
   return (

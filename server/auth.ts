@@ -30,21 +30,24 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export async function setupAuth(app: Express) {
+  const isProduction = process.env.NODE_ENV === "production";
+
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "development_secret",
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction, // Only use secure cookies in production
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'lax'
+      sameSite: isProduction ? 'strict' : 'lax'
     },
     name: 'sid'
   };
 
-  if (app.get('env') === 'production') {
+  // Only set trust proxy in production
+  if (isProduction) {
     app.set('trust proxy', 1);
   }
 

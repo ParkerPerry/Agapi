@@ -17,8 +17,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     verifyClient: async (info, done) => {
       try {
         // Parse the session cookie
-        const cookies = parseCookie(info.req.headers.cookie || '');
+        const cookieHeader = info.req.headers.cookie || '';
+        console.log('WebSocket connection attempt - Cookie header:', cookieHeader);
+
+        const cookies = parseCookie(cookieHeader);
         const sid = cookies['sid'];
+        console.log('Parsed session ID:', sid);
 
         if (!sid) {
           console.log('WebSocket connection rejected: No session cookie');
@@ -28,6 +32,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Get session from shared session store
         const session = await getSession(sid);
+        console.log('Retrieved session:', {
+          exists: !!session,
+          hasPassport: !!session?.passport,
+          userId: session?.passport?.user
+        });
 
         if (!session?.passport?.user) {
           console.log('WebSocket connection rejected: Invalid session');
