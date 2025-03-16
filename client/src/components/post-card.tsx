@@ -16,10 +16,11 @@ interface PostCardProps {
   post: Post & {
     interactions: Array<{
       id: number;
-      type: "like" | "comment";
+      type: "like" | "comment" | "reply";
       content?: string;
       aiFollowerId?: number;
       aiFollower?: AiFollower;
+      userId?: number;
       parentId?: number;
       createdAt: Date;
     }>;
@@ -89,11 +90,13 @@ function Comment({
 }) {
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
+  const { user } = useAuth();
 
   const commentReplies = replies.filter((reply) => reply.parentId === comment.id);
   const hasReplies = commentReplies.length > 0;
 
   const isAIComment = !!comment.aiFollowerId;
+  const isUserComment = !!comment.userId;
 
   return (
     <div className={`space-y-4 ${level > 0 ? "ml-8 border-l-2 pl-4" : ""}`}>
@@ -116,7 +119,7 @@ function Comment({
           </p>
           <p className="text-sm">{comment.content}</p>
           <div className="flex items-center space-x-2 mt-2">
-            {!isReplying && isAIComment && (
+            {!isReplying && isAIComment && user && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -166,22 +169,26 @@ export function PostCard({ post }: PostCardProps) {
   const [interactions, setInteractions] = useState(post.interactions);
   const { user } = useAuth();
 
+  // Update interactions when post.interactions changes
   useEffect(() => {
-    // Subscribe to real-time updates for this post
+    setInteractions(post.interactions);
+  }, [post.interactions]);
+
+  // Handle WebSocket updates for post interactions
+  useEffect(() => {
     const unsubscribe = subscribeToWebSocket(`post-${post.id}`, (data) => {
-      // Handle thread update messages
       if (data.type === 'thread-update' && data.postId === post.id) {
         setInteractions(prev => {
-          // Find and replace the updated thread
-          return prev.map(interaction => 
+          const isNew = !prev.some(i => i.id === data.thread.id);
+          if (isNew) {
+            return [...prev, data.thread];
+          }
+          return prev.map(interaction =>
             interaction.id === data.thread.id ? data.thread : interaction
           );
         });
-      } 
-      // Handle new interaction
-      else if (data.postId === post.id) {
+      } else if (data.postId === post.id) {
         setInteractions(prev => {
-          // Check if this interaction already exists
           const exists = prev.some(i => i.id === data.id);
           if (!exists) {
             return [...prev, data];
@@ -191,65 +198,56 @@ export function PostCard({ post }: PostCardProps) {
       }
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, [post.id]);
 
-  // Subscribe to thread updates
+  // Handle WebSocket updates for thread updates
   useEffect(() => {
     if (!post?.id) return;
 
-    console.log(`Subscribing to WebSocket updates for post ${post.id}`);
     const unsubscribe = subscribeToWebSocket('thread-update', (data) => {
-      console.log('Received thread update via WebSocket:', data);
       if (data.postId === post.id && data.thread) {
-        queryClient.setQueryData(['posts', user?.id], (oldData: any) => {
+        setInteractions(prev => {
+          const isNew = !prev.some(i => i.id === data.thread.id);
+          if (isNew) {
+            return [...prev, data.thread];
+          }
+          return prev.map(interaction =>
+            interaction.id === data.thread.id ? data.thread : interaction
+          );
+        });
+
+        // Update query cache
+        queryClient.setQueryData(['/api/posts', user?.id], (oldData: any) => {
           if (!oldData) return oldData;
 
           return oldData.map((p: any) => {
             if (p.id === post.id) {
-              // Find if this thread already exists in interactions
-              const threadExists = p.interactions.some((i: any) => i.id === data.thread.id);
-
-              if (threadExists) {
-                // Replace the existing thread
-                return {
-                  ...p,
-                  interactions: p.interactions.map((i: any) => {
-                    if (i.id === data.thread.id) {
-                      return data.thread;
-                    }
-                    return i;
-                  })
-                };
-              } else {
-                // Add new thread to interactions
-                return {
-                  ...p,
-                  interactions: [...p.interactions, data.thread]
-                };
-              }
+              return {
+                ...p,
+                interactions: p.interactions.map((i: any) => {
+                  if (i.id === data.thread.id) {
+                    return data.thread;
+                  }
+                  if (!p.interactions.some((existing: any) => existing.id === data.thread.id)) {
+                    p.interactions.push(data.thread);
+                  }
+                  return i;
+                }),
+              };
             }
             return p;
           });
         });
-
-        // Invalidate query to ensure we get the latest data
-        queryClient.invalidateQueries(['posts', user?.id]);
       }
     });
 
-    return () => {
-      console.log(`Unsubscribing from WebSocket updates for post ${post.id}`);
-      unsubscribe();
-    };
-  }, [post.id, queryClient, user?.id]);
-
+    return () => unsubscribe();
+  }, [post.id, user?.id]);
 
   const likes = interactions.filter((i) => i.type === "like").length;
   const comments = interactions.filter(
-    (i) => i.type === "comment" && !i.parentId
+    (i) => (i.type === "comment" || i.type === "reply") && !i.parentId
   );
 
   return (
