@@ -3,46 +3,35 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { generateAIResponse, generateAIBackground } from "./openai";
-
-function organizeThreadedInteractions(interactions: any[], interactionMap: Map<any, any>) {
-  const threadedInteractions: any[] = [];
-
-  // Helper function to recursively organize replies
-  function addReplies(parentId: number | null) {
-    const replies = interactions
-      .filter(interaction => interaction.parentId === parentId)
-      .map(interaction => {
-        const interactionWithData = interactionMap.get(interaction.id);
-        // Recursively get nested replies
-        const nestedReplies = addReplies(interaction.id);
-        return {
-          ...interactionWithData,
-          replies: nestedReplies
-        };
-      })
-      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-
-    return replies;
-  }
-
-  // Get top-level interactions (no parent)
-  const topLevelInteractions = interactions
-    .filter(interaction => interaction.parentId === null)
-    .map(interaction => {
-      const interactionWithData = interactionMap.get(interaction.id);
-      const replies = addReplies(interaction.id);
-      return {
-        ...interactionWithData,
-        replies
-      };
-    });
-
-  return topLevelInteractions;
-}
+import { ThreadManager } from "./thread-manager";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
   const httpServer = createServer(app);
+
+  app.get("/api/posts/:userId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const posts = await storage.getUserPosts(parseInt(req.params.userId));
+
+      // Get threaded interactions for each post
+      const postsWithInteractions = await Promise.all(
+        posts.map(async (post) => {
+          const threadedInteractions = await ThreadManager.getThreadedInteractions(post.id);
+          return {
+            ...post,
+            interactions: threadedInteractions
+          };
+        })
+      );
+
+      res.json(postsWithInteractions);
+    } catch (error) {
+      console.error("Error getting posts:", error);
+      res.status(500).json({ message: "Failed to get posts" });
+    }
+  });
 
   app.post("/api/posts/:postId/reply", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
@@ -51,7 +40,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const postId = parseInt(req.params.postId);
 
     try {
-      // Get parent interaction and AI follower
+      // Get parent interaction and its AI follower
       const parentInteraction = await storage.getInteraction(parentId);
       if (!parentInteraction) {
         return res.status(404).json({ message: "Parent interaction not found" });
@@ -64,7 +53,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "AI follower not found" });
       }
 
-      // Save user's reply
+      // Save the user's reply
       const userReply = await storage.createAiInteraction({
         postId,
         userId: req.user!.id,
@@ -76,7 +65,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log("Created user reply:", userReply);
 
-      // Generate AI response to the user's reply
+      // Generate and save AI response
       const aiResponse = await generateAIResponse(
         content,
         aiFollower.personality,
@@ -97,74 +86,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Created AI reply:", aiReply);
       }
 
-      // Get all interactions for the post
-      const interactions = await storage.getPostInteractions(postId);
-      console.log("Retrieved all interactions for post:", interactions.length);
+      // Get updated thread structure
+      const threadedInteractions = await ThreadManager.getThreadedInteractions(postId);
+      const updatedThread = ThreadManager.findThreadById(threadedInteractions, parentId);
 
-      // Create a map to store interactions by their ID
-      const interactionMap = new Map();
+      if (!updatedThread) {
+        return res.status(500).json({ message: "Failed to find updated thread" });
+      }
 
-      // Build interaction map with AI follower info
-      await Promise.all(
-        interactions.map(async (interaction) => {
-          const follower = interaction.aiFollowerId ? 
-            await storage.getAiFollower(interaction.aiFollowerId) 
-            : null;
-
-          interactionMap.set(interaction.id, {
-            ...interaction,
-            aiFollower: follower,
-            replies: []
-          });
-        })
-      );
-
-      // Organize interactions into threads
-      const threadedInteractions = organizeThreadedInteractions(interactions, interactionMap);
-
-      res.status(201).json({
-        success: true,
-        message: "Reply created successfully"
-      });
+      res.status(201).json(updatedThread);
     } catch (error) {
       console.error("Error handling reply:", error);
       res.status(500).json({ message: "Failed to process reply" });
     }
-  });
-
-  app.get("/api/posts/:userId", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
-    const posts = await storage.getUserPosts(parseInt(req.params.userId));
-    const postsWithInteractions = await Promise.all(
-      posts.map(async (post) => {
-        const interactions = await storage.getPostInteractions(post.id);
-        const interactionMap = new Map();
-
-        await Promise.all(
-          interactions.map(async (interaction) => {
-            const aiFollower = interaction.aiFollowerId ? 
-              await storage.getAiFollower(interaction.aiFollowerId) 
-              : null;
-
-            interactionMap.set(interaction.id, {
-              ...interaction,
-              aiFollower,
-              replies: []
-            });
-          })
-        );
-
-        const threadedInteractions = organizeThreadedInteractions(interactions, interactionMap);
-
-        return {
-          ...post,
-          interactions: threadedInteractions
-        };
-      })
-    );
-
-    res.json(postsWithInteractions);
   });
 
   app.post("/api/posts", async (req, res) => {

@@ -33,15 +33,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(insertUser).returning();
+    const [user] = (await db.insert(users).values(insertUser).returning()) as User[];
     return user;
   }
 
   async createPost(userId: number, content: string): Promise<Post> {
-    const [post] = await db
+    const [post] = (await db
       .insert(posts)
       .values({ userId, content })
-      .returning();
+      .returning()) as Post[];
     return post;
   }
 
@@ -77,10 +77,10 @@ export class DatabaseStorage implements IStorage {
     userId: number,
     follower: Omit<AiFollower, "id" | "userId">,
   ): Promise<AiFollower> {
-    const [aiFollower] = await db
+    const [aiFollower] = (await db
       .insert(aiFollowers)
       .values({ ...follower, userId })
-      .returning();
+      .returning()) as AiFollower[];
     return aiFollower;
   }
 
@@ -96,10 +96,10 @@ export class DatabaseStorage implements IStorage {
     });
 
     try {
-      const [aiInteraction] = await db
+      const [aiInteraction] = (await db
         .insert(aiInteractions)
         .values(interaction)
-        .returning();
+        .returning()) as AiInteraction[];
 
       console.log("[Storage] Created AI interaction:", {
         id: aiInteraction.id,
@@ -124,14 +124,20 @@ export class DatabaseStorage implements IStorage {
         .from(aiInteractions)
         .where(eq(aiInteractions.id, id));
 
-      console.log("[Storage] Retrieved interaction:", interaction ? {
-        id: interaction.id,
-        type: interaction.type,
-        userId: interaction.userId,
-        aiFollowerId: interaction.aiFollowerId
-      } : "Not found");
+      if (interaction) {
+        console.log("[Storage] Retrieved interaction:", {
+          id: interaction.id,
+          type: interaction.type,
+          userId: interaction.userId,
+          aiFollowerId: interaction.aiFollowerId,
+          parentId: interaction.parentId
+        });
 
-      return interaction;
+        return interaction as AiInteraction;
+      }
+
+      console.log("[Storage] Interaction not found");
+      return undefined;
     } catch (error) {
       console.error("[Storage] Error getting interaction:", error);
       throw error;
@@ -149,7 +155,8 @@ export class DatabaseStorage implements IStorage {
         .orderBy(aiInteractions.createdAt);
 
       console.log("[Storage] Retrieved interactions count:", interactions.length);
-      return interactions;
+
+      return interactions as AiInteraction[];
     } catch (error) {
       console.error("[Storage] Error getting post interactions:", error);
       throw error;

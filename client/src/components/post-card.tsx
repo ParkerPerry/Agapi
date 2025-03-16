@@ -89,23 +89,19 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
 function Comment({
   comment,
   postId,
-  replies,
   level = 0,
 }: {
   comment: PostCardProps["post"]["interactions"][0];
   postId: number;
-  replies: PostCardProps["post"]["interactions"];
   level?: number;
 }) {
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
   const { user } = useAuth();
 
-  const commentReplies = replies.filter((reply) => reply.parentId === comment.id);
-  const hasReplies = commentReplies.length > 0;
-
   const isAIComment = !!comment.aiFollowerId;
   const isUserComment = !!comment.userId;
+  const hasReplies = comment.replies && comment.replies.length > 0;
 
   return (
     <div className={`space-y-4 ${level > 0 ? "ml-8 border-l-2 pl-4" : ""}`}>
@@ -143,7 +139,7 @@ function Comment({
                 size="sm"
                 onClick={() => setShowReplies(!showReplies)}
               >
-                {showReplies ? "Hide Replies" : "Show Replies"}
+                {showReplies ? "Hide Replies" : `Show Replies (${comment.replies?.length})`}
               </Button>
             )}
           </div>
@@ -161,12 +157,11 @@ function Comment({
         </div>
       )}
 
-      {showReplies && commentReplies.map((reply) => (
+      {showReplies && comment.replies && comment.replies.map((reply) => (
         <Comment
           key={reply.id}
           comment={reply}
           postId={postId}
-          replies={replies}
           level={level + 1}
         />
       ))}
@@ -176,7 +171,7 @@ function Comment({
 
 export function PostCard({ post }: PostCardProps) {
   const likes = post.interactions.filter((i) => i.type === "like").length;
-  const comments = post.interactions.filter(
+  const rootComments = post.interactions.filter(
     (i) => (i.type === "comment" || i.type === "reply") && !i.parentId
   );
 
@@ -203,16 +198,15 @@ export function PostCard({ post }: PostCardProps) {
           </div>
           <div className="flex items-center space-x-1">
             <MessageSquare className="h-4 w-4" />
-            <span className="text-sm">{comments.length}</span>
+            <span className="text-sm">{rootComments.length}</span>
           </div>
         </div>
         <div className="space-y-6">
-          {comments.map((comment) => (
+          {rootComments.map((comment) => (
             <Comment
               key={comment.id}
               comment={comment}
               postId={post.id}
-              replies={post.interactions}
             />
           ))}
         </div>
