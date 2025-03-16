@@ -2,8 +2,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Post, AiFollower } from "@shared/schema";
 import { Heart, MessageSquare, Send } from "lucide-react";
-import { useEffect, useState } from "react";
-import { subscribeToWebSocket } from "@/lib/websocket";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -176,118 +175,8 @@ function Comment({
 }
 
 export function PostCard({ post }: PostCardProps) {
-  const [interactions, setInteractions] = useState(post.interactions);
-  const { user } = useAuth();
-
-  // Update interactions when post.interactions changes
-  useEffect(() => {
-    setInteractions(post.interactions);
-  }, [post.interactions]);
-
-  // Handle WebSocket updates for post interactions
-  useEffect(() => {
-    const unsubscribe = subscribeToWebSocket(`post-${post.id}`, (data) => {
-      if (data.type === 'thread-update' && data.postId === post.id) {
-        setInteractions(prev => {
-          // Find the parent interaction in the current state
-          const parentIndex = prev.findIndex(i => i.id === data.thread.parentId);
-          if (parentIndex >= 0) {
-            // Update the parent interaction with the new thread data
-            const updatedInteractions = [...prev];
-            if (!updatedInteractions[parentIndex].replies) {
-              updatedInteractions[parentIndex].replies = [];
-            }
-            updatedInteractions[parentIndex].replies.push(data.thread);
-            updatedInteractions[parentIndex].replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-            return updatedInteractions;
-          } else {
-            // If parent wasn't found, it might be a new thread
-            return [...prev, data.thread];
-          }
-        });
-      }
-    });
-
-    return () => unsubscribe();
-  }, [post.id]);
-
-  // Handle WebSocket updates for individual interactions
-  useEffect(() => {
-    if (!post?.id) return;
-
-    const unsubscribe = subscribeToWebSocket('thread-update', (data) => {
-      if (data.postId === post.id && data.thread) {
-        setInteractions(prev => {
-          const updatedInteractions = [...prev];
-          const parentIndex = updatedInteractions.findIndex(i => i.id === data.thread.parentId);
-
-          if (parentIndex >= 0) {
-            // Update existing thread
-            if (!updatedInteractions[parentIndex].replies) {
-              updatedInteractions[parentIndex].replies = [];
-            }
-            updatedInteractions[parentIndex].replies.push(data.thread);
-            updatedInteractions[parentIndex].replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-          } else {
-            // Check if this is a reply that belongs to an existing thread
-            const parentThreadIndex = updatedInteractions.findIndex(i =>
-              i.id === data.thread.parentId ||
-              i.replies?.some(reply => reply.id === data.thread.parentId)
-            );
-
-            if (parentThreadIndex >= 0) {
-              // Add to parent thread's replies
-              if (!updatedInteractions[parentThreadIndex].replies) {
-                updatedInteractions[parentThreadIndex].replies = [];
-              }
-              updatedInteractions[parentThreadIndex].replies.push(data.thread);
-              // Sort replies by creation time
-              updatedInteractions[parentThreadIndex].replies.sort((a, b) =>
-                new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-              );
-            } else {
-              // New top-level interaction
-              updatedInteractions.push(data.thread);
-            }
-          }
-          return updatedInteractions;
-        });
-
-        // Update query cache
-        queryClient.setQueryData(['/api/posts', user?.id], (oldData: any) => {
-          if (!oldData) return oldData;
-          return oldData.map((p: any) => {
-            if (p.id === post.id) {
-              return {
-                ...p,
-                interactions: p.interactions.map((i: any) => {
-                  if (i.id === data.thread.id) {
-                    return data.thread;
-                  }
-                  // Check if this interaction is a parent of the update
-                  if (i.replies?.some((reply: any) => reply.id === data.thread.id)) {
-                    return {
-                      ...i,
-                      replies: i.replies.map((reply: any) =>
-                        reply.id === data.thread.id ? data.thread : reply
-                      )
-                    };
-                  }
-                  return i;
-                })
-              };
-            }
-            return p;
-          });
-        });
-      }
-    });
-
-    return () => unsubscribe();
-  }, [post.id, user?.id]);
-
-  const likes = interactions.filter((i) => i.type === "like").length;
-  const comments = interactions.filter(
+  const likes = post.interactions.filter((i) => i.type === "like").length;
+  const comments = post.interactions.filter(
     (i) => (i.type === "comment" || i.type === "reply") && !i.parentId
   );
 
@@ -323,7 +212,7 @@ export function PostCard({ post }: PostCardProps) {
               key={comment.id}
               comment={comment}
               postId={post.id}
-              replies={interactions}
+              replies={post.interactions}
             />
           ))}
         </div>
