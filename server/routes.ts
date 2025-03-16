@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { generateAIResponse, generateAIBackground } from "./openai";
@@ -21,6 +21,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const sid = cookies['sid'];
 
         if (!sid) {
+          console.log('WebSocket connection rejected: No session cookie');
           done(false, 401, 'Unauthorized: No session cookie');
           return;
         }
@@ -29,12 +30,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const session = await getSession(sid);
 
         if (!session?.passport?.user) {
+          console.log('WebSocket connection rejected: Invalid session');
           done(false, 401, 'Unauthorized: Invalid session');
           return;
         }
 
         // Attach session to request for later use
         (info.req as any).session = session;
+        console.log(`WebSocket authentication successful for user: ${session.passport.user}`);
         done(true);
       } catch (error) {
         console.error('WebSocket authentication error:', error);
@@ -43,88 +46,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Store active connections
+  const clients = new Map<WebSocket, number>();
+
   wss.on('connection', (ws, req) => {
     const session = (req as any).session;
     const userId = session?.passport?.user;
-    
-    console.log(`WebSocket connection established for user: ${userId}`);
 
-    // Send initial confirmation message
-    try {
-      ws.send(JSON.stringify({ type: 'connected', userId }));
-    } catch (error) {
-      console.error(`Error sending initial message to user ${userId}:`, error);
-    }
+    if (userId) {
+      clients.set(ws, userId);
+      console.log(`WebSocket connection established for user: ${userId}`);
 
-    // Handle errors with more detail
-    ws.on('error', (error) => {
-      console.error(`WebSocket error for user ${userId}:`, error);
-    });
-
-    // Handle pings from client to keep connection alive
-    ws.on('message', (message) => {
+      // Send initial confirmation message
       try {
-        const data = JSON.parse(message.toString());
-        if (data.type === 'ping') {
-          ws.send(JSON.stringify({ type: 'pong' }));
-          console.log(`Ping-pong exchange with user ${userId}`);
-        }
+        ws.send(JSON.stringify({ type: 'connected', userId }));
       } catch (error) {
-        console.error(`Error processing WebSocket message from user ${userId}:`, error);
+        console.error(`Error sending initial message to user ${userId}:`, error);
       }
-    });
 
-    // Server-side ping to keep the connection alive (more frequent)
-    const pingInterval = setInterval(() => {
-      if (ws.readyState === ws.OPEN) {
+      // Handle errors with more detail
+      ws.on('error', (error) => {
+        console.error(`WebSocket error for user ${userId}:`, error);
+      });
+
+      // Handle client messages
+      ws.on('message', (message) => {
         try {
-          ws.send(JSON.stringify({ type: 'server-ping' }));
+          const data = JSON.parse(message.toString());
+          if (data.type === 'ping') {
+            ws.send(JSON.stringify({ type: 'pong' }));
+          }
         } catch (error) {
-          console.error(`Error sending ping to user ${userId}:`, error);
+          console.error(`Error processing WebSocket message from user ${userId}:`, error);
         }
-      } else if (ws.readyState !== ws.CONNECTING) {
-        console.log(`Clearing interval for disconnected user ${userId}`);
-        clearInterval(pingInterval);
-      }
-    }, 15000); // More frequent pings
+      });
 
-    ws.on('close', (code, reason) => {
-      console.log(`WebSocket connection closed for user ${userId}:`, code, reason.toString());
-      clearInterval(pingInterval);
-    });
+      // Server-side ping to keep the connection alive
+      const pingInterval = setInterval(() => {
+        if (ws.readyState === ws.OPEN) {
+          try {
+            ws.send(JSON.stringify({ type: 'server-ping' }));
+          } catch (error) {
+            console.error(`Error sending ping to user ${userId}:`, error);
+            clearInterval(pingInterval);
+            if (clients.has(ws)) {
+              clients.delete(ws);
+              try {
+                ws.close();
+              } catch (closeError) {
+                console.error(`Error closing WebSocket for user ${userId}:`, closeError);
+              }
+            }
+          }
+        }
+      }, 30000); // Send ping every 30 seconds
+
+      ws.on('close', () => {
+        clearInterval(pingInterval);
+        clients.delete(ws);
+        console.log(`WebSocket connection closed for user ${userId}`);
+      });
+    } else {
+      console.log('WebSocket connection rejected: No user ID in session');
+      ws.close(1008, 'No user ID in session');
+    }
   });
 
-  // Broadcast AI interactions to all connected clients
+  // Function to broadcast to specific users or all users
   function broadcastInteraction(interaction: any) {
     const messageStr = JSON.stringify(interaction);
     let sentCount = 0;
-    let closedCount = 0;
-    
-    wss.clients.forEach((client) => {
-      if (client.readyState === client.OPEN) { // WebSocket.OPEN = 1
+
+    clients.forEach((userId, client) => {
+      if (client.readyState === client.OPEN) {
         try {
           client.send(messageStr);
           sentCount++;
         } catch (error) {
-          console.error('Error sending WebSocket message:', error);
-          // Try to close problematic connections
+          console.error(`Error sending to user ${userId}:`, error);
+          clients.delete(client);
           try {
-            client.close(1011, "Error sending message");
-            closedCount++;
+            client.close();
           } catch (closeError) {
-            console.error('Error closing problematic WebSocket:', closeError);
+            console.error(`Error closing WebSocket for user ${userId}:`, closeError);
           }
         }
-      } else if (client.readyState === client.CLOSED || client.readyState === client.CLOSING) {
-        closedCount++;
       }
     });
-    
-    console.log(`Broadcast interaction to ${sentCount} clients (${closedCount} closed/closing):`, {
-      type: interaction.type || 'interaction',
-      id: interaction.id,
-      postId: interaction.postId
-    });
+
+    console.log(`Broadcast interaction to ${sentCount} clients`);
   }
 
   app.post("/api/posts", async (req, res) => {
