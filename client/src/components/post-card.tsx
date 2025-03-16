@@ -23,6 +23,16 @@ interface PostCardProps {
       userId?: number;
       parentId?: number;
       createdAt: Date;
+      replies?: Array<{
+        id: number;
+        type: "like" | "comment" | "reply";
+        content?: string;
+        aiFollowerId?: number;
+        aiFollower?: AiFollower;
+        userId?: number;
+        parentId?: number;
+        createdAt: Date;
+      }>;
     }>;
   };
 }
@@ -179,21 +189,21 @@ export function PostCard({ post }: PostCardProps) {
     const unsubscribe = subscribeToWebSocket(`post-${post.id}`, (data) => {
       if (data.type === 'thread-update' && data.postId === post.id) {
         setInteractions(prev => {
-          const isNew = !prev.some(i => i.id === data.thread.id);
-          if (isNew) {
+          // Find the parent interaction in the current state
+          const parentIndex = prev.findIndex(i => i.id === data.thread.parentId);
+          if (parentIndex >= 0) {
+            // Update the parent interaction with the new thread data
+            const updatedInteractions = [...prev];
+            if (!updatedInteractions[parentIndex].replies) {
+              updatedInteractions[parentIndex].replies = [];
+            }
+            updatedInteractions[parentIndex].replies.push(data.thread);
+            updatedInteractions[parentIndex].replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            return updatedInteractions;
+          } else {
+            // If parent wasn't found, it might be a new thread
             return [...prev, data.thread];
           }
-          return prev.map(interaction =>
-            interaction.id === data.thread.id ? data.thread : interaction
-          );
-        });
-      } else if (data.postId === post.id) {
-        setInteractions(prev => {
-          const exists = prev.some(i => i.id === data.id);
-          if (!exists) {
-            return [...prev, data];
-          }
-          return prev;
         });
       }
     });
@@ -201,26 +211,51 @@ export function PostCard({ post }: PostCardProps) {
     return () => unsubscribe();
   }, [post.id]);
 
-  // Handle WebSocket updates for thread updates
+  // Handle WebSocket updates for individual interactions
   useEffect(() => {
     if (!post?.id) return;
 
     const unsubscribe = subscribeToWebSocket('thread-update', (data) => {
       if (data.postId === post.id && data.thread) {
         setInteractions(prev => {
-          const isNew = !prev.some(i => i.id === data.thread.id);
-          if (isNew) {
-            return [...prev, data.thread];
+          const updatedInteractions = [...prev];
+          const parentIndex = updatedInteractions.findIndex(i => i.id === data.thread.parentId);
+
+          if (parentIndex >= 0) {
+            // Update existing thread
+            if (!updatedInteractions[parentIndex].replies) {
+              updatedInteractions[parentIndex].replies = [];
+            }
+            updatedInteractions[parentIndex].replies.push(data.thread);
+            updatedInteractions[parentIndex].replies.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          } else {
+            // Check if this is a reply that belongs to an existing thread
+            const parentThreadIndex = updatedInteractions.findIndex(i =>
+              i.id === data.thread.parentId ||
+              i.replies?.some(reply => reply.id === data.thread.parentId)
+            );
+
+            if (parentThreadIndex >= 0) {
+              // Add to parent thread's replies
+              if (!updatedInteractions[parentThreadIndex].replies) {
+                updatedInteractions[parentThreadIndex].replies = [];
+              }
+              updatedInteractions[parentThreadIndex].replies.push(data.thread);
+              // Sort replies by creation time
+              updatedInteractions[parentThreadIndex].replies.sort((a, b) =>
+                new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+              );
+            } else {
+              // New top-level interaction
+              updatedInteractions.push(data.thread);
+            }
           }
-          return prev.map(interaction =>
-            interaction.id === data.thread.id ? data.thread : interaction
-          );
+          return updatedInteractions;
         });
 
         // Update query cache
         queryClient.setQueryData(['/api/posts', user?.id], (oldData: any) => {
           if (!oldData) return oldData;
-
           return oldData.map((p: any) => {
             if (p.id === post.id) {
               return {
@@ -229,11 +264,17 @@ export function PostCard({ post }: PostCardProps) {
                   if (i.id === data.thread.id) {
                     return data.thread;
                   }
-                  if (!p.interactions.some((existing: any) => existing.id === data.thread.id)) {
-                    p.interactions.push(data.thread);
+                  // Check if this interaction is a parent of the update
+                  if (i.replies?.some((reply: any) => reply.id === data.thread.id)) {
+                    return {
+                      ...i,
+                      replies: i.replies.map((reply: any) =>
+                        reply.id === data.thread.id ? data.thread : reply
+                      )
+                    };
                   }
                   return i;
-                }),
+                })
               };
             }
             return p;
