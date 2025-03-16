@@ -180,5 +180,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(followers);
   });
 
+  app.patch("/api/followers/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const followerId = parseInt(req.params.id);
+
+    try {
+      // First verify the follower belongs to the user
+      const follower = await storage.getAiFollower(followerId);
+      if (!follower || follower.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Follower not found" });
+      }
+
+      // Update the follower
+      const updatedFollower = await storage.updateAiFollower(followerId, {
+        name: req.body.name,
+        personality: req.body.personality,
+        responsiveness: req.body.responsiveness,
+      });
+
+      res.json(updatedFollower);
+    } catch (error) {
+      console.error("Error updating AI follower:", error);
+      res.status(500).json({ message: "Failed to update AI follower" });
+    }
+  });
+
+  app.delete("/api/followers/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const followerId = parseInt(req.params.id);
+
+    try {
+      // First verify the follower belongs to the user
+      const follower = await storage.getAiFollower(followerId);
+      if (!follower || follower.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Follower not found" });
+      }
+
+      // Delete the follower
+      await storage.deleteAiFollower(followerId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error deleting AI follower:", error);
+      res.status(500).json({ message: "Failed to delete AI follower" });
+    }
+  });
+
   return httpServer;
 }

@@ -12,12 +12,33 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState, React } from "react";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const params = useParams();
   const userId = parseInt(params.userId || user?.id?.toString() || "0");
+  const [editingFollower, setEditingFollower] = useState<AiFollower | null>(null);
 
   const { data: followers } = useQuery<AiFollower[]>({
     queryKey: ["/api/followers"],
@@ -38,6 +59,25 @@ export default function ProfilePage() {
     },
   });
 
+  const editForm = useForm({
+    defaultValues: {
+      name: "",
+      personality: "",
+      responsiveness: "active",
+    },
+  });
+
+  // Reset edit form when follower changes
+  React.useEffect(() => {
+    if (editingFollower) {
+      editForm.reset({
+        name: editingFollower.name,
+        personality: editingFollower.personality,
+        responsiveness: editingFollower.responsiveness,
+      });
+    }
+  }, [editingFollower]);
+
   const createFollowerMutation = useMutation({
     mutationFn: async (data: { 
       name: string; 
@@ -47,7 +87,7 @@ export default function ProfilePage() {
     }) => {
       const res = await apiRequest("POST", "/api/followers", {
         ...data,
-        avatarUrl: generateUniqueAvatarUrl(), // Generate new URL on submit
+        avatarUrl: generateUniqueAvatarUrl(),
       });
       return res.json();
     },
@@ -56,9 +96,38 @@ export default function ProfilePage() {
       form.reset({
         name: "",
         personality: "",
-        avatarUrl: generateUniqueAvatarUrl(), // Generate new URL for next form
+        avatarUrl: generateUniqueAvatarUrl(),
         responsiveness: "active",
       });
+    },
+  });
+
+  const updateFollowerMutation = useMutation({
+    mutationFn: async (data: {
+      id: number;
+      name: string;
+      personality: string;
+      responsiveness: "instant" | "active" | "casual" | "zen";
+    }) => {
+      const res = await apiRequest("PATCH", `/api/followers/${data.id}`, {
+        name: data.name,
+        personality: data.personality,
+        responsiveness: data.responsiveness,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
+      setEditingFollower(null);
+    },
+  });
+
+  const deleteFollowerMutation = useMutation({
+    mutationFn: async (followerId: number) => {
+      await apiRequest("DELETE", `/api/followers/${followerId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
     },
   });
 
@@ -163,21 +232,150 @@ export default function ProfilePage() {
               <div className="grid gap-4 md:grid-cols-2">
                 {followers?.map((follower) => (
                   <div key={follower.id} className="flex flex-col space-y-4 p-4 border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <Avatar>
-                        <img src={follower.avatarUrl} alt={follower.name} />
-                        <AvatarFallback>
-                          {follower.name.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h3 className="font-medium">{follower.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {follower.personality}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
-                        </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Avatar>
+                          <img src={follower.avatarUrl} alt={follower.name} />
+                          <AvatarFallback>
+                            {follower.name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <h3 className="font-medium">{follower.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {follower.personality}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => setEditingFollower(follower)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit AI Follower</DialogTitle>
+                              <DialogDescription>
+                                Update the profile details for {follower.name}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <Form {...editForm}>
+                              <form onSubmit={editForm.handleSubmit((data) => {
+                                if (editingFollower) {
+                                  updateFollowerMutation.mutate({
+                                    id: editingFollower.id,
+                                    ...data,
+                                  });
+                                }
+                              })} className="space-y-4">
+                                <FormField
+                                  control={editForm.control}
+                                  name="name"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Name</FormLabel>
+                                      <FormControl>
+                                        <Input {...field} />
+                                      </FormControl>
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={editForm.control}
+                                  name="personality"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Personality</FormLabel>
+                                      <FormControl>
+                                        <Textarea {...field} />
+                                      </FormControl>
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={editForm.control}
+                                  name="responsiveness"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Responsiveness</FormLabel>
+                                      <Select
+                                        value={field.value}
+                                        onValueChange={field.onChange}
+                                      >
+                                        <FormControl>
+                                          <SelectTrigger>
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                          {responsivenessOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                              <div>
+                                                <div>{option.label}</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                  {option.description}
+                                                </div>
+                                              </div>
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    </FormItem>
+                                  )}
+                                />
+                                <Button
+                                  type="submit"
+                                  className="w-full"
+                                  disabled={updateFollowerMutation.isPending}
+                                >
+                                  {updateFollowerMutation.isPending ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  ) : (
+                                    "Update Follower"
+                                  )}
+                                </Button>
+                              </form>
+                            </Form>
+                          </DialogContent>
+                        </Dialog>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="icon">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete AI Follower</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete {follower.name}? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteFollowerMutation.mutate(follower.id)}
+                                className="bg-destructive hover:bg-destructive/90"
+                              >
+                                {deleteFollowerMutation.isPending ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  "Delete"
+                                )}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
 

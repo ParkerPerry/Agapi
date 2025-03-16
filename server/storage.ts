@@ -24,6 +24,13 @@ export interface IStorage {
   createPendingResponse(response: Omit<PendingResponse, "id" | "createdAt">): Promise<PendingResponse>;
   getPendingResponses(): Promise<PendingResponse[]>;
   markPendingResponseProcessed(id: number): Promise<void>;
+
+  updateAiFollower(
+    id: number,
+    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness">>
+  ): Promise<AiFollower>;
+
+  deleteAiFollower(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -216,6 +223,35 @@ export class DatabaseStorage implements IStorage {
         .where(eq(pendingResponses.id, id));
     } catch (error) {
       console.error("[Storage] Error marking pending response as processed:", error);
+      throw error;
+    }
+  }
+
+  async updateAiFollower(
+    id: number,
+    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness">>
+  ): Promise<AiFollower> {
+    try {
+      const [updatedFollower] = (await db
+        .update(aiFollowers)
+        .set(updates)
+        .where(eq(aiFollowers.id, id))
+        .returning()) as AiFollower[];
+
+      return updatedFollower;
+    } catch (error) {
+      console.error("[Storage] Error updating AI follower:", error);
+      throw error;
+    }
+  }
+
+  async deleteAiFollower(id: number): Promise<void> {
+    try {
+      await db
+        .delete(aiFollowers)
+        .where(eq(aiFollowers.id, id));
+    } catch (error) {
+      console.error("[Storage] Error deleting AI follower:", error);
       throw error;
     }
   }
