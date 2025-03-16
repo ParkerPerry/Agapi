@@ -1,5 +1,5 @@
-import { InsertUser, User, Post, AiFollower, AiInteraction } from "@shared/schema";
-import { users, posts, aiFollowers, aiInteractions } from "@shared/schema";
+import { InsertUser, User, Post, AiFollower, AiInteraction, PendingResponse } from "@shared/schema";
+import { users, posts, aiFollowers, aiInteractions, pendingResponses } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 
@@ -19,6 +19,11 @@ export interface IStorage {
   createAiInteraction(interaction: Omit<AiInteraction, "id" | "createdAt">): Promise<AiInteraction>;
   getInteraction(id: number): Promise<AiInteraction | undefined>;
   getPostInteractions(postId: number): Promise<AiInteraction[]>;
+
+  // New methods for pending responses
+  createPendingResponse(response: Omit<PendingResponse, "id" | "createdAt">): Promise<PendingResponse>;
+  getPendingResponses(): Promise<PendingResponse[]>;
+  markPendingResponseProcessed(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -159,6 +164,58 @@ export class DatabaseStorage implements IStorage {
       return interactions as AiInteraction[];
     } catch (error) {
       console.error("[Storage] Error getting post interactions:", error);
+      throw error;
+    }
+  }
+
+  async createPendingResponse(
+    response: Omit<PendingResponse, "id" | "createdAt">
+  ): Promise<PendingResponse> {
+    console.log("[Storage] Creating pending response:", {
+      postId: response.postId,
+      aiFollowerId: response.aiFollowerId,
+      scheduledFor: response.scheduledFor
+    });
+
+    try {
+      const [pendingResponse] = (await db
+        .insert(pendingResponses)
+        .values(response)
+        .returning()) as PendingResponse[];
+
+      console.log("[Storage] Created pending response:", {
+        id: pendingResponse.id,
+        scheduledFor: pendingResponse.scheduledFor
+      });
+
+      return pendingResponse;
+    } catch (error) {
+      console.error("[Storage] Error creating pending response:", error);
+      throw error;
+    }
+  }
+
+  async getPendingResponses(): Promise<PendingResponse[]> {
+    try {
+      return await db
+        .select()
+        .from(pendingResponses)
+        .where(eq(pendingResponses.processed, false))
+        .orderBy(pendingResponses.scheduledFor);
+    } catch (error) {
+      console.error("[Storage] Error getting pending responses:", error);
+      throw error;
+    }
+  }
+
+  async markPendingResponseProcessed(id: number): Promise<void> {
+    try {
+      await db
+        .update(pendingResponses)
+        .set({ processed: true })
+        .where(eq(pendingResponses.id, id));
+    } catch (error) {
+      console.error("[Storage] Error marking pending response as processed:", error);
       throw error;
     }
   }

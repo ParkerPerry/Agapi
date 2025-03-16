@@ -19,6 +19,7 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Added new fields for response behavior
 export const aiFollowers = pgTable("ai_followers", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
@@ -32,16 +33,35 @@ export const aiFollowers = pgTable("ai_followers", {
     likes: string[];
     dislikes: string[];
   }>(),
+  // New fields for response behavior
+  responsiveness: text("responsiveness", { 
+    enum: ["instant", "active", "casual", "zen"] 
+  }).notNull().default("active"),
+  responseDelay: json("response_delay").$type<{
+    min: number; // minimum delay in minutes
+    max: number; // maximum delay in minutes
+  }>().notNull().default({ min: 1, max: 60 }),
+  responseChance: integer("response_chance").notNull().default(80), // Percentage chance of responding
 });
 
+export const pendingResponses = pgTable("pending_responses", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").references(() => posts.id),
+  aiFollowerId: integer("ai_follower_id").references(() => aiFollowers.id),
+  scheduledFor: timestamp("scheduled_for").notNull(),
+  processed: boolean("processed").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Rest of the schema stays the same
 export const aiInteractions = pgTable("ai_interactions", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").references(() => posts.id),
   aiFollowerId: integer("ai_follower_id").references(() => aiFollowers.id),
-  userId: integer("user_id").references(() => users.id), // Added to track user replies
+  userId: integer("user_id").references(() => users.id),
   type: text("type", { enum: ["like", "comment", "reply"] }).notNull(),
   content: text("content"),
-  parentId: integer("parent_id").references(() => aiInteractions.id), // Self-reference for thread replies
+  parentId: integer("parent_id").references(() => aiInteractions.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -89,3 +109,4 @@ export type User = typeof users.$inferSelect;
 export type Post = typeof posts.$inferSelect;
 export type AiFollower = typeof aiFollowers.$inferSelect;
 export type AiInteraction = typeof aiInteractions.$inferSelect;
+export type PendingResponse = typeof pendingResponses.$inferSelect;

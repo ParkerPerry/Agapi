@@ -6,9 +6,10 @@ import { AiFollower } from "@shared/schema";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useParams } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Loader2, Plus } from "lucide-react";
@@ -33,11 +34,17 @@ export default function ProfilePage() {
       name: "",
       personality: "",
       avatarUrl: generateUniqueAvatarUrl(),
+      responsiveness: "active",
     },
   });
 
   const createFollowerMutation = useMutation({
-    mutationFn: async (data: { name: string; personality: string; avatarUrl: string }) => {
+    mutationFn: async (data: { 
+      name: string; 
+      personality: string; 
+      avatarUrl: string;
+      responsiveness: "instant" | "active" | "casual" | "zen";
+    }) => {
       const res = await apiRequest("POST", "/api/followers", {
         ...data,
         avatarUrl: generateUniqueAvatarUrl(), // Generate new URL on submit
@@ -50,9 +57,17 @@ export default function ProfilePage() {
         name: "",
         personality: "",
         avatarUrl: generateUniqueAvatarUrl(), // Generate new URL for next form
+        responsiveness: "active",
       });
     },
   });
+
+  const responsivenessOptions = [
+    { value: "instant", label: "Instant (< 5 min)", description: "Quick to respond, always online" },
+    { value: "active", label: "Active (5-60 min)", description: "Regular social media user" },
+    { value: "casual", label: "Casual (1-8 hrs)", description: "Checks occasionally" },
+    { value: "zen", label: "Zen (8-24 hrs)", description: "Mindful and deliberate responses" },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,6 +108,40 @@ export default function ProfilePage() {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="responsiveness"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Responsiveness</FormLabel>
+                        <Select 
+                          value={field.value} 
+                          onValueChange={field.onChange}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select responsiveness level" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {responsivenessOptions.map(option => (
+                              <SelectItem key={option.value} value={option.value}>
+                                <div>
+                                  <div>{option.label}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {option.description}
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Determines how quickly and often the AI follower responds to posts
+                        </FormDescription>
+                      </FormItem>
+                    )}
+                  />
                   <Button type="submit" className="w-full" disabled={createFollowerMutation.isPending}>
                     {createFollowerMutation.isPending ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -125,6 +174,9 @@ export default function ProfilePage() {
                         <h3 className="font-medium">{follower.name}</h3>
                         <p className="text-sm text-muted-foreground">
                           {follower.personality}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
                         </p>
                       </div>
                     </div>

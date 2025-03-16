@@ -4,10 +4,15 @@ import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { generateAIResponse, generateAIBackground } from "./openai";
 import { ThreadManager } from "./thread-manager";
+import { ResponseScheduler } from "./response-scheduler";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
   const httpServer = createServer(app);
+
+  // Start the response scheduler
+  const scheduler = ResponseScheduler.getInstance();
+  scheduler.start();
 
   app.get("/api/posts/:userId", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
@@ -46,7 +51,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Parent interaction not found" });
       }
 
-      const aiFollower = parentInteraction.aiFollowerId ? 
+      const aiFollower = parentInteraction.aiFollowerId ?
         await storage.getAiFollower(parentInteraction.aiFollowerId)
         : null;
       if (!aiFollower) {
@@ -104,45 +109,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/posts", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
-    const post = await storage.createPost(req.user!.id, req.body.content);
+    try {
+      const post = await storage.createPost(req.user!.id, req.body.content);
 
-    // Get AI followers for the user
-    const followers = await storage.getAiFollowers(req.user!.id);
+      // Get AI followers for the user
+      const followers = await storage.getAiFollowers(req.user!.id);
 
-    // Generate AI responses
-    for (const follower of followers) {
-      try {
-        const aiResponse = await generateAIResponse(post.content, follower.personality);
-
-        if (aiResponse.confidence > 0.7) {
-          await storage.createAiInteraction({
-            postId: post.id,
-            aiFollowerId: follower.id,
-            userId: null,
-            type: aiResponse.type || 'comment',
-            content: aiResponse.content || null,
-            parentId: null,
-          });
-        }
-      } catch (error) {
-        console.error(`AI follower ${follower.id} failed to respond:`, error);
+      // Schedule potential responses for each follower
+      for (const follower of followers) {
+        await scheduler.scheduleResponse(post.id, follower);
       }
-    }
 
-    res.status(201).json(post);
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Error creating post:", error);
+      res.status(500).json({ message: "Failed to create post" });
+    }
   });
 
   app.post("/api/followers", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      // Generate AI background based on name and personality
       const aiBackground = await generateAIBackground(
         req.body.name,
         req.body.personality
       );
 
-      // Create follower with the generated background
+      // Create follower with the generated background and responsiveness settings
       const follower = await storage.createAiFollower(req.user!.id, {
         name: req.body.name,
         personality: req.body.personality,
@@ -151,6 +145,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         interests: aiBackground.interests,
         communicationStyle: aiBackground.communication_style,
         interactionPreferences: aiBackground.interaction_preferences,
+        responsiveness: req.body.responsiveness || "active",
+        responseDelay: getDefaultDelay(req.body.responsiveness),
+        responseChance: req.body.responseChance || 80,
       });
 
       res.status(201).json(follower);
@@ -159,6 +156,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to create AI follower" });
     }
   });
+
+  // Helper function to get default delay based on responsiveness
+  function getDefaultDelay(responsiveness: string = "active") {
+    switch (responsiveness) {
+      case "instant":
+        return { min: 0, max: 5 };
+      case "active":
+        return { min: 5, max: 60 };
+      case "casual":
+        return { min: 60, max: 480 }; // 1-8 hours
+      case "zen":
+        return { min: 480, max: 1440 }; // 8-24 hours
+      default:
+        return { min: 5, max: 60 };
+    }
+  }
 
   app.get("/api/followers", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
