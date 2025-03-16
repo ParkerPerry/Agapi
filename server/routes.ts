@@ -9,6 +9,42 @@ import { getSession } from "./sessionStore";
 
 // Previous imports and WebSocket setup remain unchanged...
 
+function organizeThreadedInteractions(interactions: any[], interactionMap: Map<any, any>) {
+  const threadedInteractions: any[] = [];
+
+  // Helper function to recursively organize replies
+  function addReplies(parentId: number | null) {
+    const replies = interactions
+      .filter(interaction => interaction.parentId === parentId)
+      .map(interaction => {
+        const interactionWithData = interactionMap.get(interaction.id);
+        // Recursively get nested replies
+        const nestedReplies = addReplies(interaction.id);
+        return {
+          ...interactionWithData,
+          replies: nestedReplies
+        };
+      })
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+    return replies;
+  }
+
+  // Get top-level interactions (no parent)
+  const topLevelInteractions = interactions
+    .filter(interaction => interaction.parentId === null)
+    .map(interaction => {
+      const interactionWithData = interactionMap.get(interaction.id);
+      const replies = addReplies(interaction.id);
+      return {
+        ...interactionWithData,
+        replies
+      };
+    });
+
+  return topLevelInteractions;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
@@ -155,7 +191,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const postId = parseInt(req.params.postId);
 
     try {
-      // First, get the parent interaction and its AI follower
+      // Get parent interaction and AI follower - unchanged...
       const parentInteraction = await storage.getInteraction(parentId);
       if (!parentInteraction) {
         return res.status(404).json({ message: "Parent interaction not found" });
@@ -168,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "AI follower not found" });
       }
 
-      // Save the user's reply
+      // Save user's reply - unchanged...
       const userReply = await storage.createAiInteraction({
         postId,
         userId: req.user!.id,
@@ -180,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log("Created user reply:", userReply);
 
-      // Generate AI response to the user's reply
+      // Generate and save AI response - unchanged...
       const aiResponse = await generateAIResponse(
         content,
         aiFollower.personality,
@@ -189,7 +225,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       let aiReply = null;
       if (aiResponse.confidence > 0.7) {
-        // Save the AI's response
         aiReply = await storage.createAiInteraction({
           postId,
           aiFollowerId: aiFollower.id,
@@ -202,11 +237,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Created AI reply:", aiReply);
       }
 
-      // Get the complete thread for response
+      // Get all interactions and build the interaction map
       const interactions = await storage.getPostInteractions(postId);
       console.log("Retrieved all interactions for post:", interactions.length);
 
-      // Create a map to store interactions by their ID
       const interactionMap = new Map();
 
       // First pass: create interaction objects with their AI follower info
@@ -224,58 +258,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
         })
       );
 
-      // Second pass: organize into threads
-      const threadedInteractions: any[] = [];
-      interactions.forEach(interaction => {
-        const interactionWithData = interactionMap.get(interaction.id);
+      // Organize interactions into a properly nested structure
+      const threadedInteractions = organizeThreadedInteractions(interactions, interactionMap);
 
-        if (interaction.parentId === null) {
-          // This is a top-level interaction
-          threadedInteractions.push(interactionWithData);
-        } else {
-          // This is a reply, add it to its parent's replies array
-          const parent = interactionMap.get(interaction.parentId);
-          if (parent) {
-            if (!parent.replies) {
-              parent.replies = [];
-            }
-            parent.replies.push(interactionWithData);
+      // Find the root thread that contains our reply
+      function findThreadWithReply(threads: any[], targetId: number): any {
+        for (const thread of threads) {
+          if (thread.id === targetId) {
+            return thread;
+          }
+          if (thread.replies && thread.replies.length > 0) {
+            const found = findThreadWithReply(thread.replies, targetId);
+            if (found) return found;
           }
         }
-      });
+        return null;
+      }
 
-      // Sort replies by timestamp
-      threadedInteractions.forEach(interaction => {
-        if (interaction.replies) {
-          interaction.replies.sort((a: any, b: any) => 
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        }
-      });
-
-      // Find the complete parent thread
-      const parentThread = threadedInteractions.find(interaction => 
-        interaction.id === parentId || 
-        interaction.replies?.some((reply: any) => reply.id === parentId)
-      );
-
-      if (!parentThread) {
+      // Start by looking for the parent interaction
+      const rootThread = findThreadWithReply(threadedInteractions, parentId);
+      if (!rootThread) {
         return res.status(500).json({ message: "Failed to construct reply thread" });
       }
 
-      // Broadcast updates to all connected clients
+      // Broadcast update with the complete thread structure
       broadcastInteraction({
         type: 'thread-update',
         postId,
-        thread: parentThread
+        thread: rootThread
       });
 
-      res.status(201).json(parentThread);
+      res.status(201).json(rootThread);
     } catch (error) {
       console.error("Error handling reply:", error);
       res.status(500).json({ message: "Failed to process reply" });
     }
   });
+
+  // Update the GET /api/posts/:userId endpoint to use the same thread organization
+  app.get("/api/posts/:userId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const posts = await storage.getUserPosts(parseInt(req.params.userId));
+    const postsWithInteractions = await Promise.all(
+      posts.map(async (post) => {
+        const interactions = await storage.getPostInteractions(post.id);
+        const interactionMap = new Map();
+
+        await Promise.all(
+          interactions.map(async (interaction) => {
+            const aiFollower = interaction.aiFollowerId ? 
+              await storage.getAiFollower(interaction.aiFollowerId) 
+              : null;
+
+            interactionMap.set(interaction.id, {
+              ...interaction,
+              aiFollower,
+              replies: []
+            });
+          })
+        );
+
+        const threadedInteractions = organizeThreadedInteractions(interactions, interactionMap);
+
+        return {
+          ...post,
+          interactions: threadedInteractions
+        };
+      })
+    );
+
+    res.json(postsWithInteractions);
+  });
+
 
   app.post("/api/posts", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
@@ -341,31 +396,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           })
         );
 
-        // Second pass: organize into threads
-        const threadedInteractions = [];
-        interactions.forEach(interaction => {
-          const interactionWithData = interactionMap.get(interaction.id);
-
-          if (interaction.parentId === null) {
-            // This is a top-level interaction
-            threadedInteractions.push(interactionWithData);
-          } else {
-            // This is a reply, add it to its parent's replies array
-            const parent = interactionMap.get(interaction.parentId);
-            if (parent) {
-              parent.replies.push(interactionWithData);
-            }
-          }
-        });
-
-        // Sort replies by timestamp within each thread
-        threadedInteractions.forEach(interaction => {
-          if (interaction.replies) {
-            interaction.replies.sort((a, b) => 
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-            );
-          }
-        });
+        const threadedInteractions = organizeThreadedInteractions(interactions, interactionMap);
 
         return {
           ...post,
