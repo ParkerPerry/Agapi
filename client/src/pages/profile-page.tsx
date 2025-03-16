@@ -32,12 +32,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState, React } from "react";
+import { useState, useEffect } from "react";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const params = useParams();
-  const userId = parseInt(params.userId || user?.id?.toString() || "0");
+  const userId = params.userId ? parseInt(params.userId) : user?.id;
+
+  // Redirect to home if no valid user ID
+  if (!userId) {
+    return null;
+  }
+
   const [editingFollower, setEditingFollower] = useState<AiFollower | null>(null);
 
   const { data: followers } = useQuery<AiFollower[]>({
@@ -68,7 +74,7 @@ export default function ProfilePage() {
   });
 
   // Reset edit form when follower changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (editingFollower) {
       editForm.reset({
         name: editingFollower.name,
