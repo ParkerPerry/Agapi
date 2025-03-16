@@ -2,9 +2,9 @@ import { generateAIResponse, generateAIBackground } from '../openai';
 
 describe('OpenAI Integration', () => {
   describe('generateAIResponse', () => {
-    it('should generate a response for a video post', async () => {
+    it('should generate a response for a post', async () => {
       const response = await generateAIResponse(
-        'Check out my new video tutorial on React hooks!',
+        'Hello world!',
         'friendly and enthusiastic'
       );
 
@@ -20,9 +20,9 @@ describe('OpenAI Integration', () => {
 
     it('should handle replies with context', async () => {
       const response = await generateAIResponse(
-        'The explanation at 2:45 was really helpful!',
+        'How are you today?',
         'friendly and enthusiastic',
-        'Great tutorial on React hooks!'
+        'Hello there!'
       );
 
       expect(response.type).toBe('reply');
@@ -34,8 +34,8 @@ describe('OpenAI Integration', () => {
   describe('generateAIBackground', () => {
     it('should generate a complete AI follower background', async () => {
       const background = await generateAIBackground(
-        'TechTuber',
-        'tech-savvy video content creator'
+        'TestBot',
+        'friendly tech enthusiast'
       );
 
       expect(background).toMatchObject({

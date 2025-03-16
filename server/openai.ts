@@ -29,7 +29,7 @@ export async function generateAIBackground(
       messages: [
         {
           role: "system",
-          content: `You are a creative AI character developer for CircleTube, a video sharing platform. Your task is to create a detailed background for an AI follower, responding in JSON format with the following structure:
+          content: `You are a creative AI character developer. Your task is to create a detailed background for an AI follower, responding in JSON format with the following structure:
             {
               "background": "A brief but engaging backstory",
               "interests": ["List of 3-5 specific interests"],
@@ -67,24 +67,24 @@ export async function generateAIResponse(
   try {
     const contextPrompt = previousMessage 
       ? `You are in a conversation thread. Someone said: "${previousMessage}". Now respond to: "${postContent}"`
-      : `Please analyze this video post and respond: ${postContent}`;
+      : `Please analyze this post and respond: ${postContent}`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `You are an AI follower on CircleTube with the following personality: ${personality}. 
+          content: `You are an AI follower with the following personality: ${personality}. 
             ${previousMessage 
-              ? "You are continuing a conversation thread about a video. Maintain context and reply directly to the previous message." 
-              : "Analyze the video post and decide whether to like it or comment on it."}
+              ? "You are continuing a conversation thread. Maintain context and reply directly to the previous message." 
+              : "Analyze the post and decide whether to like it or comment on it."}
             Your response must be in JSON format with the following structure:
             {
               "type": ${previousMessage ? '"reply"' : '"like" or "comment"'},
               "content": "your response text",
               "confidence": number between 0 and 1
             }
-            Keep responses concise and natural, focusing on continuing the conversation about the video content in a meaningful way.`,
+            Keep responses concise and natural, focusing on continuing the conversation in a meaningful way.`,
         },
         {
           role: "user",
