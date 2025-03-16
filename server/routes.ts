@@ -49,6 +49,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     console.log(`WebSocket connection established for user: ${userId}`);
 
+    // Send initial confirmation message
+    try {
+      ws.send(JSON.stringify({ type: 'connected', userId }));
+    } catch (error) {
+      console.error(`Error sending initial message to user ${userId}:`, error);
+    }
+
     // Handle errors with more detail
     ws.on('error', (error) => {
       console.error(`WebSocket error for user ${userId}:`, error);
@@ -60,22 +67,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const data = JSON.parse(message.toString());
         if (data.type === 'ping') {
           ws.send(JSON.stringify({ type: 'pong' }));
+          console.log(`Ping-pong exchange with user ${userId}`);
         }
       } catch (error) {
         console.error(`Error processing WebSocket message from user ${userId}:`, error);
       }
     });
 
-    // Server-side ping to keep the connection alive
+    // Server-side ping to keep the connection alive (more frequent)
     const pingInterval = setInterval(() => {
       if (ws.readyState === ws.OPEN) {
         try {
-          ws.ping();
+          ws.send(JSON.stringify({ type: 'server-ping' }));
         } catch (error) {
           console.error(`Error sending ping to user ${userId}:`, error);
         }
+      } else if (ws.readyState !== ws.CONNECTING) {
+        console.log(`Clearing interval for disconnected user ${userId}`);
+        clearInterval(pingInterval);
       }
-    }, 30000);
+    }, 15000); // More frequent pings
 
     ws.on('close', (code, reason) => {
       console.log(`WebSocket connection closed for user ${userId}:`, code, reason.toString());
@@ -87,19 +98,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   function broadcastInteraction(interaction: any) {
     const messageStr = JSON.stringify(interaction);
     let sentCount = 0;
+    let closedCount = 0;
     
     wss.clients.forEach((client) => {
-      if (client.readyState === 1) { // WebSocket.OPEN = 1
+      if (client.readyState === client.OPEN) { // WebSocket.OPEN = 1
         try {
           client.send(messageStr);
           sentCount++;
         } catch (error) {
           console.error('Error sending WebSocket message:', error);
+          // Try to close problematic connections
+          try {
+            client.close(1011, "Error sending message");
+            closedCount++;
+          } catch (closeError) {
+            console.error('Error closing problematic WebSocket:', closeError);
+          }
         }
+      } else if (client.readyState === client.CLOSED || client.readyState === client.CLOSING) {
+        closedCount++;
       }
     });
     
-    console.log(`Broadcast interaction to ${sentCount} clients:`, {
+    console.log(`Broadcast interaction to ${sentCount} clients (${closedCount} closed/closing):`, {
       type: interaction.type || 'interaction',
       id: interaction.id,
       postId: interaction.postId
