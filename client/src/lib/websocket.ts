@@ -1,54 +1,39 @@
-// WebSocket singleton implementation
+
+import { getUser } from '@/hooks/use-auth';
+
+// WebSocket connection
 let ws: WebSocket | null = null;
-let reconnectTimeout: NodeJS.Timeout | null = null;
 let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 15;
-const LISTENERS: Map<string, Set<(data: any) => void>> = new Map();
+let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+const MAX_RECONNECT_ATTEMPTS = 5;
 
-// Get WebSocket URL based on current window location
-function getWebSocketUrl(): string {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const host = window.location.host;
-  return `${protocol}//${host}/ws`;
-}
+// Map to store message type listeners
+const LISTENERS = new Map<string, Set<(data: any) => void>>();
 
+// Clear WebSocket state when connection fails
 function clearWebSocketState() {
+  ws = null;
+  reconnectAttempts = 0;
   if (reconnectTimeout) {
     clearTimeout(reconnectTimeout);
     reconnectTimeout = null;
   }
-  reconnectAttempts = 0;
-  ws = null;
 }
 
-export function createWebSocket(): WebSocket | null {
-  // Don't create a connection if there's no authentication token
-  if (!localStorage.getItem('token')) {
-    console.log('No authentication token found, skipping WebSocket connection');
-    return null;
-  }
-
+// Create a new WebSocket connection
+export function createWebSocket(): WebSocket {
   if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-    console.log('WebSocket connection already exists');
     return ws;
   }
 
-  // Close any existing connection
-  if (ws) {
-    console.log('Closing existing WebSocket connection');
-    ws.close();
-  }
-
-  const wsUrl = getWebSocketUrl();
-  console.log(`Connecting to WebSocket at ${wsUrl}`);
-
-  const socket = new WebSocket(wsUrl);
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const socket = new WebSocket(`${protocol}//${window.location.host}/ws`);
 
   socket.onopen = () => {
     console.log('WebSocket connection established');
     reconnectAttempts = 0;
 
-    // Start ping interval to keep the connection alive
+    // Set up ping to keep connection alive
     const pingInterval = setInterval(() => {
       if (socket.readyState === WebSocket.OPEN) {
         try {
@@ -56,12 +41,11 @@ export function createWebSocket(): WebSocket | null {
         } catch (error) {
           console.error('Error sending ping:', error);
           clearInterval(pingInterval);
-          socket.close();
         }
       } else {
         clearInterval(pingInterval);
       }
-    }, 30000); // Send ping every 30 seconds
+    }, 25000); // Send ping every 25 seconds
 
     // Clean up interval when socket closes
     socket.addEventListener('close', () => clearInterval(pingInterval));
@@ -153,15 +137,17 @@ export function subscribeToWebSocket(type: string, callback: (data: any) => void
 
 export function sendWebSocketMessage(message: any): void {
   if (!ws || ws.readyState !== WebSocket.OPEN) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.warn('Cannot send message: No authentication token');
+    const user = getUser();
+    if (!user) {
+      console.warn('Cannot send message: Not authenticated');
       return;
     }
-
-    createWebSocket();
-    // Queue message to be sent when connection is established
-    setTimeout(() => sendWebSocketMessage(message), 500);
+    
+    ws = createWebSocket();
+    // Queue the message to be sent when the connection is established
+    ws.addEventListener('open', () => {
+      sendWebSocketMessage(message);
+    });
     return;
   }
 
@@ -169,6 +155,21 @@ export function sendWebSocketMessage(message: any): void {
     ws.send(JSON.stringify(message));
   } catch (error) {
     console.error('Error sending WebSocket message:', error);
-    ws.close();
+  }
+}
+
+// Initialize WebSocket on user authentication
+export function initializeWebSocket(): void {
+  const user = getUser();
+  if (user && (!ws || ws.readyState !== WebSocket.OPEN)) {
+    createWebSocket();
+  }
+}
+
+// Close WebSocket connection
+export function closeWebSocket(): void {
+  if (ws) {
+    ws.close(1000, 'User logout');
+    clearWebSocketState();
   }
 }
