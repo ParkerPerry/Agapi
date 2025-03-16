@@ -32,6 +32,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState, useEffect } from "react";
+import { TourProvider } from "@/components/tour/tour-context";
 
 export default function AiFollowersPage() {
   const { user } = useAuth();
@@ -57,7 +58,7 @@ export default function AiFollowersPage() {
       name: "",
       personality: "",
       avatarUrl: generateUniqueAvatarUrl(),
-      responsiveness: "active",
+      responsiveness: "active" as const,
     },
   });
 
@@ -65,7 +66,7 @@ export default function AiFollowersPage() {
     defaultValues: {
       name: "",
       personality: "",
-      responsiveness: "active",
+      responsiveness: "active" as const,
     },
   });
 
@@ -138,300 +139,302 @@ export default function AiFollowersPage() {
     { value: "active", label: "Active (5-60 min)", description: "Regular social media user" },
     { value: "casual", label: "Casual (1-8 hrs)", description: "Checks occasionally" },
     { value: "zen", label: "Zen (8-24 hrs)", description: "Mindful and deliberate responses" },
-  ];
+  ] as const;
 
   return (
-    <div className="min-h-screen bg-background">
-      <NavBar />
-      <main className="container py-6">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Create AI Follower</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit((data) => createFollowerMutation.mutate(data))} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="Enter follower name" />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="personality"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Personality</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            {...field}
-                            placeholder="Describe the follower's personality (e.g., 'Enthusiastic tech nerd who loves blockchain')"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="responsiveness"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Responsiveness</FormLabel>
-                        <Select 
-                          value={field.value} 
-                          onValueChange={field.onChange}
-                        >
+    <TourProvider>
+      <div className="min-h-screen bg-background">
+        <NavBar />
+        <main className="container py-6">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Create AI Follower</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit((data) => createFollowerMutation.mutate(data))} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select responsiveness level" />
-                            </SelectTrigger>
+                            <Input {...field} placeholder="Enter follower name" />
                           </FormControl>
-                          <SelectContent>
-                            {responsivenessOptions.map(option => (
-                              <SelectItem key={option.value} value={option.value}>
-                                <div>
-                                  <div>{option.label}</div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {option.description}
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="personality"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Personality</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              placeholder="Describe the follower's personality (e.g., 'Enthusiastic tech nerd who loves blockchain')"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="responsiveness"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Responsiveness</FormLabel>
+                          <Select 
+                            value={field.value} 
+                            onValueChange={field.onChange}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select responsiveness level" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {responsivenessOptions.map(option => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  <div>
+                                    <div>{option.label}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {option.description}
+                                    </div>
                                   </div>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          Determines how quickly and often the AI follower responds to posts
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full" disabled={createFollowerMutation.isPending}>
-                    {createFollowerMutation.isPending ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Plus className="mr-2 h-4 w-4" />
-                    )}
-                    Create Follower
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            Determines how quickly and often the AI follower responds to posts
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full" disabled={createFollowerMutation.isPending}>
+                      {createFollowerMutation.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Plus className="mr-2 h-4 w-4" />
+                      )}
+                      Create Follower
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>AI Followers</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2">
-                {followers?.map((follower) => (
-                  <div key={follower.id} className="flex flex-col space-y-4 p-4 border rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Avatar>
-                          <img src={follower.avatarUrl} alt={follower.name} />
-                          <AvatarFallback>
-                            {follower.name.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h3 className="font-medium">{follower.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {follower.personality}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
-                          </p>
+            <Card>
+              <CardHeader>
+                <CardTitle>AI Followers</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {followers?.map((follower) => (
+                    <div key={follower.id} className="flex flex-col space-y-4 p-4 border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <Avatar>
+                            <img src={follower.avatarUrl} alt={follower.name} />
+                            <AvatarFallback>
+                              {follower.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="font-medium">{follower.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {follower.personality}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => setEditingFollower(follower)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Edit AI Follower</DialogTitle>
+                                <DialogDescription>
+                                  Update the profile details for {follower.name}
+                                </DialogDescription>
+                              </DialogHeader>
+                              <Form {...editForm}>
+                                <form onSubmit={editForm.handleSubmit((data) => {
+                                  if (editingFollower) {
+                                    updateFollowerMutation.mutate({
+                                      id: editingFollower.id,
+                                      ...data,
+                                    });
+                                  }
+                                })} className="space-y-4">
+                                  <FormField
+                                    control={editForm.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                          <Input {...field} />
+                                        </FormControl>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={editForm.control}
+                                    name="personality"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Personality</FormLabel>
+                                        <FormControl>
+                                          <Textarea {...field} />
+                                        </FormControl>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={editForm.control}
+                                    name="responsiveness"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Responsiveness</FormLabel>
+                                        <Select
+                                          value={field.value}
+                                          onValueChange={field.onChange}
+                                        >
+                                          <FormControl>
+                                            <SelectTrigger>
+                                              <SelectValue />
+                                            </SelectTrigger>
+                                          </FormControl>
+                                          <SelectContent>
+                                            {responsivenessOptions.map(option => (
+                                              <SelectItem key={option.value} value={option.value}>
+                                                <div>
+                                                  <div>{option.label}</div>
+                                                  <div className="text-xs text-muted-foreground">
+                                                    {option.description}
+                                                  </div>
+                                                </div>
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <Button
+                                    type="submit"
+                                    className="w-full"
+                                    disabled={updateFollowerMutation.isPending}
+                                  >
+                                    {updateFollowerMutation.isPending ? (
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    ) : (
+                                      "Update Follower"
+                                    )}
+                                  </Button>
+                                </form>
+                              </Form>
+                            </DialogContent>
+                          </Dialog>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="icon">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete AI Follower</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete {follower.name}? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => deleteFollowerMutation.mutate(follower.id)}
+                                  className="bg-destructive hover:bg-destructive/90"
+                                >
+                                  {deleteFollowerMutation.isPending ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    "Delete"
+                                  )}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => setEditingFollower(follower)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Edit AI Follower</DialogTitle>
-                              <DialogDescription>
-                                Update the profile details for {follower.name}
-                              </DialogDescription>
-                            </DialogHeader>
-                            <Form {...editForm}>
-                              <form onSubmit={editForm.handleSubmit((data) => {
-                                if (editingFollower) {
-                                  updateFollowerMutation.mutate({
-                                    id: editingFollower.id,
-                                    ...data,
-                                  });
-                                }
-                              })} className="space-y-4">
-                                <FormField
-                                  control={editForm.control}
-                                  name="name"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Name</FormLabel>
-                                      <FormControl>
-                                        <Input {...field} />
-                                      </FormControl>
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={editForm.control}
-                                  name="personality"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Personality</FormLabel>
-                                      <FormControl>
-                                        <Textarea {...field} />
-                                      </FormControl>
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={editForm.control}
-                                  name="responsiveness"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Responsiveness</FormLabel>
-                                      <Select
-                                        value={field.value}
-                                        onValueChange={field.onChange}
-                                      >
-                                        <FormControl>
-                                          <SelectTrigger>
-                                            <SelectValue />
-                                          </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                          {responsivenessOptions.map(option => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                              <div>
-                                                <div>{option.label}</div>
-                                                <div className="text-xs text-muted-foreground">
-                                                  {option.description}
-                                                </div>
-                                              </div>
-                                            </SelectItem>
-                                          ))}
-                                        </SelectContent>
-                                      </Select>
-                                    </FormItem>
-                                  )}
-                                />
-                                <Button
-                                  type="submit"
-                                  className="w-full"
-                                  disabled={updateFollowerMutation.isPending}
-                                >
-                                  {updateFollowerMutation.isPending ? (
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  ) : (
-                                    "Update Follower"
-                                  )}
-                                </Button>
-                              </form>
-                            </Form>
-                          </DialogContent>
-                        </Dialog>
 
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="outline" size="icon">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete AI Follower</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete {follower.name}? This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => deleteFollowerMutation.mutate(follower.id)}
-                                className="bg-destructive hover:bg-destructive/90"
-                              >
-                                {deleteFollowerMutation.isPending ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  "Delete"
-                                )}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                      {follower.background && (
+                        <div className="space-y-2 mt-2">
+                          <p className="text-sm">{follower.background}</p>
+
+                          {follower.interests && follower.interests.length > 0 && (
+                            <div>
+                              <p className="text-sm font-medium">Interests:</p>
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                {follower.interests.map((interest, i) => (
+                                  <span
+                                    key={i}
+                                    className="text-xs bg-secondary px-2 py-1 rounded-full"
+                                  >
+                                    {interest}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {follower.communicationStyle && (
+                            <p className="text-sm">
+                              <span className="font-medium">Communication style: </span>
+                              {follower.communicationStyle}
+                            </p>
+                          )}
+
+                          {follower.interactionPreferences && (
+                            <div className="space-y-1">
+                              <p className="text-sm font-medium">Interaction Preferences:</p>
+                              <div className="space-y-1 pl-2">
+                                <p className="text-sm">
+                                  <span className="text-green-600">Likes:</span>{" "}
+                                  {follower.interactionPreferences.likes.join(", ")}
+                                </p>
+                                <p className="text-sm">
+                                  <span className="text-red-600">Dislikes:</span>{" "}
+                                  {follower.interactionPreferences.dislikes.join(", ")}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-
-                    {follower.background && (
-                      <div className="space-y-2 mt-2">
-                        <p className="text-sm">{follower.background}</p>
-
-                        {follower.interests && follower.interests.length > 0 && (
-                          <div>
-                            <p className="text-sm font-medium">Interests:</p>
-                            <div className="flex flex-wrap gap-2 mt-1">
-                              {follower.interests.map((interest, i) => (
-                                <span
-                                  key={i}
-                                  className="text-xs bg-secondary px-2 py-1 rounded-full"
-                                >
-                                  {interest}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {follower.communicationStyle && (
-                          <p className="text-sm">
-                            <span className="font-medium">Communication style: </span>
-                            {follower.communicationStyle}
-                          </p>
-                        )}
-
-                        {follower.interactionPreferences && (
-                          <div className="space-y-1">
-                            <p className="text-sm font-medium">Interaction Preferences:</p>
-                            <div className="space-y-1 pl-2">
-                              <p className="text-sm">
-                                <span className="text-green-600">Likes:</span>{" "}
-                                {follower.interactionPreferences.likes.join(", ")}
-                              </p>
-                              <p className="text-sm">
-                                <span className="text-red-600">Dislikes:</span>{" "}
-                                {follower.interactionPreferences.dislikes.join(", ")}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      </div>
+    </TourProvider>
   );
 }
