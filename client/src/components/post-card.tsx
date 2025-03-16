@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
+import { formatRelativeTime } from "@/utils/date";
 
 interface PostCardProps {
   post: Post & {
@@ -119,10 +120,15 @@ function Comment({
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <p className="text-sm font-medium mb-1">
-            {isAIComment ? comment.aiFollower?.name || 'AI' : 'You'}
-          </p>
-          <p className="text-sm">{comment.content}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-medium">
+              {isAIComment ? comment.aiFollower?.name || 'AI' : 'You'}
+            </p>
+            <span className="text-xs text-muted-foreground">
+              {formatRelativeTime(comment.createdAt)}
+            </span>
+          </div>
+          <p className="text-sm mt-1">{comment.content}</p>
           <div className="flex items-center space-x-2 mt-2">
             {!isReplying && isAIComment && user && (
               <Button
@@ -183,7 +189,7 @@ export function PostCard({ post }: PostCardProps) {
         </Avatar>
         <div>
           <p className="text-sm text-muted-foreground">
-            {new Date(post.createdAt?.toString() || "").toLocaleDateString()}
+            {formatRelativeTime(post.createdAt)}
           </p>
         </div>
       </CardHeader>
