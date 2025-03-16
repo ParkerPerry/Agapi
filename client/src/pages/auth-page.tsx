@@ -48,7 +48,7 @@ export default function AuthPage() {
       <div className="flex items-center justify-center p-8">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Welcome to SocialAI</CardTitle>
+            <CardTitle>Welcome to CircleTube</CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="login">
@@ -141,7 +141,7 @@ export default function AuthPage() {
 
       <div className="hidden md:flex bg-muted items-center justify-center p-8">
         <div className="max-w-lg space-y-6 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">Your Personal AI Social Network</h1>
+          <h1 className="text-4xl font-bold tracking-tight">Your Personal Circle on CircleTube</h1>
           <p className="text-lg text-muted-foreground">
             Experience social media in a new way with AI-powered followers that interact with your posts.
             Share your thoughts, receive instant feedback, and engage with unique AI personalities.
