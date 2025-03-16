@@ -2,10 +2,12 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Bell, Home, User, LogOut } from "lucide-react";
+import { Bell, Home, User, LogOut, HelpCircle } from "lucide-react";
+import { useTour } from "@/components/tour/tour-context";
 
 export function NavBar() {
   const { user, logoutMutation } = useAuth();
+  const { startTour } = useTour();
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -36,6 +38,10 @@ export function NavBar() {
                   <User className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
               </Link>
+
+              <Button variant="ghost" size="icon" onClick={startTour}>
+                <HelpCircle className="h-[1.2rem] w-[1.2rem]" />
+              </Button>
 
               <Button 
                 variant="ghost" 

@@ -135,6 +135,7 @@ function Comment({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsReplying(true)}
+                className="reply-button"
               >
                 Reply
               </Button>
