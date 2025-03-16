@@ -38,9 +38,10 @@ export const aiInteractions = pgTable("ai_interactions", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").references(() => posts.id),
   aiFollowerId: integer("ai_follower_id").references(() => aiFollowers.id),
-  type: text("type", { enum: ["like", "comment"] }).notNull(),
+  userId: integer("user_id").references(() => users.id), // Added to track user replies
+  type: text("type", { enum: ["like", "comment", "reply"] }).notNull(),
   content: text("content"),
-  parentId: integer("parent_id"),
+  parentId: integer("parent_id").references(() => aiInteractions.id), // Self-reference for thread replies
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -58,6 +59,10 @@ export const aiInteractionsRelations = relations(aiInteractions, ({ one }) => ({
     fields: [aiInteractions.postId],
     references: [posts.id],
   }),
+  user: one(users, {
+    fields: [aiInteractions.userId],
+    references: [users.id],
+  }),
 }));
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -68,6 +73,16 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertPostSchema = createInsertSchema(posts).pick({
   content: true,
 });
+
+export const insertInteractionSchema = createInsertSchema(aiInteractions)
+  .pick({
+    postId: true,
+    content: true,
+    parentId: true,
+  })
+  .extend({
+    type: z.enum(["like", "comment", "reply"]),
+  });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;

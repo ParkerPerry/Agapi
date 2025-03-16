@@ -84,30 +84,76 @@ export class DatabaseStorage implements IStorage {
     return aiFollower;
   }
 
-  async getInteraction(id: number): Promise<AiInteraction | undefined> {
-    const [interaction] = await db
-      .select()
-      .from(aiInteractions)
-      .where(eq(aiInteractions.id, id));
-    return interaction;
-  }
-
   async createAiInteraction(
     interaction: Omit<AiInteraction, "id" | "createdAt">,
   ): Promise<AiInteraction> {
-    const [aiInteraction] = await db
-      .insert(aiInteractions)
-      .values(interaction)
-      .returning();
-    return aiInteraction;
+    console.log("[Storage] Creating AI interaction:", {
+      postId: interaction.postId,
+      userId: interaction.userId,
+      aiFollowerId: interaction.aiFollowerId,
+      type: interaction.type,
+      parentId: interaction.parentId
+    });
+
+    try {
+      const [aiInteraction] = await db
+        .insert(aiInteractions)
+        .values(interaction)
+        .returning();
+
+      console.log("[Storage] Created AI interaction:", {
+        id: aiInteraction.id,
+        type: aiInteraction.type,
+        userId: aiInteraction.userId,
+        aiFollowerId: aiInteraction.aiFollowerId
+      });
+
+      return aiInteraction;
+    } catch (error) {
+      console.error("[Storage] Error creating AI interaction:", error);
+      throw error;
+    }
+  }
+
+  async getInteraction(id: number): Promise<AiInteraction | undefined> {
+    console.log("[Storage] Getting interaction by ID:", id);
+
+    try {
+      const [interaction] = await db
+        .select()
+        .from(aiInteractions)
+        .where(eq(aiInteractions.id, id));
+
+      console.log("[Storage] Retrieved interaction:", interaction ? {
+        id: interaction.id,
+        type: interaction.type,
+        userId: interaction.userId,
+        aiFollowerId: interaction.aiFollowerId
+      } : "Not found");
+
+      return interaction;
+    } catch (error) {
+      console.error("[Storage] Error getting interaction:", error);
+      throw error;
+    }
   }
 
   async getPostInteractions(postId: number): Promise<AiInteraction[]> {
-    return await db
-      .select()
-      .from(aiInteractions)
-      .where(eq(aiInteractions.postId, postId))
-      .orderBy(aiInteractions.createdAt);
+    console.log("[Storage] Getting interactions for post:", postId);
+
+    try {
+      const interactions = await db
+        .select()
+        .from(aiInteractions)
+        .where(eq(aiInteractions.postId, postId))
+        .orderBy(aiInteractions.createdAt);
+
+      console.log("[Storage] Retrieved interactions count:", interactions.length);
+      return interactions;
+    } catch (error) {
+      console.error("[Storage] Error getting post interactions:", error);
+      throw error;
+    }
   }
 }
 
