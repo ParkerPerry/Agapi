@@ -10,7 +10,6 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
-import { EmojiReactions } from "@/components/ui/emoji-reactions";
 
 interface PostCardProps {
   post: Post & {
@@ -125,7 +124,6 @@ function Comment({
           </p>
           <p className="text-sm">{comment.content}</p>
           <div className="flex items-center space-x-2 mt-2">
-            <EmojiReactions interactionId={comment.id} className="my-2" />
             {!isReplying && isAIComment && user && (
               <Button
                 variant="ghost"
@@ -191,7 +189,6 @@ export function PostCard({ post }: PostCardProps) {
       </CardHeader>
       <CardContent>
         <p className="whitespace-pre-wrap">{post.content}</p>
-        <EmojiReactions postId={post.id} className="mt-4" />
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
         <div className="flex items-center space-x-4 text-muted-foreground">
