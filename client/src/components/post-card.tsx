@@ -169,13 +169,43 @@ export function PostCard({ post }: PostCardProps) {
     const socket = createWebSocket();
 
     socket.onmessage = (event) => {
-      const interaction = JSON.parse(event.data);
-      if (interaction.postId === post.id) {
-        setInteractions((prev) => [...prev, interaction]);
+      try {
+        const data = JSON.parse(event.data);
+        
+        // Handle thread update messages
+        if (data.type === 'thread-update' && data.postId === post.id) {
+          setInteractions(prev => {
+            // Find and replace the updated thread
+            return prev.map(interaction => 
+              interaction.id === data.thread.id ? data.thread : interaction
+            );
+          });
+        } 
+        // Handle new interaction
+        else if (data.postId === post.id) {
+          setInteractions(prev => {
+            // Check if this interaction already exists
+            const exists = prev.some(i => i.id === data.id);
+            if (!exists) {
+              return [...prev, data];
+            }
+            return prev;
+          });
+        }
+      } catch (error) {
+        console.error("Error processing WebSocket message:", error);
       }
     };
 
+    // Ping to keep the connection alive
+    const pingInterval = setInterval(() => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ type: 'ping' }));
+      }
+    }, 30000);
+
     return () => {
+      clearInterval(pingInterval);
       socket.close();
     };
   }, [post.id]);

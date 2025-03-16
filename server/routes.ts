@@ -46,27 +46,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
   wss.on('connection', (ws, req) => {
     const session = (req as any).session;
     const userId = session?.passport?.user;
+    
+    console.log(`WebSocket connection established for user: ${userId}`);
 
-    ws.on('error', console.error);
+    // Handle errors with more detail
+    ws.on('error', (error) => {
+      console.error(`WebSocket error for user ${userId}:`, error);
+    });
 
-    // Keep the connection alive
+    // Handle pings from client to keep connection alive
+    ws.on('message', (message) => {
+      try {
+        const data = JSON.parse(message.toString());
+        if (data.type === 'ping') {
+          ws.send(JSON.stringify({ type: 'pong' }));
+        }
+      } catch (error) {
+        console.error(`Error processing WebSocket message from user ${userId}:`, error);
+      }
+    });
+
+    // Server-side ping to keep the connection alive
     const pingInterval = setInterval(() => {
       if (ws.readyState === ws.OPEN) {
-        ws.ping();
+        try {
+          ws.ping();
+        } catch (error) {
+          console.error(`Error sending ping to user ${userId}:`, error);
+        }
       }
     }, 30000);
 
-    ws.on('close', () => {
+    ws.on('close', (code, reason) => {
+      console.log(`WebSocket connection closed for user ${userId}:`, code, reason.toString());
       clearInterval(pingInterval);
     });
   });
 
   // Broadcast AI interactions to all connected clients
   function broadcastInteraction(interaction: any) {
+    const messageStr = JSON.stringify(interaction);
+    let sentCount = 0;
+    
     wss.clients.forEach((client) => {
-      if (client.readyState === 1) {
-        client.send(JSON.stringify(interaction));
+      if (client.readyState === 1) { // WebSocket.OPEN = 1
+        try {
+          client.send(messageStr);
+          sentCount++;
+        } catch (error) {
+          console.error('Error sending WebSocket message:', error);
+        }
       }
+    });
+    
+    console.log(`Broadcast interaction to ${sentCount} clients:`, {
+      type: interaction.type || 'interaction',
+      id: interaction.id,
+      postId: interaction.postId
     });
   }
 
