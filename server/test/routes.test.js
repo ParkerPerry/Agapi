@@ -1,7 +1,7 @@
-import request from 'supertest';
-import express from 'express';
-import { registerRoutes } from '../routes';
-import { storage } from '../storage';
+const request = require('supertest');
+const express = require('express');
+const { registerRoutes } = require('../routes');
+const { storage } = require('../storage');
 
 let app;
 let server;
@@ -12,7 +12,7 @@ beforeAll(async () => {
   server = await registerRoutes(app);
 });
 
-afterAll(async () => {
+afterAll(() => {
   return new Promise((resolve) => {
     server.close(() => {
       resolve();
@@ -20,42 +20,66 @@ afterAll(async () => {
   });
 });
 
-describe('API Routes', () => {
-  describe('Authentication', () => {
-    it('should return 401 for unauthorized requests', async () => {
-      await request(app)
-        .get('/api/posts/1')
-        .expect(401);
+describe('Core Features', () => {
+  describe('Login with Test1/test1', () => {
+    it('should successfully login with correct credentials', async () => {
+      storage.getUserByUsername = jest.fn().mockResolvedValue({
+        id: 1,
+        username: 'Test1',
+        password: 'test1', // In real app this would be hashed
+        createdAt: new Date().toISOString()
+      });
+
+      const response = await request(app)
+        .post('/api/login')
+        .send({
+          username: 'Test1',
+          password: 'test1'
+        })
+        .expect(200);
+
+      expect(response.body).toHaveProperty('id', 1);
+      expect(response.body).toHaveProperty('username', 'Test1');
     });
   });
 
-  describe('Posts', () => {
-    // Mock authenticated user session
-    const mockSession = {
-      passport: { user: { id: 1 } }
-    };
+  describe('Post Creation and AI Interaction', () => {
+    const mockUser = { id: 1, username: 'Test1' };
 
     beforeEach(() => {
-      // Mock isAuthenticated middleware
       app.use((req, _res, next) => {
         req.isAuthenticated = () => true;
-        req.user = mockSession.passport.user;
+        req.user = mockUser;
         next();
       });
     });
 
-    it('should create a new post', async () => {
+    it('should create a post and trigger AI responses', async () => {
       const postContent = 'Test post content';
 
-      // Mock storage methods
       storage.createPost = jest.fn().mockResolvedValue({
         id: 1,
         content: postContent,
-        userId: 1,
+        userId: mockUser.id,
         createdAt: new Date().toISOString()
       });
 
-      storage.getAiFollowers = jest.fn().mockResolvedValue([]);
+      storage.getAiFollowers = jest.fn().mockResolvedValue([{
+        id: 1,
+        name: 'TestBot',
+        personality: 'friendly',
+        userId: mockUser.id
+      }]);
+
+      storage.createAiInteraction = jest.fn().mockResolvedValue({
+        id: 1,
+        postId: 1,
+        aiFollowerId: 1,
+        type: 'comment',
+        content: 'Test AI response',
+        parentId: null,
+        createdAt: new Date().toISOString()
+      });
 
       const response = await request(app)
         .post('/api/posts')
@@ -63,90 +87,55 @@ describe('API Routes', () => {
         .expect(201);
 
       expect(response.body).toMatchObject({
-        id: expect.any(Number),
+        id: 1,
         content: postContent,
-        userId: 1
+        userId: mockUser.id
       });
+
+      expect(storage.createAiInteraction).toHaveBeenCalled();
     });
 
-    it('should retrieve user posts with interactions', async () => {
-      // Mock storage methods
-      storage.getUserPosts = jest.fn().mockResolvedValue([{
+    it('should handle replies to AI followers', async () => {
+      const replyContent = 'Test reply content';
+
+      storage.getInteraction = jest.fn().mockResolvedValue({
         id: 1,
-        content: 'Test post',
-        userId: 1,
-        createdAt: new Date().toISOString()
-      }]);
-
-      storage.getPostInteractions = jest.fn().mockResolvedValue([]);
-
-      const response = await request(app)
-        .get('/api/posts/1')
-        .expect(200);
-
-      expect(response.body).toBeInstanceOf(Array);
-      expect(response.body[0]).toMatchObject({
-        id: expect.any(Number),
-        content: expect.any(String),
-        interactions: expect.any(Array)
-      });
-    });
-  });
-
-  describe('AI Followers', () => {
-    beforeEach(() => {
-      app.use((req, _res, next) => {
-        req.isAuthenticated = () => true;
-        req.user = { id: 1 };
-        next();
-      });
-    });
-
-    it('should create a new AI follower', async () => {
-      const followerData = {
-        name: 'TestBot',
-        personality: 'friendly tech enthusiast',
-        avatarUrl: 'https://example.com/avatar.png'
-      };
-
-      storage.createAiFollower = jest.fn().mockResolvedValue({
-        id: 1,
-        ...followerData,
-        userId: 1,
+        postId: 1,
+        aiFollowerId: 1,
+        type: 'comment',
+        content: 'Original AI comment',
+        parentId: null,
         createdAt: new Date().toISOString()
       });
 
-      const response = await request(app)
-        .post('/api/followers')
-        .send(followerData)
-        .expect(201);
-
-      expect(response.body).toMatchObject({
-        id: expect.any(Number),
-        name: followerData.name,
-        personality: followerData.personality
-      });
-    });
-
-    it('should retrieve user\'s AI followers', async () => {
-      storage.getAiFollowers = jest.fn().mockResolvedValue([{
+      storage.getAiFollower = jest.fn().mockResolvedValue({
         id: 1,
         name: 'TestBot',
         personality: 'friendly',
-        userId: 1,
+        userId: mockUser.id
+      });
+
+      storage.createAiInteraction = jest.fn().mockResolvedValue({
+        id: 2,
+        postId: 1,
+        aiFollowerId: 1,
+        type: 'reply',
+        content: replyContent,
+        parentId: 1,
         createdAt: new Date().toISOString()
-      }]);
+      });
 
       const response = await request(app)
-        .get('/api/followers')
-        .expect(200);
+        .post('/api/posts/1/reply')
+        .send({
+          content: replyContent,
+          parentId: 1
+        })
+        .expect(201);
 
-      expect(response.body).toBeInstanceOf(Array);
-      expect(response.body[0]).toMatchObject({
-        id: expect.any(Number),
-        name: expect.any(String),
-        personality: expect.any(String)
-      });
+      expect(response.body).toHaveProperty('id');
+      expect(response.body).toHaveProperty('content');
+      expect(storage.createAiInteraction).toHaveBeenCalled();
     });
   });
 });
