@@ -29,7 +29,7 @@ export async function generateAIBackground(
       messages: [
         {
           role: "system",
-          content: `You are a creative AI character developer. Your task is to create a detailed background for an AI follower, responding in JSON format with the following structure:
+          content: `You are a creative character developer. Your task is to create a detailed background for an AI social-media follower, responding in JSON format with the following structure:
             {
               "background": "A brief but engaging backstory",
               "interests": ["List of 3-5 specific interests"],
