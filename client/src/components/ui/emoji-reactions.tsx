@@ -3,9 +3,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
+import { Reaction } from "@shared/schema";
 
 interface EmojiReactionsProps {
   postId?: number;
@@ -29,25 +31,25 @@ export function EmojiReactions({
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: reactions = [] } = useQuery({
-    queryKey: ["reactions", { postId, interactionId }],
-    enabled: Boolean(postId || interactionId),
+  const { data: reactions = [] } = useQuery<Reaction[]>({
+    queryKey: ["/api/reactions", { postId, interactionId }],
+    enabled: Boolean(postId || interactionId) && Boolean(user),
   });
 
   const addReaction = useMutation({
     mutationFn: async (emoji: string) => {
-      return await queryClient.apiRequest("/api/reactions", {
-        method: "POST",
+      const response = await apiRequest("POST", "/api/reactions", {
         body: {
           emoji,
           postId,
           interactionId,
         },
       });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["reactions", { postId, interactionId }],
+        queryKey: ["/api/reactions", { postId, interactionId }],
       });
     },
     onError: () => {
@@ -61,13 +63,11 @@ export function EmojiReactions({
 
   const removeReaction = useMutation({
     mutationFn: async (reactionId: number) => {
-      return await queryClient.apiRequest(`/api/reactions/${reactionId}`, {
-        method: "DELETE",
-      });
+      await apiRequest("DELETE", `/api/reactions/${reactionId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["reactions", { postId, interactionId }],
+        queryKey: ["/api/reactions", { postId, interactionId }],
       });
     },
     onError: () => {
