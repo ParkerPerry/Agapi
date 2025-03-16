@@ -7,6 +7,8 @@ import { generateAIResponse, generateAIBackground } from "./openai";
 import { parse as parseCookie } from "cookie";
 import { getSession } from "./sessionStore";
 
+// Previous imports and WebSocket setup remain unchanged...
+
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
@@ -108,7 +110,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
         }
-      }, 30000); // Send ping every 30 seconds
+      }, 30000);
 
       ws.on('close', () => {
         clearInterval(pingInterval);
@@ -145,6 +147,135 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     console.log(`Broadcast interaction to ${sentCount} clients`);
   }
+
+  app.post("/api/posts/:postId/reply", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const { content, parentId } = req.body;
+    const postId = parseInt(req.params.postId);
+
+    try {
+      // First, get the parent interaction and its AI follower
+      const parentInteraction = await storage.getInteraction(parentId);
+      if (!parentInteraction) {
+        return res.status(404).json({ message: "Parent interaction not found" });
+      }
+
+      const aiFollower = parentInteraction.aiFollowerId ? 
+        await storage.getAiFollower(parentInteraction.aiFollowerId)
+        : null;
+      if (!aiFollower) {
+        return res.status(404).json({ message: "AI follower not found" });
+      }
+
+      // Save the user's reply
+      const userReply = await storage.createAiInteraction({
+        postId,
+        userId: req.user!.id,
+        aiFollowerId: null,
+        type: "reply",
+        content,
+        parentId
+      });
+
+      console.log("Created user reply:", userReply);
+
+      // Generate AI response to the user's reply
+      const aiResponse = await generateAIResponse(
+        content,
+        aiFollower.personality,
+        parentInteraction.content || undefined
+      );
+
+      let aiReply = null;
+      if (aiResponse.confidence > 0.7) {
+        // Save the AI's response
+        aiReply = await storage.createAiInteraction({
+          postId,
+          aiFollowerId: aiFollower.id,
+          userId: null,
+          type: "reply",
+          content: aiResponse.content || null,
+          parentId
+        });
+
+        console.log("Created AI reply:", aiReply);
+      }
+
+      // Get the complete thread for response
+      const interactions = await storage.getPostInteractions(postId);
+      console.log("Retrieved all interactions for post:", interactions.length);
+
+      // Create a map to store interactions by their ID
+      const interactionMap = new Map();
+
+      // First pass: create interaction objects with their AI follower info
+      await Promise.all(
+        interactions.map(async (interaction) => {
+          const follower = interaction.aiFollowerId ? 
+            await storage.getAiFollower(interaction.aiFollowerId) 
+            : null;
+
+          interactionMap.set(interaction.id, {
+            ...interaction,
+            aiFollower: follower,
+            replies: []
+          });
+        })
+      );
+
+      // Second pass: organize into threads
+      const threadedInteractions: any[] = [];
+      interactions.forEach(interaction => {
+        const interactionWithData = interactionMap.get(interaction.id);
+
+        if (interaction.parentId === null) {
+          // This is a top-level interaction
+          threadedInteractions.push(interactionWithData);
+        } else {
+          // This is a reply, add it to its parent's replies array
+          const parent = interactionMap.get(interaction.parentId);
+          if (parent) {
+            if (!parent.replies) {
+              parent.replies = [];
+            }
+            parent.replies.push(interactionWithData);
+          }
+        }
+      });
+
+      // Sort replies by timestamp
+      threadedInteractions.forEach(interaction => {
+        if (interaction.replies) {
+          interaction.replies.sort((a: any, b: any) => 
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        }
+      });
+
+      // Find the complete parent thread
+      const parentThread = threadedInteractions.find(interaction => 
+        interaction.id === parentId || 
+        interaction.replies?.some((reply: any) => reply.id === parentId)
+      );
+
+      if (!parentThread) {
+        return res.status(500).json({ message: "Failed to construct reply thread" });
+      }
+
+      // Broadcast updates to all connected clients
+      broadcastInteraction({
+        type: 'thread-update',
+        postId,
+        thread: parentThread
+      });
+
+      res.status(201).json(parentThread);
+    } catch (error) {
+      console.error("Error handling reply:", error);
+      res.status(500).json({ message: "Failed to process reply" });
+    }
+  });
 
   app.post("/api/posts", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
@@ -246,122 +377,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(postsWithInteractions);
   });
 
-  app.post("/api/posts/:postId/reply", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
-    const { content, parentId } = req.body;
-    const postId = parseInt(req.params.postId);
-
-    try {
-        // First, get the parent interaction and its AI follower
-        const parentInteraction = await storage.getInteraction(parentId);
-        if (!parentInteraction) {
-            return res.status(404).json({ message: "Parent interaction not found" });
-        }
-
-        const aiFollower = parentInteraction.aiFollowerId ? 
-            await storage.getAiFollower(parentInteraction.aiFollowerId)
-            : null;
-        if (!aiFollower) {
-            return res.status(404).json({ message: "AI follower not found" });
-        }
-
-        // Save the user's reply first
-        const userReply = await storage.createAiInteraction({
-            postId,
-            userId: req.user!.id,
-            aiFollowerId: null,
-            type: "reply",
-            content,
-            parentId,
-        });
-
-        // Generate AI response to the user's reply
-        const aiResponse = await generateAIResponse(
-            content,
-            aiFollower.personality,
-            parentInteraction.content
-        );
-
-        if (aiResponse.confidence > 0.7) {
-            // Save the AI's response
-            const aiReply = await storage.createAiInteraction({
-                postId,
-                aiFollowerId: aiFollower.id,
-                userId: null,
-                type: "reply",
-                content: aiResponse.content || null,
-                parentId,
-            });
-
-            // Get all interactions for this thread
-            const interactions = await storage.getPostInteractions(postId);
-            const interactionMap = new Map();
-
-            // Build interaction map with AI follower info
-            await Promise.all(
-                interactions.map(async (inter) => {
-                    const follower = inter.aiFollowerId ? 
-                        await storage.getAiFollower(inter.aiFollowerId) 
-                        : null;
-
-                    interactionMap.set(inter.id, {
-                        ...inter,
-                        aiFollower: follower,
-                        replies: []
-                    });
-                })
-            );
-
-            // Organize into threads
-            const threadedInteractions = [];
-            interactions.forEach(inter => {
-                const interWithData = interactionMap.get(inter.id);
-
-                if (inter.parentId === null) {
-                    threadedInteractions.push(interWithData);
-                } else {
-                    const parent = interactionMap.get(inter.parentId);
-                    if (parent) {
-                        parent.replies.push(interWithData);
-                    }
-                }
-            });
-
-            // Sort replies by timestamp
-            threadedInteractions.forEach(inter => {
-                if (inter.replies) {
-                    inter.replies.sort((a, b) => 
-                        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-                    );
-                }
-            });
-
-            // Find the complete thread containing our replies
-            const parentThread = threadedInteractions.find(
-                inter => inter.id === parentId || inter.replies.some(reply => reply.id === parentId)
-            );
-
-            if (!parentThread) {
-                return res.status(500).json({ message: "Failed to construct reply thread" });
-            }
-
-            // Broadcast thread update to all connected clients
-            broadcastInteraction({
-                type: 'thread-update',
-                postId,
-                thread: parentThread
-            });
-
-            res.status(201).json(parentThread);
-        } else {
-            res.status(400).json({ message: "AI couldn't generate a confident response" });
-        }
-    } catch (error) {
-        console.error("Error handling reply:", error);
-        res.status(500).json({ message: "Failed to process reply" });
-    }
-  });
 
   app.post("/api/followers", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
