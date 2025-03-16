@@ -8,6 +8,8 @@ import AuthPage from "@/pages/auth-page";
 import ProfilePage from "@/pages/profile-page";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
+import { createWebSocket } from "@/lib/websocket";
+import { useEffect } from "react";
 
 function Router() {
   return (
@@ -21,6 +23,11 @@ function Router() {
 }
 
 function App() {
+  // Initialize WebSocket connection when app loads
+  useEffect(() => {
+    createWebSocket();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

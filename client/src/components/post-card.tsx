@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Post, AiFollower } from "@shared/schema";
 import { Heart, MessageSquare, Send } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createWebSocket } from "@/lib/websocket";
+import { subscribeToWebSocket } from "@/lib/websocket";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";

@@ -38,6 +38,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      // Create a new WebSocket connection when user is authenticated
+      import("@/lib/websocket").then(({ createWebSocket }) => {
+        createWebSocket();
+      });
     },
     onError: (error: Error) => {
       toast({
