@@ -45,15 +45,7 @@ export const aiInteractions = pgTable("ai_interactions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const reactions = pgTable("reactions", {
-  id: serial("id").primaryKey(),
-  emoji: text("emoji").notNull(),
-  postId: integer("post_id").references(() => posts.id),
-  interactionId: integer("interaction_id").references(() => aiInteractions.id),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
+// Define relations
 export const aiInteractionsRelations = relations(aiInteractions, ({ one }) => ({
   parent: one(aiInteractions, {
     fields: [aiInteractions.parentId],
@@ -69,21 +61,6 @@ export const aiInteractionsRelations = relations(aiInteractions, ({ one }) => ({
   }),
   user: one(users, {
     fields: [aiInteractions.userId],
-    references: [users.id],
-  }),
-}));
-
-export const reactionsRelations = relations(reactions, ({ one }) => ({
-  post: one(posts, {
-    fields: [reactions.postId],
-    references: [posts.id],
-  }),
-  interaction: one(aiInteractions, {
-    fields: [reactions.interactionId],
-    references: [aiInteractions.id],
-  }),
-  user: one(users, {
-    fields: [reactions.userId],
     references: [users.id],
   }),
 }));
@@ -107,17 +84,8 @@ export const insertInteractionSchema = createInsertSchema(aiInteractions)
     type: z.enum(["like", "comment", "reply"]),
   });
 
-export const insertReactionSchema = createInsertSchema(reactions)
-  .pick({
-    emoji: true,
-    postId: true,
-    interactionId: true,
-  });
-
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Post = typeof posts.$inferSelect;
 export type AiFollower = typeof aiFollowers.$inferSelect;
 export type AiInteraction = typeof aiInteractions.$inferSelect;
-export type Reaction = typeof reactions.$inferSelect;
-export type InsertReaction = z.infer<typeof insertReactionSchema>;
