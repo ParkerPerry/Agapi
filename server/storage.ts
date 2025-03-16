@@ -1,24 +1,24 @@
-import { InsertUser, User, Post, AiFollower, AiInteraction } from "@shared/schema";
-import { users, posts, aiFollowers, aiInteractions } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { InsertUser, User, Post, AiFollower, AiInteraction, Reaction, InsertReaction } from "@shared/schema";
+import { users, posts, aiFollowers, aiInteractions, reactions } from "@shared/schema";
+import { eq, and } from "drizzle-orm";
 import { db } from "./db";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-
   createPost(userId: number, content: string): Promise<Post>;
   getPost(id: number): Promise<Post | undefined>;
   getUserPosts(userId: number): Promise<Post[]>;
-
   getAiFollowers(userId: number): Promise<AiFollower[]>;
   getAiFollower(id: number): Promise<AiFollower | undefined>;
   createAiFollower(userId: number, follower: Omit<AiFollower, "id" | "userId">): Promise<AiFollower>;
-
   createAiInteraction(interaction: Omit<AiInteraction, "id" | "createdAt">): Promise<AiInteraction>;
   getInteraction(id: number): Promise<AiInteraction | undefined>;
   getPostInteractions(postId: number): Promise<AiInteraction[]>;
+  createReaction(userId: number, reaction: Omit<InsertReaction, "userId">): Promise<Reaction>;
+  getReactions(postId?: number, interactionId?: number): Promise<Reaction[]>;
+  deleteReaction(id: number, userId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -161,6 +161,41 @@ export class DatabaseStorage implements IStorage {
       console.error("[Storage] Error getting post interactions:", error);
       throw error;
     }
+  }
+
+  async createReaction(
+    userId: number,
+    reaction: Omit<InsertReaction, "userId">
+  ): Promise<Reaction> {
+    const [newReaction] = await db
+      .insert(reactions)
+      .values({ ...reaction, userId })
+      .returning();
+    return newReaction as Reaction;
+  }
+
+  async getReactions(postId?: number, interactionId?: number): Promise<Reaction[]> {
+    let query = db.select().from(reactions);
+
+    if (postId) {
+      query = query.where(eq(reactions.postId, postId));
+    }
+    if (interactionId) {
+      query = query.where(eq(reactions.interactionId, interactionId));
+    }
+
+    return await query.orderBy(reactions.createdAt);
+  }
+
+  async deleteReaction(id: number, userId: number): Promise<void> {
+    await db
+      .delete(reactions)
+      .where(
+        and(
+          eq(reactions.id, id),
+          eq(reactions.userId, userId)
+        )
+      );
   }
 }
 

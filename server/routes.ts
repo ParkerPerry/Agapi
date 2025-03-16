@@ -4,6 +4,7 @@ import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { generateAIResponse, generateAIBackground } from "./openai";
 import { ThreadManager } from "./thread-manager";
+import { insertReactionSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
@@ -46,7 +47,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Parent interaction not found" });
       }
 
-      const aiFollower = parentInteraction.aiFollowerId ? 
+      const aiFollower = parentInteraction.aiFollowerId ?
         await storage.getAiFollower(parentInteraction.aiFollowerId)
         : null;
       if (!aiFollower) {
@@ -165,6 +166,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     const followers = await storage.getAiFollowers(req.user!.id);
     res.json(followers);
+  });
+
+  // New routes for reactions
+  app.post("/api/reactions", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const validatedData = insertReactionSchema.parse(req.body);
+      const reaction = await storage.createReaction(req.user!.id, validatedData);
+      res.status(201).json(reaction);
+    } catch (error) {
+      console.error("Error creating reaction:", error);
+      res.status(500).json({ message: "Failed to create reaction" });
+    }
+  });
+
+  app.get("/api/reactions", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const { postId, interactionId } = req.query;
+      const reactions = await storage.getReactions(
+        postId ? parseInt(postId as string) : undefined,
+        interactionId ? parseInt(interactionId as string) : undefined
+      );
+      res.json(reactions);
+    } catch (error) {
+      console.error("Error getting reactions:", error);
+      res.status(500).json({ message: "Failed to get reactions" });
+    }
+  });
+
+  app.delete("/api/reactions/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      await storage.deleteReaction(parseInt(req.params.id), req.user!.id);
+      res.sendStatus(204);
+    } catch (error) {
+      console.error("Error deleting reaction:", error);
+      res.status(500).json({ message: "Failed to delete reaction" });
+    }
   });
 
   return httpServer;
