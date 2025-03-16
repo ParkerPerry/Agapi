@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
-import ProfilePage from "@/pages/profile-page";
+import AiFollowersPage from "@/pages/ai-followers-page";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { createWebSocket, closeWebSocket } from "@/lib/websocket";
@@ -15,7 +15,7 @@ function Router() {
   return (
     <Switch>
       <ProtectedRoute path="/" component={HomePage} />
-      <ProtectedRoute path="/profile/:userId" component={ProfilePage} />
+      <ProtectedRoute path="/ai-followers" component={AiFollowersPage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>

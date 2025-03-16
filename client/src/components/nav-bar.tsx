@@ -33,7 +33,7 @@ export function NavBar() {
                 <Bell className="h-[1.2rem] w-[1.2rem]" />
               </Button>
 
-              <Link href={`/profile/${user?.id}`}>
+              <Link href="/ai-followers">
                 <Button variant="ghost" size="icon">
                   <User className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
