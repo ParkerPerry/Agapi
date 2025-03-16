@@ -7,31 +7,46 @@ import { Post } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 
-
-// Placeholder for WebSocket subscription function.  Replace with actual implementation.
-const subscribeToWebSocket = (callback) => {
-  //  Implementation to connect to WebSocket and handle messages
-  //  Example using a mock WebSocket:
-  const ws = new WebSocket('ws://localhost:8080'); // Replace with your WebSocket URL
-  ws.onmessage = (event) => {
+// WebSocket implementation
+let websocket;
+const createWebSocket = () => {
+  if (websocket) {
+    return; // WebSocket already initialized
+  }
+  websocket = new WebSocket('ws://localhost:8080'); // Replace with your WebSocket URL
+  websocket.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
-      callback(data);
+      // Handle WebSocket messages here.  This example just logs the data.
+      console.log('WebSocket message received:', data);
+      //Implement logic to update UI based on data
     } catch (error) {
       console.error("Error parsing WebSocket message:", error);
     }
   };
-  ws.onclose = () => console.log("WebSocket connection closed");
-  ws.onerror = (error) => console.error("WebSocket error:", error);
-
-  return () => {
-    ws.close();
+  websocket.onclose = () => {
+    console.log("WebSocket connection closed");
+    // Optionally attempt to reconnect
   };
+  websocket.onerror = (error) => console.error("WebSocket error:", error);
 };
 
+const closeWebSocket = () => {
+    if (websocket) {
+        websocket.close();
+        websocket = null;
+    }
+};
 
 export default function HomePage() {
   const { user } = useAuth();
+
+  // Initialize WebSocket connection
+  useEffect(() => {
+    createWebSocket();
+    return () => closeWebSocket();
+  }, []);
+
   const { data: posts, isLoading, refetch } = useQuery<(Post & { interactions: any[] })[]>({
     queryKey: [`/api/posts/${user?.id}`],
   });
@@ -39,20 +54,6 @@ export default function HomePage() {
   // Fetch posts on mount and on user change
   useEffect(() => {
     refetch();
-
-    // Subscribe to WebSocket updates
-    const unsubscribe = subscribeToWebSocket((data) => {
-      if (data.type === 'thread-update' || data.type === 'comment') {
-        console.log('Received WebSocket update:', data);
-        // Refetch posts to get the latest data
-        refetch();
-      }
-    });
-
-    // Cleanup subscription on unmount
-    return () => {
-      unsubscribe();
-    };
   }, [user, refetch]);
 
   return (

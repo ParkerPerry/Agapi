@@ -166,47 +166,32 @@ export function PostCard({ post }: PostCardProps) {
   const [interactions, setInteractions] = useState(post.interactions);
 
   useEffect(() => {
-    const socket = createWebSocket();
-
-    socket.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        
-        // Handle thread update messages
-        if (data.type === 'thread-update' && data.postId === post.id) {
-          setInteractions(prev => {
-            // Find and replace the updated thread
-            return prev.map(interaction => 
-              interaction.id === data.thread.id ? data.thread : interaction
-            );
-          });
-        } 
-        // Handle new interaction
-        else if (data.postId === post.id) {
-          setInteractions(prev => {
-            // Check if this interaction already exists
-            const exists = prev.some(i => i.id === data.id);
-            if (!exists) {
-              return [...prev, data];
-            }
-            return prev;
-          });
-        }
-      } catch (error) {
-        console.error("Error processing WebSocket message:", error);
+    // Subscribe to real-time updates for this post
+    const unsubscribe = subscribeToWebSocket(`post-${post.id}`, (data) => {
+      // Handle thread update messages
+      if (data.type === 'thread-update' && data.postId === post.id) {
+        setInteractions(prev => {
+          // Find and replace the updated thread
+          return prev.map(interaction => 
+            interaction.id === data.thread.id ? data.thread : interaction
+          );
+        });
+      } 
+      // Handle new interaction
+      else if (data.postId === post.id) {
+        setInteractions(prev => {
+          // Check if this interaction already exists
+          const exists = prev.some(i => i.id === data.id);
+          if (!exists) {
+            return [...prev, data];
+          }
+          return prev;
+        });
       }
-    };
-
-    // Ping to keep the connection alive
-    const pingInterval = setInterval(() => {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ type: 'ping' }));
-      }
-    }, 30000);
+    });
 
     return () => {
-      clearInterval(pingInterval);
-      socket.close();
+      unsubscribe();
     };
   }, [post.id]);
 
