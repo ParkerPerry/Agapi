@@ -6,7 +6,7 @@ import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
 import ProfilePage from "@/pages/profile-page";
-import { AuthProvider } from "@/hooks/use-auth";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { createWebSocket } from "@/lib/websocket";
 import { useEffect } from "react";
@@ -22,30 +22,33 @@ function Router() {
   );
 }
 
-function App() {
-  // Initialize WebSocket connection when app loads
-  useEffect(() => {
-    // Initialize WebSocket only if user is authenticated
-    const checkAndConnectWebSocket = () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        createWebSocket();
-      }
-    };
-    
-    checkAndConnectWebSocket();
-    
-    // Clean up WebSocket on unmount
-    return () => {
-      // No need to explicitly close - the WebSocket module handles reconnection
-    };
-  }, []);
+function MainApp() {
+  const { user } = useAuth();
 
+  useEffect(() => {
+    if (user) {
+      const ws = createWebSocket();
+      return () => {
+        if (ws) {
+          ws.close();
+        }
+      };
+    }
+  }, [user]);
+
+  return (
+    <>
+      <Router />
+      <Toaster />
+    </>
+  );
+}
+
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router />
-        <Toaster />
+        <MainApp />
       </AuthProvider>
     </QueryClientProvider>
   );

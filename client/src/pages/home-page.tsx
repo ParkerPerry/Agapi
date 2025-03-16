@@ -5,34 +5,37 @@ import { PostCard } from "@/components/post-card";
 import { useQuery } from "@tanstack/react-query";
 import { Post } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
-
-// Use the shared WebSocket implementation from lib/websocket.ts
-
-const closeWebSocket = () => {
-    if (websocket) {
-        websocket.close();
-        websocket = null;
-    }
-};
+import { useEffect, useCallback } from "react";
+import { createWebSocket, subscribeToWebSocket } from "@/lib/websocket";
 
 export default function HomePage() {
   const { user } = useAuth();
-
-  // Initialize WebSocket connection
-  useEffect(() => {
-    createWebSocket();
-    return () => closeWebSocket();
-  }, []);
 
   const { data: posts, isLoading, refetch } = useQuery<(Post & { interactions: any[] })[]>({
     queryKey: [`/api/posts/${user?.id}`],
   });
 
-  // Fetch posts on mount and on user change
+  // Handle real-time updates
+  const handleWebSocketMessage = useCallback((data: any) => {
+    if (data.type === 'thread-update' || data.type === 'post-update') {
+      refetch();
+    }
+  }, [refetch]);
+
+  // Initialize WebSocket connection
   useEffect(() => {
-    refetch();
-  }, [user, refetch]);
+    if (user) {
+      const ws = createWebSocket();
+      const unsubscribe = subscribeToWebSocket('*', handleWebSocketMessage);
+
+      return () => {
+        unsubscribe();
+        if (ws) {
+          ws.close();
+        }
+      };
+    }
+  }, [user, handleWebSocketMessage]);
 
   return (
     <div className="min-h-screen bg-background">

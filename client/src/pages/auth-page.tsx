@@ -10,16 +10,17 @@ import { insertUserSchema } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useEffect } from "react";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [, setLocation] = useLocation();
 
-  // Redirect if already logged in
-  if (user) {
-    setLocation("/");
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
 
   const loginForm = useForm({
     resolver: zodResolver(insertUserSchema),
@@ -36,6 +37,11 @@ export default function AuthPage() {
       password: "",
     },
   });
+
+  // Return null early only after checking in useEffect
+  if (user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen grid md:grid-cols-2">
