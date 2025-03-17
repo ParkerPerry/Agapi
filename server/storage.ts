@@ -20,16 +20,17 @@ export interface IStorage {
   getInteraction(id: number): Promise<AiInteraction | undefined>;
   getPostInteractions(postId: number): Promise<AiInteraction[]>;
 
+  // New methods for pending responses
   createPendingResponse(response: Omit<PendingResponse, "id" | "createdAt">): Promise<PendingResponse>;
   getPendingResponses(): Promise<PendingResponse[]>;
   markPendingResponseProcessed(id: number): Promise<void>;
 
   updateAiFollower(
     id: number,
-    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "active">>
+    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness">>
   ): Promise<AiFollower>;
 
-  deactivateAiFollower(id: number): Promise<void>;
+  deleteAiFollower(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -228,7 +229,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateAiFollower(
     id: number,
-    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "active">>
+    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness">>
   ): Promise<AiFollower> {
     try {
       const [updatedFollower] = (await db
@@ -244,13 +245,28 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async deactivateAiFollower(id: number): Promise<void> {
+  async deleteAiFollower(id: number): Promise<void> {
     try {
-      console.log("[Storage] Deactivating AI follower:", id);
-      await this.updateAiFollower(id, { active: false });
-      console.log("[Storage] Successfully deactivated AI follower");
+      console.log("[Storage] Deleting AI follower and related interactions:", id);
+
+      // First delete all interactions by this follower
+      await db
+        .delete(aiInteractions)
+        .where(eq(aiInteractions.aiFollowerId, id));
+
+      // Then delete all pending responses
+      await db
+        .delete(pendingResponses)
+        .where(eq(pendingResponses.aiFollowerId, id));
+
+      // Finally delete the follower
+      await db
+        .delete(aiFollowers)
+        .where(eq(aiFollowers.id, id));
+
+      console.log("[Storage] Successfully deleted AI follower and related data");
     } catch (error) {
-      console.error("[Storage] Error deactivating AI follower:", error);
+      console.error("[Storage] Error deleting AI follower:", error);
       throw error;
     }
   }

@@ -42,7 +42,6 @@ export const aiFollowers = pgTable("ai_followers", {
     max: number; // maximum delay in minutes
   }>().notNull().default({ min: 1, max: 60 }),
   responseChance: integer("response_chance").notNull().default(80), // Percentage chance of responding
-  active: boolean("active").notNull().default(true), // New field to track follower status
 });
 
 export const pendingResponses = pgTable("pending_responses", {
