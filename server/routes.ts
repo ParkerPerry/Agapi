@@ -99,11 +99,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         parentId
       });
 
+      // Calculate thread depth
+      let threadDepth = 1;
+      let currentParent = parentInteraction;
+      while (currentParent.parentId) {
+        threadDepth++;
+        currentParent = await storage.getInteraction(currentParent.parentId);
+      }
+
       // Get thread context
       const threadContext = {
         parentMessage: parentInteraction.content || undefined,
-        parentAuthor: "User", // This could be enhanced to get actual username
-        immediateContext: content
+        parentAuthor: "User", // Could be enhanced to get actual username
+        immediateContext: content,
+        threadDepth
       };
 
       // Generate and save AI response with thread context

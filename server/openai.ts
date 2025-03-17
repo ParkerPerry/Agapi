@@ -64,6 +64,33 @@ interface ThreadContext {
   parentAuthor?: string;
   threadTopic?: string;
   immediateContext: string;
+  threadDepth: number;
+}
+
+// Helper to determine if follower should maintain context based on personality
+function shouldMaintainContext(personality: string, threadDepth: number): boolean {
+  // Extract personality traits that might affect context maintenance
+  const attentiveTraits = ['detail-oriented', 'analytical', 'focused', 'professional', 'expert', 'academic'];
+  const casualTraits = ['casual', 'laid-back', 'playful', 'distracted', 'chaotic', 'random'];
+
+  // Calculate base chance of maintaining context
+  let contextChance = 0.7; // 70% base chance
+
+  // Adjust based on personality traits
+  const lowerPersonality = personality.toLowerCase();
+  attentiveTraits.forEach(trait => {
+    if (lowerPersonality.includes(trait)) contextChance += 0.1;
+  });
+  casualTraits.forEach(trait => {
+    if (lowerPersonality.includes(trait)) contextChance -= 0.1;
+  });
+
+  // Decrease chance as thread depth increases
+  contextChance -= (threadDepth - 1) * 0.2;
+
+  // Add some randomness
+  const random = Math.random();
+  return random < Math.max(0.1, Math.min(0.9, contextChance));
 }
 
 export async function generateAIResponse(
@@ -73,13 +100,16 @@ export async function generateAIResponse(
   threadContext?: ThreadContext
 ): Promise<AIResponse> {
   try {
-    // Construct context-aware but independent prompt
-    const contextPrompt = threadContext 
-      ? `You are responding in a thread where ${threadContext.parentAuthor} said: "${threadContext.parentMessage}". 
-         The immediate context you're responding to is: "${postContent}"`
+    // Determine if the AI should maintain context based on personality and thread depth
+    const maintainContext = threadContext && shouldMaintainContext(personality, threadContext.threadDepth);
+
+    // Construct a more natural, personality-driven context prompt
+    const contextPrompt = maintainContext
+      ? `You're in a conversation where someone earlier mentioned something about "${threadContext.parentMessage}". 
+         Now someone is saying: "${postContent}"`
       : previousMessage 
-        ? `You are responding to: "${postContent}" in context of previous message: "${previousMessage}"`
-        : `Please analyze this post and respond: ${postContent}`;
+        ? `Responding to: "${postContent}"`
+        : `Check out this post: ${postContent}`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -87,17 +117,17 @@ export async function generateAIResponse(
         {
           role: "system",
           content: `You are an AI follower with this personality: ${personality}.
-            Important guidelines:
-            - Maintain your personality traits regardless of thread tone
-            - Focus only on the immediate conversation context
-            - Don't reference information from other threads or conversations
-            - Keep responses concise and natural
-            - Stay true to your character's communication style
+            Key guidelines:
+            - Be natural and spontaneous in your responses
+            - Sometimes reference earlier context, sometimes don't - be human-like
+            - Stay true to your personality regardless of conversation
+            - Keep responses casual and conversational
+            ${maintainContext ? "- You might want to reference the earlier context if it feels natural" : ""}
 
-            Your response must be in JSON format:
+            Format response as JSON:
             {
               "type": ${previousMessage ? '"reply"' : '"like" or "comment"'},
-              "content": "your response text",
+              "content": "your response",
               "confidence": number between 0 and 1
             }`
         },
