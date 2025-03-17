@@ -340,8 +340,10 @@ export class DatabaseStorage implements IStorage {
       const responses = await db
         .select()
         .from(pendingResponses)
-        .where(eq(pendingResponses.postId, postId))
-        .where(eq(pendingResponses.processed, false))
+        .where(
+          eq(pendingResponses.postId, postId) && 
+          eq(pendingResponses.processed, false)
+        )
         .orderBy(pendingResponses.scheduledFor);
 
       console.log("[Storage] Found pending responses:", responses.length);

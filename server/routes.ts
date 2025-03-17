@@ -28,22 +28,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
             storage.getPostPendingResponses(post.id)
           ]);
 
-          // Get AI follower info for each pending response
-          const pendingFollowers = await Promise.all(
+          // Get AI follower info for each pending response, ensuring uniqueness by follower ID
+          const followerMap = new Map();
+          await Promise.all(
             pendingResponses.map(async (response) => {
-              const follower = await storage.getAiFollower(response.aiFollowerId);
-              return follower ? {
-                id: follower.id,
-                name: follower.name,
-                avatarUrl: follower.avatarUrl,
-                scheduledFor: response.scheduledFor
-              } : null;
+              if (!followerMap.has(response.aiFollowerId)) {
+                const follower = await storage.getAiFollower(response.aiFollowerId);
+                if (follower) {
+                  followerMap.set(response.aiFollowerId, {
+                    id: follower.id,
+                    name: follower.name,
+                    avatarUrl: follower.avatarUrl,
+                    scheduledFor: response.scheduledFor
+                  });
+                }
+              }
             })
           );
 
-          // Filter out null values and sort by scheduled time
-          const validPendingFollowers = pendingFollowers
-            .filter((f): f is NonNullable<typeof f> => f !== null)
+          // Convert map to array and sort by scheduled time
+          const validPendingFollowers = Array.from(followerMap.values())
             .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime());
 
           return {
