@@ -59,32 +59,47 @@ export async function generateAIBackground(
   }
 }
 
+interface ThreadContext {
+  parentMessage?: string;
+  parentAuthor?: string;
+  threadTopic?: string;
+  immediateContext: string;
+}
+
 export async function generateAIResponse(
   postContent: string,
   personality: string,
   previousMessage?: string,
+  threadContext?: ThreadContext
 ): Promise<AIResponse> {
   try {
-    const contextPrompt = previousMessage 
-      ? `You are in a conversation thread. Someone said: "${previousMessage}". Now respond to: "${postContent}"`
-      : `Please analyze this post and respond: ${postContent}`;
+    // Construct context-aware but independent prompt
+    const contextPrompt = threadContext 
+      ? `You are responding in a thread where ${threadContext.parentAuthor} said: "${threadContext.parentMessage}". 
+         The immediate context you're responding to is: "${postContent}"`
+      : previousMessage 
+        ? `You are responding to: "${postContent}" in context of previous message: "${previousMessage}"`
+        : `Please analyze this post and respond: ${postContent}`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `You are an AI follower with the following personality: ${personality}. 
-            ${previousMessage 
-              ? "You are continuing a conversation thread. Maintain context and reply directly to the previous message." 
-              : "Analyze the post and decide whether to like it or comment on it."}
-            Your response must be in JSON format with the following structure:
+          content: `You are an AI follower with this personality: ${personality}.
+            Important guidelines:
+            - Maintain your personality traits regardless of thread tone
+            - Focus only on the immediate conversation context
+            - Don't reference information from other threads or conversations
+            - Keep responses concise and natural
+            - Stay true to your character's communication style
+
+            Your response must be in JSON format:
             {
               "type": ${previousMessage ? '"reply"' : '"like" or "comment"'},
               "content": "your response text",
               "confidence": number between 0 and 1
-            }
-            Keep responses concise and natural, focusing on continuing the conversation in a meaningful way.`,
+            }`
         },
         {
           role: "user",

@@ -99,13 +99,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         parentId
       });
 
-      console.log("Created user reply:", userReply);
+      // Get thread context
+      const threadContext = {
+        parentMessage: parentInteraction.content || undefined,
+        parentAuthor: "User", // This could be enhanced to get actual username
+        immediateContext: content
+      };
 
-      // Generate and save AI response
+      // Generate and save AI response with thread context
       const aiResponse = await generateAIResponse(
         content,
         aiFollower.personality,
-        parentInteraction.content || undefined
+        parentInteraction.content || undefined,
+        threadContext
       );
 
       if (aiResponse.confidence > 0.7) {
