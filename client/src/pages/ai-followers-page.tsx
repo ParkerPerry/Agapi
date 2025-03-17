@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Plus, Pencil, PowerOff } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -31,6 +31,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { TourProvider } from "@/components/tour/tour-context";
 
@@ -235,7 +237,13 @@ export default function AiFollowersPage() {
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2">
                   {followers?.map((follower) => (
-                    <div key={follower.id} className="flex flex-col space-y-4 p-4 border rounded-lg">
+                    <div 
+                      key={follower.id} 
+                      className={cn(
+                        "flex flex-col space-y-4 p-4 border rounded-lg transition-opacity",
+                        !follower.active && "opacity-60"
+                      )}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <Avatar>
@@ -245,7 +253,12 @@ export default function AiFollowersPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <h3 className="font-medium">{follower.name}</h3>
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-medium">{follower.name}</h3>
+                              {!follower.active && (
+                                <Badge variant="secondary">Inactive</Badge>
+                              )}
+                            </div>
                             <p className="text-sm text-muted-foreground">
                               {follower.personality}
                             </p>
@@ -354,27 +367,43 @@ export default function AiFollowersPage() {
 
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button variant="outline" size="icon">
-                                <Trash2 className="h-4 w-4" />
+                              <Button 
+                                variant="outline" 
+                                size="icon"
+                                className={cn(
+                                  follower.active && "hover:bg-destructive/10"
+                                )}
+                              >
+                                <PowerOff className="h-4 w-4 text-destructive" />
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Deactivate AI Follower</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  {follower.active ? "Deactivate" : "Reactivate"} AI Follower
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to deactivate {follower.name}? They will no longer participate in conversations, but their previous interactions will remain intact.
+                                  {follower.active 
+                                    ? `Are you sure you want to deactivate ${follower.name}? They will no longer participate in conversations, but their previous interactions will remain intact.`
+                                    : `Would you like to reactivate ${follower.name}? They will resume participating in conversations.`
+                                  }
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => deleteFollowerMutation.mutate(follower.id)}
-                                  className="bg-destructive hover:bg-destructive/90"
+                                  className={cn(
+                                    "bg-destructive hover:bg-destructive/90",
+                                    !follower.active && "bg-primary hover:bg-primary/90"
+                                  )}
                                 >
                                   {deleteFollowerMutation.isPending ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : follower.active ? (
+                                    "Deactivate"
                                   ) : (
-                                    "Delete"
+                                    "Reactivate"
                                   )}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
