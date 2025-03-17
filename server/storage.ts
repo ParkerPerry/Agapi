@@ -1,10 +1,11 @@
 import { 
   InsertUser, User, Post, AiFollower, AiInteraction, PendingResponse,
-  Circle, InsertCircle, CircleFollower, InsertCircleFollower
+  Circle, InsertCircle, CircleFollower, InsertCircleFollower,
+  InsertCircleMember, CircleMember, InsertCircleInvitation, CircleInvitation
 } from "@shared/schema";
 import { 
   users, posts, ai_followers, aiInteractions, pendingResponses,
-  circles, circleFollowers
+  circles, circleFollowers, circleMembers, circleInvitations
 } from "@shared/schema";
 import { eq, and, asc } from "drizzle-orm";
 import { db } from "./db";
@@ -44,6 +45,15 @@ export interface IStorage {
   createPostInCircle(userId: number, circleId: number, content: string): Promise<Post>;
   getCirclePosts(circleId: number): Promise<Post[]>;
   movePostToCircle(postId: number, circleId: number): Promise<Post>;
+
+  addCircleMember(member: InsertCircleMember): Promise<CircleMember>;
+  removeCircleMember(circleId: number, userId: number): Promise<void>;
+  getCircleMembers(circleId: number): Promise<CircleMember[]>;
+  createCircleInvitation(invitation: Omit<InsertCircleInvitation, "status">): Promise<CircleInvitation>;
+  getCircleInvitation(id: number): Promise<CircleInvitation | undefined>;
+  getCircleInvitations(circleId: number): Promise<CircleInvitation[]>;
+  getUserPendingInvitations(userId: number): Promise<CircleInvitation[]>;
+  updateInvitationStatus(id: number, status: "accepted" | "declined"): Promise<CircleInvitation>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -521,6 +531,96 @@ export class DatabaseStorage implements IStorage {
       .where(eq(posts.id, postId))
       .returning()) as Post[];
     return updatedPost;
+  }
+
+  async addCircleMember(member: InsertCircleMember): Promise<CircleMember> {
+    const [circleMember] = (await db
+      .insert(circleMembers)
+      .values(member)
+      .returning()) as CircleMember[];
+    return circleMember;
+  }
+
+  async removeCircleMember(circleId: number, userId: number): Promise<void> {
+    await db
+      .delete(circleMembers)
+      .where(and(
+        eq(circleMembers.circleId, circleId),
+        eq(circleMembers.userId, userId)
+      ));
+  }
+
+  async getCircleMembers(circleId: number): Promise<CircleMember[]> {
+    return await db
+      .select()
+      .from(circleMembers)
+      .where(eq(circleMembers.circleId, circleId))
+      .orderBy(asc(circleMembers.joinedAt));
+  }
+
+  async createCircleInvitation(
+    invitation: Omit<InsertCircleInvitation, "status">
+  ): Promise<CircleInvitation> {
+    const [circleInvitation] = (await db
+      .insert(circleInvitations)
+      .values({
+        ...invitation,
+        status: "pending" as const
+      })
+      .returning()) as CircleInvitation[];
+    return circleInvitation;
+  }
+
+  async getCircleInvitation(id: number): Promise<CircleInvitation | undefined> {
+    const [invitation] = await db
+      .select()
+      .from(circleInvitations)
+      .where(eq(circleInvitations.id, id));
+    return invitation;
+  }
+
+  async getCircleInvitations(circleId: number): Promise<CircleInvitation[]> {
+    return await db
+      .select()
+      .from(circleInvitations)
+      .where(eq(circleInvitations.circleId, circleId))
+      .orderBy(asc(circleInvitations.createdAt));
+  }
+
+  async getUserPendingInvitations(userId: number): Promise<CircleInvitation[]> {
+    return await db
+      .select()
+      .from(circleInvitations)
+      .where(and(
+        eq(circleInvitations.inviteeId, userId),
+        eq(circleInvitations.status, "pending")
+      ))
+      .orderBy(asc(circleInvitations.createdAt));
+  }
+
+  async updateInvitationStatus(
+    id: number,
+    status: "accepted" | "declined"
+  ): Promise<CircleInvitation> {
+    const [invitation] = (await db
+      .update(circleInvitations)
+      .set({ 
+        status,
+        respondedAt: new Date()
+      })
+      .where(eq(circleInvitations.id, id))
+      .returning()) as CircleInvitation[];
+
+    // If invitation is accepted, create a circle member
+    if (status === "accepted") {
+      await this.addCircleMember({
+        circleId: invitation.circleId,
+        userId: invitation.inviteeId,
+        role: invitation.role,
+      });
+    }
+
+    return invitation;
   }
 }
 
