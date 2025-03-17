@@ -13,7 +13,7 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// New circles table
+// Update circles table to include icon and color
 export const circles = pgTable("circles", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),

@@ -424,6 +424,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getDefaultCircle(userId: number): Promise<Circle> {
+    console.log("[Storage] Getting default circle for user:", userId);
+
     let [defaultCircle] = await db
       .select()
       .from(circles)
@@ -433,6 +435,8 @@ export class DatabaseStorage implements IStorage {
       ));
 
     if (!defaultCircle) {
+      console.log("[Storage] Creating new Home circle for user:", userId);
+
       // Create home circle if it doesn't exist
       [defaultCircle] = (await db
         .insert(circles)
@@ -445,6 +449,8 @@ export class DatabaseStorage implements IStorage {
           color: "#2563eb", // Blue color
         })
         .returning()) as Circle[];
+
+      console.log("[Storage] Created Home circle:", defaultCircle);
 
       // Create Tom as the default AI follower
       const tom = await this.createAiFollower(userId, {
@@ -464,8 +470,11 @@ export class DatabaseStorage implements IStorage {
         active: true
       });
 
+      console.log("[Storage] Created Tom follower:", tom);
+
       // Add Tom to the home circle
       await this.addFollowerToCircle(defaultCircle.id, tom.id);
+      console.log("[Storage] Added Tom to Home circle");
     }
 
     return defaultCircle;
