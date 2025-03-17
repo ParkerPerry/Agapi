@@ -1,0 +1,27 @@
+Your plan from another session:
+```
+Context Retrieval & Summarization:
+Add a new context management system that will:
+Maintain a rolling window of recent interactions
+Use embeddings to store and retrieve relevant past conversations
+Implement automatic summarization of longer conversation histories
+Track conversation themes and topics
+
+Enhanced Prompt Construction:
+Improve the AI response generation by:
+Including historical interaction patterns
+Adding personality-driven response templates
+Implementing contextual awareness of conversation tone
+Maintaining consistent character voice
+```
+
+my feedback:
+```
+Context Retrieval & Summarization: your plan there makes sense. But my concern is that we're going to start blending the thoughts of the various ai-followers, ie they'll be too knowledgable of the other threads and it won't come of natural. In a reddit like app with real followers, the real followers, have some context of other messages, or other threads in that post, but that's not the point of how to use the app. You get real deep engagments becuase their hyper-thread aware vs having the context of ALL the post replies. We're aiming to mimic the depth that reddit threads have with ai-followers that act inpedendantly
+Track conversation themes and topics while I see the benefits here, in the future this would be a DAG so we can map relationships. Today, I think your intention is something simple, but I need to understand your idea here better.
+Improve the AI response generation by: while your idea there makes sense, we do need to mindful of token costs. Also, we don't want to provide too much data per #3 above. Adding personality-driven response templates that makes sense but we already have this in the ai-follower's profile.
+Implementing contextual awareness of conversation tone this makes sense, but how would you do this without poisioning the ai-followers response to sound like the rest of the thread. ie, if an ai-follower has a general annoyed tone, they're not going to be cheery and happy just because a threads tone is happy. So we need to approach with caution.
+
+```
+
+let's continue here
