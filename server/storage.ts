@@ -31,6 +31,7 @@ export interface IStorage {
   ): Promise<AiFollower>;
 
   deleteAiFollower(id: number): Promise<void>;
+  deactivateAiFollower(id: number): Promise<AiFollower>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -261,7 +262,7 @@ export class DatabaseStorage implements IStorage {
       await db
         .delete(aiInteractions)
         .where(
-          eq(aiInteractions.parentId, 
+          eq(aiInteractions.parentId,
             db.select({ id: aiInteractions.id })
               .from(aiInteractions)
               .where(eq(aiInteractions.aiFollowerId, id))
@@ -292,6 +293,23 @@ export class DatabaseStorage implements IStorage {
       console.log("[Storage] Successfully deleted AI follower and related data");
     } catch (error) {
       console.error("[Storage] Error deleting AI follower:", error);
+      throw error;
+    }
+  }
+  async deactivateAiFollower(id: number): Promise<AiFollower> {
+    try {
+      console.log("[Storage] Deactivating AI follower:", id);
+
+      const [updatedFollower] = (await db
+        .update(aiFollowers)
+        .set({ active: false })
+        .where(eq(aiFollowers.id, id))
+        .returning()) as AiFollower[];
+
+      console.log("[Storage] Successfully deactivated AI follower:", id);
+      return updatedFollower;
+    } catch (error) {
+      console.error("[Storage] Error deactivating AI follower:", error);
       throw error;
     }
   }

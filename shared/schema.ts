@@ -19,7 +19,6 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Added new fields for response behavior
 export const aiFollowers = pgTable("ai_followers", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
@@ -33,15 +32,15 @@ export const aiFollowers = pgTable("ai_followers", {
     likes: string[];
     dislikes: string[];
   }>(),
-  // New fields for response behavior
+  active: boolean("active").notNull().default(true),
   responsiveness: text("responsiveness", { 
     enum: ["instant", "active", "casual", "zen"] 
   }).notNull().default("active"),
   responseDelay: json("response_delay").$type<{
-    min: number; // minimum delay in minutes
-    max: number; // maximum delay in minutes
+    min: number;
+    max: number;
   }>().notNull().default({ min: 1, max: 60 }),
-  responseChance: integer("response_chance").notNull().default(80), // Percentage chance of responding
+  responseChance: integer("response_chance").notNull().default(80),
 });
 
 export const pendingResponses = pgTable("pending_responses", {
@@ -53,7 +52,6 @@ export const pendingResponses = pgTable("pending_responses", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Rest of the schema stays the same
 export const aiInteractions = pgTable("ai_interactions", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").references(() => posts.id),
@@ -65,7 +63,6 @@ export const aiInteractions = pgTable("ai_interactions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Define relations
 export const aiInteractionsRelations = relations(aiInteractions, ({ one }) => ({
   parent: one(aiInteractions, {
     fields: [aiInteractions.parentId],

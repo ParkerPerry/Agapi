@@ -360,9 +360,9 @@ export default function AiFollowersPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Delete AI Follower</AlertDialogTitle>
+                                <AlertDialogTitle>Deactivate AI Follower</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete {follower.name}? This action cannot be undone.
+                                  Are you sure you want to deactivate {follower.name}? They will no longer participate in conversations, but their previous interactions will remain intact.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
