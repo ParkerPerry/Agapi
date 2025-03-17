@@ -599,23 +599,30 @@ export class DatabaseStorage implements IStorage {
     console.log("[Storage] Getting circle members for circle:", circleId);
 
     try {
-      // First try with a simple query without joins
+      // Start with a basic query first
       const members = await db
-        .select({
-          id: circleMembers.id,
-          circleId: circleMembers.circleId,
-          userId: circleMembers.userId,
-          role: circleMembers.role,
-          joinedAt: circleMembers.joinedAt,
-          user: users
-        })
+        .select()
         .from(circleMembers)
-        .leftJoin(users, eq(circleMembers.userId, users.id))
         .where(eq(circleMembers.circleId, circleId))
         .orderBy(asc(circleMembers.joinedAt));
 
-      console.log("[Storage] Successfully retrieved circle members:", members.length);
-      return members;
+      // Then join with users table
+      const membersWithUsers = await Promise.all(
+        members.map(async (member) => {
+          const [user] = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, member.userId));
+
+          return {
+            ...member,
+            user: user || null
+          };
+        })
+      );
+
+      console.log("[Storage] Successfully retrieved circle members:", membersWithUsers.length);
+      return membersWithUsers;
     } catch (error) {
       console.error("[Storage] Error getting circle members:", error);
       // Return empty array as fallback instead of throwing
