@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
 import AiFollowersPage from "@/pages/ai-followers-page";
+import CirclesPage from "@/pages/circles-page";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { createWebSocket, closeWebSocket } from "@/lib/websocket";
@@ -16,6 +17,7 @@ function Router() {
     <Switch>
       <ProtectedRoute path="/" component={HomePage} />
       <ProtectedRoute path="/ai-followers" component={AiFollowersPage} />
+      <ProtectedRoute path="/circles" component={CirclesPage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>

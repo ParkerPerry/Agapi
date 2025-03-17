@@ -1,39 +1,48 @@
-import { InsertUser, User, Post, AiFollower, AiInteraction, PendingResponse } from "@shared/schema";
-import { users, posts, aiFollowers, aiInteractions, pendingResponses } from "@shared/schema";
-import { eq, and } from "drizzle-orm";
+import { 
+  InsertUser, User, Post, AiFollower, AiInteraction, PendingResponse,
+  Circle, InsertCircle, CircleFollower, InsertCircleFollower
+} from "@shared/schema";
+import { 
+  users, posts, aiFollowers, aiInteractions, pendingResponses,
+  circles, circleFollowers
+} from "@shared/schema";
+import { eq, and, asc } from "drizzle-orm";
 import { db } from "./db";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-
   createPost(userId: number, content: string): Promise<Post>;
   getPost(id: number): Promise<Post | undefined>;
   getUserPosts(userId: number): Promise<Post[]>;
-
   getAiFollowers(userId: number): Promise<AiFollower[]>;
   getAiFollower(id: number): Promise<AiFollower | undefined>;
   createAiFollower(userId: number, follower: Omit<AiFollower, "id" | "userId">): Promise<AiFollower>;
-
   createAiInteraction(interaction: Omit<AiInteraction, "id" | "createdAt">): Promise<AiInteraction>;
   getInteraction(id: number): Promise<AiInteraction | undefined>;
   getPostInteractions(postId: number): Promise<AiInteraction[]>;
-
-  // New methods for pending responses
   createPendingResponse(response: Omit<PendingResponse, "id" | "createdAt">): Promise<PendingResponse>;
   getPendingResponses(): Promise<PendingResponse[]>;
   markPendingResponseProcessed(id: number): Promise<void>;
-
-  updateAiFollower(
-    id: number,
-    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness">>
-  ): Promise<AiFollower>;
-
+  updateAiFollower(id: number, updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness">>): Promise<AiFollower>;
   deleteAiFollower(id: number): Promise<void>;
   deactivateAiFollower(id: number): Promise<AiFollower>;
   reactivateAiFollower(id: number): Promise<AiFollower>;
   getPostPendingResponses(postId: number): Promise<PendingResponse[]>;
+
+  createCircle(userId: number, circle: InsertCircle): Promise<Circle>;
+  getCircle(id: number): Promise<Circle | undefined>;
+  getUserCircles(userId: number): Promise<Circle[]>;
+  updateCircle(id: number, updates: Partial<InsertCircle>): Promise<Circle>;
+  deleteCircle(id: number): Promise<void>;
+  getDefaultCircle(userId: number): Promise<Circle>;
+  addFollowerToCircle(circleId: number, aiFollowerId: number): Promise<CircleFollower>;
+  removeFollowerFromCircle(circleId: number, aiFollowerId: number): Promise<void>;
+  getCircleFollowers(circleId: number): Promise<AiFollower[]>;
+  createPostInCircle(userId: number, circleId: number, content: string): Promise<Post>;
+  getCirclePosts(circleId: number): Promise<Post[]>;
+  movePostToCircle(postId: number, circleId: number): Promise<Post>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -356,6 +365,144 @@ export class DatabaseStorage implements IStorage {
       console.error("[Storage] Error getting post pending responses:", error);
       throw error;
     }
+  }
+
+  async createCircle(userId: number, circle: InsertCircle): Promise<Circle> {
+    const [newCircle] = (await db
+      .insert(circles)
+      .values({ ...circle, userId })
+      .returning()) as Circle[];
+    return newCircle;
+  }
+
+  async getCircle(id: number): Promise<Circle | undefined> {
+    const [circle] = await db.select().from(circles).where(eq(circles.id, id));
+    return circle;
+  }
+
+  async getUserCircles(userId: number): Promise<Circle[]> {
+    return await db
+      .select()
+      .from(circles)
+      .where(eq(circles.userId, userId))
+      .orderBy(asc(circles.createdAt));
+  }
+
+  async updateCircle(id: number, updates: Partial<InsertCircle>): Promise<Circle> {
+    const [updatedCircle] = (await db
+      .update(circles)
+      .set(updates)
+      .where(eq(circles.id, id))
+      .returning()) as Circle[];
+    return updatedCircle;
+  }
+
+  async deleteCircle(id: number): Promise<void> {
+    // First move all posts to the default circle
+    const [defaultCircle] = await db
+      .select()
+      .from(circles)
+      .where(and(
+        eq(circles.userId, (await this.getCircle(id))!.userId),
+        eq(circles.isDefault, true)
+      ));
+
+    await db
+      .update(posts)
+      .set({ circleId: defaultCircle.id })
+      .where(eq(posts.circleId, id));
+
+    // Remove all followers from the circle
+    await db
+      .delete(circleFollowers)
+      .where(eq(circleFollowers.circleId, id));
+
+    // Finally delete the circle
+    await db
+      .delete(circles)
+      .where(eq(circles.id, id));
+  }
+
+  async getDefaultCircle(userId: number): Promise<Circle> {
+    let [defaultCircle] = await db
+      .select()
+      .from(circles)
+      .where(and(
+        eq(circles.userId, userId),
+        eq(circles.isDefault, true)
+      ));
+
+    if (!defaultCircle) {
+      // Create default circle if it doesn't exist
+      [defaultCircle] = (await db
+        .insert(circles)
+        .values({
+          userId,
+          name: "Default Circle",
+          description: "Your default circle for all posts",
+          isDefault: true,
+        })
+        .returning()) as Circle[];
+    }
+
+    return defaultCircle;
+  }
+
+  async addFollowerToCircle(circleId: number, aiFollowerId: number): Promise<CircleFollower> {
+    const [follower] = (await db
+      .insert(circleFollowers)
+      .values({ circleId, aiFollowerId })
+      .returning()) as CircleFollower[];
+    return follower;
+  }
+
+  async removeFollowerFromCircle(circleId: number, aiFollowerId: number): Promise<void> {
+    await db
+      .delete(circleFollowers)
+      .where(and(
+        eq(circleFollowers.circleId, circleId),
+        eq(circleFollowers.aiFollowerId, aiFollowerId)
+      ));
+  }
+
+  async getCircleFollowers(circleId: number): Promise<AiFollower[]> {
+    const followers = await db
+      .select({
+        follower: aiFollowers,
+      })
+      .from(circleFollowers)
+      .innerJoin(
+        aiFollowers,
+        eq(circleFollowers.aiFollowerId, aiFollowers.id)
+      )
+      .where(eq(circleFollowers.circleId, circleId));
+
+    return followers.map(f => f.follower);
+  }
+
+  async createPostInCircle(userId: number, circleId: number, content: string): Promise<Post> {
+    const [post] = (await db
+      .insert(posts)
+      .values({ userId, circleId, content })
+      .returning()) as Post[];
+    return post;
+  }
+
+  async getCirclePosts(circleId: number): Promise<Post[]> {
+    return await db
+      .select()
+      .from(posts)
+      .where(eq(posts.circleId, circleId))
+      .orderBy(asc(posts.createdAt));
+  }
+
+  async movePostToCircle(postId: number, circleId: number): Promise<Post> {
+    const [updatedPost] = (await db
+      .update(posts)
+      .set({ circleId })
+      .where(eq(posts.id, postId))
+      .returning()) as Post[];
+    return updatedPost;
   }
 }
 

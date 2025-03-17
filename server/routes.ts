@@ -15,6 +15,240 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const scheduler = ResponseScheduler.getInstance();
   scheduler.start();
 
+  // New Circle Management Routes
+  app.get("/api/circles", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const circles = await storage.getUserCircles(req.user!.id);
+      res.json(circles);
+    } catch (error) {
+      console.error("Error getting circles:", error);
+      res.status(500).json({ message: "Failed to get circles" });
+    }
+  });
+
+  app.post("/api/circles", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const circle = await storage.createCircle(req.user!.id, req.body);
+      res.status(201).json(circle);
+    } catch (error) {
+      console.error("Error creating circle:", error);
+      res.status(500).json({ message: "Failed to create circle" });
+    }
+  });
+
+  app.patch("/api/circles/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      // Verify circle ownership
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      const updatedCircle = await storage.updateCircle(circleId, req.body);
+      res.json(updatedCircle);
+    } catch (error) {
+      console.error("Error updating circle:", error);
+      res.status(500).json({ message: "Failed to update circle" });
+    }
+  });
+
+  app.delete("/api/circles/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      // Verify circle ownership
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      if (circle.isDefault) {
+        return res.status(400).json({ message: "Cannot delete default circle" });
+      }
+
+      await storage.deleteCircle(circleId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error deleting circle:", error);
+      res.status(500).json({ message: "Failed to delete circle" });
+    }
+  });
+
+  // Circle Followers Management
+  app.post("/api/circles/:id/followers", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    const { aiFollowerId } = req.body;
+
+    try {
+      // Verify circle ownership
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      // Verify AI follower ownership
+      const follower = await storage.getAiFollower(aiFollowerId);
+      if (!follower || follower.userId !== req.user!.id) {
+        return res.status(404).json({ message: "AI follower not found" });
+      }
+
+      const circleFollower = await storage.addFollowerToCircle(circleId, aiFollowerId);
+      res.status(201).json(circleFollower);
+    } catch (error) {
+      console.error("Error adding follower to circle:", error);
+      res.status(500).json({ message: "Failed to add follower to circle" });
+    }
+  });
+
+  app.delete("/api/circles/:id/followers/:followerId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    const aiFollowerId = parseInt(req.params.followerId);
+
+    try {
+      // Verify circle ownership
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      await storage.removeFollowerFromCircle(circleId, aiFollowerId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error removing follower from circle:", error);
+      res.status(500).json({ message: "Failed to remove follower from circle" });
+    }
+  });
+
+  app.get("/api/circles/:id/followers", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      // Verify circle ownership
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      const followers = await storage.getCircleFollowers(circleId);
+      res.json(followers);
+    } catch (error) {
+      console.error("Error getting circle followers:", error);
+      res.status(500).json({ message: "Failed to get circle followers" });
+    }
+  });
+
+  // Update the existing post creation endpoint to support circles
+  app.post("/api/posts", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const circleId = req.body.circleId || (await storage.getDefaultCircle(req.user!.id)).id;
+      const post = await storage.createPostInCircle(req.user!.id, circleId, req.body.content);
+
+      // Get AI followers for the specific circle
+      const followers = await storage.getCircleFollowers(circleId);
+
+      // Schedule potential responses for each follower in the circle
+      for (const follower of followers) {
+        await scheduler.scheduleResponse(post.id, follower);
+      }
+
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Error creating post:", error);
+      res.status(500).json({ message: "Failed to create post" });
+    }
+  });
+
+  // Get posts for a specific circle
+  app.get("/api/circles/:id/posts", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      // Verify circle ownership
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      const posts = await storage.getCirclePosts(circleId);
+
+      // Get threaded interactions for each post
+      const postsWithData = await Promise.all(
+        posts.map(async (post) => {
+          const threadedInteractions = await ThreadManager.getThreadedInteractions(post.id);
+          const pendingResponses = await storage.getPostPendingResponses(post.id);
+
+          // Get AI follower info for each pending response
+          const pendingFollowers = await Promise.all(
+            pendingResponses.map(async (response) => {
+              const follower = await storage.getAiFollower(response.aiFollowerId);
+              return follower ? {
+                id: follower.id,
+                name: follower.name,
+                avatarUrl: follower.avatarUrl,
+                scheduledFor: response.scheduledFor
+              } : null;
+            })
+          );
+
+          return {
+            ...post,
+            interactions: threadedInteractions,
+            pendingResponses: pendingFollowers.filter(Boolean)
+          };
+        })
+      );
+
+      res.json(postsWithData);
+    } catch (error) {
+      console.error("Error getting circle posts:", error);
+      res.status(500).json({ message: "Failed to get circle posts" });
+    }
+  });
+
+  // Move a post to a different circle
+  app.patch("/api/posts/:id/move", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const postId = parseInt(req.params.id);
+    const { circleId } = req.body;
+
+    try {
+      // Verify post ownership
+      const post = await storage.getPost(postId);
+      if (!post || post.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+
+      // Verify circle ownership
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      const updatedPost = await storage.movePostToCircle(postId, circleId);
+      res.json(updatedPost);
+    } catch (error) {
+      console.error("Error moving post:", error);
+      res.status(500).json({ message: "Failed to move post" });
+    }
+  });
+
   app.get("/api/posts/:userId", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
@@ -149,12 +383,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      const post = await storage.createPost(req.user!.id, req.body.content);
+      const circleId = req.body.circleId || (await storage.getDefaultCircle(req.user!.id)).id;
+      const post = await storage.createPostInCircle(req.user!.id, circleId, req.body.content);
 
-      // Get AI followers for the user
-      const followers = await storage.getAiFollowers(req.user!.id);
+      // Get AI followers for the specific circle
+      const followers = await storage.getCircleFollowers(circleId);
 
-      // Schedule potential responses for each follower
+      // Schedule potential responses for each follower in the circle
       for (const follower of followers) {
         await scheduler.scheduleResponse(post.id, follower);
       }
