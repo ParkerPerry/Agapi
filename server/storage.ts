@@ -247,9 +247,24 @@ export class DatabaseStorage implements IStorage {
 
   async deleteAiFollower(id: number): Promise<void> {
     try {
+      console.log("[Storage] Deleting AI follower and related interactions:", id);
+
+      // First delete all interactions by this follower
+      await db
+        .delete(aiInteractions)
+        .where(eq(aiInteractions.aiFollowerId, id));
+
+      // Then delete all pending responses
+      await db
+        .delete(pendingResponses)
+        .where(eq(pendingResponses.aiFollowerId, id));
+
+      // Finally delete the follower
       await db
         .delete(aiFollowers)
         .where(eq(aiFollowers.id, id));
+
+      console.log("[Storage] Successfully deleted AI follower and related data");
     } catch (error) {
       console.error("[Storage] Error deleting AI follower:", error);
       throw error;
