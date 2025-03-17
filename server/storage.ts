@@ -433,16 +433,39 @@ export class DatabaseStorage implements IStorage {
       ));
 
     if (!defaultCircle) {
-      // Create default circle if it doesn't exist
+      // Create home circle if it doesn't exist
       [defaultCircle] = (await db
         .insert(circles)
         .values({
           userId,
-          name: "Default Circle",
-          description: "Your default circle for all posts",
+          name: "Home",
+          description: "Your personal space for sharing and connecting",
           isDefault: true,
+          icon: "🏠",
+          color: "#2563eb", // Blue color
         })
         .returning()) as Circle[];
+
+      // Create Tom as the default AI follower
+      const tom = await this.createAiFollower(userId, {
+        name: "Tom",
+        personality: "Friendly and helpful MySpace creator and your first AI friend",
+        avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tom",  // Using DiceBear for avatar
+        background: "Created MyFace, loves technology and connecting people",
+        interests: ["technology", "social networks", "music", "coding"],
+        communicationStyle: "Casual and friendly",
+        interactionPreferences: {
+          likes: ["helping new users", "customizing profiles", "building communities"],
+          dislikes: ["spam", "toxic behavior"]
+        },
+        responsiveness: "active",
+        responseDelay: { min: 1, max: 30 },
+        responseChance: 90,
+        active: true
+      });
+
+      // Add Tom to the home circle
+      await this.addFollowerToCircle(defaultCircle.id, tom.id);
     }
 
     return defaultCircle;

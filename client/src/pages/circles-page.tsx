@@ -81,8 +81,8 @@ export default function CirclesPage() {
     defaultValues: {
       name: "",
       description: "",
-      icon: "",
-      color: "",
+      icon: "🔵",
+      color: "#3b82f6",
     },
   });
 
@@ -203,7 +203,7 @@ export default function CirclesPage() {
                                   className="w-full text-left font-normal"
                                   onClick={() => setShowEmojiPicker(true)}
                                 >
-                                  {field.value || "Select an emoji"}
+                                  {field.value || "🔵"}
                                 </Button>
                                 <Dialog open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
                                   <DialogContent className="p-0">
@@ -232,6 +232,7 @@ export default function CirclesPage() {
                           <FormControl>
                             <Textarea
                               {...field}
+                              value={field.value || ""}
                               placeholder="Describe the purpose of this circle"
                             />
                           </FormControl>
@@ -245,7 +246,7 @@ export default function CirclesPage() {
                         <FormItem>
                           <FormLabel>Color</FormLabel>
                           <FormControl>
-                            <Input {...field} type="color" className="h-10 px-2" />
+                            <Input {...field} value={field.value || "#3b82f6"} type="color" className="h-10 px-2" />
                           </FormControl>
                           <FormDescription>
                             Choose a color to represent this circle
