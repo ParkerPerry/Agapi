@@ -20,29 +20,37 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
 
   const { data: circles } = useQuery({
     queryKey: ["/api/circles"],
-    enabled: !!user,
+    enabled: !!user && !defaultCircleId, // Only fetch circles if not in a specific circle view
   });
 
   const form = useForm({
     resolver: zodResolver(insertPostSchema),
     defaultValues: {
       content: "",
-      circleId: defaultCircleId?.toString() || "",
+      circleId: defaultCircleId ? defaultCircleId.toString() : "",
     },
   });
 
   const createPostMutation = useMutation({
     mutationFn: async (data: { content: string; circleId: string }) => {
+      const circleId = defaultCircleId || parseInt(data.circleId);
+      if (isNaN(circleId)) {
+        throw new Error("Invalid circle ID");
+      }
+
       const res = await apiRequest("POST", "/api/posts", {
         content: data.content,
-        circleId: parseInt(data.circleId),
+        circleId,
       });
       return res.json();
     },
     onSuccess: (_, variables) => {
-      // Invalidate the posts query for the specific circle
-      queryClient.invalidateQueries({ queryKey: [`/api/circles/${variables.circleId}/posts`] });
-      form.reset();
+      const circleId = defaultCircleId || parseInt(variables.circleId);
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/posts`] });
+      form.reset({
+        content: "",
+        circleId: defaultCircleId ? defaultCircleId.toString() : "",
+      });
     },
   });
 
@@ -68,33 +76,39 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
             />
           </CardContent>
           <CardFooter className="flex justify-between items-center">
-            <FormField
-              control={form.control}
-              name="circleId"
-              render={({ field }) => (
-                <FormItem className="w-[200px]">
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select circle" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {circles?.map((circle) => (
-                        <SelectItem key={circle.id} value={circle.id.toString()}>
-                          <span className="flex items-center gap-2">
-                            <span>{circle.icon}</span>
-                            <span>{circle.name}</span>
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-            <Button type="submit" disabled={createPostMutation.isPending}>
+            {!defaultCircleId && (
+              <FormField
+                control={form.control}
+                name="circleId"
+                render={({ field }) => (
+                  <FormItem className="w-[200px]">
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select circle" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {circles?.map((circle) => (
+                          <SelectItem key={circle.id} value={circle.id.toString()}>
+                            <span className="flex items-center gap-2">
+                              <span>{circle.icon}</span>
+                              <span>{circle.name}</span>
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            )}
+            <Button 
+              type="submit" 
+              className={!defaultCircleId ? "" : "ml-auto"}
+              disabled={createPostMutation.isPending}
+            >
               {createPostMutation.isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}

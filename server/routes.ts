@@ -19,7 +19,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/circles/:id", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
+    // Handle 'default' as a special case
+    if (req.params.id === 'default') {
+      try {
+        const defaultCircle = await storage.getDefaultCircle(req.user!.id);
+        res.json(defaultCircle);
+      } catch (error) {
+        console.error("Error getting default circle:", error);
+        res.status(500).json({ message: "Failed to get default circle" });
+      }
+      return;
+    }
+
     const circleId = parseInt(req.params.id);
+    if (isNaN(circleId)) {
+      return res.status(400).json({ message: "Invalid circle ID" });
+    }
+
     try {
       const circle = await storage.getCircle(circleId);
       if (!circle || circle.userId !== req.user!.id) {
@@ -32,18 +48,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Add before other circle routes
-  app.get("/api/circles/default", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
-    try {
-      const defaultCircle = await storage.getDefaultCircle(req.user!.id);
-      res.json(defaultCircle);
-    } catch (error) {
-      console.error("Error getting default circle:", error);
-      res.status(500).json({ message: "Failed to get default circle" });
-    }
-  });
 
   // New Circle Management Routes
   app.get("/api/circles", async (req, res) => {
