@@ -33,27 +33,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           console.log("[Routes] Pending responses for post", post.id, ":", pendingResponses);
 
-          // Get AI follower info for each pending response, ensuring uniqueness by follower ID
-          const followerMap = new Map();
-          await Promise.all(
+          // Get AI follower info for each pending response
+          const pendingFollowers = await Promise.all(
             pendingResponses.map(async (response) => {
-              if (!followerMap.has(response.aiFollowerId)) {
-                const follower = await storage.getAiFollower(response.aiFollowerId);
-                console.log("[Routes] Found follower for response:", follower?.name);
-                if (follower) {
-                  followerMap.set(response.aiFollowerId, {
-                    id: follower.id,
-                    name: follower.name,
-                    avatarUrl: follower.avatarUrl,
-                    scheduledFor: response.scheduledFor
-                  });
-                }
-              }
+              const follower = await storage.getAiFollower(response.aiFollowerId);
+              console.log("[Routes] Found follower for response:", follower?.name);
+              return follower ? {
+                id: follower.id,
+                name: follower.name,
+                avatarUrl: follower.avatarUrl,
+                scheduledFor: response.scheduledFor
+              } : null;
             })
           );
 
-          // Convert map to array and sort by scheduled time
-          const validPendingFollowers = Array.from(followerMap.values())
+          // Filter out null values and sort by scheduled time
+          const validPendingFollowers = pendingFollowers
+            .filter((f): f is NonNullable<typeof f> => f !== null)
             .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime());
 
           console.log("[Routes] Valid pending followers for post", post.id, ":", validPendingFollowers);
