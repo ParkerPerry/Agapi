@@ -5,8 +5,6 @@ import { PostCard } from "@/components/post-card";
 import { useQuery } from "@tanstack/react-query";
 import { Post, Circle } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useCallback } from "react";
-import { createWebSocket, subscribeToWebSocket } from "@/lib/websocket";
 import { TourProvider } from "@/components/tour/tour-context";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -24,32 +22,10 @@ export default function HomePage() {
   });
 
   // Get posts for the circle
-  const { data: posts, isLoading: isLoadingPosts, refetch } = useQuery<(Post & { interactions: any[] })[]>({
+  const { data: posts, isLoading: isLoadingPosts } = useQuery<(Post & { interactions: any[] })[]>({
     queryKey: [`/api/circles/${circle?.id}/posts`],
     enabled: !!circle,
   });
-
-  // Handle real-time updates
-  const handleWebSocketMessage = useCallback((data: any) => {
-    if (data.type === 'thread-update' || data.type === 'post-update') {
-      refetch();
-    }
-  }, [refetch]);
-
-  // Initialize WebSocket connection
-  useEffect(() => {
-    if (user) {
-      const ws = createWebSocket();
-      const unsubscribe = subscribeToWebSocket('*', handleWebSocketMessage);
-
-      return () => {
-        unsubscribe();
-        if (ws) {
-          ws.close();
-        }
-      };
-    }
-  }, [user, handleWebSocketMessage]);
 
   const isLoading = isLoadingCircle || isLoadingPosts;
 

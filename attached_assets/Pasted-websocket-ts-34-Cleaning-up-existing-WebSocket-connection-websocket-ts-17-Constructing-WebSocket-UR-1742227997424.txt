@@ -1,0 +1,93 @@
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection
+websocket.ts:39 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws' failed: 
+createWebSocket @ websocket.ts:39
+(anonymous) @ websocket.ts:114
+websocket.ts:122 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+socket.onerror @ websocket.ts:122
+websocket.ts:96 WebSocket connection closed: 1006 
+websocket.ts:107 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Cleaning up existing WebSocket connection
+websocket.ts:17 Constructing WebSocket URL: {protocol: 'wss:', hostname: 'a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev', port: '5000', finalUrl: 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev:5000/ws'}
+websocket.ts:40 Creating new WebSocket connection

@@ -4,53 +4,39 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPostSchema } from "@shared/schema";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface PostFormProps {
   defaultCircleId?: number;
 }
 
 export function PostForm({ defaultCircleId }: PostFormProps) {
-  const { user } = useAuth();
-
-  const { data: circles } = useQuery({
-    queryKey: ["/api/circles"],
-    enabled: !!user && !defaultCircleId, // Only fetch circles if not in a specific circle view
-  });
-
   const form = useForm({
     resolver: zodResolver(insertPostSchema),
     defaultValues: {
       content: "",
-      circleId: defaultCircleId ? defaultCircleId.toString() : "",
     },
   });
 
   const createPostMutation = useMutation({
-    mutationFn: async (data: { content: string; circleId: string }) => {
-      const circleId = defaultCircleId || parseInt(data.circleId);
-      if (isNaN(circleId)) {
-        throw new Error("Invalid circle ID");
+    mutationFn: async (data: { content: string }) => {
+      if (!defaultCircleId) {
+        throw new Error("No circle selected");
       }
 
       const res = await apiRequest("POST", "/api/posts", {
         content: data.content,
-        circleId,
+        circleId: defaultCircleId,
       });
       return res.json();
     },
-    onSuccess: (_, variables) => {
-      const circleId = defaultCircleId || parseInt(variables.circleId);
-      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/posts`] });
-      form.reset({
-        content: "",
-        circleId: defaultCircleId ? defaultCircleId.toString() : "",
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${defaultCircleId}/posts`] });
+      form.reset({ content: "" });
     },
   });
 
@@ -75,38 +61,9 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
               )}
             />
           </CardContent>
-          <CardFooter className="flex justify-between items-center">
-            {!defaultCircleId && (
-              <FormField
-                control={form.control}
-                name="circleId"
-                render={({ field }) => (
-                  <FormItem className="w-[200px]">
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select circle" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {circles?.map((circle) => (
-                          <SelectItem key={circle.id} value={circle.id.toString()}>
-                            <span className="flex items-center gap-2">
-                              <span>{circle.icon}</span>
-                              <span>{circle.name}</span>
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-            )}
+          <CardFooter className="flex justify-end">
             <Button 
-              type="submit" 
-              className={!defaultCircleId ? "" : "ml-auto"}
+              type="submit"
               disabled={createPostMutation.isPending}
             >
               {createPostMutation.isPending ? (
