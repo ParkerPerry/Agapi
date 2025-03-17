@@ -33,6 +33,7 @@ export interface IStorage {
   deleteAiFollower(id: number): Promise<void>;
   deactivateAiFollower(id: number): Promise<AiFollower>;
   reactivateAiFollower(id: number): Promise<AiFollower>;
+  getPostPendingResponses(postId: number): Promise<PendingResponse[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -329,6 +330,24 @@ export class DatabaseStorage implements IStorage {
       return updatedFollower;
     } catch (error) {
       console.error("[Storage] Error reactivating AI follower:", error);
+      throw error;
+    }
+  }
+  async getPostPendingResponses(postId: number): Promise<PendingResponse[]> {
+    console.log("[Storage] Getting pending responses for post:", postId);
+
+    try {
+      const responses = await db
+        .select()
+        .from(pendingResponses)
+        .where(eq(pendingResponses.postId, postId))
+        .where(eq(pendingResponses.processed, false))
+        .orderBy(pendingResponses.scheduledFor);
+
+      console.log("[Storage] Found pending responses:", responses.length);
+      return responses;
+    } catch (error) {
+      console.error("[Storage] Error getting post pending responses:", error);
       throw error;
     }
   }

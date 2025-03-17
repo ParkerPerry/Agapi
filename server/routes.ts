@@ -20,18 +20,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const posts = await storage.getUserPosts(parseInt(req.params.userId));
 
-      // Get threaded interactions for each post
-      const postsWithInteractions = await Promise.all(
+      // Get threaded interactions and pending responses for each post
+      const postsWithData = await Promise.all(
         posts.map(async (post) => {
-          const threadedInteractions = await ThreadManager.getThreadedInteractions(post.id);
+          const [threadedInteractions, pendingResponses] = await Promise.all([
+            ThreadManager.getThreadedInteractions(post.id),
+            storage.getPostPendingResponses(post.id)
+          ]);
+
+          // Get AI follower info for each pending response
+          const pendingFollowers = await Promise.all(
+            pendingResponses.map(async (response) => {
+              const follower = await storage.getAiFollower(response.aiFollowerId);
+              return follower ? {
+                id: follower.id,
+                name: follower.name,
+                avatarUrl: follower.avatarUrl,
+                scheduledFor: response.scheduledFor
+              } : null;
+            })
+          );
+
+          // Filter out null values and sort by scheduled time
+          const validPendingFollowers = pendingFollowers
+            .filter((f): f is NonNullable<typeof f> => f !== null)
+            .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime());
+
           return {
             ...post,
-            interactions: threadedInteractions
+            interactions: threadedInteractions,
+            pendingResponses: validPendingFollowers
           };
         })
       );
 
-      res.json(postsWithInteractions);
+      res.json(postsWithData);
     } catch (error) {
       console.error("Error getting posts:", error);
       res.status(500).json({ message: "Failed to get posts" });
