@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Loader2, Plus, Pencil, Trash2, Users } from "lucide-react";
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -42,6 +44,8 @@ export default function CirclesPage() {
   const { toast } = useToast();
   const [editingCircle, setEditingCircle] = useState<Circle | null>(null);
   const [selectedCircle, setSelectedCircle] = useState<Circle | null>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false);
 
   if (!user) {
     return null;
@@ -88,6 +92,7 @@ export default function CirclesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
       form.reset();
+      setShowEmojiPicker(false);
       toast({
         title: "Circle created",
         description: "Your new circle has been created successfully.",
@@ -108,6 +113,7 @@ export default function CirclesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
       setEditingCircle(null);
+      setShowEditEmojiPicker(false);
       toast({
         title: "Circle updated",
         description: "Your circle has been updated successfully.",
@@ -188,7 +194,28 @@ export default function CirclesPage() {
                           <FormItem>
                             <FormLabel>Icon</FormLabel>
                             <FormControl>
-                              <Input {...field} placeholder="Enter emoji or icon" />
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  className="w-full text-left font-normal"
+                                  onClick={() => setShowEmojiPicker(true)}
+                                >
+                                  {field.value || "Select an emoji"}
+                                </Button>
+                                <Dialog open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
+                                  <DialogContent className="p-0">
+                                    <EmojiPicker
+                                      theme={Theme.AUTO}
+                                      onEmojiClick={(emoji) => {
+                                        field.onChange(emoji.emoji);
+                                        setShowEmojiPicker(false);
+                                      }}
+                                      width="100%"
+                                    />
+                                  </DialogContent>
+                                </Dialog>
+                              </div>
                             </FormControl>
                           </FormItem>
                         )}
@@ -427,7 +454,31 @@ export default function CirclesPage() {
                                             <FormItem>
                                               <FormLabel>Icon</FormLabel>
                                               <FormControl>
-                                                <Input {...field} />
+                                                <div className="flex items-center gap-2">
+                                                  <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="w-full text-left font-normal"
+                                                    onClick={() => setShowEditEmojiPicker(true)}
+                                                  >
+                                                    {field.value || "Select an emoji"}
+                                                  </Button>
+                                                  <Dialog
+                                                    open={showEditEmojiPicker}
+                                                    onOpenChange={setShowEditEmojiPicker}
+                                                  >
+                                                    <DialogContent className="p-0">
+                                                      <EmojiPicker
+                                                        theme={Theme.AUTO}
+                                                        onEmojiClick={(emoji) => {
+                                                          field.onChange(emoji.emoji);
+                                                          setShowEditEmojiPicker(false);
+                                                        }}
+                                                        width="100%"
+                                                      />
+                                                    </DialogContent>
+                                                  </Dialog>
+                                                </div>
                                               </FormControl>
                                             </FormItem>
                                           )}

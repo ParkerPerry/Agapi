@@ -10,30 +10,36 @@ import { useAuth } from "@/hooks/use-auth";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 
-export function PostForm() {
+interface PostFormProps {
+  defaultCircleId?: number;
+}
+
+export function PostForm({ defaultCircleId }: PostFormProps) {
   const { user } = useAuth();
-  
+
   const form = useForm({
     resolver: zodResolver(insertPostSchema),
     defaultValues: {
       content: "",
+      circleId: defaultCircleId,
     },
   });
 
   const createPostMutation = useMutation({
-    mutationFn: async (data: { content: string }) => {
+    mutationFn: async (data: { content: string; circleId?: number }) => {
       const res = await apiRequest("POST", "/api/posts", data);
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
+      // Invalidate the posts query for the specific circle
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${defaultCircleId}/posts`] });
       form.reset();
     },
   });
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => createPostMutation.mutate(data))}>
+      <form onSubmit={form.handleSubmit((data) => createPostMutation.mutate({ ...data, circleId: defaultCircleId }))}>
         <Card>
           <CardContent className="pt-6">
             <FormField
