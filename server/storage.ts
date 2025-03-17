@@ -247,17 +247,42 @@ export class DatabaseStorage implements IStorage {
 
   async deleteAiFollower(id: number): Promise<void> {
     try {
-      console.log("[Storage] Deleting AI follower and related interactions:", id);
+      console.log("[Storage] Starting deletion of AI follower and related interactions:", id);
 
-      // First delete all interactions by this follower
+      // First get all interactions by this follower
+      const followerInteractions = await db
+        .select()
+        .from(aiInteractions)
+        .where(eq(aiInteractions.aiFollowerId, id));
+
+      console.log("[Storage] Found interactions to delete:", followerInteractions.length);
+
+      // Delete child interactions (replies) first
+      await db
+        .delete(aiInteractions)
+        .where(
+          eq(aiInteractions.parentId, 
+            db.select({ id: aiInteractions.id })
+              .from(aiInteractions)
+              .where(eq(aiInteractions.aiFollowerId, id))
+          )
+        );
+
+      console.log("[Storage] Deleted child interactions");
+
+      // Then delete the follower's own interactions
       await db
         .delete(aiInteractions)
         .where(eq(aiInteractions.aiFollowerId, id));
 
-      // Then delete all pending responses
+      console.log("[Storage] Deleted follower's interactions");
+
+      // Delete pending responses
       await db
         .delete(pendingResponses)
         .where(eq(pendingResponses.aiFollowerId, id));
+
+      console.log("[Storage] Deleted pending responses");
 
       // Finally delete the follower
       await db
