@@ -18,16 +18,20 @@ export class ResponseScheduler {
     return ResponseScheduler.instance;
   }
 
-  /**
-   * Calculate how relevant a post is to an AI follower's interests
-   */
   private async calculateRelevanceScore(postContent: string, follower: AiFollower): Promise<number> {
     try {
+      console.log("[ResponseScheduler] Starting relevance calculation for:", {
+        followerId: follower.id,
+        followerName: follower.name,
+        postContentPreview: postContent.substring(0, 100)
+      });
+
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
       // Build a comprehensive prompt that compares the post content with follower's profile
       const systemPrompt = `You are an AI that analyzes content relevance. 
         Your task is to determine how relevant a social media post is to a specific follower's profile.
+        You must return a high relevance score (0.8-1.0) if the post content strongly matches the follower's expertise.
 
         Follower Profile:
         - Interests: ${follower.interests?.join(', ') || 'None specified'}
@@ -37,9 +41,13 @@ export class ResponseScheduler {
         - Dislikes: ${follower.interactionPreferences?.dislikes?.join(', ') || 'None specified'}
 
         Analyze the post content and calculate a relevance score based on:
-        1. Topic alignment with interests (40% weight)
-        2. Emotional/personality match (30% weight)
-        3. Communication style compatibility (30% weight)
+        1. Topic alignment with interests (50% weight)
+        2. Emotional/personality match (25% weight)
+        3. Communication style compatibility (25% weight)
+
+        A score above 0.8 means the follower should definitely respond.
+        A score between 0.5-0.8 means the follower might be interested.
+        A score below 0.5 means the follower probably won't engage.
 
         Return a JSON object with:
         {
@@ -73,8 +81,8 @@ export class ResponseScheduler {
 
       const result = JSON.parse(response.choices[0].message.content);
 
-      // Log the reasoning for debugging
-      console.log("[ResponseScheduler] Relevance analysis:", {
+      // Detailed logging of the analysis
+      console.log("[ResponseScheduler] Relevance analysis complete:", {
         follower: follower.name,
         postContent: postContent.substring(0, 50) + "...",
         score: result.relevance,
@@ -84,15 +92,23 @@ export class ResponseScheduler {
       return result.relevance;
     } catch (error) {
       console.error("[ResponseScheduler] Error calculating relevance:", error);
+      // Log the full error details
+      if (error instanceof Error) {
+        console.error("[ResponseScheduler] Error details:", {
+          message: error.message,
+          stack: error.stack,
+          follower: follower.name,
+          postContent: postContent.substring(0, 50)
+        });
+      }
       return 0.5; // Default to neutral on error
     }
   }
 
-  /**
-   * Schedule a potential response from an AI follower
-   */
   public async scheduleResponse(postId: number, follower: AiFollower): Promise<void> {
     try {
+      console.log(`[ResponseScheduler] Starting response scheduling for post ${postId} and follower ${follower.id}`);
+
       // Get post content for relevance analysis
       const post = await storage.getPost(postId);
       if (!post) {
@@ -104,10 +120,9 @@ export class ResponseScheduler {
       const relevanceScore = await this.calculateRelevanceScore(post.content, follower);
       console.log(`[ResponseScheduler] Post ${postId} relevance for follower ${follower.id}: ${relevanceScore}`);
 
-      // Combine base response chance with relevance score
-      // High relevance increases chance significantly, low relevance decreases it
-      const baseChance = 30; // Base 30% chance to respond
-      const relevanceMultiplier = 2.5; // Multiply relevance impact
+      // Higher base chance (50%) and stronger relevance impact
+      const baseChance = 50; // Base 50% chance to respond
+      const relevanceMultiplier = 3.0; // Stronger relevance impact
       const adjustedChance = baseChance * (relevanceScore * relevanceMultiplier);
 
       // Log the decision making process
@@ -116,12 +131,20 @@ export class ResponseScheduler {
         followerName: follower.name,
         baseChance,
         relevanceScore,
-        adjustedChance: Math.min(adjustedChance, 100)
+        finalChance: Math.min(adjustedChance, 100),
+        expertise: follower.interests,
+        personality: follower.personality
       });
 
       // Determine if follower will respond based on adjusted chance
-      if (Math.random() * 100 > Math.min(adjustedChance, 100)) {
-        console.log(`[ResponseScheduler] Follower ${follower.id} chose not to respond to post ${postId}`);
+      const randomChance = Math.random() * 100;
+      const finalChance = Math.min(adjustedChance, 100);
+
+      if (randomChance > finalChance) {
+        console.log(`[ResponseScheduler] Follower ${follower.id} chose not to respond:`, {
+          randomValue: randomChance,
+          requiredChance: finalChance
+        });
         return;
       }
 
@@ -136,9 +159,23 @@ export class ResponseScheduler {
         processed: false,
       });
 
-      console.log(`[ResponseScheduler] Scheduled response for follower ${follower.id} at ${scheduledTime}`);
+      console.log(`[ResponseScheduler] Successfully scheduled response:`, {
+        followerId: follower.id,
+        postId,
+        scheduledTime,
+        delay
+      });
     } catch (error) {
       console.error(`[ResponseScheduler] Error scheduling response:`, error);
+      // Log detailed error information
+      if (error instanceof Error) {
+        console.error("[ResponseScheduler] Error details:", {
+          message: error.message,
+          stack: error.stack,
+          followerId: follower.id,
+          postId
+        });
+      }
     }
   }
 
