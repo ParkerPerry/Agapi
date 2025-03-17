@@ -27,7 +27,7 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
     resolver: zodResolver(insertPostSchema),
     defaultValues: {
       content: "",
-      circleId: defaultCircleId?.toString(),
+      circleId: defaultCircleId?.toString() || "",
     },
   });
 
