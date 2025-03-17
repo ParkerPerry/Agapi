@@ -24,37 +24,63 @@ export class ResponseScheduler {
   private async calculateRelevanceScore(postContent: string, follower: AiFollower): Promise<number> {
     try {
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+      // Build a comprehensive prompt that compares the post content with follower's profile
+      const systemPrompt = `You are an AI that analyzes content relevance. 
+        Your task is to determine how relevant a social media post is to a specific follower's profile.
+
+        Follower Profile:
+        - Interests: ${follower.interests?.join(', ') || 'None specified'}
+        - Personality: ${follower.personality}
+        - Communication style: ${follower.communicationStyle || 'Not specified'}
+        - Likes: ${follower.interactionPreferences?.likes?.join(', ') || 'None specified'}
+        - Dislikes: ${follower.interactionPreferences?.dislikes?.join(', ') || 'None specified'}
+
+        Analyze the post content and calculate a relevance score based on:
+        1. Topic alignment with interests (40% weight)
+        2. Emotional/personality match (30% weight)
+        3. Communication style compatibility (30% weight)
+
+        Return a JSON object with:
+        {
+          "relevance": number between 0 and 1,
+          "reasoning": {
+            "topicMatch": string explaining topic relevance,
+            "personalityMatch": string explaining personality alignment,
+            "styleMatch": string explaining communication style fit
+          }
+        }`;
+
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
             role: "system",
-            content: `You are an AI that analyzes content relevance. The response must be a number between 0 and 1.
-              Consider these factors:
-              - User interests: ${follower.interests?.join(', ')}
-              - Likes: ${follower.interactionPreferences?.likes?.join(', ')}
-              - Dislikes: ${follower.interactionPreferences?.dislikes?.join(', ')}
-
-              Return a JSON object with format: {"relevance": number}
-              Where:
-              0 = Completely irrelevant/disliked
-              1 = Highly relevant/liked
-
-              Base the score on how well the content matches the interests and preferences.`
+            content: systemPrompt
           },
           {
             role: "user",
-            content: `Analyze this content: "${postContent}"`
+            content: `Analyze this post content: "${postContent}"`
           }
         ],
         response_format: { type: "json_object" }
       });
 
       if (!response.choices[0].message.content) {
+        console.warn("[ResponseScheduler] No content in relevance analysis response");
         return 0.5; // Default to neutral if no response
       }
 
       const result = JSON.parse(response.choices[0].message.content);
+
+      // Log the reasoning for debugging
+      console.log("[ResponseScheduler] Relevance analysis:", {
+        follower: follower.name,
+        postContent: postContent.substring(0, 50) + "...",
+        score: result.relevance,
+        reasoning: result.reasoning
+      });
+
       return result.relevance;
     } catch (error) {
       console.error("[ResponseScheduler] Error calculating relevance:", error);
@@ -79,12 +105,23 @@ export class ResponseScheduler {
       console.log(`[ResponseScheduler] Post ${postId} relevance for follower ${follower.id}: ${relevanceScore}`);
 
       // Combine base response chance with relevance score
-      // High relevance can increase chance, low relevance decreases it
-      const adjustedChance = follower.responseChance * relevanceScore;
+      // High relevance increases chance significantly, low relevance decreases it
+      const baseChance = 30; // Base 30% chance to respond
+      const relevanceMultiplier = 2.5; // Multiply relevance impact
+      const adjustedChance = baseChance * (relevanceScore * relevanceMultiplier);
+
+      // Log the decision making process
+      console.log(`[ResponseScheduler] Response probability calculation:`, {
+        followerId: follower.id,
+        followerName: follower.name,
+        baseChance,
+        relevanceScore,
+        adjustedChance: Math.min(adjustedChance, 100)
+      });
 
       // Determine if follower will respond based on adjusted chance
-      if (Math.random() * 100 > adjustedChance) {
-        console.log(`[ResponseScheduler] Follower ${follower.id} chose not to respond to post ${postId} (relevance: ${relevanceScore}, chance: ${adjustedChance}%)`);
+      if (Math.random() * 100 > Math.min(adjustedChance, 100)) {
+        console.log(`[ResponseScheduler] Follower ${follower.id} chose not to respond to post ${postId}`);
         return;
       }
 
@@ -106,8 +143,16 @@ export class ResponseScheduler {
   }
 
   private calculateDelay(follower: AiFollower): number {
-    const { min, max } = follower.responseDelay;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    // Define delay ranges based on responsiveness level
+    const delays = {
+      instant: { min: 1, max: 5 },
+      active: { min: 5, max: 60 },
+      casual: { min: 60, max: 480 },
+      zen: { min: 480, max: 1440 }
+    };
+
+    const range = delays[follower.responsiveness] || delays.active;
+    return Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
   }
 
   /**
@@ -119,6 +164,7 @@ export class ResponseScheduler {
     this.intervalId = setInterval(async () => {
       try {
         const pendingResponses = await storage.getPendingResponses();
+        console.log(`[ResponseScheduler] Processing ${pendingResponses.length} pending responses`);
 
         for (const response of pendingResponses) {
           if (this.shouldProcess(response)) {
@@ -144,11 +190,13 @@ export class ResponseScheduler {
 
       if (!post || !follower) {
         console.error(`[ResponseScheduler] Missing post or follower for response ${response.id}`);
+        await storage.markPendingResponseProcessed(response.id);
         return;
       }
 
       const aiResponse = await generateAIResponse(post.content, follower.personality);
 
+      // Only create interaction if confidence is high enough
       if (aiResponse.confidence > 0.7) {
         await storage.createAiInteraction({
           postId: post.id,
@@ -159,7 +207,9 @@ export class ResponseScheduler {
           parentId: null,
         });
 
-        console.log(`[ResponseScheduler] Created delayed response for follower ${follower.id} on post ${post.id}`);
+        console.log(`[ResponseScheduler] Created response for follower ${follower.id} on post ${post.id}`);
+      } else {
+        console.log(`[ResponseScheduler] Skipped low-confidence response from ${follower.id} for post ${post.id}`);
       }
 
       await storage.markPendingResponseProcessed(response.id);
