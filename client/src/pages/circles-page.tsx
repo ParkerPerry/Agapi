@@ -20,6 +20,17 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -745,7 +756,7 @@ export default function CirclesPage() {
 
             {circles?.owned && renderCircleSection("Your Circles", circles.owned)}
             {circles?.shared && renderCircleSection("Shared With You", circles.shared, false)}
-            {circles?.invited && renderCircleSection("Invitations", circles.invited, false)}
+            {circles?.invited && renderCircleSection("Invited Circles", circles.invited, false)}
 
           </div>
         </main>
