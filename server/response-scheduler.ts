@@ -124,6 +124,7 @@ export class ResponseScheduler {
       const baseChance = 50; // Base 50% chance to respond
       const relevanceMultiplier = 3.0; // Stronger relevance impact
       const adjustedChance = baseChance * (relevanceScore * relevanceMultiplier);
+      const finalChance = Math.min(adjustedChance, 100);
 
       // Log the decision making process
       console.log(`[ResponseScheduler] Response probability calculation:`, {
@@ -131,18 +132,26 @@ export class ResponseScheduler {
         followerName: follower.name,
         baseChance,
         relevanceScore,
-        finalChance: Math.min(adjustedChance, 100),
+        finalChance,
         expertise: follower.interests,
         personality: follower.personality
       });
 
-      // Determine if follower will respond based on adjusted chance
-      const randomChance = Math.random() * 100;
-      const finalChance = Math.min(adjustedChance, 100);
+      // Generate random number once and store it
+      const randomValue = Math.random() * 100;
 
-      if (randomChance > finalChance) {
+      // Debug log for the actual comparison
+      console.log(`[ResponseScheduler] Random check:`, {
+        followerId: follower.id,
+        randomValue,
+        finalChance,
+        willRespond: randomValue <= finalChance
+      });
+
+      // Determine if follower will respond based on adjusted chance
+      if (randomValue > finalChance) {
         console.log(`[ResponseScheduler] Follower ${follower.id} chose not to respond:`, {
-          randomValue: randomChance,
+          randomValue,
           requiredChance: finalChance
         });
         return;
@@ -167,7 +176,6 @@ export class ResponseScheduler {
       });
     } catch (error) {
       console.error(`[ResponseScheduler] Error scheduling response:`, error);
-      // Log detailed error information
       if (error instanceof Error) {
         console.error("[ResponseScheduler] Error details:", {
           message: error.message,
