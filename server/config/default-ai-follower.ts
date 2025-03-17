@@ -32,6 +32,6 @@ export const defaultTomConfig: Omit<AiFollower, "id" | "userId"> = {
   },
   active: true,
   responsiveness: "active",
-  responseDelay: { min: 1, max: 30 },
+  responseDelay: { min: 0.5, max: 5 },
   responseChance: 90,
 };
