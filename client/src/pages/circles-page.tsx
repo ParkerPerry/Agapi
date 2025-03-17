@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Loader2, Plus, Pencil, Trash2, Users } from "lucide-react";
+import { Loader2, Plus, Pencil, Share2, Users, Trash2 } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import {
   Dialog,
@@ -20,17 +20,6 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -47,9 +36,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Share2, Users2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+type CircleGroups = {
+  owned: Circle[];
+  shared: Circle[];
+  invited: Circle[];
+};
 
 export default function CirclesPage() {
   const { user } = useAuth();
@@ -67,7 +61,7 @@ export default function CirclesPage() {
     return null;
   }
 
-  const { data: circles, isLoading: isLoadingCircles } = useQuery<Circle[]>({
+  const { data: circles, isLoading: isLoadingCircles } = useQuery<CircleGroups>({
     queryKey: ["/api/circles"],
     enabled: !!user,
   });
@@ -218,6 +212,381 @@ export default function CirclesPage() {
       });
     },
   });
+
+  const renderCircleSection = (title: string, circleList: Circle[] = [], showShareButton = true) => (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-2">
+          {circleList.map((circle) => (
+            <div
+              key={circle.id}
+              className={cn(
+                "flex flex-col space-y-4 p-4 border rounded-lg",
+                circle.isDefault && "bg-muted"
+              )}
+              style={{ borderColor: circle.color }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div
+                    className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
+                    style={{ backgroundColor: circle.color + "20" }}
+                  >
+                    {circle.icon}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium">{circle.name}</h3>
+                      {circle.isDefault && (
+                        <Badge variant="secondary">Default</Badge>
+                      )}
+                      <Badge
+                        variant={circle.visibility === "shared" ? "default" : "outline"}
+                      >
+                        {circle.visibility}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {circle.description}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="default"
+                    onClick={() => navigate(`/?circle=${circle.id}`)}
+                  >
+                    Enter Circle
+                  </Button>
+
+                  {showShareButton && !circle.isDefault && (
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent>
+                        <SheetHeader>
+                          <SheetTitle>Share Circle</SheetTitle>
+                          <SheetDescription>
+                            Invite others to join {circle.name}
+                          </SheetDescription>
+                        </SheetHeader>
+                        <div className="py-4">
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              createInvitationMutation.mutate({
+                                circleId: circle.id,
+                                username: inviteeUsername,
+                                role: selectedRole,
+                              });
+                            }}
+                            className="space-y-4"
+                          >
+                            <div className="space-y-2">
+                              <Label htmlFor="username">Username</Label>
+                              <Input
+                                id="username"
+                                value={inviteeUsername}
+                                onChange={(e) => setInviteeUsername(e.target.value)}
+                                placeholder="Enter username to invite"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Permission Level</Label>
+                              <RadioGroup
+                                value={selectedRole}
+                                onValueChange={(value) =>
+                                  setSelectedRole(value as "viewer" | "collaborator")
+                                }
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="viewer" id="viewer" />
+                                  <Label htmlFor="viewer">Viewer</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem
+                                    value="collaborator"
+                                    id="collaborator"
+                                  />
+                                  <Label htmlFor="collaborator">Collaborator</Label>
+                                </div>
+                              </RadioGroup>
+                            </div>
+                            <Button
+                              type="submit"
+                              disabled={createInvitationMutation.isPending}
+                              className="w-full"
+                            >
+                              {createInvitationMutation.isPending ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              ) : (
+                                "Send Invitation"
+                              )}
+                            </Button>
+                          </form>
+                        </div>
+                      </SheetContent>
+                    </Sheet>
+                  )}
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          setSelectedCircle(circle);
+                        }}
+                      >
+                        <Users className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-lg">
+                      <DialogHeader>
+                        <DialogTitle>Manage AI Followers</DialogTitle>
+                        <DialogDescription>
+                          Add or remove AI followers for {circle.name}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <ScrollArea className="h-[300px] pr-4">
+                          {isLoadingCircleFollowers ? (
+                            <div className="flex items-center justify-center">
+                              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              {followers?.map((follower) => {
+                                const isInCircle = selectedCircleFollowers?.some(
+                                  (f) => f.id === follower.id
+                                );
+                                return (
+                                  <div
+                                    key={follower.id}
+                                    className="flex items-center justify-between p-2 rounded-lg hover:bg-muted"
+                                  >
+                                    <div className="flex items-center space-x-3">
+                                      <Avatar>
+                                        <img src={follower.avatarUrl} alt={follower.name} />
+                                        <AvatarFallback>
+                                          {follower.name.charAt(0).toUpperCase()}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                      <div>
+                                        <p className="font-medium">{follower.name}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                          {follower.personality}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <Button
+                                      variant={isInCircle ? "destructive" : "secondary"}
+                                      size="sm"
+                                      onClick={() => {
+                                        if (isInCircle) {
+                                          removeFollowerMutation.mutate({
+                                            circleId: circle.id,
+                                            followerId: follower.id,
+                                          });
+                                        } else {
+                                          addFollowerMutation.mutate({
+                                            circleId: circle.id,
+                                            aiFollowerId: follower.id,
+                                          });
+                                        }
+                                      }}
+                                      disabled={
+                                        addFollowerMutation.isPending ||
+                                        removeFollowerMutation.isPending
+                                      }
+                                    >
+                                      {isInCircle ? "Remove" : "Add"}
+                                    </Button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </ScrollArea>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
+                  {!circle.isDefault && (
+                    <>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              setEditingCircle(circle);
+                              editForm.reset({
+                                name: circle.name,
+                                description: circle.description || "",
+                                icon: circle.icon || "",
+                                color: circle.color || "",
+                              });
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Edit Circle</DialogTitle>
+                            <DialogDescription>
+                              Update the details for {circle.name}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Form {...editForm}>
+                            <form
+                              onSubmit={editForm.handleSubmit((data) => {
+                                if (editingCircle) {
+                                  updateCircleMutation.mutate({
+                                    id: editingCircle.id,
+                                    ...data,
+                                  });
+                                }
+                              })}
+                              className="space-y-4"
+                            >
+                              <FormField
+                                control={editForm.control}
+                                name="name"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                      <Input {...field} />
+                                    </FormControl>
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={editForm.control}
+                                name="description"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                      <Textarea {...field} />
+                                    </FormControl>
+                                  </FormItem>
+                                )}
+                              />
+                              <div className="grid gap-4 md:grid-cols-2">
+                                <FormField
+                                  control={editForm.control}
+                                  name="icon"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Icon</FormLabel>
+                                      <FormControl>
+                                        <div className="flex items-center gap-2">
+                                          <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="w-full text-left font-normal"
+                                            onClick={() => setShowEditEmojiPicker(true)}
+                                          >
+                                            {field.value || "Select an emoji"}
+                                          </Button>
+                                          <Dialog
+                                            open={showEditEmojiPicker}
+                                            onOpenChange={setShowEditEmojiPicker}
+                                          >
+                                            <DialogContent className="p-0">
+                                              <EmojiPicker
+                                                theme={Theme.AUTO}
+                                                onEmojiClick={(emoji) => {
+                                                  field.onChange(emoji.emoji);
+                                                  setShowEditEmojiPicker(false);
+                                                }}
+                                                width="100%"
+                                              />
+                                            </DialogContent>
+                                          </Dialog>
+                                        </div>
+                                      </FormControl>
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={editForm.control}
+                                  name="color"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Color</FormLabel>
+                                      <FormControl>
+                                        <Input {...field} type="color" className="h-10 px-2" />
+                                      </FormControl>
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                              <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={updateCircleMutation.isPending}
+                              >
+                                {updateCircleMutation.isPending ? (
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                  "Update Circle"
+                                )}
+                              </Button>
+                            </form>
+                          </Form>
+                        </DialogContent>
+                      </Dialog>
+
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="icon">
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Circle</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete {circle.name}? This action
+                              cannot be undone. All posts in this circle will be moved to
+                              your default circle.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteCircleMutation.mutate(circle.id)}
+                              className="bg-destructive hover:bg-destructive/90"
+                            >
+                              {deleteCircleMutation.isPending ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                "Delete"
+                              )}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <TourProvider>
@@ -374,378 +743,10 @@ export default function CirclesPage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Circles</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 md:grid-cols-2">
-                  {circles?.map((circle) => (
-                    <div
-                      key={circle.id}
-                      className={cn(
-                        "flex flex-col space-y-4 p-4 border rounded-lg",
-                        circle.isDefault && "bg-muted"
-                      )}
-                      style={{ borderColor: circle.color }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div
-                            className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
-                            style={{ backgroundColor: circle.color + "20" }}
-                          >
-                            {circle.icon}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-medium">{circle.name}</h3>
-                              {circle.isDefault && (
-                                <Badge variant="secondary">Default</Badge>
-                              )}
-                              <Badge
-                                variant={circle.visibility === "shared" ? "default" : "outline"}
-                              >
-                                {circle.visibility}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                              {circle.description}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="default"
-                            onClick={() => navigate(`/?circle=${circle.id}`)}
-                          >
-                            Enter Circle
-                          </Button>
+            {circles?.owned && renderCircleSection("Your Circles", circles.owned)}
+            {circles?.shared && renderCircleSection("Shared With You", circles.shared, false)}
+            {circles?.invited && renderCircleSection("Invitations", circles.invited, false)}
 
-                          {!circle.isDefault && (
-                            <Sheet>
-                              <SheetTrigger asChild>
-                                <Button variant="outline" size="icon">
-                                  <Share2 className="h-4 w-4" />
-                                </Button>
-                              </SheetTrigger>
-                              <SheetContent>
-                                <SheetHeader>
-                                  <SheetTitle>Share Circle</SheetTitle>
-                                  <SheetDescription>
-                                    Invite others to join {circle.name}
-                                  </SheetDescription>
-                                </SheetHeader>
-                                <div className="py-4">
-                                  <form
-                                    onSubmit={(e) => {
-                                      e.preventDefault();
-                                      createInvitationMutation.mutate({
-                                        circleId: circle.id,
-                                        username: inviteeUsername,
-                                        role: selectedRole,
-                                      });
-                                    }}
-                                    className="space-y-4"
-                                  >
-                                    <div className="space-y-2">
-                                      <Label htmlFor="username">Username</Label>
-                                      <Input
-                                        id="username"
-                                        value={inviteeUsername}
-                                        onChange={(e) => setInviteeUsername(e.target.value)}
-                                        placeholder="Enter username to invite"
-                                      />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label>Permission Level</Label>
-                                      <RadioGroup
-                                        value={selectedRole}
-                                        onValueChange={(value) =>
-                                          setSelectedRole(value as "viewer" | "collaborator")
-                                        }
-                                      >
-                                        <div className="flex items-center space-x-2">
-                                          <RadioGroupItem value="viewer" id="viewer" />
-                                          <Label htmlFor="viewer">Viewer</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                          <RadioGroupItem
-                                            value="collaborator"
-                                            id="collaborator"
-                                          />
-                                          <Label htmlFor="collaborator">Collaborator</Label>
-                                        </div>
-                                      </RadioGroup>
-                                    </div>
-                                    <Button
-                                      type="submit"
-                                      disabled={createInvitationMutation.isPending}
-                                      className="w-full"
-                                    >
-                                      {createInvitationMutation.isPending ? (
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                      ) : (
-                                        "Send Invitation"
-                                      )}
-                                    </Button>
-                                  </form>
-                                </div>
-                              </SheetContent>
-                            </Sheet>
-                          )}
-
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => {
-                                  setSelectedCircle(circle);
-                                }}
-                              >
-                                <Users className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-lg">
-                              <DialogHeader>
-                                <DialogTitle>Manage AI Followers</DialogTitle>
-                                <DialogDescription>
-                                  Add or remove AI followers for {circle.name}
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="grid gap-4 py-4">
-                                <ScrollArea className="h-[300px] pr-4">
-                                  {isLoadingCircleFollowers ? (
-                                    <div className="flex items-center justify-center">
-                                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                                    </div>
-                                  ) : (
-                                    <div className="space-y-4">
-                                      {followers?.map((follower) => {
-                                        const isInCircle = selectedCircleFollowers?.some(
-                                          (f) => f.id === follower.id
-                                        );
-                                        return (
-                                          <div
-                                            key={follower.id}
-                                            className="flex items-center justify-between p-2 rounded-lg hover:bg-muted"
-                                          >
-                                            <div className="flex items-center space-x-3">
-                                              <Avatar>
-                                                <img src={follower.avatarUrl} alt={follower.name} />
-                                                <AvatarFallback>
-                                                  {follower.name.charAt(0).toUpperCase()}
-                                                </AvatarFallback>
-                                              </Avatar>
-                                              <div>
-                                                <p className="font-medium">{follower.name}</p>
-                                                <p className="text-sm text-muted-foreground">
-                                                  {follower.personality}
-                                                </p>
-                                              </div>
-                                            </div>
-                                            <Button
-                                              variant={isInCircle ? "destructive" : "secondary"}
-                                              size="sm"
-                                              onClick={() => {
-                                                if (isInCircle) {
-                                                  removeFollowerMutation.mutate({
-                                                    circleId: circle.id,
-                                                    followerId: follower.id,
-                                                  });
-                                                } else {
-                                                  addFollowerMutation.mutate({
-                                                    circleId: circle.id,
-                                                    aiFollowerId: follower.id,
-                                                  });
-                                                }
-                                              }}
-                                              disabled={
-                                                addFollowerMutation.isPending ||
-                                                removeFollowerMutation.isPending
-                                              }
-                                            >
-                                              {isInCircle ? "Remove" : "Add"}
-                                            </Button>
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                  )}
-                                </ScrollArea>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-
-                          {!circle.isDefault && (
-                            <>
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => {
-                                      setEditingCircle(circle);
-                                      editForm.reset({
-                                        name: circle.name,
-                                        description: circle.description || "",
-                                        icon: circle.icon || "",
-                                        color: circle.color || "",
-                                      });
-                                    }}
-                                  >
-                                    <Pencil className="h-4 w-4" />
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Edit Circle</DialogTitle>
-                                    <DialogDescription>
-                                      Update the details for {circle.name}
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  <Form {...editForm}>
-                                    <form
-                                      onSubmit={editForm.handleSubmit((data) => {
-                                        if (editingCircle) {
-                                          updateCircleMutation.mutate({
-                                            id: editingCircle.id,
-                                            ...data,
-                                          });
-                                        }
-                                      })}
-                                      className="space-y-4"
-                                    >
-                                      <FormField
-                                        control={editForm.control}
-                                        name="name"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>Name</FormLabel>
-                                            <FormControl>
-                                              <Input {...field} />
-                                            </FormControl>
-                                          </FormItem>
-                                        )}
-                                      />
-                                      <FormField
-                                        control={editForm.control}
-                                        name="description"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>Description</FormLabel>
-                                            <FormControl>
-                                              <Textarea {...field} />
-                                            </FormControl>
-                                          </FormItem>
-                                        )}
-                                      />
-                                      <div className="grid gap-4 md:grid-cols-2">
-                                        <FormField
-                                          control={editForm.control}
-                                          name="icon"
-                                          render={({ field }) => (
-                                            <FormItem>
-                                              <FormLabel>Icon</FormLabel>
-                                              <FormControl>
-                                                <div className="flex items-center gap-2">
-                                                  <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    className="w-full text-left font-normal"
-                                                    onClick={() => setShowEditEmojiPicker(true)}
-                                                  >
-                                                    {field.value || "Select an emoji"}
-                                                  </Button>
-                                                  <Dialog
-                                                    open={showEditEmojiPicker}
-                                                    onOpenChange={setShowEditEmojiPicker}
-                                                  >
-                                                    <DialogContent className="p-0">
-                                                      <EmojiPicker
-                                                        theme={Theme.AUTO}
-                                                        onEmojiClick={(emoji) => {
-                                                          field.onChange(emoji.emoji);
-                                                          setShowEditEmojiPicker(false);
-                                                        }}
-                                                        width="100%"
-                                                      />
-                                                    </DialogContent>
-                                                  </Dialog>
-                                                </div>
-                                              </FormControl>
-                                            </FormItem>
-                                          )}
-                                        />
-                                        <FormField
-                                          control={editForm.control}
-                                          name="color"
-                                          render={({ field }) => (
-                                            <FormItem>
-                                              <FormLabel>Color</FormLabel>
-                                              <FormControl>
-                                                <Input {...field} type="color" className="h-10 px-2" />
-                                              </FormControl>
-                                            </FormItem>
-                                          )}
-                                        />
-                                      </div>
-                                      <Button
-                                        type="submit"
-                                        className="w-full"
-                                        disabled={updateCircleMutation.isPending}
-                                      >
-                                        {updateCircleMutation.isPending ? (
-                                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        ) : (
-                                          "Update Circle"
-                                        )}
-                                      </Button>
-                                    </form>
-                                  </Form>
-                                </DialogContent>
-                              </Dialog>
-
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="outline" size="icon">
-                                    <Trash2 className="h-4 w-4 text-destructive" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Circle</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete {circle.name}? This action
-                                      cannot be undone. All posts in this circle will be moved to
-                                      your default circle.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => deleteCircleMutation.mutate(circle.id)}
-                                      className="bg-destructive hover:bg-destructive/90"
-                                    >
-                                      {deleteCircleMutation.isPending ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                      ) : (
-                                        "Delete"
-                                      )}
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </main>
       </div>
