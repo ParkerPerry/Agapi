@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { NavBar } from "@/components/nav-bar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Circle, InsertCircle, AiFollower } from "@shared/schema";
+import { Circle, InsertCircle, AiFollower, CircleInvitation } from "@shared/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,6 +39,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Share2, Users2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function CirclesPage() {
   const { user } = useAuth();
@@ -48,6 +59,9 @@ export default function CirclesPage() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false);
   const [, navigate] = useLocation();
+  const [inviteeUsername, setInviteeUsername] = useState("");
+  const [selectedRole, setSelectedRole] = useState<"viewer" | "collaborator">("viewer");
+  const [selectedInvitation, setSelectedInvitation] = useState<CircleInvitation | null>(null);
 
   if (!user) {
     return null;
@@ -66,6 +80,11 @@ export default function CirclesPage() {
   const { data: selectedCircleFollowers, isLoading: isLoadingCircleFollowers } = useQuery<AiFollower[]>({
     queryKey: [`/api/circles/${selectedCircle?.id}/followers`],
     enabled: !!selectedCircle,
+  });
+
+  const { data: invitations } = useQuery<CircleInvitation[]>({
+    queryKey: ["/api/circles/invitations/pending"],
+    enabled: !!user,
   });
 
   const form = useForm<InsertCircle>({
@@ -163,12 +182,100 @@ export default function CirclesPage() {
     },
   });
 
+  const createInvitationMutation = useMutation({
+    mutationFn: async ({ circleId, username, role }: { circleId: number; username: string; role: "viewer" | "collaborator" }) => {
+      const res = await apiRequest("POST", `/api/circles/${circleId}/invitations`, { username, role });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/circles/invitations"] });
+      toast({
+        title: "Invitation sent",
+        description: "The user will be notified of your invitation.",
+      });
+      setInviteeUsername("");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error sending invitation",
+        description: error.message || "Could not send invitation. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const respondToInvitationMutation = useMutation({
+    mutationFn: async ({ invitationId, status }: { invitationId: number; status: "accepted" | "declined" }) => {
+      const res = await apiRequest("PATCH", `/api/circles/invitations/${invitationId}`, { status });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/circles/invitations/pending"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
+      toast({
+        title: "Invitation response sent",
+        description: "Your response has been recorded.",
+      });
+    },
+  });
+
   return (
     <TourProvider>
       <div className="min-h-screen bg-background">
         <NavBar />
         <main className="container py-6">
           <div className="max-w-4xl mx-auto space-y-6">
+            {invitations && invitations.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pending Circle Invitations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {invitations.map((invitation) => (
+                      <div
+                        key={invitation.id}
+                        className="flex items-center justify-between p-4 border rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium">Circle Invitation</p>
+                          <p className="text-sm text-muted-foreground">
+                            You've been invited as a {invitation.role}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="default"
+                            onClick={() =>
+                              respondToInvitationMutation.mutate({
+                                invitationId: invitation.id,
+                                status: "accepted",
+                              })
+                            }
+                            disabled={respondToInvitationMutation.isPending}
+                          >
+                            Accept
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              respondToInvitationMutation.mutate({
+                                invitationId: invitation.id,
+                                status: "declined",
+                              })
+                            }
+                            disabled={respondToInvitationMutation.isPending}
+                          >
+                            Decline
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <Card>
               <CardHeader>
                 <CardTitle>Create Circle</CardTitle>
@@ -296,6 +403,11 @@ export default function CirclesPage() {
                               {circle.isDefault && (
                                 <Badge variant="secondary">Default</Badge>
                               )}
+                              <Badge
+                                variant={circle.visibility === "shared" ? "default" : "outline"}
+                              >
+                                {circle.visibility}
+                              </Badge>
                             </div>
                             <p className="text-sm text-muted-foreground">
                               {circle.description}
@@ -309,6 +421,80 @@ export default function CirclesPage() {
                           >
                             Enter Circle
                           </Button>
+
+                          {!circle.isDefault && (
+                            <Sheet>
+                              <SheetTrigger asChild>
+                                <Button variant="outline" size="icon">
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
+                              </SheetTrigger>
+                              <SheetContent>
+                                <SheetHeader>
+                                  <SheetTitle>Share Circle</SheetTitle>
+                                  <SheetDescription>
+                                    Invite others to join {circle.name}
+                                  </SheetDescription>
+                                </SheetHeader>
+                                <div className="py-4">
+                                  <form
+                                    onSubmit={(e) => {
+                                      e.preventDefault();
+                                      createInvitationMutation.mutate({
+                                        circleId: circle.id,
+                                        username: inviteeUsername,
+                                        role: selectedRole,
+                                      });
+                                    }}
+                                    className="space-y-4"
+                                  >
+                                    <div className="space-y-2">
+                                      <Label htmlFor="username">Username</Label>
+                                      <Input
+                                        id="username"
+                                        value={inviteeUsername}
+                                        onChange={(e) => setInviteeUsername(e.target.value)}
+                                        placeholder="Enter username to invite"
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Permission Level</Label>
+                                      <RadioGroup
+                                        value={selectedRole}
+                                        onValueChange={(value) =>
+                                          setSelectedRole(value as "viewer" | "collaborator")
+                                        }
+                                      >
+                                        <div className="flex items-center space-x-2">
+                                          <RadioGroupItem value="viewer" id="viewer" />
+                                          <Label htmlFor="viewer">Viewer</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                          <RadioGroupItem
+                                            value="collaborator"
+                                            id="collaborator"
+                                          />
+                                          <Label htmlFor="collaborator">Collaborator</Label>
+                                        </div>
+                                      </RadioGroup>
+                                    </div>
+                                    <Button
+                                      type="submit"
+                                      disabled={createInvitationMutation.isPending}
+                                      className="w-full"
+                                    >
+                                      {createInvitationMutation.isPending ? (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                      ) : (
+                                        "Send Invitation"
+                                      )}
+                                    </Button>
+                                  </form>
+                                </div>
+                              </SheetContent>
+                            </Sheet>
+                          )}
+
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button
