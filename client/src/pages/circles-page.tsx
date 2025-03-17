@@ -18,7 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -63,13 +62,6 @@ type CircleGroups = {
   invited: Circle[];
 };
 
-type CircleDetailsData = {
-  circle: Circle;
-  owner: User;
-  members: CircleMember[];
-  followers: AiFollower[];
-};
-
 export default function CirclesPage() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -81,7 +73,7 @@ export default function CirclesPage() {
   const [inviteeUsername, setInviteeUsername] = useState("");
   const [selectedRole, setSelectedRole] = useState<"viewer" | "collaborator">("viewer");
   const [selectedInvitation, setSelectedInvitation] = useState<CircleInvitation | null>(null);
-  const [selectedCircleDetails, setSelectedCircleDetails] = useState<CircleDetailsData | null>(null);
+
 
   if (!user) {
     return null;
@@ -106,12 +98,6 @@ export default function CirclesPage() {
     queryKey: ["/api/circles/invitations/pending"],
     enabled: !!user,
   });
-
-  const { data: circleDetails } = useQuery<CircleDetailsData>({
-    queryKey: [`/api/circles/${selectedCircle?.id}/details`],
-    enabled: !!selectedCircle,
-  });
-
 
   const form = useForm<InsertCircle>({
     defaultValues: {
@@ -372,7 +358,6 @@ export default function CirclesPage() {
                       </SheetContent>
                     </Sheet>
                   )}
-
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -619,17 +604,7 @@ export default function CirclesPage() {
                   )}
                 </div>
               </div>
-              {selectedCircle?.id === circle.id && circleDetails && (
-                <div className="mt-4 pt-4 border-t">
-                  <div className="text-sm text-muted-foreground">
-                    <p>Owner: {circleDetails.owner.username}</p>
-                    <p>Members: {circleDetails.members.length}</p>
-                    <p>AI Followers: {circleDetails.followers.length}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+            ))}
         </div>
       </CardContent>
     </Card>
@@ -640,189 +615,155 @@ export default function CirclesPage() {
       <div className="min-h-screen bg-background">
         <NavBar />
         <main className="container py-6">
-          <div className="flex gap-6">
-            {selectedCircle && circleDetails && (
-              <div className="w-1/3 space-y-4">
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center space-x-4">
-                      <div
-                        className="flex items-center justify-center w-12 h-12 rounded-full text-2xl"
-                        style={{ backgroundColor: selectedCircle.color + "20" }}
-                      >
-                        {selectedCircle.icon}
-                      </div>
-                      <div>
-                        <CardTitle>{selectedCircle.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">
-                          {selectedCircle.description}
-                        </p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <CircleOwner owner={circleDetails.owner} />
-                    <CircleMembers members={circleDetails.members} />
-                    <CircleFollowers followers={circleDetails.followers} />
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-
-            <div className={cn("space-y-6", selectedCircle && "w-2/3")}>
-              {invitations && invitations.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Pending Circle Invitations</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {invitations.map((invitation) => (
-                        <div
-                          key={invitation.id}
-                          className="flex items-center justify-between p-4 border rounded-lg"
-                        >
-                          <div>
-                            <p className="font-medium">Circle Invitation</p>
-                            <p className="text-sm text-muted-foreground">
-                              You've been invited as a {invitation.role}
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="default"
-                              onClick={() =>
-                                respondToInvitationMutation.mutate({
-                                  invitationId: invitation.id,
-                                  status: "accepted",
-                                })
-                              }
-                              disabled={respondToInvitationMutation.isPending}
-                            >
-                              Accept
-                            </Button>
-                            <Button
-                              variant="outline"
-                              onClick={() =>
-                                respondToInvitationMutation.mutate({
-                                  invitationId: invitation.id,
-                                  status: "declined",
-                                })
-                              }
-                              disabled={respondToInvitationMutation.isPending}
-                            >
-                              Decline
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
+          <div className="max-w-4xl mx-auto space-y-6">
+            {invitations && invitations.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Create Circle</CardTitle>
+                  <CardTitle>Pending Circle Invitations</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit((data) => createCircleMutation.mutate(data))} className="space-y-4">
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Name</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="Enter circle name" />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="icon"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Icon</FormLabel>
-                              <FormControl>
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="w-full text-left font-normal"
-                                    onClick={() => setShowEmojiPicker(true)}
-                                  >
-                                    {field.value || "🔵"}
-                                  </Button>
-                                  <Dialog open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
-                                    <DialogContent className="p-0">
-                                      <EmojiPicker
-                                        theme={Theme.AUTO}
-                                        onEmojiClick={(emoji) => {
-                                          field.onChange(emoji.emoji);
-                                          setShowEmojiPicker(false);
-                                        }}
-                                        width="100%"
-                                      />
-                                    </DialogContent>
-                                  </Dialog>
-                                </div>
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
+                  <div className="space-y-4">
+                    {invitations.map((invitation) => (
+                      <div
+                        key={invitation.id}
+                        className="flex items-center justify-between p-4 border rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium">Circle Invitation</p>
+                          <p className="text-sm text-muted-foreground">
+                            You've been invited as a {invitation.role}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="default"
+                            onClick={() =>
+                              respondToInvitationMutation.mutate({
+                                invitationId: invitation.id,
+                                status: "accepted",
+                              })
+                            }
+                            disabled={respondToInvitationMutation.isPending}
+                          >
+                            Accept
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              respondToInvitationMutation.mutate({
+                                invitationId: invitation.id,
+                                status: "declined",
+                              })
+                            }
+                            disabled={respondToInvitationMutation.isPending}
+                          >
+                            Decline
+                          </Button>
+                        </div>
                       </div>
-                      <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Textarea
-                                {...field}
-                                value={field.value || ""}
-                                placeholder="Describe the purpose of this circle"
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="color"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Color</FormLabel>
-                            <FormControl>
-                              <Input {...field} value={field.value || "#3b82f6"} type="color" className="h-10 px-2" />
-                            </FormControl>
-                            <FormDescription>
-                              Choose a color to represent this circle
-                            </FormDescription>
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="submit" className="w-full" disabled={createCircleMutation.isPending}>
-                        {createCircleMutation.isPending ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Plus className="mr-2 h-4 w-4" />
-                        )}
-                        Create Circle
-                      </Button>
-                    </form>
-                  </Form>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
+            )}
 
-              {circles?.owned && renderCircleSection("Your Circles", circles.owned)}
-              {circles?.shared && renderCircleSection("Shared With You", circles.shared, false)}
-              {circles?.invited && renderCircleSection("Invited Circles", circles.invited, false)}
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Create Circle</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit((data) => createCircleMutation.mutate(data))} className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="Enter circle name" />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="icon"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Icon</FormLabel>
+                            <FormControl>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  className="w-full text-left font-normal"
+                                  onClick={() => setShowEmojiPicker(true)}
+                                >
+                                  {field.value || "🔵"}
+                                </Button>
+                                <Dialog open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
+                                  <DialogContent className="p-0">
+                                    <EmojiPicker
+                                      theme={Theme.AUTO}
+                                      onEmojiClick={(emoji) => {
+                                        field.onChange(emoji.emoji);
+                                        setShowEmojiPicker(false);
+                                      }}
+                                      width="100%"
+                                    />
+                                  </DialogContent>
+                                </Dialog>
+                              </div>
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} placeholder="Describe the purpose of this circle" />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="color"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Color</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="color" className="h-10 px-2" />
+                          </FormControl>
+                          <FormDescription>
+                            Choose a color to represent this circle
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full" disabled={createCircleMutation.isPending}>
+                      {createCircleMutation.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Plus className="mr-2 h-4 w-4" />
+                      )}
+                      Create Circle
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+
+            {circles?.owned && renderCircleSection("Your Circles", circles.owned)}
+            {circles?.shared && renderCircleSection("Shared With You", circles.shared, false)}
+            {circles?.invited && renderCircleSection("Invited Circles", circles.invited, false)}
           </div>
         </main>
       </div>

@@ -3,6 +3,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+type CircleMemberWithUser = CircleMember & {
+  user?: User;
+};
+
 export function CircleOwner({ owner }: { owner: User }) {
   return (
     <div className="space-y-2">
@@ -19,7 +23,7 @@ export function CircleOwner({ owner }: { owner: User }) {
   );
 }
 
-export function CircleMembers({ members }: { members: CircleMember[] }) {
+export function CircleMembers({ members }: { members: CircleMemberWithUser[] }) {
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium">Members</h3>
@@ -29,11 +33,11 @@ export function CircleMembers({ members }: { members: CircleMember[] }) {
             <div className="flex items-center space-x-3">
               <Avatar>
                 <AvatarFallback>
-                  {member.username?.charAt(0).toUpperCase()}
+                  {member.user?.username.charAt(0).toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-medium">{member.username}</p>
+                <p className="font-medium">{member.user?.username || 'Unknown User'}</p>
               </div>
             </div>
             <Badge variant={member.role === "collaborator" ? "default" : "secondary"}>

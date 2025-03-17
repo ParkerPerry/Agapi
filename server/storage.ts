@@ -52,7 +52,7 @@ export interface IStorage {
 
   addCircleMember(member: InsertCircleMember): Promise<CircleMember>;
   removeCircleMember(circleId: number, userId: number): Promise<void>;
-  getCircleMembers(circleId: number): Promise<CircleMember[]>;
+  getCircleMembers(circleId: number): Promise<(CircleMember & { user: User | null })[]>;
   createCircleInvitation(invitation: Omit<InsertCircleInvitation, "status">): Promise<CircleInvitation>;
   getCircleInvitation(id: number): Promise<CircleInvitation | undefined>;
   getCircleInvitations(circleId: number): Promise<CircleInvitation[]>;
@@ -61,7 +61,7 @@ export interface IStorage {
   getCircleWithDetails(id: number): Promise<{
     circle: Circle;
     owner: User;
-    members: CircleMember[];
+    members: (CircleMember & { user: User | null })[];
     followers: AiFollower[];
   } | undefined>;
 }
@@ -595,12 +595,32 @@ export class DatabaseStorage implements IStorage {
       ));
   }
 
-  async getCircleMembers(circleId: number): Promise<CircleMember[]> {
-    return await db
-      .select()
-      .from(circleMembers)
-      .where(eq(circleMembers.circleId, circleId))
-      .orderBy(asc(circleMembers.joinedAt));
+  async getCircleMembers(circleId: number): Promise<(CircleMember & { user: User | null })[]> {
+    console.log("[Storage] Getting circle members for circle:", circleId);
+
+    try {
+      // First try with a simple query without joins
+      const members = await db
+        .select({
+          id: circleMembers.id,
+          circleId: circleMembers.circleId,
+          userId: circleMembers.userId,
+          role: circleMembers.role,
+          joinedAt: circleMembers.joinedAt,
+          user: users
+        })
+        .from(circleMembers)
+        .leftJoin(users, eq(circleMembers.userId, users.id))
+        .where(eq(circleMembers.circleId, circleId))
+        .orderBy(asc(circleMembers.joinedAt));
+
+      console.log("[Storage] Successfully retrieved circle members:", members.length);
+      return members;
+    } catch (error) {
+      console.error("[Storage] Error getting circle members:", error);
+      // Return empty array as fallback instead of throwing
+      return [];
+    }
   }
 
   async createCircleInvitation(
@@ -671,26 +691,40 @@ export class DatabaseStorage implements IStorage {
   async getCircleWithDetails(id: number): Promise<{
     circle: Circle;
     owner: User;
-    members: CircleMember[];
+    members: (CircleMember & { user: User | null })[];
     followers: AiFollower[];
   } | undefined> {
-    const circle = await this.getCircle(id);
-    if (!circle) return undefined;
+    console.log("[Storage] Getting circle details for circle:", id);
 
-    const [owner, members, followers] = await Promise.all([
-      this.getUser(circle.userId),
-      this.getCircleMembers(id),
-      this.getCircleFollowers(id),
-    ]);
+    try {
+      const circle = await this.getCircle(id);
+      if (!circle) return undefined;
 
-    if (!owner) return undefined;
+      const [owner, members, followers] = await Promise.all([
+        this.getUser(circle.userId),
+        this.getCircleMembers(id),
+        this.getCircleFollowers(id),
+      ]);
 
-    return {
-      circle,
-      owner,
-      members,
-      followers,
-    };
+      if (!owner) return undefined;
+
+      console.log("[Storage] Successfully retrieved circle details:", {
+        circle: circle.id,
+        owner: owner.id,
+        members: members.length,
+        followers: followers.length
+      });
+
+      return {
+        circle,
+        owner,
+        members,
+        followers,
+      };
+    } catch (error) {
+      console.error("[Storage] Error getting circle details:", error);
+      return undefined;
+    }
   }
 }
 
