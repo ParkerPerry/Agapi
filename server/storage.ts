@@ -7,7 +7,7 @@ import {
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations
 } from "@shared/schema";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, or } from "drizzle-orm";
 import { db } from "./db";
 import { defaultTomConfig } from "./config/default-ai-follower";
 
@@ -35,7 +35,11 @@ export interface IStorage {
 
   createCircle(userId: number, circle: InsertCircle): Promise<Circle>;
   getCircle(id: number): Promise<Circle | undefined>;
-  getUserCircles(userId: number): Promise<Circle[]>;
+  getUserCircles(userId: number): Promise<{
+    owned: Circle[];
+    shared: Circle[];
+    invited: Circle[];
+  }>;
   updateCircle(id: number, updates: Partial<InsertCircle>): Promise<Circle>;
   deleteCircle(id: number): Promise<void>;
   getDefaultCircle(userId: number): Promise<Circle>;
@@ -54,6 +58,12 @@ export interface IStorage {
   getCircleInvitations(circleId: number): Promise<CircleInvitation[]>;
   getUserPendingInvitations(userId: number): Promise<CircleInvitation[]>;
   updateInvitationStatus(id: number, status: "accepted" | "declined"): Promise<CircleInvitation>;
+  getCircleWithDetails(id: number): Promise<{
+    circle: Circle;
+    owner: User;
+    members: CircleMember[];
+    followers: AiFollower[];
+  } | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -391,12 +401,47 @@ export class DatabaseStorage implements IStorage {
     return circle;
   }
 
-  async getUserCircles(userId: number): Promise<Circle[]> {
-    return await db
-      .select()
-      .from(circles)
-      .where(eq(circles.userId, userId))
-      .orderBy(asc(circles.createdAt));
+  async getUserCircles(userId: number): Promise<{
+    owned: Circle[];
+    shared: Circle[];
+    invited: Circle[];
+  }> {
+    const [owned, memberOf, invitedTo] = await Promise.all([
+      // Get circles owned by the user
+      db.select()
+        .from(circles)
+        .where(eq(circles.userId, userId))
+        .orderBy(asc(circles.createdAt)),
+
+      // Get circles where user is a member
+      db.select({
+        circle: circles,
+      })
+        .from(circleMembers)
+        .innerJoin(circles, eq(circleMembers.circleId, circles.id))
+        .where(eq(circleMembers.userId, userId))
+        .orderBy(asc(circles.createdAt)),
+
+      // Get circles user is invited to
+      db.select({
+        circle: circles,
+      })
+        .from(circleInvitations)
+        .innerJoin(circles, eq(circleInvitations.circleId, circles.id))
+        .where(
+          and(
+            eq(circleInvitations.inviteeId, userId),
+            eq(circleInvitations.status, "pending")
+          )
+        )
+        .orderBy(asc(circles.createdAt)),
+    ]);
+
+    return {
+      owned,
+      shared: memberOf.map(m => m.circle),
+      invited: invitedTo.map(i => i.circle),
+    };
   }
 
   async updateCircle(id: number, updates: Partial<InsertCircle>): Promise<Circle> {
@@ -621,6 +666,31 @@ export class DatabaseStorage implements IStorage {
     }
 
     return invitation;
+  }
+
+  async getCircleWithDetails(id: number): Promise<{
+    circle: Circle;
+    owner: User;
+    members: CircleMember[];
+    followers: AiFollower[];
+  } | undefined> {
+    const circle = await this.getCircle(id);
+    if (!circle) return undefined;
+
+    const [owner, members, followers] = await Promise.all([
+      this.getUser(circle.userId),
+      this.getCircleMembers(id),
+      this.getCircleFollowers(id),
+    ]);
+
+    if (!owner) return undefined;
+
+    return {
+      circle,
+      owner,
+      members,
+      followers,
+    };
   }
 }
 

@@ -628,5 +628,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add endpoint to get circle details including members and followers
+  app.get("/api/circles/:id/details", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      const details = await storage.getCircleWithDetails(circleId);
+      if (!details) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      // Check if user has access to this circle
+      const isOwner = details.circle.userId === req.user!.id;
+      const isMember = details.members.some(m => m.userId === req.user!.id);
+      if (!isOwner && !isMember) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      res.json(details);
+    } catch (error) {
+      console.error("Error getting circle details:", error);
+      res.status(500).json({ message: "Failed to get circle details" });
+    }
+  });
+
   return httpServer;
 }
