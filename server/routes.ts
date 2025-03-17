@@ -18,15 +18,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
+      console.log("[Routes] Getting posts for user:", req.params.userId);
       const posts = await storage.getUserPosts(parseInt(req.params.userId));
+      console.log("[Routes] Found posts:", posts.length);
 
       // Get threaded interactions and pending responses for each post
       const postsWithData = await Promise.all(
         posts.map(async (post) => {
+          console.log("[Routes] Processing post:", post.id);
           const [threadedInteractions, pendingResponses] = await Promise.all([
             ThreadManager.getThreadedInteractions(post.id),
             storage.getPostPendingResponses(post.id)
           ]);
+
+          console.log("[Routes] Pending responses for post", post.id, ":", pendingResponses);
 
           // Get AI follower info for each pending response, ensuring uniqueness by follower ID
           const followerMap = new Map();
@@ -34,6 +39,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             pendingResponses.map(async (response) => {
               if (!followerMap.has(response.aiFollowerId)) {
                 const follower = await storage.getAiFollower(response.aiFollowerId);
+                console.log("[Routes] Found follower for response:", follower?.name);
                 if (follower) {
                   followerMap.set(response.aiFollowerId, {
                     id: follower.id,
@@ -49,6 +55,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Convert map to array and sort by scheduled time
           const validPendingFollowers = Array.from(followerMap.values())
             .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime());
+
+          console.log("[Routes] Valid pending followers for post", post.id, ":", validPendingFollowers);
 
           return {
             ...post,
