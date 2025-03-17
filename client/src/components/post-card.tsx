@@ -222,25 +222,29 @@ export function PostCard({ post }: PostCardProps) {
               <Clock className="h-4 w-4 text-muted-foreground" />
               <div className="flex -space-x-2">
                 {post.pendingResponses?.map((follower) => (
-                  <HoverCard key={follower.id}>
+                  <HoverCard key={`${post.id}-${follower.id}`}>
                     <HoverCardTrigger>
                       <Avatar className="h-6 w-6 border-2 border-background">
-                        <img
-                          src={follower.avatarUrl}
-                          alt={follower.name}
-                          className="h-full w-full object-cover"
-                        />
+                        {follower.avatarUrl && (
+                          <img
+                            src={follower.avatarUrl}
+                            alt={follower.name}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
                         <AvatarFallback>{follower.name[0]}</AvatarFallback>
                       </Avatar>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-60">
                       <div className="flex justify-between space-x-4">
                         <Avatar>
-                          <img
-                            src={follower.avatarUrl}
-                            alt={follower.name}
-                            className="h-full w-full object-cover"
-                          />
+                          {follower.avatarUrl && (
+                            <img
+                              src={follower.avatarUrl}
+                              alt={follower.name}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
                           <AvatarFallback>{follower.name[0]}</AvatarFallback>
                         </Avatar>
                         <div className="space-y-1">
