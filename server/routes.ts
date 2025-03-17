@@ -218,12 +218,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Follower not found" });
       }
 
-      // Deactivate the follower instead of deleting
-      const deactivatedFollower = await storage.deactivateAiFollower(followerId);
-      res.json(deactivatedFollower);
+      // Toggle activation status
+      const updatedFollower = follower.active
+        ? await storage.deactivateAiFollower(followerId)
+        : await storage.reactivateAiFollower(followerId);
+
+      res.json(updatedFollower);
     } catch (error) {
-      console.error("Error deactivating AI follower:", error);
-      res.status(500).json({ message: "Failed to deactivate AI follower" });
+      console.error("Error updating AI follower status:", error);
+      res.status(500).json({ message: "Failed to update AI follower status" });
     }
   });
 

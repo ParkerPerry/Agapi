@@ -32,6 +32,7 @@ export interface IStorage {
 
   deleteAiFollower(id: number): Promise<void>;
   deactivateAiFollower(id: number): Promise<AiFollower>;
+  reactivateAiFollower(id: number): Promise<AiFollower>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -310,6 +311,24 @@ export class DatabaseStorage implements IStorage {
       return updatedFollower;
     } catch (error) {
       console.error("[Storage] Error deactivating AI follower:", error);
+      throw error;
+    }
+  }
+
+  async reactivateAiFollower(id: number): Promise<AiFollower> {
+    try {
+      console.log("[Storage] Reactivating AI follower:", id);
+
+      const [updatedFollower] = (await db
+        .update(aiFollowers)
+        .set({ active: true })
+        .where(eq(aiFollowers.id, id))
+        .returning()) as AiFollower[];
+
+      console.log("[Storage] Successfully reactivated AI follower:", id);
+      return updatedFollower;
+    } catch (error) {
+      console.error("[Storage] Error reactivating AI follower:", error);
       throw error;
     }
   }
