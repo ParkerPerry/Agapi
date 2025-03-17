@@ -34,24 +34,19 @@ import {
 import { useState, useEffect } from "react";
 import { TourProvider } from "@/components/tour/tour-context";
 
+function generateUniqueAvatarUrl() {
+    const randomSeed = Math.random().toString(36).substring(7);
+    return `https://api.dicebear.com/7.x/bottts/svg?seed=${randomSeed}`;
+}
+
 export default function AiFollowersPage() {
   const { user } = useAuth();
   const [editingFollower, setEditingFollower] = useState<AiFollower | null>(null);
-
-  // Redirect to login if no user
-  if (!user) {
-    return null;
-  }
 
   const { data: followers } = useQuery<AiFollower[]>({
     queryKey: ["/api/followers"],
     enabled: !!user,
   });
-
-  function generateUniqueAvatarUrl() {
-    const randomSeed = Math.random().toString(36).substring(7);
-    return `https://api.dicebear.com/7.x/bottts/svg?seed=${randomSeed}`;
-  }
 
   const form = useForm({
     defaultValues: {
@@ -125,7 +120,7 @@ export default function AiFollowersPage() {
     },
   });
 
-  const deleteFollowerMutation = useMutation({
+  const deactivateFollowerMutation = useMutation({
     mutationFn: async (followerId: number) => {
       await apiRequest("DELETE", `/api/followers/${followerId}`);
     },
@@ -134,12 +129,16 @@ export default function AiFollowersPage() {
     },
   });
 
+
   const responsivenessOptions = [
     { value: "instant", label: "Instant (< 5 min)", description: "Quick to respond, always online" },
     { value: "active", label: "Active (5-60 min)", description: "Regular social media user" },
     { value: "casual", label: "Casual (1-8 hrs)", description: "Checks occasionally" },
     { value: "zen", label: "Zen (8-24 hrs)", description: "Mindful and deliberate responses" },
   ] as const;
+
+  // Filter active followers
+  const activeFollowers = followers?.filter(f => f.active) || [];
 
   return (
     <TourProvider>
@@ -234,7 +233,7 @@ export default function AiFollowersPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2">
-                  {followers?.map((follower) => (
+                  {activeFollowers.map((follower) => (
                     <div key={follower.id} className="flex flex-col space-y-4 p-4 border rounded-lg">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
@@ -360,21 +359,21 @@ export default function AiFollowersPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Delete AI Follower</AlertDialogTitle>
+                                <AlertDialogTitle>Deactivate AI Follower</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete {follower.name}? This action cannot be undone.
+                                  Are you sure you want to deactivate {follower.name}? They will no longer interact with your posts.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
-                                  onClick={() => deleteFollowerMutation.mutate(follower.id)}
+                                  onClick={() => deactivateFollowerMutation.mutate(follower.id)}
                                   className="bg-destructive hover:bg-destructive/90"
                                 >
-                                  {deleteFollowerMutation.isPending ? (
+                                  {deactivateFollowerMutation.isPending ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                   ) : (
-                                    "Delete"
+                                    "Deactivate"
                                   )}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
