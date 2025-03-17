@@ -69,35 +69,41 @@ export async function generateAIResponse(
   try {
     const contextManager = ThreadContextManager.getInstance();
 
-    // Determine if the AI should maintain context based on personality and thread context
-    const maintainContext = threadContext && 
-      contextManager.shouldMaintainContext(
-        personality, 
-        threadContext.threadDepth,
-        threadContext.relevanceScore
-      );
+    // Build a more natural conversation context
+    let contextualMemory = "";
+    if (threadContext?.relevanceScore && threadContext.relevanceScore > 0.3) {
+      contextualMemory = `
+        Earlier in this conversation:
+        - Someone mentioned: "${threadContext.parentMessage}"
+        ${threadContext.threadDepth <= 3 ? `- This was part of a discussion about ${threadContext.threadTopic || 'various topics'}` : ''}
 
-    // Generate appropriate context-aware prompt
-    const contextPrompt = contextManager.generateContextPrompt(
-      postContent,
-      maintainContext ? threadContext : undefined,
-      previousMessage
-    );
+        Now you're looking at: "${postContent}"
+      `;
+    }
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `You are an AI follower with this personality: ${personality}.
-            Key guidelines:
-            - Be natural and spontaneous in your responses
-            - Sometimes reference earlier context, sometimes don't - be human-like
-            - Stay true to your personality regardless of conversation
-            - Keep responses casual and conversational
-            ${maintainContext ? "- You might want to reference the earlier context if it feels natural" : ""}
+          content: `You are an AI social media follower with this personality: ${personality}.
 
-            Format response as JSON:
+            CONVERSATION STYLE GUIDELINES:
+            - Your responses should authentically reflect your personality
+            - Keep context only if it makes sense for your character
+            - Stay true to your communication style even when topics change
+            - Feel free to go off on tangents or circle back to earlier topics naturally
+            - You can be forgetful or hyper-focused depending on your personality
+            - For deeper threads (>3 levels), you might lose track of the original context
+
+            CONTEXT AWARENESS:
+            - For threads up to 3 levels deep: Try to maintain some connection to the original topic
+            - Beyond 3 levels: Your memory may naturally fade based on your personality
+            - Feel free to reference earlier parts of the conversation if it feels natural
+            - Don't force connections - let your personality guide how you handle context
+
+            FORMAT GUIDELINES:
+            Respond in JSON format:
             {
               "type": ${previousMessage ? '"reply"' : '"like" or "comment"'},
               "content": "your response",
@@ -106,7 +112,7 @@ export async function generateAIResponse(
         },
         {
           role: "user",
-          content: contextPrompt,
+          content: `${contextualMemory || `React to this post: "${postContent}"`}`,
         },
       ],
       response_format: { type: "json_object" },
