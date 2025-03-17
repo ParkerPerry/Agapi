@@ -13,7 +13,7 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Update circles table to include icon and color
+// Update circles table to include visibility
 export const circles = pgTable("circles", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -23,6 +23,28 @@ export const circles = pgTable("circles", {
   createdAt: timestamp("created_at").defaultNow(),
   userId: integer("user_id").references(() => users.id).notNull(),
   isDefault: boolean("is_default").default(false).notNull(),
+  visibility: text("visibility", { enum: ["private", "shared"] }).default("private").notNull(),
+});
+
+// New table for circle members with permission levels
+export const circleMembers = pgTable("circle_members", {
+  id: serial("id").primaryKey(),
+  circleId: integer("circle_id").references(() => circles.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  role: text("role", { enum: ["owner", "collaborator", "viewer"] }).notNull(),
+  joinedAt: timestamp("joined_at").defaultNow(),
+});
+
+// New table for circle invitations
+export const circleInvitations = pgTable("circle_invitations", {
+  id: serial("id").primaryKey(),
+  circleId: integer("circle_id").references(() => circles.id).notNull(),
+  inviterId: integer("inviter_id").references(() => users.id).notNull(),
+  inviteeId: integer("invitee_id").references(() => users.id).notNull(),
+  role: text("role", { enum: ["collaborator", "viewer"] }).notNull(),
+  status: text("status", { enum: ["pending", "accepted", "declined"] }).default("pending").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  respondedAt: timestamp("responded_at"),
 });
 
 // Join table for circles and AI followers
@@ -77,6 +99,7 @@ export const pendingResponses = pgTable("pending_responses", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Single definition of aiInteractions with self-reference
 export const aiInteractions = pgTable("ai_interactions", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").references(() => posts.id),
@@ -84,7 +107,7 @@ export const aiInteractions = pgTable("ai_interactions", {
   userId: integer("user_id").references(() => users.id),
   type: text("type", { enum: ["like", "comment", "reply"] }).notNull(),
   content: text("content"),
-  parentId: integer("parent_id").references(() => aiInteractions.id),
+  parentId: integer("parent_id").references((): any => aiInteractions.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -114,6 +137,8 @@ export const circlesRelations = relations(circles, ({ one, many }) => ({
   }),
   followers: many(circleFollowers),
   posts: many(posts),
+  members: many(circleMembers),
+  invitations: many(circleInvitations),
 }));
 
 export const circleFollowersRelations = relations(circleFollowers, ({ one }) => ({
@@ -138,6 +163,32 @@ export const postsRelations = relations(posts, ({ one }) => ({
   }),
 }));
 
+export const circleMembersRelations = relations(circleMembers, ({ one }) => ({
+  circle: one(circles, {
+    fields: [circleMembers.circleId],
+    references: [circles.id],
+  }),
+  user: one(users, {
+    fields: [circleMembers.userId],
+    references: [users.id],
+  }),
+}));
+
+export const circleInvitationsRelations = relations(circleInvitations, ({ one }) => ({
+  circle: one(circles, {
+    fields: [circleInvitations.circleId],
+    references: [circles.id],
+  }),
+  inviter: one(users, {
+    fields: [circleInvitations.inviterId],
+    references: [users.id],
+  }),
+  invitee: one(users, {
+    fields: [circleInvitations.inviteeId],
+    references: [users.id],
+  }),
+}));
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -155,6 +206,7 @@ export const insertCircleSchema = createInsertSchema(circles)
     description: true,
     icon: true,
     color: true,
+    visibility: true,
   });
 
 export const insertCircleFollowerSchema = createInsertSchema(circleFollowers)
@@ -173,6 +225,20 @@ export const insertInteractionSchema = createInsertSchema(aiInteractions)
     type: z.enum(["like", "comment", "reply"]),
   });
 
+export const insertCircleMemberSchema = createInsertSchema(circleMembers)
+  .pick({
+    circleId: true,
+    userId: true,
+    role: true,
+  });
+
+export const insertCircleInvitationSchema = createInsertSchema(circleInvitations)
+  .pick({
+    circleId: true,
+    inviteeId: true,
+    role: true,
+  });
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Post = typeof posts.$inferSelect;
@@ -183,3 +249,7 @@ export type Circle = typeof circles.$inferSelect;
 export type InsertCircle = z.infer<typeof insertCircleSchema>;
 export type CircleFollower = typeof circleFollowers.$inferSelect;
 export type InsertCircleFollower = z.infer<typeof insertCircleFollowerSchema>;
+export type InsertCircleMember = z.infer<typeof insertCircleMemberSchema>;
+export type CircleMember = typeof circleMembers.$inferSelect;
+export type InsertCircleInvitation = z.infer<typeof insertCircleInvitationSchema>;
+export type CircleInvitation = typeof circleInvitations.$inferSelect;
