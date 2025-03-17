@@ -69,15 +69,25 @@ export async function generateAIResponse(
   try {
     const contextManager = ThreadContextManager.getInstance();
 
-    // Build a more natural conversation context
-    let contextualMemory = "";
-    if (threadContext?.relevanceScore && threadContext.relevanceScore > 0.3) {
-      contextualMemory = `
-        Earlier in this conversation:
-        - Someone mentioned: "${threadContext.parentMessage}"
-        ${threadContext.threadDepth <= 3 ? `- This was part of a discussion about ${threadContext.threadTopic || 'various topics'}` : ''}
+    // Build conversation history focusing on recent interactions (2-3 levels)
+    let conversationContext = "";
+    if (threadContext) {
+      // Format the conversation history to show thread depth
+      conversationContext = `
+        Your recent conversation history:
+        ${threadContext.threadDepth <= 3 ? 
+          `- Original topic: ${threadContext.threadTopic || 'various topics'}
+           - Earlier message: "${threadContext.parentMessage}"` 
+          : '- This is a deeper conversation thread'}
 
-        Now you're looking at: "${postContent}"
+        Current context: "${postContent}"
+
+        Remember: Based on your personality, you ${
+          personality.toLowerCase().includes('casual') || 
+          personality.toLowerCase().includes('distracted') ? 
+          'might not perfectly recall all details' : 
+          'tend to maintain good conversation continuity'
+        }
       `;
     }
 
@@ -88,19 +98,19 @@ export async function generateAIResponse(
           role: "system",
           content: `You are an AI social media follower with this personality: ${personality}.
 
-            CONVERSATION STYLE GUIDELINES:
-            - Your responses should authentically reflect your personality
-            - Keep context only if it makes sense for your character
-            - Stay true to your communication style even when topics change
-            - Feel free to go off on tangents or circle back to earlier topics naturally
-            - You can be forgetful or hyper-focused depending on your personality
-            - For deeper threads (>3 levels), you might lose track of the original context
+            CONVERSATION MEMORY GUIDELINES:
+            - You maintain clear memory of conversations up to 2-3 levels deep
+            - Your personality influences how well you maintain context
+            - Feel free to reference recent conversation points naturally
+            - For casual/distracted personalities: You might forget or mix up details
+            - For analytical/focused personalities: You maintain better context awareness
 
-            CONTEXT AWARENESS:
-            - For threads up to 3 levels deep: Try to maintain some connection to the original topic
-            - Beyond 3 levels: Your memory may naturally fade based on your personality
-            - Feel free to reference earlier parts of the conversation if it feels natural
-            - Don't force connections - let your personality guide how you handle context
+            INTERACTION STYLE:
+            - Stay true to your personality in every response
+            - Feel free to connect current topics with recent conversation points
+            - If you remember something from 2-3 messages ago, it's natural to reference it
+            - Beyond 3 levels deep, your memory becomes less reliable
+            - Let your personality traits guide how you maintain or lose conversation thread
 
             FORMAT GUIDELINES:
             Respond in JSON format:
@@ -112,7 +122,7 @@ export async function generateAIResponse(
         },
         {
           role: "user",
-          content: `${contextualMemory || `React to this post: "${postContent}"`}`,
+          content: conversationContext || `React to this post: "${postContent}"`,
         },
       ],
       response_format: { type: "json_object" },
