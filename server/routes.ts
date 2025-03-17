@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { generateAIResponse, generateAIBackground } from "./openai";
 import { ThreadManager } from "./thread-manager";
 import { ResponseScheduler } from "./response-scheduler";
+import { ThreadContextManager } from "./context-manager";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
@@ -99,21 +100,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         parentId
       });
 
-      // Calculate thread depth
-      let threadDepth = 1;
-      let currentParent = parentInteraction;
-      while (currentParent.parentId) {
-        threadDepth++;
-        currentParent = await storage.getInteraction(currentParent.parentId);
-      }
-
-      // Get thread context
-      const threadContext = {
-        parentMessage: parentInteraction.content || undefined,
-        parentAuthor: "User", // Could be enhanced to get actual username
-        immediateContext: content,
-        threadDepth
-      };
+      // Build thread context using the context manager
+      const contextManager = ThreadContextManager.getInstance();
+      const threadContext = await contextManager.buildThreadContext(
+        userReply,
+        parentInteraction,
+        aiFollower
+      );
 
       // Generate and save AI response with thread context
       const aiResponse = await generateAIResponse(

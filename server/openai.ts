@@ -1,6 +1,7 @@
 import OpenAI from "openai";
+import { ThreadContextManager, ThreadContextData } from "./context-manager";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+// OpenAI configuration remains unchanged
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 interface AIResponse {
@@ -59,57 +60,29 @@ export async function generateAIBackground(
   }
 }
 
-interface ThreadContext {
-  parentMessage?: string;
-  parentAuthor?: string;
-  threadTopic?: string;
-  immediateContext: string;
-  threadDepth: number;
-}
-
-// Helper to determine if follower should maintain context based on personality
-function shouldMaintainContext(personality: string, threadDepth: number): boolean {
-  // Extract personality traits that might affect context maintenance
-  const attentiveTraits = ['detail-oriented', 'analytical', 'focused', 'professional', 'expert', 'academic'];
-  const casualTraits = ['casual', 'laid-back', 'playful', 'distracted', 'chaotic', 'random'];
-
-  // Calculate base chance of maintaining context
-  let contextChance = 0.7; // 70% base chance
-
-  // Adjust based on personality traits
-  const lowerPersonality = personality.toLowerCase();
-  attentiveTraits.forEach(trait => {
-    if (lowerPersonality.includes(trait)) contextChance += 0.1;
-  });
-  casualTraits.forEach(trait => {
-    if (lowerPersonality.includes(trait)) contextChance -= 0.1;
-  });
-
-  // Decrease chance as thread depth increases
-  contextChance -= (threadDepth - 1) * 0.2;
-
-  // Add some randomness
-  const random = Math.random();
-  return random < Math.max(0.1, Math.min(0.9, contextChance));
-}
-
 export async function generateAIResponse(
   postContent: string,
   personality: string,
   previousMessage?: string,
-  threadContext?: ThreadContext
+  threadContext?: ThreadContextData
 ): Promise<AIResponse> {
   try {
-    // Determine if the AI should maintain context based on personality and thread depth
-    const maintainContext = threadContext && shouldMaintainContext(personality, threadContext.threadDepth);
+    const contextManager = ThreadContextManager.getInstance();
 
-    // Construct a more natural, personality-driven context prompt
-    const contextPrompt = maintainContext
-      ? `You're in a conversation where someone earlier mentioned something about "${threadContext.parentMessage}". 
-         Now someone is saying: "${postContent}"`
-      : previousMessage 
-        ? `Responding to: "${postContent}"`
-        : `Check out this post: ${postContent}`;
+    // Determine if the AI should maintain context based on personality and thread context
+    const maintainContext = threadContext && 
+      contextManager.shouldMaintainContext(
+        personality, 
+        threadContext.threadDepth,
+        threadContext.relevanceScore
+      );
+
+    // Generate appropriate context-aware prompt
+    const contextPrompt = contextManager.generateContextPrompt(
+      postContent,
+      maintainContext ? threadContext : undefined,
+      previousMessage
+    );
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
