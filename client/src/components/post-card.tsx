@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Post, AiFollower } from "@shared/schema";
-import { Heart, MessageSquare, Send } from "lucide-react";
+import { Heart, MessageSquare, Send, Clock } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { formatRelativeTime } from "@/utils/date";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 interface PostCardProps {
   post: Post & {
@@ -33,6 +34,12 @@ interface PostCardProps {
         parentId?: number;
         createdAt: Date;
       }>;
+    }>;
+    pendingResponses?: Array<{
+      id: number;
+      name: string;
+      avatarUrl: string;
+      scheduledFor: Date;
     }>;
   };
 }
@@ -181,6 +188,7 @@ export function PostCard({ post }: PostCardProps) {
   const rootComments = post.interactions.filter(
     (i) => (i.type === "comment" || i.type === "reply") && !i.parentId
   );
+  const pendingCount = post.pendingResponses?.length || 0;
 
   return (
     <Card>
@@ -198,15 +206,56 @@ export function PostCard({ post }: PostCardProps) {
         <p className="whitespace-pre-wrap">{post.content}</p>
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
-        <div className="flex items-center space-x-4 text-muted-foreground">
-          <div className="flex items-center space-x-1">
-            <Heart className="h-4 w-4" />
-            <span className="text-sm">{likes}</span>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center space-x-4 text-muted-foreground">
+            <div className="flex items-center space-x-1">
+              <Heart className="h-4 w-4" />
+              <span className="text-sm">{likes}</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <MessageSquare className="h-4 w-4" />
+              <span className="text-sm">{rootComments.length}</span>
+            </div>
           </div>
-          <div className="flex items-center space-x-1">
-            <MessageSquare className="h-4 w-4" />
-            <span className="text-sm">{rootComments.length}</span>
-          </div>
+          {pendingCount > 0 && (
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <div className="flex -space-x-2">
+                {post.pendingResponses?.map((follower) => (
+                  <HoverCard key={follower.id}>
+                    <HoverCardTrigger>
+                      <Avatar className="h-6 w-6 border-2 border-background">
+                        <img
+                          src={follower.avatarUrl}
+                          alt={follower.name}
+                          className="h-full w-full object-cover"
+                        />
+                        <AvatarFallback>{follower.name[0]}</AvatarFallback>
+                      </Avatar>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-60">
+                      <div className="flex justify-between space-x-4">
+                        <Avatar>
+                          <img
+                            src={follower.avatarUrl}
+                            alt={follower.name}
+                            className="h-full w-full object-cover"
+                          />
+                          <AvatarFallback>{follower.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-semibold">{follower.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Will respond {formatRelativeTime(follower.scheduledFor)}
+                          </p>
+                        </div>
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         <div className="space-y-6">
           {rootComments.map((comment) => (
