@@ -11,13 +11,13 @@ export interface ThreadContextData {
 
 export class ThreadContextManager {
   private static instance: ThreadContextManager;
-  
+
   // Personality traits that affect context maintenance
   private readonly attentiveTraits = [
     'detail-oriented', 'analytical', 'focused', 
     'professional', 'expert', 'academic'
   ];
-  
+
   private readonly casualTraits = [
     'casual', 'laid-back', 'playful', 
     'distracted', 'chaotic', 'random'
@@ -41,7 +41,7 @@ export class ThreadContextManager {
     aiFollower: AiFollower
   ): Promise<ThreadContextData> {
     const threadDepth = await this.calculateThreadDepth(parentInteraction);
-    
+
     return {
       parentMessage: parentInteraction.content || undefined,
       parentAuthor: "User", // TODO: Enhance with actual username
@@ -56,7 +56,7 @@ export class ThreadContextManager {
   }
 
   /**
-   * Determine if the AI follower should maintain context
+   * Determine if the AI follower should maintain context based on personality and relevance
    */
   public shouldMaintainContext(
     personality: string,
@@ -68,11 +68,11 @@ export class ThreadContextManager {
 
     // Adjust based on personality traits
     const lowerPersonality = personality.toLowerCase();
-    
+
     this.attentiveTraits.forEach(trait => {
       if (lowerPersonality.includes(trait)) contextChance += 0.1;
     });
-    
+
     this.casualTraits.forEach(trait => {
       if (lowerPersonality.includes(trait)) contextChance -= 0.1;
     });
@@ -100,13 +100,13 @@ export class ThreadContextManager {
     if (!interaction.parentId) {
       return depth;
     }
-    
+
     // TODO: Implement storage.getInteraction once moved
     // const parent = await storage.getInteraction(interaction.parentId);
     // if (parent) {
     //   return this.calculateThreadDepth(parent, depth + 1);
     // }
-    
+
     return depth;
   }
 
@@ -121,7 +121,7 @@ export class ThreadContextManager {
     // Simple word overlap scoring for now
     const currentWords = new Set(currentMessage.toLowerCase().split(/\s+/));
     const parentWords = new Set(parentMessage.toLowerCase().split(/\s+/));
-    
+
     const intersection = new Set(
       [...currentWords].filter(word => parentWords.has(word))
     );

@@ -69,26 +69,22 @@ export async function generateAIResponse(
   try {
     const contextManager = ThreadContextManager.getInstance();
 
-    // Build conversation history focusing on recent interactions (2-3 levels)
-    let conversationContext = "";
+    // Build comprehensive conversation history
+    let conversationHistory = "";
     if (threadContext) {
-      // Format the conversation history to show thread depth
-      conversationContext = `
-        Your recent conversation history:
-        ${threadContext.threadDepth <= 3 ? 
-          `- Original topic: ${threadContext.threadTopic || 'various topics'}
-           - Earlier message: "${threadContext.parentMessage}"` 
-          : '- This is a deeper conversation thread'}
+      const depthAwareHistory = threadContext.threadDepth <= 3
+        ? `Recent conversation history:
+           Last message: "${threadContext.immediateContext}"
+           Earlier message: "${threadContext.parentMessage}"
+           Topic started with: "${threadContext.threadTopic || 'various topics'}"
 
-        Current context: "${postContent}"
+           Current message to respond to: "${postContent}"`
+        : `You're deep in a conversation thread. 
+           Latest message: "${postContent}"
 
-        Remember: Based on your personality, you ${
-          personality.toLowerCase().includes('casual') || 
-          personality.toLowerCase().includes('distracted') ? 
-          'might not perfectly recall all details' : 
-          'tend to maintain good conversation continuity'
-        }
-      `;
+           Note: Given your personality, you might not remember exactly how this conversation started.`;
+
+      conversationHistory = depthAwareHistory;
     }
 
     const response = await openai.chat.completions.create({
@@ -96,24 +92,30 @@ export async function generateAIResponse(
       messages: [
         {
           role: "system",
-          content: `You are an AI social media follower with this personality: ${personality}.
+          content: `You are an AI social media follower with this personality: "${personality}".
 
-            CONVERSATION MEMORY GUIDELINES:
-            - You maintain clear memory of conversations up to 2-3 levels deep
-            - Your personality influences how well you maintain context
-            - Feel free to reference recent conversation points naturally
-            - For casual/distracted personalities: You might forget or mix up details
-            - For analytical/focused personalities: You maintain better context awareness
+            MEMORY AND CONVERSATION RULES:
+            1. For threads up to 3 messages deep:
+               - You should naturally recall and reference recent messages
+               - How well you maintain context depends on your personality
+               - Feel free to bring up points from recent messages if relevant
 
-            INTERACTION STYLE:
-            - Stay true to your personality in every response
-            - Feel free to connect current topics with recent conversation points
-            - If you remember something from 2-3 messages ago, it's natural to reference it
-            - Beyond 3 levels deep, your memory becomes less reliable
-            - Let your personality traits guide how you maintain or lose conversation thread
+            2. Personality affects your memory:
+               - If you're analytical/professional: Keep good track of conversation
+               - If you're casual/distracted: You might mix up or forget details
+               - If you're social/chatty: Jump between topics but can circle back
 
-            FORMAT GUIDELINES:
-            Respond in JSON format:
+            3. Natural conversation flow:
+               - Stay true to your personality traits
+               - Reference recent messages naturally (don't force it)
+               - It's okay to sometimes forget or misremember things
+               - Let your personality guide how you maintain conversation threads
+
+            CONVERSATION STATE:
+            ${conversationHistory || "Starting a new conversation"}
+
+            RESPONSE FORMAT:
+            Reply in JSON:
             {
               "type": ${previousMessage ? '"reply"' : '"like" or "comment"'},
               "content": "your response",
@@ -122,7 +124,7 @@ export async function generateAIResponse(
         },
         {
           role: "user",
-          content: conversationContext || `React to this post: "${postContent}"`,
+          content: postContent,
         },
       ],
       response_format: { type: "json_object" },
