@@ -8,6 +8,7 @@ import {
 } from "@shared/schema";
 import { eq, and, asc } from "drizzle-orm";
 import { db } from "./db";
+import { defaultTomConfig } from "./config/default-ai-follower";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -452,23 +453,8 @@ export class DatabaseStorage implements IStorage {
 
       console.log("[Storage] Created Home circle:", defaultCircle);
 
-      // Create Tom as the default AI follower
-      const tom = await this.createAiFollower(userId, {
-        name: "Tom",
-        personality: "Friendly and helpful MySpace creator and your first AI friend",
-        avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tom",  // Using DiceBear for avatar
-        background: "Created MyFace, loves technology and connecting people",
-        interests: ["technology", "social networks", "music", "coding"],
-        communicationStyle: "Casual and friendly",
-        interactionPreferences: {
-          likes: ["helping new users", "customizing profiles", "building communities"],
-          dislikes: ["spam", "toxic behavior"]
-        },
-        responsiveness: "active",
-        responseDelay: { min: 1, max: 30 },
-        responseChance: 90,
-        active: true
-      });
+      // Create Tom as the default AI follower using the default config
+      const tom = await this.createAiFollower(userId, defaultTomConfig);
 
       console.log("[Storage] Created Tom follower:", tom);
 
