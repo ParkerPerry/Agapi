@@ -16,6 +16,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   scheduler.start();
 
   // Add before other circle routes
+  app.get("/api/circles/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+      res.json(circle);
+    } catch (error) {
+      console.error("Error getting circle:", error);
+      res.status(500).json({ message: "Failed to get circle" });
+    }
+  });
+
+  // Add before other circle routes
   app.get("/api/circles/default", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 

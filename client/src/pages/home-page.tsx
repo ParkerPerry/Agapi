@@ -13,16 +13,20 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 export default function HomePage() {
   const { user } = useAuth();
 
-  // Get default circle
-  const { data: defaultCircle, isLoading: isLoadingCircle } = useQuery<Circle>({
-    queryKey: ["/api/circles/default"],
+  // Get circle ID from URL query parameter
+  const params = new URLSearchParams(window.location.search);
+  const circleId = params.get('circle');
+
+  // Get circle data based on ID or default
+  const { data: circle, isLoading: isLoadingCircle } = useQuery<Circle>({
+    queryKey: [circleId ? `/api/circles/${circleId}` : "/api/circles/default"],
     enabled: !!user,
   });
 
-  // Get posts for the default circle
+  // Get posts for the circle
   const { data: posts, isLoading: isLoadingPosts, refetch } = useQuery<(Post & { interactions: any[] })[]>({
-    queryKey: [`/api/circles/${defaultCircle?.id}/posts`],
-    enabled: !!defaultCircle,
+    queryKey: [`/api/circles/${circle?.id}/posts`],
+    enabled: !!circle,
   });
 
   // Handle real-time updates
@@ -57,27 +61,27 @@ export default function HomePage() {
           <div className="max-w-2xl mx-auto space-y-6">
             {isLoadingCircle ? (
               <Skeleton className="h-24 w-full" />
-            ) : defaultCircle && (
+            ) : circle && (
               <Card>
                 <CardHeader className="space-y-1">
                   <div className="flex items-center space-x-2">
                     <div
                       className="flex items-center justify-center w-8 h-8 rounded-full text-lg"
-                      style={{ backgroundColor: defaultCircle.color + "20" }}
+                      style={{ backgroundColor: circle.color + "20" }}
                     >
-                      {defaultCircle.icon}
+                      {circle.icon}
                     </div>
-                    <CardTitle>{defaultCircle.name}</CardTitle>
+                    <CardTitle>{circle.name}</CardTitle>
                   </div>
-                  {defaultCircle.description && (
-                    <CardDescription>{defaultCircle.description}</CardDescription>
+                  {circle.description && (
+                    <CardDescription>{circle.description}</CardDescription>
                   )}
                 </CardHeader>
               </Card>
             )}
 
             <div className="post-form">
-              <PostForm defaultCircleId={defaultCircle?.id} />
+              <PostForm defaultCircleId={circle?.id} />
             </div>
 
             {isLoadingPosts ? (

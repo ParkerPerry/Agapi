@@ -38,6 +38,7 @@ import { TourProvider } from "@/components/tour/tour-context";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 export default function CirclesPage() {
   const { user } = useAuth();
@@ -46,6 +47,7 @@ export default function CirclesPage() {
   const [selectedCircle, setSelectedCircle] = useState<Circle | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false);
+  const [, navigate] = useLocation();
 
   if (!user) {
     return null;
@@ -300,6 +302,12 @@ export default function CirclesPage() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
+                          <Button
+                            variant="default"
+                            onClick={() => navigate(`/?circle=${circle.id}`)}
+                          >
+                            Enter Circle
+                          </Button>
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button
