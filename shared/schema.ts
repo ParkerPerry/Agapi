@@ -29,7 +29,7 @@ export const circles = pgTable("circles", {
 export const circleFollowers = pgTable("circle_followers", {
   id: serial("id").primaryKey(),
   circleId: integer("circle_id").references(() => circles.id).notNull(),
-  aiFollowerId: integer("ai_follower_id").references(() => aiFollowers.id).notNull(),
+  aiFollowerId: integer("ai_follower_id").references(() => ai_followers.id).notNull(),
   addedAt: timestamp("added_at").defaultNow(),
 });
 
@@ -42,8 +42,9 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Rest of the existing tables remain unchanged
-export const aiFollowers = pgTable("aiFollowers", {
+
+// Update the table name from aiFollowers to ai_followers
+export const ai_followers = pgTable("ai_followers", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
   name: text("name").notNull(),
@@ -70,7 +71,7 @@ export const aiFollowers = pgTable("aiFollowers", {
 export const pendingResponses = pgTable("pending_responses", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").references(() => posts.id),
-  aiFollowerId: integer("ai_follower_id").references(() => aiFollowers.id),
+  aiFollowerId: integer("ai_follower_id").references(() => ai_followers.id),
   scheduledFor: timestamp("scheduled_for").notNull(),
   processed: boolean("processed").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow(),
@@ -79,7 +80,7 @@ export const pendingResponses = pgTable("pending_responses", {
 export const aiInteractions = pgTable("ai_interactions", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").references(() => posts.id),
-  aiFollowerId: integer("ai_follower_id").references(() => aiFollowers.id),
+  aiFollowerId: integer("ai_follower_id").references(() => ai_followers.id),
   userId: integer("user_id").references(() => users.id),
   type: text("type", { enum: ["like", "comment", "reply"] }).notNull(),
   content: text("content"),
@@ -92,9 +93,9 @@ export const aiInteractionsRelations = relations(aiInteractions, ({ one }) => ({
     fields: [aiInteractions.parentId],
     references: [aiInteractions.id],
   }),
-  aiFollower: one(aiFollowers, {
+  aiFollower: one(ai_followers, {
     fields: [aiInteractions.aiFollowerId],
-    references: [aiFollowers.id],
+    references: [ai_followers.id],
   }),
   post: one(posts, {
     fields: [aiInteractions.postId],
@@ -120,9 +121,9 @@ export const circleFollowersRelations = relations(circleFollowers, ({ one }) => 
     fields: [circleFollowers.circleId],
     references: [circles.id],
   }),
-  aiFollower: one(aiFollowers, {
+  aiFollower: one(ai_followers, {
     fields: [circleFollowers.aiFollowerId],
-    references: [aiFollowers.id],
+    references: [ai_followers.id],
   }),
 }));
 
@@ -175,7 +176,7 @@ export const insertInteractionSchema = createInsertSchema(aiInteractions)
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Post = typeof posts.$inferSelect;
-export type AiFollower = typeof aiFollowers.$inferSelect;
+export type AiFollower = typeof ai_followers.$inferSelect;
 export type AiInteraction = typeof aiInteractions.$inferSelect;
 export type PendingResponse = typeof pendingResponses.$inferSelect;
 export type Circle = typeof circles.$inferSelect;

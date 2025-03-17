@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Bell, Home, User, LogOut, HelpCircle } from "lucide-react";
+import { Bell, Home, User, LogOut, HelpCircle, Circle } from "lucide-react";
 import { useTour } from "@/components/tour/tour-context";
 
 export function NavBar() {
@@ -36,6 +36,12 @@ export function NavBar() {
               <Link href="/ai-followers">
                 <Button variant="ghost" size="icon">
                   <User className="h-[1.2rem] w-[1.2rem]" />
+                </Button>
+              </Link>
+
+              <Link href="/circles">
+                <Button variant="ghost" size="icon">
+                  <Circle className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
               </Link>
 

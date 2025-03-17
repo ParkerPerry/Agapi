@@ -3,7 +3,7 @@ import {
   Circle, InsertCircle, CircleFollower, InsertCircleFollower
 } from "@shared/schema";
 import { 
-  users, posts, aiFollowers, aiInteractions, pendingResponses,
+  users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers
 } from "@shared/schema";
 import { eq, and, asc } from "drizzle-orm";
@@ -85,15 +85,15 @@ export class DatabaseStorage implements IStorage {
   async getAiFollowers(userId: number): Promise<AiFollower[]> {
     return await db
       .select()
-      .from(aiFollowers)
-      .where(eq(aiFollowers.userId, userId));
+      .from(ai_followers)
+      .where(eq(ai_followers.userId, userId));
   }
 
   async getAiFollower(id: number): Promise<AiFollower | undefined> {
     const [follower] = await db
       .select()
-      .from(aiFollowers)
-      .where(eq(aiFollowers.id, id));
+      .from(ai_followers)
+      .where(eq(ai_followers.id, id));
     return follower;
   }
 
@@ -102,7 +102,7 @@ export class DatabaseStorage implements IStorage {
     follower: Omit<AiFollower, "id" | "userId">,
   ): Promise<AiFollower> {
     const [aiFollower] = (await db
-      .insert(aiFollowers)
+      .insert(ai_followers)
       .values({ ...follower, userId })
       .returning()) as AiFollower[];
     return aiFollower;
@@ -245,9 +245,9 @@ export class DatabaseStorage implements IStorage {
   ): Promise<AiFollower> {
     try {
       const [updatedFollower] = (await db
-        .update(aiFollowers)
+        .update(ai_followers)
         .set(updates)
-        .where(eq(aiFollowers.id, id))
+        .where(eq(ai_followers.id, id))
         .returning()) as AiFollower[];
 
       return updatedFollower;
@@ -298,8 +298,8 @@ export class DatabaseStorage implements IStorage {
 
       // Finally delete the follower
       await db
-        .delete(aiFollowers)
-        .where(eq(aiFollowers.id, id));
+        .delete(ai_followers)
+        .where(eq(ai_followers.id, id));
 
       console.log("[Storage] Successfully deleted AI follower and related data");
     } catch (error) {
@@ -313,9 +313,9 @@ export class DatabaseStorage implements IStorage {
       console.log("[Storage] Deactivating AI follower:", id);
 
       const [updatedFollower] = (await db
-        .update(aiFollowers)
+        .update(ai_followers)
         .set({ active: false })
-        .where(eq(aiFollowers.id, id))
+        .where(eq(ai_followers.id, id))
         .returning()) as AiFollower[];
 
       console.log("[Storage] Successfully deactivated AI follower:", id);
@@ -331,9 +331,9 @@ export class DatabaseStorage implements IStorage {
       console.log("[Storage] Reactivating AI follower:", id);
 
       const [updatedFollower] = (await db
-        .update(aiFollowers)
+        .update(ai_followers)
         .set({ active: true })
-        .where(eq(aiFollowers.id, id))
+        .where(eq(ai_followers.id, id))
         .returning()) as AiFollower[];
 
       console.log("[Storage] Successfully reactivated AI follower:", id);
@@ -468,12 +468,12 @@ export class DatabaseStorage implements IStorage {
   async getCircleFollowers(circleId: number): Promise<AiFollower[]> {
     const followers = await db
       .select({
-        follower: aiFollowers,
+        follower: ai_followers,
       })
       .from(circleFollowers)
       .innerJoin(
-        aiFollowers,
-        eq(circleFollowers.aiFollowerId, aiFollowers.id)
+        ai_followers,
+        eq(circleFollowers.aiFollowerId, ai_followers.id)
       )
       .where(eq(circleFollowers.circleId, circleId));
 
