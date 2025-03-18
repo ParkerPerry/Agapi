@@ -7,7 +7,7 @@ import {
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations
 } from "@shared/schema";
-import { eq, and, asc, or } from "drizzle-orm";
+import { eq, and, asc, or, inArray } from "drizzle-orm";
 import { db } from "./db";
 import { defaultTomConfig } from "./config/default-ai-follower";
 
@@ -193,7 +193,8 @@ export class DatabaseStorage implements IStorage {
     console.log("[Storage] Getting interactions for post:", postId);
 
     try {
-      const interactions = await db
+      // First get all parent interactions
+      const parentInteractions = await db
         .select({
           id: aiInteractions.id,
           postId: aiInteractions.postId,
@@ -215,12 +216,62 @@ export class DatabaseStorage implements IStorage {
           }
         })
         .from(aiInteractions)
+        .where(
+          and(
+            eq(aiInteractions.postId, postId),
+            eq(aiInteractions.parentId, null)
+          )
+        )
         .leftJoin(ai_followers, eq(aiInteractions.aiFollowerId, ai_followers.id))
         .leftJoin(users, eq(ai_followers.userId, users.id))
-        .where(eq(aiInteractions.postId, postId))
-        .orderBy(aiInteractions.createdAt);
+        .orderBy(asc(aiInteractions.createdAt));
 
-      console.log("[Storage] Retrieved interactions:", interactions);
+      // Then get all replies for these parent interactions
+      const replies = await db
+        .select({
+          id: aiInteractions.id,
+          postId: aiInteractions.postId,
+          userId: aiInteractions.userId,
+          aiFollowerId: aiInteractions.aiFollowerId,
+          type: aiInteractions.type,
+          content: aiInteractions.content,
+          parentId: aiInteractions.parentId,
+          createdAt: aiInteractions.createdAt,
+          aiFollower: {
+            id: ai_followers.id,
+            name: ai_followers.name,
+            avatarUrl: ai_followers.avatarUrl,
+            personality: ai_followers.personality,
+            userId: ai_followers.userId,
+            owner: {
+              username: users.username
+            }
+          }
+        })
+        .from(aiInteractions)
+        .where(
+          and(
+            eq(aiInteractions.postId, postId),
+            inArray(
+              aiInteractions.parentId,
+              parentInteractions.map(i => i.id)
+            )
+          )
+        )
+        .leftJoin(ai_followers, eq(aiInteractions.aiFollowerId, ai_followers.id))
+        .leftJoin(users, eq(ai_followers.userId, users.id))
+        .orderBy(asc(aiInteractions.createdAt));
+
+      // Group replies with their parent interactions
+      const interactions = parentInteractions.map(parent => ({
+        ...parent,
+        replies: replies.filter(reply => reply.parentId === parent.id)
+      }));
+
+      console.log("[Storage] Retrieved interactions:", {
+        count: interactions.length,
+        sample: interactions[0]
+      });
 
       return interactions as AiInteraction[];
     } catch (error) {
