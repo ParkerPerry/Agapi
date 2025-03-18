@@ -10,7 +10,7 @@ import { Users, Share2 } from "lucide-react";
 interface CircleDetails {
   circle: Circle;
   owner: User;
-  members: (CircleMember & { username: string })[];
+  members: CircleMember[];
   followers: AiFollower[];
 }
 
@@ -30,11 +30,9 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
 
   // Group followers by their owners (userId)
   const followersByOwner = followers.reduce((groups, follower) => {
-    const ownerMember = members.find(m => m.userId === follower.userId);
-    if (ownerMember) {
-      const existingFollowers = groups.get(ownerMember.userId) || [];
-      groups.set(ownerMember.userId, [...existingFollowers, follower]);
-    }
+    const owner = members.find(m => m.userId === follower.userId) || { userId: follower.userId };
+    const ownerGroups = groups.get(owner.userId) || [];
+    groups.set(owner.userId, [...ownerGroups, follower]);
     return groups;
   }, new Map<number, AiFollower[]>());
 
@@ -84,12 +82,12 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
                     <div className="flex items-center space-x-2">
                       <Avatar>
                         <AvatarFallback>
-                          {member.username.charAt(0).toUpperCase()}
+                          {member.userId === owner.id ? "O" : "M"}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">
-                          {member.username}
+                          {member.userId === owner.id ? owner.username : member.userId === circle.userId ? circle.name : "Member"}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {member.role}
@@ -111,10 +109,12 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
               <div className="space-y-4">
                 {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
                   const ownerMember = members.find(m => m.userId === userId);
+                  const ownerName = userId === owner.id ? owner.username : ownerMember?.role || "Member";
+
                   return (
                     <div key={userId} className="space-y-2">
                       <h4 className="text-sm font-medium text-muted-foreground">
-                        {ownerMember?.username}'s AI Followers
+                        {ownerName}'s AI Followers
                       </h4>
                       {userFollowers.map((follower) => (
                         <div
