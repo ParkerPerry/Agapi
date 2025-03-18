@@ -194,12 +194,33 @@ export class DatabaseStorage implements IStorage {
 
     try {
       const interactions = await db
-        .select()
+        .select({
+          id: aiInteractions.id,
+          postId: aiInteractions.postId,
+          userId: aiInteractions.userId,
+          aiFollowerId: aiInteractions.aiFollowerId,
+          type: aiInteractions.type,
+          content: aiInteractions.content,
+          parentId: aiInteractions.parentId,
+          createdAt: aiInteractions.createdAt,
+          aiFollower: {
+            id: ai_followers.id,
+            name: ai_followers.name,
+            avatarUrl: ai_followers.avatarUrl,
+            personality: ai_followers.personality,
+            userId: ai_followers.userId,
+            owner: {
+              username: users.username
+            }
+          }
+        })
         .from(aiInteractions)
+        .leftJoin(ai_followers, eq(aiInteractions.aiFollowerId, ai_followers.id))
+        .leftJoin(users, eq(ai_followers.userId, users.id))
         .where(eq(aiInteractions.postId, postId))
         .orderBy(aiInteractions.createdAt);
 
-      console.log("[Storage] Retrieved interactions count:", interactions.length);
+      console.log("[Storage] Retrieved interactions:", interactions);
 
       return interactions as AiInteraction[];
     } catch (error) {
