@@ -2,14 +2,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { NavBar } from "@/components/nav-bar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Circle, InsertCircle, AiFollower, CircleInvitation, CircleMember, User } from "@shared/schema";
+import { Circle, InsertCircle, AiFollower, CircleInvitation } from "@shared/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Loader2, Plus, Pencil, Share2, Users, Trash2, ExternalLink, Info } from "lucide-react";
+import { Loader2, Plus, Pencil, Share2, Users, Trash2 } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import {
   Dialog,
@@ -49,12 +49,6 @@ import {
 } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { Separator } from "@/components/ui/separator";
 
 type CircleGroups = {
   owned: Circle[];
@@ -605,17 +599,6 @@ export default function CirclesPage() {
     </Card>
   );
 
-  const { data: invitationDetails } = useQuery<{
-    circle: Circle;
-    owner: User;
-    members: (CircleMember & { username: string })[];
-    followers: AiFollower[];
-  }>({
-    queryKey: [`/api/circles/${selectedInvitation?.circleId}/details`],
-    enabled: !!selectedInvitation,
-  });
-
-
   return (
     <TourProvider>
       <div className="min-h-screen bg-background">
@@ -623,205 +606,76 @@ export default function CirclesPage() {
         <main className="container py-6">
           <div className="max-w-4xl mx-auto space-y-6">
             {invitations && invitations.length > 0 && (
-              <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Pending Circle Invitations</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {invitations.map((invitation) => (
-                        <div
-                          key={invitation.id}
-                          className="flex items-center justify-between p-4 border rounded-lg"
-                          style={{ borderColor: invitationDetails?.circle?.color || "#e5e7eb" }}
-                        >
-                          <div className="flex items-center gap-4">
-                            <div
-                              className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
-                              style={{ backgroundColor: (invitationDetails?.circle?.color || "#e5e7eb") + "20" }}
-                            >
-                              {invitationDetails?.circle?.icon || "⭕"}
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <p className="font-medium">Circle Invitation</p>
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-muted-foreground hover:text-foreground"
-                                      onClick={() => setSelectedInvitation(invitation)}
-                                    >
-                                      <Info className="h-4 w-4 mr-1" />
-                                      View Details
-                                    </Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="sm:max-w-lg">
-                                    <DialogHeader>
-                                      <DialogTitle>Circle Details</DialogTitle>
-                                      <DialogDescription>
-                                        Learn more about this circle before deciding
-                                      </DialogDescription>
-                                    </DialogHeader>
-                                    {invitationDetails ? (
-                                      <div className="space-y-4">
-                                        <div className="flex items-center gap-3">
-                                          <div
-                                            className="flex items-center justify-center w-12 h-12 rounded-full text-2xl"
-                                            style={{ backgroundColor: invitationDetails.circle.color + "20" }}
-                                          >
-                                            {invitationDetails.circle.icon}
-                                          </div>
-                                          <div>
-                                            <h3 className="font-semibold text-lg">
-                                              {invitationDetails.circle.name}
-                                            </h3>
-                                            <p className="text-sm text-muted-foreground">
-                                              {invitationDetails.circle.description}
-                                            </p>
-                                          </div>
-                                        </div>
-                                        <Separator />
-                                        <div className="grid grid-cols-2 gap-4">
-                                          <div>
-                                            <h4 className="font-medium mb-2">Circle Info</h4>
-                                            <div className="space-y-2 text-sm">
-                                              <p>Owner: {invitationDetails.owner.username}</p>
-                                              <p>Members: {invitationDetails.members.length}</p>
-                                              <p>AI Followers: {invitationDetails.followers.length}</p>
-                                              <p>Your Role: {invitation.role}</p>
-                                            </div>
-                                          </div>
-                                          <div>
-                                            <h4 className="font-medium mb-2">Members</h4>
-                                            <div className="space-y-1 text-sm">
-                                              {invitationDetails.members.map(member => (
-                                                <p key={member.id} className="text-muted-foreground">
-                                                  {member.username} ({member.role})
-                                                </p>
-                                              ))}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center justify-center p-8">
-                                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                                      </div>
-                                    )}
-                                  </DialogContent>
-                                </Dialog>
-                              </div>
-                              <p className="text-sm text-muted-foreground">
-                                You've been invited as a {invitation.role}
-                              </p>
-                              <HoverCard>
-                                <HoverCardTrigger asChild>
-                                  <Button variant="link" className="h-auto p-0 text-sm">
-                                    <ExternalLink className="h-3 w-3 mr-1" />
-                                    Quick Stats
-                                  </Button>
-                                </HoverCardTrigger>
-                                <HoverCardContent className="w-80">
-                                  <div className="space-y-2">
-                                    <h4 className="font-medium">Circle Overview</h4>
-                                    <div className="text-sm space-y-1">
-                                      <p>Members: {invitationDetails?.members?.length || 0}</p>
-                                      <p>AI Followers: {invitationDetails?.followers?.length || 0}</p>
-                                      <p>Owner: {invitationDetails?.owner?.username || "Loading..."}</p>
-                                      <p>Visibility: {invitationDetails?.circle?.visibility || "private"}</p>
-                                      <p>Created: {invitationDetails?.circle?.createdAt 
-                                        ? new Date(invitationDetails.circle.createdAt).toLocaleDateString() 
-                                        : "Unknown"}</p>
-                                    </div>
-                                  </div>
-                                </HoverCardContent>
-                              </HoverCard>
-                            </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="default"
-                              onClick={() =>
-                                respondToInvitationMutation.mutate({
-                                  invitationId: invitation.id,
-                                  status: "accepted",
-                                })
-                              }
-                              disabled={respondToInvitationMutation.isPending}
-                            >
-                              {respondToInvitationMutation.isPending ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                "Accept"
-                              )}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              onClick={() =>
-                                respondToInvitationMutation.mutate({
-                                  invitationId: invitation.id,
-                                  status: "declined",
-                                })
-                              }
-                              disabled={respondToInvitationMutation.isPending}
-                            >
-                              Decline
-                            </Button>
-                          </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pending Circle Invitations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {invitations.map((invitation) => (
+                      <div
+                        key={invitation.id}
+                        className="flex items-center justify-between p-4 border rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium">Circle Invitation</p>
+                          <p className="text-sm text-muted-foreground">
+                            You've been invited as a {invitation.role}
+                          </p>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="default"
+                            onClick={() =>
+                              respondToInvitationMutation.mutate({
+                                invitationId: invitation.id,
+                                status: "accepted",
+                              })
+                            }
+                            disabled={respondToInvitationMutation.isPending}
+                          >
+                            Accept
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              respondToInvitationMutation.mutate({
+                                invitationId: invitation.id,
+                                status: "declined",
+                              })
+                            }
+                            disabled={respondToInvitationMutation.isPending}
+                          >
+                            Decline
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             )}
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="w-full">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create New Circle
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create New Circle</DialogTitle>
-                  <DialogDescription>
-                    Create a new circle to share and collaborate with others
-                  </DialogDescription>
-                </DialogHeader>
+            <Card>
+              <CardHeader>
+                <CardTitle>Create Circle</CardTitle>
+              </CardHeader>
+              <CardContent>
                 <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit((data) => createCircleMutation.mutate(data))}
-                    className="space-y-4"
-                  >
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} value={field.value || ""} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea {...field} value={field.value || ""} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                  <form onSubmit={form.handleSubmit((data) => createCircleMutation.mutate(data))} className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="Enter circle name" />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
                       <FormField
                         control={form.control}
                         name="icon"
@@ -836,7 +690,7 @@ export default function CirclesPage() {
                                   className="w-full text-left font-normal"
                                   onClick={() => setShowEmojiPicker(true)}
                                 >
-                                  {field.value || "Select an emoji"}
+                                  {field.value || "🔵"}
                                 </Button>
                                 <Dialog open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
                                   <DialogContent className="p-0">
@@ -855,51 +709,58 @@ export default function CirclesPage() {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="color"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Color</FormLabel>
-                            <FormControl>
-                              <Input {...field} type="color" value={field.value || "#3b82f6"} className="h-10 px-2" />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
                     </div>
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={createCircleMutation.isPending}
-                    >
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              value={field.value || ""}
+                              placeholder="Describe the purpose of this circle"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="color"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Color</FormLabel>
+                          <FormControl>
+                            <Input {...field} value={field.value || "#3b82f6"} type="color" className="h-10 px-2" />
+                          </FormControl>
+                          <FormDescription>
+                            Choose a color to represent this circle
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full" disabled={createCircleMutation.isPending}>
                       {createCircleMutation.isPending ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : (
-                        "Create Circle"
+                        <Plus className="mr-2 h-4 w-4" />
                       )}
+                      Create Circle
                     </Button>
                   </form>
                 </Form>
-              </DialogContent>
-            </Dialog>
+              </CardContent>
+            </Card>
 
-            {isLoadingCircles ? (
-              <div className="flex items-center justify-center p-8">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : (
-              <>
-                {renderCircleSection("My Circles", circles?.owned)}
-                {circles?.shared?.length > 0 && renderCircleSection("Shared With Me", circles.shared, false)}
-                {circles?.invited?.length > 0 && renderCircleSection("Invited Circles", circles.invited, false)}
-              </>
-            )}
+            {circles?.owned && renderCircleSection("Your Circles", circles.owned)}
+            {circles?.shared && renderCircleSection("Shared With You", circles.shared, false)}
+            {circles?.invited && renderCircleSection("Invited Circles", circles.invited, false)}
+
           </div>
         </main>
       </div>
     </TourProvider>
   );
 }
-
-export default CirclesPage;
