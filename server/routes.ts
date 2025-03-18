@@ -6,6 +6,55 @@ import { generateAIResponse, generateAIBackground } from "./openai";
 import { ThreadManager } from "./thread-manager";
 import { ResponseScheduler } from "./response-scheduler";
 import { ThreadContextManager } from "./context-manager";
+import {IStorage} from "./storage"
+
+async function hasCirclePermission(
+  circleId: number,
+  userId: number,
+  storage: IStorage,
+  requiredRole: "owner" | "collaborator" | "viewer" = "viewer"
+): Promise<boolean> {
+  console.log("[Permissions] Checking permissions:", { circleId, userId, requiredRole });
+
+  const circle = await storage.getCircle(circleId);
+  if (!circle) {
+    console.log("[Permissions] Circle not found:", circleId);
+    return false;
+  }
+
+  // Circle owner has all permissions
+  if (circle.userId === userId) {
+    console.log("[Permissions] User is circle owner, granting all permissions");
+    return true;
+  }
+
+  // Check member role
+  const members = await storage.getCircleMembers(circleId);
+  const member = members.find(m => m.userId === userId);
+
+  if (!member) {
+    console.log("[Permissions] User is not a member of the circle");
+    return false;
+  }
+
+  console.log("[Permissions] User role:", member.role);
+
+  switch (requiredRole) {
+    case "owner":
+      console.log("[Permissions] Owner permission required, denying non-owner");
+      return false;
+    case "collaborator":
+      const hasCollabPermission = member.role === "collaborator";
+      console.log("[Permissions] Collaborator permission check:", hasCollabPermission);
+      return hasCollabPermission;
+    case "viewer":
+      console.log("[Permissions] Viewer permission granted");
+      return true;
+    default:
+      console.log("[Permissions] Unknown role requested:", requiredRole);
+      return false;
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
@@ -98,6 +147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const updatedInvitation = await storage.updateInvitationStatus(invitationId, status);
+      console.log(`[Invitations] Invitation ${invitationId} updated to status: ${status}`); //Added Log
       res.json(updatedInvitation);
     } catch (error) {
       console.error("Error responding to invitation:", error);
@@ -214,15 +264,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { aiFollowerId } = req.body;
 
     try {
-      // Verify circle ownership
-      const circle = await storage.getCircle(circleId);
-      if (!circle || circle.userId !== req.user!.id) {
-        return res.status(404).json({ message: "Circle not found" });
+      // Allow both owners and collaborators to manage followers
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage, "collaborator");
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Insufficient permissions" });
       }
 
-      // Verify AI follower ownership
+      // Verify AI follower ownership or availability
       const follower = await storage.getAiFollower(aiFollowerId);
-      if (!follower || follower.userId !== req.user!.id) {
+      if (!follower) {
         return res.status(404).json({ message: "AI follower not found" });
       }
 
@@ -280,6 +330,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const circleId = req.body.circleId || (await storage.getDefaultCircle(req.user!.id)).id;
+
+      // Check if user has permission to post in this circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage, "collaborator");
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Insufficient permissions to post in this circle" });
+      }
+
       const post = await storage.createPostInCircle(req.user!.id, circleId, req.body.content);
 
       // Get AI followers for the specific circle
@@ -503,27 +560,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/posts", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
+  //Duplicate route removed
 
-    try {
-      const circleId = req.body.circleId || (await storage.getDefaultCircle(req.user!.id)).id;
-      const post = await storage.createPostInCircle(req.user!.id, circleId, req.body.content);
-
-      // Get AI followers for the specific circle
-      const followers = await storage.getCircleFollowers(circleId);
-
-      // Schedule potential responses for each follower in the circle
-      for (const follower of followers) {
-        await scheduler.scheduleResponse(post.id, follower);
-      }
-
-      res.status(201).json(post);
-    } catch (error) {
-      console.error("Error creating post:", error);
-      res.status(500).json({ message: "Failed to create post" });
-    }
-  });
 
   app.post("/api/followers", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);

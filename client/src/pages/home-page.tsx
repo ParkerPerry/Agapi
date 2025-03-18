@@ -2,11 +2,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { NavBar } from "@/components/nav-bar";
 import { PostForm } from "@/components/post-form";
 import { PostCard } from "@/components/post-card";
+import { CirclePanel } from "@/components/circle-panel";
 import { useQuery } from "@tanstack/react-query";
 import { Post, Circle } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TourProvider } from "@/components/tour/tour-context";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -33,45 +33,32 @@ export default function HomePage() {
     <TourProvider>
       <div className="min-h-screen bg-background">
         <NavBar />
-        <main className="container py-6 main-content">
-          <div className="max-w-2xl mx-auto space-y-6">
-            {isLoadingCircle ? (
-              <Skeleton className="h-24 w-full" />
-            ) : circle && (
-              <Card>
-                <CardHeader className="space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className="flex items-center justify-center w-8 h-8 rounded-full text-lg"
-                      style={{ backgroundColor: circle.color + "20" }}
-                    >
-                      {circle.icon}
-                    </div>
-                    <CardTitle>{circle.name}</CardTitle>
-                  </div>
-                  {circle.description && (
-                    <CardDescription>{circle.description}</CardDescription>
-                  )}
-                </CardHeader>
-              </Card>
-            )}
-
-            <div className="post-form">
-              <PostForm defaultCircleId={circle?.id} />
+        <main className="container py-6">
+          <div className="flex gap-6">
+            {/* Fixed left panel */}
+            <div className="w-80 shrink-0">
+              {circle && <CirclePanel circleId={circle.id} />}
             </div>
 
-            {isLoadingPosts ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="space-y-3">
-                  <Skeleton className="h-12 w-[250px]" />
-                  <Skeleton className="h-24 w-full" />
-                </div>
-              ))
-            ) : posts?.map((post) => (
-              <div key={post.id} className="post-card">
-                <PostCard post={post} />
+            {/* Main content */}
+            <div className="flex-1 space-y-6">
+              <div className="post-form">
+                <PostForm defaultCircleId={circle?.id} />
               </div>
-            ))}
+
+              {isLoadingPosts ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="space-y-3">
+                    <Skeleton className="h-12 w-[250px]" />
+                    <Skeleton className="h-24 w-full" />
+                  </div>
+                ))
+              ) : posts?.map((post) => (
+                <div key={post.id} className="post-card">
+                  <PostCard post={post} />
+                </div>
+              ))}
+            </div>
           </div>
         </main>
       </div>
