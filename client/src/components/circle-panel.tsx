@@ -5,14 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Users, Share2, Settings } from "lucide-react";
+import { Users, Share2 } from "lucide-react";
+
+interface CircleDetails {
+  circle: Circle;
+  owner: User;
+  members: CircleMember[];
+  followers: AiFollower[];
+}
 
 interface CirclePanelProps {
   circleId: number;
 }
 
 export function CirclePanel({ circleId }: CirclePanelProps) {
-  const { data: circleDetails } = useQuery({
+  const { data: circleDetails } = useQuery<CircleDetails>({
     queryKey: [`/api/circles/${circleId}/details`],
     enabled: !!circleId,
   });
@@ -20,6 +27,14 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
   if (!circleDetails) return null;
 
   const { circle, owner, members, followers } = circleDetails;
+
+  // Group followers by their owners (userId)
+  const followersByOwner = followers.reduce((groups, follower) => {
+    const owner = members.find(m => m.userId === follower.userId) || { userId: follower.userId };
+    const ownerGroups = groups.get(owner.userId) || [];
+    groups.set(owner.userId, [...ownerGroups, follower]);
+    return groups;
+  }, new Map<number, AiFollower[]>());
 
   return (
     <Card className="h-[calc(100vh-4rem)] flex flex-col">
@@ -72,7 +87,7 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">
-                          {member.userId === owner.id ? owner.username : "Member"}
+                          {member.userId === owner.id ? owner.username : member.userId === circle.userId ? circle.name : "Member"}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {member.role}
@@ -91,28 +106,40 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
                 <Share2 className="h-4 w-4" />
                 AI Followers ({followers.length})
               </h3>
-              <div className="space-y-2">
-                {followers.map((follower) => (
-                  <div
-                    key={follower.id}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-muted"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <Avatar>
-                        <img src={follower.avatarUrl} alt={follower.name} />
-                        <AvatarFallback>
-                          {follower.name.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-sm font-medium">{follower.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {follower.personality}
-                        </p>
-                      </div>
+              <div className="space-y-4">
+                {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
+                  const ownerMember = members.find(m => m.userId === userId);
+                  const ownerName = userId === owner.id ? owner.username : ownerMember?.role || "Member";
+
+                  return (
+                    <div key={userId} className="space-y-2">
+                      <h4 className="text-sm font-medium text-muted-foreground">
+                        {ownerName}'s AI Followers
+                      </h4>
+                      {userFollowers.map((follower) => (
+                        <div
+                          key={follower.id}
+                          className="flex items-center justify-between p-2 rounded-lg hover:bg-muted"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Avatar>
+                              <img src={follower.avatarUrl} alt={follower.name} />
+                              <AvatarFallback>
+                                {follower.name.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium">{follower.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {follower.personality}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
