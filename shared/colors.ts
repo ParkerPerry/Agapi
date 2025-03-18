@@ -1,3 +1,4 @@
+
 // Shared color utilities between frontend and backend
 
 export const USER_COLORS = [
@@ -34,7 +35,8 @@ export function generateCircleColors(members: { id: number; username: string }[]
   
   // Assign unique colors to users first
   members.forEach((member, index) => {
-    userColors.set(member.id, USER_COLORS[index % USER_COLORS.length]);
+    const color = USER_COLORS[index % USER_COLORS.length];
+    userColors.set(member.id, color);
   });
 
   return {
@@ -48,4 +50,11 @@ export function generateCircleColors(members: { id: number; username: string }[]
  */
 export function getFollowerColor(ownerId: number, userColors: Map<number, string>): string {
   return userColors.get(ownerId) || USER_COLORS[0];
+}
+
+/**
+ * Generate a color for a single user
+ */
+export function generateUserColor(userId: number): string {
+  return USER_COLORS[userId % USER_COLORS.length];
 }
