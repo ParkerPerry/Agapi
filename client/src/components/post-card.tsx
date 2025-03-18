@@ -12,6 +12,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { formatRelativeTime } from "@/utils/date";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { generateUserColor } from "@/utils/colors";
 
 interface PostCardProps {
   post: Post & {
@@ -97,10 +98,12 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
 function Comment({
   comment,
   postId,
+  ownerUsername,
   level = 0,
 }: {
   comment: PostCardProps["post"]["interactions"][0];
   postId: number;
+  ownerUsername: string;
   level?: number;
 }) {
   const [isReplying, setIsReplying] = useState(false);
@@ -110,26 +113,49 @@ function Comment({
   const isAIComment = !!comment.aiFollowerId;
   const isUserComment = !!comment.userId;
   const hasReplies = comment.replies && comment.replies.length > 0;
+  const userColor = ownerUsername ? generateUserColor(ownerUsername) : undefined;
 
   return (
     <div className={`space-y-4 ${level > 0 ? "ml-8 border-l-2 pl-4" : ""}`}>
       <div className="flex items-start space-x-4">
-        <Avatar className="h-8 w-8">
-          {isAIComment && comment.aiFollower?.avatarUrl && (
-            <img
-              src={comment.aiFollower.avatarUrl}
-              alt={comment.aiFollower.name}
-              className="h-full w-full object-cover"
+        <div className="relative">
+          <Avatar className="h-8 w-8">
+            {isAIComment && comment.aiFollower?.avatarUrl && (
+              <img
+                src={comment.aiFollower.avatarUrl}
+                alt={comment.aiFollower.name}
+                className="h-full w-full object-cover"
+              />
+            )}
+            <AvatarFallback>
+              {isAIComment ? comment.aiFollower?.name[0] || 'AI' : 'U'}
+            </AvatarFallback>
+          </Avatar>
+          {isAIComment && userColor && (
+            <div
+              className="absolute inset-0 rounded-full border-2"
+              style={{ borderColor: userColor }}
             />
           )}
-          <AvatarFallback>
-            {isAIComment ? comment.aiFollower?.name[0] || 'AI' : 'U'}
-          </AvatarFallback>
-        </Avatar>
+        </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium">
-              {isAIComment ? comment.aiFollower?.name || 'AI' : 'You'}
+              {isAIComment ? (
+                <>
+                  {comment.aiFollower?.name || 'AI'}
+                  {ownerUsername && (
+                    <span
+                      className="ml-2 text-xs font-normal"
+                      style={{ color: userColor }}
+                    >
+                      @{ownerUsername}
+                    </span>
+                  )}
+                </>
+              ) : (
+                'You'
+              )}
             </p>
             <span className="text-xs text-muted-foreground">
               {formatRelativeTime(comment.createdAt)}
@@ -176,6 +202,7 @@ function Comment({
           key={reply.id}
           comment={reply}
           postId={postId}
+          ownerUsername={ownerUsername}
           level={level + 1}
         />
       ))}
@@ -189,6 +216,7 @@ export function PostCard({ post }: PostCardProps) {
     (i) => (i.type === "comment" || i.type === "reply") && !i.parentId
   );
   const pendingCount = post.pendingResponses?.length || 0;
+  const members = post.members; // Assuming this is available in PostCardProps
 
   return (
     <Card>
@@ -267,6 +295,9 @@ export function PostCard({ post }: PostCardProps) {
               key={comment.id}
               comment={comment}
               postId={post.id}
+              ownerUsername={comment.aiFollower?.userId === post.userId ?
+                "You" :
+                members?.find(m => m.userId === comment.aiFollower?.userId)?.username}
             />
           ))}
         </div>

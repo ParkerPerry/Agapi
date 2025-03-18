@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Users, Share2 } from "lucide-react";
+import { generateUserColor } from "@/utils/colors";
 
 interface CircleDetails {
   circle: Circle;
@@ -16,22 +17,6 @@ interface CircleDetails {
 
 interface CirclePanelProps {
   circleId: number;
-}
-
-// Generate a consistent color for a user based on their username
-function generateUserColor(username: string): string {
-  const colors = [
-    "#2563eb", // blue
-    "#dc2626", // red
-    "#16a34a", // green
-    "#9333ea", // purple
-    "#ea580c", // orange
-    "#0891b2", // cyan
-    "#be185d", // pink
-  ];
-  // Simple hash function to get a consistent index
-  const hash = username.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
-  return colors[hash % colors.length];
 }
 
 export function CirclePanel({ circleId }: CirclePanelProps) {
