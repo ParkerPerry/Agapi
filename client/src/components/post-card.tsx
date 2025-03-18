@@ -254,23 +254,16 @@ export function PostCard({ post }: PostCardProps) {
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
               <div className="flex -space-x-2">
-                {post.pendingResponses?.map((follower) => (
-                  <HoverCard key={`${post.id}-${follower.id}`}>
-                    <HoverCardTrigger>
-                      <Avatar className="h-6 w-6 border-2 border-background">
-                        {follower.avatarUrl && (
-                          <img
-                            src={follower.avatarUrl}
-                            alt={follower.name}
-                            className="h-full w-full object-cover"
+                {post.pendingResponses?.map((follower) => {
+                  const followerColor = generateUserColor(follower.id);
+                  return (
+                    <HoverCard key={`${post.id}-${follower.id}`}>
+                      <HoverCardTrigger>
+                        <Avatar className="relative h-6 w-6 border-2 border-background">
+                          <div 
+                            className="absolute inset-0 rounded-full border-2"
+                            style={{ borderColor: followerColor }}
                           />
-                        )}
-                        <AvatarFallback>{follower.name[0]}</AvatarFallback>
-                      </Avatar>
-                    </HoverCardTrigger>
-                    <HoverCardContent className="w-60">
-                      <div className="flex justify-between space-x-4">
-                        <Avatar>
                           {follower.avatarUrl && (
                             <img
                               src={follower.avatarUrl}
@@ -280,16 +273,34 @@ export function PostCard({ post }: PostCardProps) {
                           )}
                           <AvatarFallback>{follower.name[0]}</AvatarFallback>
                         </Avatar>
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-semibold">{follower.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            Will respond {formatRelativeTime(follower.scheduledFor)}
-                          </p>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-60">
+                        <div className="flex justify-between space-x-4">
+                          <Avatar className="relative">
+                            <div 
+                              className="absolute inset-0 rounded-full border-2"
+                              style={{ borderColor: followerColor }}
+                            />
+                            {follower.avatarUrl && (
+                              <img
+                                src={follower.avatarUrl}
+                                alt={follower.name}
+                                className="h-full w-full object-cover"
+                              />
+                            )}
+                            <AvatarFallback>{follower.name[0]}</AvatarFallback>
+                          </Avatar>
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-semibold">{follower.name}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Will respond {formatRelativeTime(follower.scheduledFor)}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </HoverCardContent>
-                  </HoverCard>
-                ))}
+                      </HoverCardContent>
+                    </HoverCard>
+                  );
+                })}
               </div>
             </div>
           )}
