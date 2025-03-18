@@ -10,7 +10,7 @@ import { Users, Share2 } from "lucide-react";
 interface CircleDetails {
   circle: Circle;
   owner: User;
-  members: CircleMember[];
+  members: (CircleMember & { username: string })[];
   followers: AiFollower[];
 }
 
@@ -30,9 +30,9 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
 
   // Group followers by their owners (userId)
   const followersByOwner = followers.reduce((groups, follower) => {
-    const owner = members.find(m => m.userId === follower.userId) || { userId: follower.userId };
-    const ownerGroups = groups.get(owner.userId) || [];
-    groups.set(owner.userId, [...ownerGroups, follower]);
+    const ownerMember = members.find(m => m.userId === follower.userId);
+    const ownerGroups = groups.get(follower.userId) || [];
+    groups.set(follower.userId, [...ownerGroups, follower]);
     return groups;
   }, new Map<number, AiFollower[]>());
 
@@ -82,12 +82,12 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
                     <div className="flex items-center space-x-2">
                       <Avatar>
                         <AvatarFallback>
-                          {member.userId === owner.id ? "O" : "M"}
+                          {member.username.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">
-                          {member.userId === owner.id ? owner.username : member.userId === circle.userId ? circle.name : "Member"}
+                          {member.username}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {member.role}
@@ -109,7 +109,7 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
               <div className="space-y-4">
                 {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
                   const ownerMember = members.find(m => m.userId === userId);
-                  const ownerName = userId === owner.id ? owner.username : ownerMember?.role || "Member";
+                  const ownerName = ownerMember?.username || "Unknown User";
 
                   return (
                     <div key={userId} className="space-y-2">
