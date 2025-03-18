@@ -152,15 +152,7 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
                               />
                             </div>
                             <div>
-                              <p className="text-sm font-medium">
-                                {follower.name}
-                                <span 
-                                  className="ml-2 text-xs font-normal"
-                                  style={{ color: userColor }}
-                                >
-                                  @{ownerName}
-                                </span>
-                              </p>
+                              <p className="text-sm font-medium">{follower.name}</p>
                               <p className="text-xs text-muted-foreground">
                                 {follower.personality}
                               </p>
