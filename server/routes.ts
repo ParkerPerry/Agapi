@@ -64,13 +64,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const scheduler = ResponseScheduler.getInstance();
   scheduler.start();
 
-  // Get pending invitations for the current user
+  // Update the Get pending invitations endpoint to include circle information
   app.get("/api/circles/invitations/pending", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
       const invitations = await storage.getUserPendingInvitations(req.user!.id);
-      res.json(invitations);
+
+      // Get circle information for each invitation
+      const invitationsWithCircles = await Promise.all(
+        invitations.map(async (invitation) => {
+          const circle = await storage.getCircle(invitation.circleId);
+          return {
+            ...invitation,
+            circle
+          };
+        })
+      );
+
+      res.json(invitationsWithCircles);
     } catch (error) {
       console.error("Error getting pending invitations:", error);
       res.status(500).json({ message: "Failed to get pending invitations" });
@@ -565,6 +577,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to process reply" });
     }
   });
+
 
 
   app.post("/api/followers", async (req, res) => {
