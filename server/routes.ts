@@ -177,8 +177,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      // Check if user has access to this circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
       const circle = await storage.getCircle(circleId);
-      if (!circle || circle.userId !== req.user!.id) {
+      if (!circle) {
         return res.status(404).json({ message: "Circle not found" });
       }
       res.json(circle);
@@ -310,10 +316,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     const circleId = parseInt(req.params.id);
     try {
-      // Verify circle ownership
-      const circle = await storage.getCircle(circleId);
-      if (!circle || circle.userId !== req.user!.id) {
-        return res.status(404).json({ message: "Circle not found" });
+      // Check if user has access to this circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
       }
 
       const followers = await storage.getCircleFollowers(circleId);
@@ -354,16 +360,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get posts for a specific circle
+  // Update the circle posts route
   app.get("/api/circles/:id/posts", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     const circleId = parseInt(req.params.id);
     try {
-      // Verify circle ownership
-      const circle = await storage.getCircle(circleId);
-      if (!circle || circle.userId !== req.user!.id) {
-        return res.status(404).json({ message: "Circle not found" });
+      // Check if user has access to this circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
       }
 
       const posts = await storage.getCirclePosts(circleId);
@@ -560,8 +566,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  //Duplicate route removed
-
 
   app.post("/api/followers", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
@@ -672,16 +676,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     const circleId = parseInt(req.params.id);
     try {
+      // Check if user has access to this circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
       const details = await storage.getCircleWithDetails(circleId);
       if (!details) {
         return res.status(404).json({ message: "Circle not found" });
-      }
-
-      // Check if user has access to this circle
-      const isOwner = details.circle.userId === req.user!.id;
-      const isMember = details.members.some(m => m.userId === req.user!.id);
-      if (!isOwner && !isMember) {
-        return res.status(403).json({ message: "Access denied" });
       }
 
       res.json(details);
