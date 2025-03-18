@@ -10,10 +10,10 @@ import { CircleInvitationsList } from "@/components/circles/circle-invitations-l
 import { useDeleteCircle } from "@/lib/mutations/circle-mutations";
 import { useLocation } from "wouter";
 
-
 type CircleGroups = {
-  owned: Circle[];
+  private: Circle[];
   shared: Circle[];
+  sharedWithYou: Circle[];
   invited: Circle[];
 };
 
@@ -50,7 +50,6 @@ export default function CirclesPage() {
               onDelete={deleteCircleMutation.mutate}
               isDeleting={deleteCircleMutation.isPending}
               showShareButton={showShareButton}
-              navigate={navigate}
             />
           ))}
         </div>
@@ -77,8 +76,9 @@ export default function CirclesPage() {
               </CardContent>
             </Card>
 
-            {circles?.owned && renderCircleSection("Your Circles", circles.owned)}
-            {circles?.shared && renderCircleSection("Shared With You", circles.shared, false)}
+            {circles?.private && renderCircleSection("Private Circles", circles.private)}
+            {circles?.shared && renderCircleSection("Shared Circles", circles.shared)}
+            {circles?.sharedWithYou && renderCircleSection("Circles Shared with You", circles.sharedWithYou, false)}
             {circles?.invited && renderCircleSection("Invited Circles", circles.invited, false)}
 
           </div>

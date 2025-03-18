@@ -222,7 +222,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const circles = await storage.getUserCircles(req.user!.id);
-      res.json(circles);
+
+      // Reorganize circles into the new grouping structure
+      const categorizedCircles = {
+        private: circles.owned.filter(c => c.visibility !== "shared"),
+        shared: circles.owned.filter(c => c.visibility === "shared"),
+        sharedWithYou: circles.shared,
+        invited: circles.invited
+      };
+
+      res.json(categorizedCircles);
     } catch (error) {
       console.error("Error getting circles:", error);
       res.status(500).json({ message: "Failed to get circles" });
