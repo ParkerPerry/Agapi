@@ -687,6 +687,7 @@ export class DatabaseStorage implements IStorage {
     // Get members with their usernames by joining with users table
     const members = await db
       .select({
+        id: circleMembers.id,
         circleId: circleMembers.circleId,
         userId: circleMembers.userId,
         role: circleMembers.role,
@@ -697,6 +698,19 @@ export class DatabaseStorage implements IStorage {
       .innerJoin(users, eq(circleMembers.userId, users.id))
       .where(eq(circleMembers.circleId, id))
       .orderBy(asc(circleMembers.joinedAt));
+
+    // Add owner to members list if not already present
+    const ownerMember = members.find(m => m.userId === owner.id);
+    if (!ownerMember) {
+      members.unshift({
+        id: 0, // Temporary ID for display purposes
+        circleId: id,
+        userId: owner.id,
+        role: "owner" as const,
+        joinedAt: circle.createdAt,
+        username: owner.username,
+      });
+    }
 
     return {
       circle,
