@@ -7,15 +7,9 @@ import {
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations
 } from "@shared/schema";
-import { eq, and, asc, or, inArray } from "drizzle-orm";
+import { eq, and, asc, or } from "drizzle-orm";
 import { db } from "./db";
 import { defaultTomConfig } from "./config/default-ai-follower";
-import { ColoredUser, generateCircleColors, getFollowerColor, generateUserColor, USER_COLORS } from "@shared/colors";
-
-// Add this interface to extend the AiFollower type with owner info
-interface AiFollowerWithOwner extends AiFollower {
-  owner: ColoredUser;
-}
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -51,7 +45,7 @@ export interface IStorage {
   getDefaultCircle(userId: number): Promise<Circle>;
   addFollowerToCircle(circleId: number, aiFollowerId: number): Promise<CircleFollower>;
   removeFollowerFromCircle(circleId: number, aiFollowerId: number): Promise<void>;
-  getCircleFollowers(circleId: number): Promise<AiFollowerWithOwner[]>;
+  getCircleFollowers(circleId: number): Promise<AiFollower[]>;
   createPostInCircle(userId: number, circleId: number, content: string): Promise<Post>;
   getCirclePosts(circleId: number): Promise<Post[]>;
   movePostToCircle(postId: number, circleId: number): Promise<Post>;
@@ -199,85 +193,13 @@ export class DatabaseStorage implements IStorage {
     console.log("[Storage] Getting interactions for post:", postId);
 
     try {
-      // First get all parent interactions with owner info
-      const parentInteractions = await db
-        .select({
-          id: aiInteractions.id,
-          postId: aiInteractions.postId,
-          userId: aiInteractions.userId,
-          aiFollowerId: aiInteractions.aiFollowerId,
-          type: aiInteractions.type,
-          content: aiInteractions.content,
-          parentId: aiInteractions.parentId,
-          createdAt: aiInteractions.createdAt,
-          aiFollower: {
-            id: ai_followers.id,
-            name: ai_followers.name,
-            avatarUrl: ai_followers.avatarUrl,
-            personality: ai_followers.personality,
-            userId: ai_followers.userId,
-            owner: {
-              username: users.username,
-            }
-          }
-        })
+      const interactions = await db
+        .select()
         .from(aiInteractions)
-        .where(
-          and(
-            eq(aiInteractions.postId, postId),
-            eq(aiInteractions.parentId, null)
-          )
-        )
-        .leftJoin(ai_followers, eq(aiInteractions.aiFollowerId, ai_followers.id))
-        .leftJoin(users, eq(ai_followers.userId, users.id))
-        .orderBy(asc(aiInteractions.createdAt));
+        .where(eq(aiInteractions.postId, postId))
+        .orderBy(aiInteractions.createdAt);
 
-      // Get replies with the same structure
-      const replies = await db
-        .select({
-          id: aiInteractions.id,
-          postId: aiInteractions.postId,
-          userId: aiInteractions.userId,
-          aiFollowerId: aiInteractions.aiFollowerId,
-          type: aiInteractions.type,
-          content: aiInteractions.content,
-          parentId: aiInteractions.parentId,
-          createdAt: aiInteractions.createdAt,
-          aiFollower: {
-            id: ai_followers.id,
-            name: ai_followers.name,
-            avatarUrl: ai_followers.avatarUrl,
-            personality: ai_followers.personality,
-            userId: ai_followers.userId,
-            owner: {
-              username: users.username,
-            }
-          }
-        })
-        .from(aiInteractions)
-        .where(
-          and(
-            eq(aiInteractions.postId, postId),
-            inArray(
-              aiInteractions.parentId,
-              parentInteractions.map(i => i.id)
-            )
-          )
-        )
-        .leftJoin(ai_followers, eq(aiInteractions.aiFollowerId, ai_followers.id))
-        .leftJoin(users, eq(ai_followers.userId, users.id))
-        .orderBy(asc(aiInteractions.createdAt));
-
-      // Group replies with their parent interactions
-      const interactions = parentInteractions.map(parent => ({
-        ...parent,
-        replies: replies.filter(reply => reply.parentId === parent.id)
-      }));
-
-      console.log("[Storage] Retrieved interactions:", {
-        count: interactions.length,
-        sample: interactions[0]
-      });
+      console.log("[Storage] Retrieved interactions count:", interactions.length);
 
       return interactions as AiInteraction[];
     } catch (error) {
@@ -616,35 +538,19 @@ export class DatabaseStorage implements IStorage {
       ));
   }
 
-  async getCircleFollowers(circleId: number): Promise<AiFollowerWithOwner[]> {
+  async getCircleFollowers(circleId: number): Promise<AiFollower[]> {
     const followers = await db
       .select({
-        follower: {
-          id: ai_followers.id,
-          name: ai_followers.name,
-          avatarUrl: ai_followers.avatarUrl,
-          personality: ai_followers.personality,
-          userId: ai_followers.userId,
-          owner: {
-            username: users.username,
-          }
-        }
+        follower: ai_followers,
       })
       .from(circleFollowers)
       .innerJoin(
         ai_followers,
         eq(circleFollowers.aiFollowerId, ai_followers.id)
       )
-      .leftJoin(users, eq(ai_followers.userId, users.id))
       .where(eq(circleFollowers.circleId, circleId));
 
-    return followers.map(f => ({
-      ...f.follower,
-      owner: {
-        username: f.follower.owner.username,
-        color: generateUserColor(f.follower.owner.username)
-      }
-    }));
+    return followers.map(f => f.follower);
   }
 
   async createPostInCircle(userId: number, circleId: number, content: string): Promise<Post> {
@@ -743,7 +649,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<CircleInvitation> {
     const [invitation] = (await db
       .update(circleInvitations)
-      .set({
+      .set({ 
         status,
         respondedAt: new Date()
       })
