@@ -61,7 +61,7 @@ export interface IStorage {
   getCircleWithDetails(id: number): Promise<{
     circle: Circle;
     owner: User;
-    members: CircleMember[];
+    members: (CircleMember & { username: string })[];
     followers: AiFollower[];
   } | undefined>;
 }
@@ -671,7 +671,7 @@ export class DatabaseStorage implements IStorage {
   async getCircleWithDetails(id: number): Promise<{
     circle: Circle;
     owner: User;
-    members: CircleMember[];
+    members: (CircleMember & { username: string })[];
     followers: AiFollower[];
   } | undefined> {
     const circle = await this.getCircle(id);
@@ -679,7 +679,14 @@ export class DatabaseStorage implements IStorage {
 
     const [owner, members, followers] = await Promise.all([
       this.getUser(circle.userId),
-      this.getCircleMembers(id),
+      db.select({
+        ...circleMembers,
+        username: users.username
+      })
+        .from(circleMembers)
+        .innerJoin(users, eq(circleMembers.userId, users.id))
+        .where(eq(circleMembers.circleId, id))
+        .orderBy(asc(circleMembers.joinedAt)),
       this.getCircleFollowers(id),
     ]);
 
