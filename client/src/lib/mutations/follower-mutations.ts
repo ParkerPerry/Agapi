@@ -59,8 +59,8 @@ export function useDeleteFollower() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
       toast({
-        title: "Follower deleted",
-        description: "The AI follower has been deleted successfully.",
+        title: "Follower deactivated",
+        description: "The AI follower has been deactivated successfully.",
       });
     },
   });
