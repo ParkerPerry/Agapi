@@ -10,34 +10,42 @@ export const USER_COLORS = [
   "#be185d", // pink
 ] as const;
 
-/**
- * Generates a consistent color for a user based on their username
- * This is shared between frontend and backend to ensure consistency
- */
-export function generateUserColor(username: string): string {
-  // Use position-weighted character codes for better distribution
-  const hash = username
-    .split('')
-    .reduce((acc, char, i) => 
-      char.charCodeAt(0) * (i + 1) + acc, 0
-    );
-
-  return USER_COLORS[Math.abs(hash) % USER_COLORS.length];
-}
-
-/**
- * Type-safe interface for user color associations
- */
 export interface ColoredUser {
   username: string;
+  id: number;
+  color: string;
+}
+
+export interface ColoredFollower {
+  id: number;
+  ownerId: number;
   color: string;
 }
 
 /**
- * Creates a consistent color mapping for a set of users
+ * Generates consistent colors for circle members and their followers
  */
-export function createUserColorMap(usernames: string[]): Map<string, string> {
-  return new Map(
-    usernames.map(username => [username, generateUserColor(username)])
-  );
+export function generateCircleColors(members: { id: number; username: string }[]): {
+  users: Map<number, string>;
+  followers: Map<number, string>;
+} {
+  const userColors = new Map<number, string>();
+  const followerColors = new Map<number, string>();
+  
+  // Assign unique colors to users first
+  members.forEach((member, index) => {
+    userColors.set(member.id, USER_COLORS[index % USER_COLORS.length]);
+  });
+
+  return {
+    users: userColors,
+    followers: followerColors
+  };
+}
+
+/**
+ * Get follower color based on owner's color
+ */
+export function getFollowerColor(ownerId: number, userColors: Map<number, string>): string {
+  return userColors.get(ownerId) || USER_COLORS[0];
 }
