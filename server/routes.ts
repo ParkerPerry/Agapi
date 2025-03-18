@@ -32,6 +32,15 @@ async function hasCirclePermission(
   const members = await storage.getCircleMembers(circleId);
   const member = members.find(m => m.userId === userId);
 
+  // Check if user has a pending invitation
+  const invitations = await storage.getUserPendingInvitations(userId);
+  const hasPendingInvitation = invitations.some(inv => inv.circleId === circleId && inv.status === "pending");
+
+  if (hasPendingInvitation) {
+    console.log("[Permissions] User has pending invitation, granting viewer access");
+    return requiredRole === "viewer";
+  }
+
   if (!member) {
     console.log("[Permissions] User is not a member of the circle");
     return false;
