@@ -206,7 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update circle follower management routes to allow collaborators
+  // Circle Followers Management
   app.post("/api/circles/:id/followers", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
@@ -214,26 +214,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { aiFollowerId } = req.body;
 
     try {
-      // Verify circle exists
+      // Verify circle ownership
       const circle = await storage.getCircle(circleId);
-      if (!circle) {
+      if (!circle || circle.userId !== req.user!.id) {
         return res.status(404).json({ message: "Circle not found" });
-      }
-
-      // Check if user is owner or collaborator
-      const members = await storage.getCircleMembers(circleId);
-      const isCollaborator = members.some(member =>
-        member.userId === req.user!.id && member.role === "collaborator"
-      );
-      const isOwner = circle.userId === req.user!.id;
-
-      if (!isOwner && !isCollaborator) {
-        return res.status(403).json({ message: "Not authorized to manage followers" });
       }
 
       // Verify AI follower ownership
       const follower = await storage.getAiFollower(aiFollowerId);
-      if (!follower || (follower.userId !== req.user!.id && !isCollaborator)) {
+      if (!follower || follower.userId !== req.user!.id) {
         return res.status(404).json({ message: "AI follower not found" });
       }
 
@@ -285,31 +274,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update post creation endpoint to allow collaborators
+  // Update the existing post creation endpoint to support circles
   app.post("/api/posts", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
       const circleId = req.body.circleId || (await storage.getDefaultCircle(req.user!.id)).id;
-
-      // Check if user has permission to post in this circle
-      if (circleId !== (await storage.getDefaultCircle(req.user!.id)).id) {
-        const circle = await storage.getCircle(circleId);
-        if (!circle) {
-          return res.status(404).json({ message: "Circle not found" });
-        }
-
-        const members = await storage.getCircleMembers(circleId);
-        const isCollaborator = members.some(member =>
-          member.userId === req.user!.id && member.role === "collaborator"
-        );
-        const isOwner = circle.userId === req.user!.id;
-
-        if (!isOwner && !isCollaborator) {
-          return res.status(403).json({ message: "Not authorized to post in this circle" });
-        }
-      }
-
       const post = await storage.createPostInCircle(req.user!.id, circleId, req.body.content);
 
       // Get AI followers for the specific circle
@@ -533,7 +503,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/posts", async (req, res) => { //This is a duplicate route, likely a mistake in the original code.  Keeping both for completeness of the merge.
+  app.post("/api/posts", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
