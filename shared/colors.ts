@@ -1,5 +1,16 @@
-
 // Shared color utilities between frontend and backend
+
+function generateHSLColor(userId: number): string {
+  // Use userId to generate a unique but consistent hue
+  const hue = (userId * 137.508) % 360; // Golden angle approximation for good distribution
+  const saturation = 85; // High saturation for vibrant colors
+  const lightness = 60; // Balanced lightness for visibility
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
+export function generateUserColor(userId: number): string {
+  return generateHSLColor(userId);
+}
 
 export const USER_COLORS = [
   "#2563eb", // blue
@@ -50,11 +61,4 @@ export function generateCircleColors(members: { id: number; username: string }[]
  */
 export function getFollowerColor(ownerId: number, userColors: Map<number, string>): string {
   return userColors.get(ownerId) || USER_COLORS[0];
-}
-
-/**
- * Generate a color for a single user
- */
-export function generateUserColor(userId: number): string {
-  return USER_COLORS[userId % USER_COLORS.length];
 }
