@@ -29,9 +29,10 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
 
   const { circle, owner, members, followers } = circleDetails;
 
-  // Group followers by their owners (userId)
   const followersByOwner = followers.reduce((groups, follower) => {
-    const ownerMember = members.find(m => m.userId === follower.userId);
+    const ownerUsername = follower.owner?.username;
+    if (!ownerUsername) return groups;
+
     const ownerGroups = groups.get(follower.userId) || [];
     groups.set(follower.userId, [...ownerGroups, follower]);
     return groups;
@@ -118,9 +119,9 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
               </h3>
               <div className="space-y-4">
                 {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
-                  const ownerMember = members.find(m => m.userId === userId);
-                  const ownerName = ownerMember?.username || "Unknown User";
-                  const userColor = generateUserColor(ownerName);
+                  const ownerUsername = userFollowers[0]?.owner?.username;
+                  if (!ownerUsername) return null;
+                  const userColor = generateUserColor(ownerUsername);
 
                   return (
                     <div key={userId} className="space-y-2">
@@ -130,7 +131,7 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
                           style={{ backgroundColor: userColor }}
                         />
                         <h4 className="text-sm font-medium text-muted-foreground">
-                          {ownerName}'s AI Followers
+                          {ownerUsername}'s AI Followers
                         </h4>
                       </div>
                       {userFollowers.map((follower) => (

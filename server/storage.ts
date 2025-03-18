@@ -613,13 +613,23 @@ export class DatabaseStorage implements IStorage {
   async getCircleFollowers(circleId: number): Promise<AiFollower[]> {
     const followers = await db
       .select({
-        follower: ai_followers,
+        follower: {
+          id: ai_followers.id,
+          name: ai_followers.name,
+          avatarUrl: ai_followers.avatarUrl,
+          personality: ai_followers.personality,
+          userId: ai_followers.userId,
+          owner: {
+            username: users.username
+          }
+        }
       })
       .from(circleFollowers)
       .innerJoin(
         ai_followers,
         eq(circleFollowers.aiFollowerId, ai_followers.id)
       )
+      .leftJoin(users, eq(ai_followers.userId, users.id))
       .where(eq(circleFollowers.circleId, circleId));
 
     return followers.map(f => f.follower);

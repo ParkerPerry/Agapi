@@ -48,10 +48,6 @@ interface PostCardProps {
       avatarUrl: string;
       scheduledFor: Date;
     }>;
-    members?: Array<{
-      userId: number;
-      username: string;
-    }>;
   };
 }
 
@@ -108,12 +104,10 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
 function Comment({
   comment,
   postId,
-  ownerUsername,
   level = 0,
 }: {
   comment: PostCardProps["post"]["interactions"][0];
   postId: number;
-  ownerUsername?: string;
   level?: number;
 }) {
   const [isReplying, setIsReplying] = useState(false);
@@ -124,9 +118,9 @@ function Comment({
   const isUserComment = !!comment.userId;
   const hasReplies = comment.replies && comment.replies.length > 0;
 
-  // Use the owner's username for color generation
-  const commentOwnerUsername = comment.aiFollower?.owner?.username || ownerUsername;
-  const userColor = commentOwnerUsername ? generateUserColor(commentOwnerUsername) : undefined;
+  // Get owner's username directly from aiFollower
+  const ownerUsername = comment.aiFollower?.owner?.username;
+  const userColor = ownerUsername ? generateUserColor(ownerUsername) : undefined;
 
   return (
     <div className={`space-y-4 ${level > 0 ? "ml-8 border-l-2 pl-4" : ""}`}>
@@ -145,7 +139,7 @@ function Comment({
             </AvatarFallback>
           </Avatar>
           {isAIComment && userColor && (
-            <div
+            <div 
               className="absolute inset-0 rounded-full border-2"
               style={{ borderColor: userColor }}
             />
@@ -157,12 +151,12 @@ function Comment({
               {isAIComment ? (
                 <>
                   {comment.aiFollower?.name || 'AI'}
-                  {commentOwnerUsername && (
+                  {ownerUsername && (
                     <span
                       className="ml-2 text-xs font-normal"
                       style={{ color: userColor }}
                     >
-                      @{commentOwnerUsername}
+                      @{ownerUsername}
                     </span>
                   )}
                 </>
@@ -215,7 +209,6 @@ function Comment({
           key={reply.id}
           comment={reply}
           postId={postId}
-          ownerUsername={commentOwnerUsername}
           level={level + 1}
         />
       ))}
@@ -229,7 +222,6 @@ export function PostCard({ post }: PostCardProps) {
     (i) => (i.type === "comment" || i.type === "reply") && !i.parentId
   );
   const pendingCount = post.pendingResponses?.length || 0;
-  const members = post.members;
 
   return (
     <Card>
@@ -308,7 +300,6 @@ export function PostCard({ post }: PostCardProps) {
               key={comment.id}
               comment={comment}
               postId={post.id}
-              ownerUsername={comment.aiFollower?.owner?.username}
             />
           ))}
         </div>
