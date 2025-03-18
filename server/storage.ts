@@ -10,7 +10,7 @@ import {
 import { eq, and, asc, or, inArray } from "drizzle-orm";
 import { db } from "./db";
 import { defaultTomConfig } from "./config/default-ai-follower";
-import { ColoredUser, generateCircleColors, getFollowerColor } from "@shared/colors";
+import { ColoredUser, generateCircleColors, getFollowerColor, generateUserColor, USER_COLORS } from "@shared/colors";
 
 // Add this interface to extend the AiFollower type with owner info
 interface AiFollowerWithOwner extends AiFollower {
