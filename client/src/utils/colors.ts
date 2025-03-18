@@ -2,7 +2,7 @@
 export function generateUserColor(username: string): string {
   const colors = [
     "#2563eb", // blue
-    "#dc2626", // red
+    "#dc2626", // red  
     "#16a34a", // green
     "#9333ea", // purple
     "#ea580c", // orange
@@ -16,6 +16,6 @@ export function generateUserColor(username: string): string {
     .reduce((acc, char, i) => 
       char.charCodeAt(0) * (i + 1) + acc, 0
     );
-  
+
   return colors[Math.abs(hash) % colors.length];
 }
