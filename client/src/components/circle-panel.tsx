@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Users, Share2 } from "lucide-react";
-import { generateUserColor } from "@shared/colors";
+import { generateUserColor, generateCircleColors, USER_COLORS } from "@shared/colors";
 
 interface CircleDetails {
   circle: Circle;
