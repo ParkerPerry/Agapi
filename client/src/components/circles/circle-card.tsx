@@ -30,65 +30,70 @@ export function CircleCard({
   return (
     <div
       className={cn(
-        "flex flex-col space-y-4 p-4 border rounded-lg",
+        "flex flex-col p-4 border rounded-lg relative",
         circle.isDefault && "bg-muted"
       )}
       style={{ borderColor: circle.color }}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div
-            className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
-            style={{ backgroundColor: circle.color + "20" }}
-          >
-            {circle.icon}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-medium">{circle.name}</h3>
-              {circle.isDefault && (
-                <Badge variant="secondary">Default</Badge>
-              )}
-              <Badge
-                variant={circle.visibility === "shared" ? "default" : "outline"}
-              >
-                {circle.visibility}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {circle.description}
-            </p>
-          </div>
+      {/* Subtle shared indicator */}
+      {circle.visibility === "shared" && (
+        <Badge 
+          variant="secondary" 
+          className="absolute top-2 right-2 opacity-70"
+        >
+          shared
+        </Badge>
+      )}
+
+      {/* Circle header with icon and details */}
+      <div className="flex items-start space-x-4">
+        <div
+          className="flex items-center justify-center w-12 h-12 rounded-full text-2xl flex-shrink-0"
+          style={{ backgroundColor: circle.color + "20" }}
+        >
+          {circle.icon}
         </div>
-        <div className="flex space-x-2">
-          <Button
-            variant="default"
-            onClick={() => navigate(`/?circle=${circle.id}`)}
-          >
-            Enter Circle
-          </Button>
-
-          {showShareButton && !circle.isDefault && (
-            <CircleShareDialog circle={circle} />
-          )}
-
-          <CircleFollowerManager circle={circle} />
-
-          {!circle.isDefault && (
-            <>
-              <CircleEditDialog
-                circle={circle}
-                onEdit={onEdit}
-              />
-
-              <CircleDeleteDialog
-                circle={circle}
-                onDelete={onDelete}
-                isDeleting={isDeleting}
-              />
-            </>
-          )}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-medium truncate">{circle.name}</h3>
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {circle.description}
+          </p>
         </div>
+      </div>
+
+      {/* Primary action button */}
+      <div className="mt-4">
+        <Button
+          variant="default"
+          className="w-full"
+          onClick={() => navigate(`/?circle=${circle.id}`)}
+        >
+          Enter Circle
+        </Button>
+      </div>
+
+      {/* Secondary actions */}
+      <div className="flex flex-wrap gap-2 mt-3 justify-end">
+        {showShareButton && !circle.isDefault && (
+          <CircleShareDialog circle={circle} />
+        )}
+
+        <CircleFollowerManager circle={circle} />
+
+        {!circle.isDefault && (
+          <>
+            <CircleEditDialog
+              circle={circle}
+              onEdit={onEdit}
+            />
+
+            <CircleDeleteDialog
+              circle={circle}
+              onDelete={onDelete}
+              isDeleting={isDeleting}
+            />
+          </>
+        )}
       </div>
     </div>
   );
