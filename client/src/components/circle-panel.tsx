@@ -33,11 +33,16 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
   if (!circleDetails) return null;
 
   const { circle, owner, members, followers } = circleDetails;
+  
+  // Generate colors for all users in the circle
+  const { users: userColors } = generateCircleColors(members);
 
   const followersByOwner = followers.reduce((groups, follower) => {
     if (!follower.owner) return groups;
 
     const ownerGroups = groups.get(follower.userId) || [];
+    const ownerColor = userColors.get(follower.userId) || USER_COLORS[0];
+    follower.owner.color = ownerColor; // Set the color for the follower's owner
     groups.set(follower.userId, [...ownerGroups, follower]);
     return groups;
   }, new Map<number, typeof followers>());
