@@ -67,3 +67,51 @@ export function useRespondToInvitation() {
     },
   });
 }
+
+export function useDeactivateCircleMember() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ circleId, userId }: { circleId: number; userId: number }) => {
+      await apiRequest(
+        "POST",
+        `/api/circles/${circleId}/members/${userId}/deactivate`
+      );
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
+      queryClient.invalidateQueries({ 
+        queryKey: [`/api/circles/${variables.circleId}/details`] 
+      });
+      toast({
+        title: "Member deactivated",
+        description: "The member has been deactivated from this circle.",
+      });
+    },
+  });
+}
+
+export function useReactivateCircleMember() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ circleId, userId }: { circleId: number; userId: number }) => {
+      await apiRequest(
+        "POST",
+        `/api/circles/${circleId}/members/${userId}/reactivate`
+      );
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
+      queryClient.invalidateQueries({ 
+        queryKey: [`/api/circles/${variables.circleId}/details`] 
+      });
+      toast({
+        title: "Member reactivated",
+        description: "The member has been reactivated in this circle.",
+      });
+    },
+  });
+}

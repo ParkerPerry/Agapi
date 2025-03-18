@@ -222,13 +222,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const circles = await storage.getUserCircles(req.user!.id);
+      const deactivatedCircles = await storage.getDeactivatedCircles(req.user!.id);
 
       // Reorganize circles into the new grouping structure
       const categorizedCircles = {
         private: circles.owned.filter(c => c.visibility !== "shared"),
         shared: circles.owned.filter(c => c.visibility === "shared"),
         sharedWithYou: circles.shared,
-        invited: circles.invited
+        invited: circles.invited,
+        deactivated: deactivatedCircles
       };
 
       res.json(categorizedCircles);
@@ -722,6 +724,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error getting circle details:", error);
       res.status(500).json({ message: "Failed to get circle details" });
+    }
+  });
+
+  // Deactivate a circle member
+  app.post("/api/circles/:id/members/:userId/deactivate", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    const targetUserId = parseInt(req.params.userId);
+
+    try {
+      // Check if user has permission to manage members
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage, "owner");
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Only circle owners can deactivate members" });
+      }
+
+      // Can't deactivate the owner
+      const circle = await storage.getCircle(circleId);
+      if (circle?.userId === targetUserId) {
+        return res.status(400).json({ message: "Cannot deactivate the circle owner" });
+      }
+
+      await storage.deactivateCircleMember(circleId, targetUserId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error deactivating circle member:", error);
+      res.status(500).json({ message: "Failed to deactivate circle member" });
+    }
+  });
+
+  // Reactivate a circle member
+  app.post("/api/circles/:id/members/:userId/reactivate", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    const targetUserId = parseInt(req.params.userId);
+
+    try {
+      // Check if user has permission to manage members
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage, "owner");
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Only circle owners can reactivate members" });
+      }
+
+      await storage.reactivateCircleMember(circleId, targetUserId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error reactivating circle member:", error);
+      res.status(500).json({ message: "Failed to reactivate circle member" });
+    }
+  });
+
+  // Get deactivated circles
+  app.get("/api/circles/deactivated", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const circles = await storage.getDeactivatedCircles(req.user!.id);
+      res.json(circles);
+    } catch (error) {
+      console.error("Error getting deactivated circles:", error);
+      res.status(500).json({ message: "Failed to get deactivated circles" });
     }
   });
 

@@ -26,12 +26,13 @@ export const circles = pgTable("circles", {
   visibility: text("visibility", { enum: ["private", "shared"] }).default("private").notNull(),
 });
 
-// New table for circle members with permission levels
+// Update circleMembers table definition to include status
 export const circleMembers = pgTable("circle_members", {
   id: serial("id").primaryKey(),
   circleId: integer("circle_id").references(() => circles.id).notNull(),
   userId: integer("user_id").references(() => users.id).notNull(),
   role: text("role", { enum: ["owner", "collaborator", "viewer"] }).notNull(),
+  status: text("status", { enum: ["active", "deactivated"] }).default("active").notNull(),
   joinedAt: timestamp("joined_at").defaultNow(),
 });
 
@@ -225,11 +226,13 @@ export const insertInteractionSchema = createInsertSchema(aiInteractions)
     type: z.enum(["like", "comment", "reply"]),
   });
 
+// Update the insert schema to include status
 export const insertCircleMemberSchema = createInsertSchema(circleMembers)
   .pick({
     circleId: true,
     userId: true,
     role: true,
+    status: true,
   });
 
 export const insertCircleInvitationSchema = createInsertSchema(circleInvitations)

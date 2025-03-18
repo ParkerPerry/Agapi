@@ -1,7 +1,7 @@
 import { Circle } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Share2, Users, Pencil, Trash2 } from "lucide-react";
+import { Share2, Users, Pencil, Ban } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -16,6 +16,7 @@ interface CircleCardProps {
   onDelete?: (id: number) => void;
   isDeleting?: boolean;
   showShareButton?: boolean;
+  status?: "active" | "deactivated";
 }
 
 export function CircleCard({
@@ -24,6 +25,7 @@ export function CircleCard({
   onDelete,
   isDeleting,
   showShareButton = true,
+  status = "active",
 }: CircleCardProps) {
   const [, navigate] = useLocation();
 
@@ -31,19 +33,24 @@ export function CircleCard({
     <div
       className={cn(
         "flex flex-col p-4 border rounded-lg relative",
-        circle.isDefault && "bg-muted"
+        circle.isDefault && "bg-muted",
+        status === "deactivated" && "opacity-75"
       )}
       style={{ borderColor: circle.color }}
     >
-      {/* Subtle shared indicator */}
-      {circle.visibility === "shared" && (
-        <Badge 
-          variant="secondary" 
-          className="absolute top-2 right-2 opacity-70"
-        >
-          shared
-        </Badge>
-      )}
+      {/* Status badges */}
+      <div className="absolute top-2 right-2 flex gap-2">
+        {circle.visibility === "shared" && (
+          <Badge variant="secondary" className="opacity-70">
+            shared
+          </Badge>
+        )}
+        {status === "deactivated" && (
+          <Badge variant="destructive" className="opacity-70">
+            deactivated
+          </Badge>
+        )}
+      </div>
 
       {/* Circle header with icon and details */}
       <div className="flex items-start space-x-4">
@@ -67,20 +74,21 @@ export function CircleCard({
           variant="default"
           className="w-full"
           onClick={() => navigate(`/?circle=${circle.id}`)}
+          disabled={status === "deactivated"}
         >
-          Enter Circle
+          {status === "deactivated" ? "Access Removed" : "Enter Circle"}
         </Button>
       </div>
 
       {/* Secondary actions */}
       <div className="flex flex-wrap gap-2 mt-3 justify-end">
-        {showShareButton && !circle.isDefault && (
+        {showShareButton && !circle.isDefault && status === "active" && (
           <CircleShareDialog circle={circle} />
         )}
 
-        <CircleFollowerManager circle={circle} />
+        {status === "active" && <CircleFollowerManager circle={circle} />}
 
-        {!circle.isDefault && (
+        {!circle.isDefault && status === "active" && (
           <>
             <CircleEditDialog
               circle={circle}

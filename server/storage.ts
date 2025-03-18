@@ -52,7 +52,7 @@ export interface IStorage {
 
   addCircleMember(member: InsertCircleMember): Promise<CircleMember>;
   removeCircleMember(circleId: number, userId: number): Promise<void>;
-  getCircleMembers(circleId: number): Promise<CircleMember[]>;
+  getCircleMembers(circleId: number, status: "active" | "deactivated" | "all"): Promise<CircleMember[]>;
   createCircleInvitation(invitation: Omit<InsertCircleInvitation, "status">): Promise<CircleInvitation>;
   getCircleInvitation(id: number): Promise<CircleInvitation | undefined>;
   getCircleInvitations(circleId: number): Promise<CircleInvitation[]>;
@@ -64,6 +64,9 @@ export interface IStorage {
     members: (CircleMember & { username: string })[];
     followers: AiFollower[];
   } | undefined>;
+  deactivateCircleMember(circleId: number, userId: number): Promise<void>;
+  reactivateCircleMember(circleId: number, userId: number): Promise<void>;
+  getDeactivatedCircles(userId: number): Promise<Circle[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -595,12 +598,20 @@ export class DatabaseStorage implements IStorage {
       ));
   }
 
-  async getCircleMembers(circleId: number): Promise<CircleMember[]> {
-    return await db
+  async getCircleMembers(
+    circleId: number, 
+    status: "active" | "deactivated" | "all" = "active"
+  ): Promise<CircleMember[]> {
+    const query = db
       .select()
       .from(circleMembers)
-      .where(eq(circleMembers.circleId, circleId))
-      .orderBy(asc(circleMembers.joinedAt));
+      .where(eq(circleMembers.circleId, circleId));
+
+    if (status !== "all") {
+      query.where(eq(circleMembers.status, status));
+    }
+
+    return await query.orderBy(asc(circleMembers.joinedAt));
   }
 
   async createCircleInvitation(
@@ -718,6 +729,47 @@ export class DatabaseStorage implements IStorage {
       members,
       followers,
     };
+  }
+
+  async deactivateCircleMember(circleId: number, userId: number): Promise<void> {
+    await db
+      .update(circleMembers)
+      .set({ status: "deactivated" })
+      .where(
+        and(
+          eq(circleMembers.circleId, circleId),
+          eq(circleMembers.userId, userId)
+        )
+      );
+  }
+
+  async reactivateCircleMember(circleId: number, userId: number): Promise<void> {
+    await db
+      .update(circleMembers)
+      .set({ status: "active" })
+      .where(
+        and(
+          eq(circleMembers.circleId, circleId),
+          eq(circleMembers.userId, userId)
+        )
+      );
+  }
+
+  async getDeactivatedCircles(userId: number): Promise<Circle[]> {
+    const deactivatedMemberships = await db
+      .select({
+        circle: circles,
+      })
+      .from(circleMembers)
+      .innerJoin(circles, eq(circleMembers.circleId, circles.id))
+      .where(
+        and(
+          eq(circleMembers.userId, userId),
+          eq(circleMembers.status, "deactivated")
+        )
+      );
+
+    return deactivatedMemberships.map(m => m.circle);
   }
 }
 
