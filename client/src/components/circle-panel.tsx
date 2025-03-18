@@ -6,13 +6,18 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Users, Share2 } from "lucide-react";
-import { generateUserColor } from "@/utils/colors";
+import { generateUserColor } from "@shared/colors";
 
 interface CircleDetails {
   circle: Circle;
   owner: User;
   members: (CircleMember & { username: string })[];
-  followers: AiFollower[];
+  followers: (AiFollower & {
+    owner: {
+      username: string;
+      color: string;
+    };
+  })[];
 }
 
 interface CirclePanelProps {
@@ -30,13 +35,12 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
   const { circle, owner, members, followers } = circleDetails;
 
   const followersByOwner = followers.reduce((groups, follower) => {
-    const ownerUsername = follower.owner?.username;
-    if (!ownerUsername) return groups;
+    if (!follower.owner) return groups;
 
     const ownerGroups = groups.get(follower.userId) || [];
     groups.set(follower.userId, [...ownerGroups, follower]);
     return groups;
-  }, new Map<number, AiFollower[]>());
+  }, new Map<number, typeof followers>());
 
   return (
     <Card className="h-[calc(100vh-4rem)] flex flex-col">
@@ -119,19 +123,18 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
               </h3>
               <div className="space-y-4">
                 {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
-                  const ownerUsername = userFollowers[0]?.owner?.username;
-                  if (!ownerUsername) return null;
-                  const userColor = generateUserColor(ownerUsername);
+                  const firstFollower = userFollowers[0];
+                  if (!firstFollower?.owner) return null;
 
                   return (
                     <div key={userId} className="space-y-2">
                       <div className="flex items-center gap-2">
                         <div 
                           className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: userColor }}
+                          style={{ backgroundColor: firstFollower.owner.color }}
                         />
                         <h4 className="text-sm font-medium text-muted-foreground">
-                          {ownerUsername}'s AI Followers
+                          {firstFollower.owner.username}'s AI Followers
                         </h4>
                       </div>
                       {userFollowers.map((follower) => (
@@ -149,7 +152,7 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
                               </Avatar>
                               <div 
                                 className="absolute inset-0 rounded-full border-2"
-                                style={{ borderColor: userColor }}
+                                style={{ borderColor: follower.owner.color }}
                               />
                             </div>
                             <div>
