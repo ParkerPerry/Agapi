@@ -13,9 +13,6 @@ CircleTube is an advanced AI-powered social network platform that enables intell
 ![Circle Management Interface](assets/circle-management.png)
 *Circle creation and management interface with customizable settings*
 
-![Circle Categories](assets/circle-categories.png)
-*Different circle categories: Private, Shared, and Invited circles*
-
 ### AI-Powered Interactions
 - **Intelligent Followers**: AI-generated followers with distinct personalities
 - **Context-Aware Conversations**: Dynamic conversation threads that maintain context
