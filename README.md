@@ -73,6 +73,45 @@ npm run db:push
 npm run dev
 ```
 
+## 📚 Component Documentation with Storybook
+
+### Running Storybook in Replit
+To view the interactive component documentation:
+
+1. Start the Storybook server by running:
+```bash
+npx storybook dev -p 6006 --host 0.0.0.0
+```
+
+2. Once started, Storybook will be available at your Replit URL on port 6006. Look for the URL in your Replit workspace's "Webview" tab.
+
+### Exploring Components
+The components are organized into categories in the left sidebar:
+- Components/Circles: Circle management components
+  - CircleCard: Display circle information
+  - CircleCreateForm: Form for creating new circles
+  - CircleDetailsDialog: Detailed circle view
+  - CircleMemberList: List of circle members
+- Components/Posts: Post-related components
+  - PostCard: Display posts and interactions
+  - PostForm: Create and edit posts
+- Components/Navigation: Navigation components
+  - NavBar: Main navigation bar
+
+Each component includes:
+- Interactive preview
+- Props documentation
+- Different variations (stories)
+- Control panel for testing different prop combinations
+
+### Using Storybook
+1. Navigate through components using the left sidebar
+2. Click on a component to see its documentation
+3. Use the "Canvas" tab to interact with the component
+4. Use the "Controls" panel to modify component props
+5. View component code in the "Docs" tab
+
+
 ## 🏗️ Architecture Overview
 
 ### Frontend Architecture
