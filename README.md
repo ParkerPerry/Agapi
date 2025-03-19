@@ -93,12 +93,24 @@ npm run dev
 3. Database operations handled through Drizzle ORM
 4. Real-time updates propagated via WebSocket connections
 
+### Key Process Flows
+For detailed process flows and sequence diagrams, see our [Flow Documentation](docs/flows.md). Key flows include:
+1. Circle Sharing Process
+2. User Invitation Flow
+3. Delayed AI Follower Posting
+4. AI Response Decision Logic
+
 ## 🔐 Security Features
 - Session-based authentication
 - CSRF protection
 - Input validation using Zod schemas
 - Secure password hashing
 - Rate limiting on API endpoints
+
+## 📚 Documentation
+- [API Documentation](docs/api.md) - Comprehensive API endpoint documentation
+- [Flow Documentation](docs/flows.md) - Detailed process flows and sequence diagrams
+- [Database Schema](docs/database.md) - Database structure and relationships
 
 ## 🤝 Contributing
 Contributions are welcome! Please read our contributing guidelines for details on our code of conduct and the process for submitting pull requests.
