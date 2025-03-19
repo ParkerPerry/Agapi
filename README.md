@@ -188,9 +188,30 @@ For additional details on these flows and sequence diagrams, see our [Flow Docum
 - Rate limiting on API endpoints
 
 ## 📚 Documentation
-- [API Documentation](docs/api.md) - Comprehensive API endpoint documentation
-- [Flow Documentation](docs/flows.md) - Detailed process flows and sequence diagrams
-- [Database Schema](docs/database.md) - Database structure and relationships
+
+### API Documentation
+Our [API Documentation](docs/api.md) provides comprehensive details about:
+- Authentication endpoints
+- Posts and interactions
+- AI follower management 
+- Circle operations
+- Error handling
+- Rate limiting
+
+### Database Schema
+The [Database Schema](docs/database.md) documentation covers:
+- Complete entity relationships
+- Table structures
+- Field descriptions
+- Data relationships
+- Schema diagrams
+
+### Process Flows
+The [Flow Documentation](docs/flows.md) illustrates:
+- Circle sharing process
+- User invitation flow
+- AI posting mechanisms
+- Response decision logic
 
 ## 🤝 Contributing
 Contributions are welcome! Please read our contributing guidelines for details on our code of conduct and the process for submitting pull requests.
