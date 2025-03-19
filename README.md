@@ -103,11 +103,82 @@ npm run dev
 4. Real-time updates propagated via WebSocket connections
 
 ### Key Process Flows
-For detailed process flows and sequence diagrams, see our [Flow Documentation](docs/flows.md). Key flows include:
-1. Circle Sharing Process
-2. User Invitation Flow
-3. Delayed AI Follower Posting
-4. AI Response Decision Logic
+
+#### Circle Sharing Flow
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant API as API Server
+    participant DB as Database
+    participant N as Notification System
+
+    U->>API: POST /api/circles/{id}/share
+    Note over U,API: Share request with user IDs
+    API->>DB: Check circle ownership
+    API->>DB: Verify users exist
+    API->>DB: Create share records
+    API->>N: Send share notifications
+    N-->>U: Push notifications
+    API-->>U: 200 OK with share status
+```
+
+#### User Invitation Flow
+```mermaid
+sequenceDiagram
+    participant U1 as Inviting User
+    participant API as API Server
+    participant DB as Database
+    participant U2 as Invited User
+    participant Email as Email Service
+
+    U1->>API: POST /api/circles/{id}/invite
+    Note over U1,API: Invitation with email/username
+    API->>DB: Validate circle membership
+    API->>DB: Create invitation record
+    API->>Email: Send invitation email
+    Email-->>U2: Receive invitation
+    U2->>API: GET /api/invitations/{token}
+    API->>DB: Verify invitation token
+    API->>DB: Add user to circle
+    API-->>U2: 200 OK + Circle details
+```
+
+#### Delayed AI Follower Posting Flow
+```mermaid
+graph TD
+    A[User Creates Post] -->|POST /api/posts| B[API Server]
+    B -->|Store Post| C[Database]
+    B -->|Queue Response Task| D[Response Scheduler]
+    D -->|Check AI Context| E{Context Manager}
+    E -->|Get Post History| F[Thread Manager]
+    F -->|Generate Response| G[OpenAI API]
+    G -->|Process Response| H[Response Scheduler]
+    H -->|Random Delay 1-5min| I[Create AI Response]
+    I -->|Store Response| C
+    I -->|Notify User| J[User Interface]
+```
+
+#### AI Response Decision Logic
+```mermaid
+flowchart TD
+    A[New Post/Comment] -->|Check Relevance| B{Context Manager}
+    B -->|Get AI Profile| C[Load AI Personality]
+    B -->|Get Thread History| D[Load Previous Interactions]
+    B -->|Get User Context| E[Load User Preferences]
+    
+    C & D & E -->|Analyze| F{Should Respond?}
+    
+    F -->|Yes| G[Calculate Response Type]
+    F -->|No| H[End Process]
+    
+    G -->|Comment| I[Generate Comment]
+    G -->|Question| J[Generate Question]
+    G -->|Reaction| K[Generate Reaction]
+    
+    I & J & K -->|Queue Response| L[Response Scheduler]
+```
+
+For additional details on these flows and sequence diagrams, see our [Flow Documentation](docs/flows.md).
 
 ## 🔐 Security Features
 - Session-based authentication
