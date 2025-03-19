@@ -584,7 +584,10 @@ export class DatabaseStorage implements IStorage {
   async addCircleMember(member: InsertCircleMember): Promise<CircleMember> {
     const [circleMember] = (await db
       .insert(circleMembers)
-      .values(member)
+      .values({
+        ...member,
+        status: member.status || "active"
+      })
       .returning()) as CircleMember[];
     return circleMember;
   }
