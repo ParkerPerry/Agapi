@@ -2,7 +2,11 @@ import {
   InsertUser, User, Post, AiFollower, AiInteraction, PendingResponse,
   Circle, InsertCircle, CircleFollower, InsertCircleFollower,
   InsertCircleMember, CircleMember, InsertCircleInvitation, CircleInvitation,
-  Notification, InsertNotification, notifications
+  Notification, InsertNotification,
+  // Add table imports
+  users, posts, ai_followers, aiInteractions, pendingResponses,
+  circles, circleFollowers, circleMembers, circleInvitations,
+  notifications
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
