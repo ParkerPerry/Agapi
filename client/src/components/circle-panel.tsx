@@ -7,7 +7,6 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, Share2, ChevronRight } from "lucide-react";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface CircleDetails {
@@ -19,11 +18,11 @@ interface CircleDetails {
 
 interface CirclePanelProps {
   circleId: number;
+  isCollapsed: boolean;
+  onCollapse: (collapsed: boolean) => void;
 }
 
-export function CirclePanel({ circleId }: CirclePanelProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
+export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelProps) {
   const { data: circleDetails } = useQuery<CircleDetails>({
     queryKey: [`/api/circles/${circleId}/details`],
     enabled: !!circleId,
@@ -43,13 +42,13 @@ export function CirclePanel({ circleId }: CirclePanelProps) {
   return (
     <Card className={cn(
       "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300",
-      isCollapsed && "w-16"
+      isCollapsed ? "w-16" : "w-80"
     )}>
       <Button
         variant="ghost"
         size="icon"
         className="absolute right-2 top-2 z-10"
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={() => onCollapse(!isCollapsed)}
       >
         <ChevronRight className={cn(
           "h-4 w-4 transition-transform",

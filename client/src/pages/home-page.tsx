@@ -7,9 +7,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Post, Circle } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TourProvider } from "@/components/tour/tour-context";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function HomePage() {
   const { user } = useAuth();
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
   // Get circle ID from URL query parameter
   const params = new URLSearchParams(window.location.search);
@@ -35,12 +38,21 @@ export default function HomePage() {
         <NavBar />
         <main className="container py-6">
           <div className="flex gap-6">
-            {/* Fixed left panel */}
-            <div className="w-80 shrink-0">
-              {circle && <CirclePanel circleId={circle.id} />}
+            {/* Left panel with collapsible state */}
+            <div className={cn(
+              "transition-all duration-300",
+              isPanelCollapsed ? "w-16" : "w-80"
+            )}>
+              {circle && (
+                <CirclePanel 
+                  circleId={circle.id} 
+                  isCollapsed={isPanelCollapsed}
+                  onCollapse={setIsPanelCollapsed}
+                />
+              )}
             </div>
 
-            {/* Main content */}
+            {/* Main content - expands when panel is collapsed */}
             <div className="flex-1 space-y-6">
               <div className="post-form">
                 <PostForm defaultCircleId={circle?.id} />
