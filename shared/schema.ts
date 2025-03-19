@@ -190,57 +190,6 @@ export const circleInvitationsRelations = relations(circleInvitations, ({ one })
   }),
 }));
 
-// Add notifications table after existing tables
-export const notifications = pgTable("notifications", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  type: text("type", {
-    enum: ["circle_invite", "new_post", "ai_interaction", "circle_update", "mention"]
-  }).notNull(),
-  content: text("content").notNull(),
-  read: boolean("read").default(false).notNull(),
-  entityType: text("entity_type", {
-    enum: ["post", "circle", "ai_follower", "circle_invitation"]
-  }).notNull(),
-  entityId: integer("entity_id").notNull(),
-  metadata: json("metadata").$type<{
-    circleId?: number;
-    postId?: number;
-    aiFollowerId?: number;
-    invitationId?: number;
-  }>(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  readAt: timestamp("read_at"),
-});
-
-// Add notifications relation to users
-export const usersRelations = relations(users, ({ many }) => ({
-  notifications: many(notifications),
-}));
-
-// Add notification relations
-export const notificationsRelations = relations(notifications, ({ one }) => ({
-  user: one(users, {
-    fields: [notifications.userId],
-    references: [users.id],
-  }),
-}));
-
-// Add insert schema for notifications
-export const insertNotificationSchema = createInsertSchema(notifications)
-  .pick({
-    userId: true,
-    type: true,
-    content: true,
-    entityType: true,
-    entityId: true,
-    metadata: true,
-  });
-
-// Add types for notifications
-export type Notification = typeof notifications.$inferSelect;
-export type InsertNotification = z.infer<typeof insertNotificationSchema>;
-
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,

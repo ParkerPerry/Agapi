@@ -1,14 +1,13 @@
 import { 
   InsertUser, User, Post, AiFollower, AiInteraction, PendingResponse,
   Circle, InsertCircle, CircleFollower, InsertCircleFollower,
-  InsertCircleMember, CircleMember, InsertCircleInvitation, CircleInvitation,
-  Notification, InsertNotification, notifications
+  InsertCircleMember, CircleMember, InsertCircleInvitation, CircleInvitation
 } from "@shared/schema";
 import { 
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations
 } from "@shared/schema";
-import { eq, and, asc, desc, or } from "drizzle-orm";
+import { eq, and, asc, or } from "drizzle-orm";
 import { db } from "./db";
 import { defaultTomConfig } from "./config/default-ai-follower";
 
@@ -68,14 +67,6 @@ export interface IStorage {
   deactivateCircleMember(circleId: number, userId: number): Promise<void>;
   reactivateCircleMember(circleId: number, userId: number): Promise<void>;
   getDeactivatedCircles(userId: number): Promise<Circle[]>;
-
-  // Add new notification methods
-  createNotification(notification: InsertNotification): Promise<Notification>;
-  getUserNotifications(userId: number, limit?: number): Promise<Notification[]>;
-  getUnreadNotificationCount(userId: number): Promise<number>;
-  markNotificationRead(id: number): Promise<void>;
-  markAllNotificationsRead(userId: number): Promise<void>;
-  deleteNotification(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -782,70 +773,6 @@ export class DatabaseStorage implements IStorage {
       );
 
     return deactivatedMemberships.map(m => m.circle);
-  }
-
-  // Implement notification methods
-  async createNotification(notification: InsertNotification): Promise<Notification> {
-    const [newNotification] = (await db
-      .insert(notifications)
-      .values(notification)
-      .returning()) as Notification[];
-    return newNotification;
-  }
-
-  async getUserNotifications(userId: number, limit: number = 50): Promise<Notification[]> {
-    return await db
-      .select()
-      .from(notifications)
-      .where(eq(notifications.userId, userId))
-      .orderBy(desc(notifications.createdAt))
-      .limit(limit);
-  }
-
-  async getUnreadNotificationCount(userId: number): Promise<number> {
-    const [result] = await db
-      .select({ count: notifications.id })
-      .from(notifications)
-      .where(
-        and(
-          eq(notifications.userId, userId),
-          eq(notifications.read, false)
-        )
-      )
-      .count();
-
-    return Number(result?.count || 0);
-  }
-
-  async markNotificationRead(id: number): Promise<void> {
-    await db
-      .update(notifications)
-      .set({ 
-        read: true,
-        readAt: new Date()
-      })
-      .where(eq(notifications.id, id));
-  }
-
-  async markAllNotificationsRead(userId: number): Promise<void> {
-    await db
-      .update(notifications)
-      .set({ 
-        read: true,
-        readAt: new Date()
-      })
-      .where(
-        and(
-          eq(notifications.userId, userId),
-          eq(notifications.read, false)
-        )
-      );
-  }
-
-  async deleteNotification(id: number): Promise<void> {
-    await db
-      .delete(notifications)
-      .where(eq(notifications.id, id));
   }
 }
 
