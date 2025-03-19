@@ -73,6 +73,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const scheduler = ResponseScheduler.getInstance();
   scheduler.start();
 
+  // Add notification routes
+  app.get("/api/notifications", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const notifications = await storage.getUserNotifications(req.user!.id);
+      res.json(notifications);
+    } catch (error) {
+      console.error("Error getting notifications:", error);
+      res.status(500).json({ message: "Failed to get notifications" });
+    }
+  });
+
+  app.get("/api/notifications/unread/count", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const count = await storage.getUnreadNotificationCount(req.user!.id);
+      res.json({ count });
+    } catch (error) {
+      console.error("Error getting unread notification count:", error);
+      res.status(500).json({ message: "Failed to get unread notification count" });
+    }
+  });
+
+  app.patch("/api/notifications/:id/read", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const notificationId = parseInt(req.params.id);
+    try {
+      await storage.markNotificationRead(notificationId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      res.status(500).json({ message: "Failed to mark notification as read" });
+    }
+  });
+
+  app.patch("/api/notifications/read-all", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      await storage.markAllNotificationsRead(req.user!.id);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      res.status(500).json({ message: "Failed to mark all notifications as read" });
+    }
+  });
+
+  app.delete("/api/notifications/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const notificationId = parseInt(req.params.id);
+    try {
+      await storage.deleteNotification(notificationId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+      res.status(500).json({ message: "Failed to delete notification" });
+    }
+  });
+
   // Update the Get pending invitations endpoint to include circle information
   app.get("/api/circles/invitations/pending", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
@@ -97,7 +160,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get pending invitations" });
     }
   });
-
   // Create invitation for a circle
   app.post("/api/circles/:id/invitations", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
