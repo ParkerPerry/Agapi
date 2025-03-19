@@ -242,6 +242,44 @@ export const insertCircleInvitationSchema = createInsertSchema(circleInvitations
     role: true,
   });
 
+// Add notifications table
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  type: text("type", {
+    enum: ["mention", "circle_invite", "follower_interaction", "circle_update"]
+  }).notNull(),
+  content: text("content").notNull(),
+  read: boolean("read").default(false).notNull(),
+  metadata: json("metadata").$type<{
+    sourceId?: number;
+    sourceType?: string;
+    actionUrl?: string;
+  }>(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Add notification relations
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+}));
+
+// Add insert schema for notifications
+export const insertNotificationSchema = createInsertSchema(notifications)
+  .pick({
+    userId: true,
+    type: true,
+    content: true,
+    metadata: true,
+  });
+
+// Add notification types
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Post = typeof posts.$inferSelect;
