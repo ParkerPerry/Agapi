@@ -2,8 +2,9 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Bell, Home, User, LogOut, HelpCircle, Circle } from "lucide-react";
+import { Home, User, LogOut, HelpCircle, Circle } from "lucide-react";
 import { useTour } from "@/components/tour/tour-context";
+import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
 
 export function NavBar() {
   const { user, logoutMutation } = useAuth();
@@ -29,9 +30,7 @@ export function NavBar() {
                 </Button>
               </Link>
 
-              <Button variant="ghost" size="icon">
-                <Bell className="h-[1.2rem] w-[1.2rem]" />
-              </Button>
+              <NotificationDropdown />
 
               <Link href="/ai-followers">
                 <Button variant="ghost" size="icon">
