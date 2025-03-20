@@ -1,10 +1,18 @@
 import { AiFollower, AiInteraction, PendingResponse } from "@shared/schema";
 import { storage } from "./storage";
 
+// Define a simplified pending response type for UI display
+interface DisplayPendingResponse {
+  id: number;
+  name: string;
+  avatarUrl: string;
+  scheduledFor: Date;
+}
+
 export interface ThreadedInteraction extends AiInteraction {
   aiFollower?: AiFollower;
   replies: ThreadedInteraction[];
-  pendingResponses?: PendingResponse[];
+  pendingResponses?: DisplayPendingResponse[];
 }
 
 export class ThreadManager {
@@ -41,19 +49,38 @@ export class ThreadManager {
               return false;
             }
           }
-        ).map(pr => ({
-          id: pr.id,
-          name: pr.followerName,
-          avatarUrl: pr.followerAvatarUrl,
-          scheduledFor: pr.scheduledFor
-        }));
+        )
+        
+        // Get follower info for each pending response and format them
+        const formattedPendingResponses = await Promise.all(
+          interactionPendingResponses.map(async pr => {
+            // Get follower info to display name and avatar 
+            let followerName = "AI";
+            let followerAvatarUrl = "";
+            
+            if (pr.aiFollowerId) {
+              const follower = await storage.getAiFollower(pr.aiFollowerId);
+              if (follower) {
+                followerName = follower.name;
+                followerAvatarUrl = follower.avatarUrl;
+              }
+            }
+            
+            return {
+              id: pr.id,
+              name: followerName,
+              avatarUrl: followerAvatarUrl,
+              scheduledFor: pr.scheduledFor
+            };
+          })
+        );
         
         // Create the base interaction object with explicit type casting
         const threadedInteraction: ThreadedInteraction = {
           ...interaction,
           aiFollower: follower,
           replies: [],
-          pendingResponses: interactionPendingResponses.length > 0 ? interactionPendingResponses : undefined
+          pendingResponses: formattedPendingResponses.length > 0 ? formattedPendingResponses : undefined
         };
 
         interactionMap.set(interaction.id, threadedInteraction);
@@ -62,7 +89,7 @@ export class ThreadManager {
           type: interaction.type,
           parentId: interaction.parentId,
           hasFollower: !!follower,
-          pendingResponses: interactionPendingResponses.length,
+          pendingResponses: formattedPendingResponses.length,
           content: interaction.content?.substring(0, 50)
         });
       })
