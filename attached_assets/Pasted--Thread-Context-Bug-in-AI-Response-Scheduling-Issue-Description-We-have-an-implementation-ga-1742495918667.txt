@@ -1,0 +1,60 @@
+# Thread Context Bug in AI Response Scheduling
+
+## Issue Description
+We have an implementation gap in the ResponseScheduler's context awareness for thread replies. When evaluating whether an AI follower should respond to a thread, the scheduler is only considering the original post content rather than incorporating the full conversational context from the thread.
+
+## Observed Behavior
+As shown in your console output, the ResponseScheduler is evaluating relevance based solely on the original post:
+```
+[ResponseScheduler] Starting relevance calculation for: {
+  followerId: 4,
+  followerName: 'ChainGuru',
+  postContentPreview: "testing posting to my followers, who's available to checkin and engage on a tech topic?"
+}
+```
+
+However, the thread now contains relevant context about web3/web4 transitions that should trigger different relevance calculations for followers with matching expertise (like ChainGuru).
+
+## Expected Behavior
+When calculating relevance for thread replies, the scheduler should:
+1. Aggregate content from 2-3 previous messages in the thread
+2. Include this contextual content in the relevance calculation
+3. Weigh recent thread messages more heavily than the original post
+4. Apply this enhanced context only for thread replies (maintain existing behavior for direct post replies)
+
+## Technical Implementation
+We need to modify the ResponseScheduler to:
+
+1. Extend the context gathering logic in the thread reply handler:
+```typescript
+// In thread-reply.service.ts
+async getThreadContext(threadId: string, depth: number = 3): Promise<string> {
+  const messages = await this.threadRepository.findRecentMessages(threadId, depth);
+  return messages
+    .map(msg => msg.content)
+    .join(' ');
+}
+```
+
+2. Pass this aggregated context to the scheduler instead of just the original post:
+```typescript
+// In post-events.ts or thread-controller.ts
+const threadContext = await threadService.getThreadContext(threadId);
+eventEmitter.emit('thread.reply.created', {
+  postId,
+  replyId,
+  userId,
+  threadContext
+});
+```
+
+3. Update the ResponseScheduler to use this context for relevance calculation:
+```typescript
+// In response-scheduler.service.ts
+calculateRelevance(follower, params) {
+  const contentToAnalyze = params.threadContext || params.postContent;
+  // Continue with existing relevance calculation using enhanced context
+}
+```
+
+Please prioritize this enhancement to ensure our AI followers respond appropriately to the evolving context within threads, particularly for domain-specific discussions like the web3/web4 example in the screenshot.
