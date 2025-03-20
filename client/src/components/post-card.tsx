@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { formatRelativeTime } from "@/utils/date";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -51,7 +51,6 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
   onReply: () => void;
 }) {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const form = useForm({
     defaultValues: {
       content: "",
@@ -66,67 +65,11 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
       });
       return res.json();
     },
-    onMutate: async (variables) => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: [`/api/posts/${user?.id}`] });
-
-      // Get current data
-      const previousData = queryClient.getQueryData([`/api/posts/${user?.id}`]);
-
-      // Optimistically update the cache
-      queryClient.setQueryData([`/api/posts/${user?.id}`], (old: any) => {
-        if (!old) return old;
-        return old.map((post: any) => {
-          if (post.id !== postId) return post;
-
-          const updateThreads = (threads: any[]): any[] => {
-            return threads.map(thread => {
-              if (thread.id === commentId) {
-                return {
-                  ...thread,
-                  replies: [...(thread.replies || []), {
-                    id: `temp-${Date.now()}`,
-                    type: "reply",
-                    content: variables.content,
-                    userId: user?.id,
-                    createdAt: new Date(),
-                    parentId: commentId
-                  }]
-                };
-              }
-              if (thread.replies) {
-                return {
-                  ...thread,
-                  replies: updateThreads(thread.replies)
-                };
-              }
-              return thread;
-            });
-          };
-
-          return {
-            ...post,
-            interactions: updateThreads(post.interactions)
-          };
-        });
-      });
-
-      return { previousData };
-    },
-    onError: (error, variables, context) => {
-      // Roll back the optimistic update
-      if (context?.previousData) {
-        queryClient.setQueryData([`/api/posts/${user?.id}`], context.previousData);
-      }
-    },
-    onSettled: () => {
-      // Always refetch after error or success to sync with server
-      queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
-    },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
       form.reset();
       onReply();
-    }
+    },
   });
 
   return (

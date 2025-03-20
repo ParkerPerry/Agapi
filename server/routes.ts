@@ -610,8 +610,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const postId = parseInt(req.params.postId);
 
     try {
-      console.log("[Reply] Processing reply for post:", postId, "parent:", parentId);
-
       // Get parent interaction and its AI follower
       const parentInteraction = await storage.getInteraction(parentId);
       if (!parentInteraction) {
@@ -625,9 +623,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "AI follower not found" });
       }
 
-      console.log("[Reply] Found AI follower:", aiFollower.name);
-
-      // Save the user's reply immediately
+      // Save the user's reply
       const userReply = await storage.createAiInteraction({
         postId,
         userId: req.user!.id,
@@ -637,66 +633,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
         parentId
       });
 
-      console.log("[Reply] Created user reply:", userReply.id);
+      // Build thread context using the context manager
+      const contextManager = ThreadContextManager.getInstance();
+      const threadContext = await contextManager.buildThreadContext(
+        userReply,
+        parentInteraction,
+        aiFollower
+      );
 
-      // Get the updated thread structure
+      // Generate and save AI response with thread context
+      const aiResponse = await generateAIResponse(
+        content,
+        aiFollower.personality,
+        parentInteraction.content || undefined,
+        threadContext
+      );
+
+      if (aiResponse.confidence > 0.7) {
+        // Save the AI's response
+        const aiReply = await storage.createAiInteraction({
+          postId,
+          aiFollowerId: aiFollower.id,
+          userId: null,
+          type: "reply",
+          content: aiResponse.content || null,
+          parentId
+        });
+
+        console.log("Created AI reply:", aiReply);
+      }
+
+      // Get updated thread structure
       const threadedInteractions = await ThreadManager.getThreadedInteractions(postId);
       const updatedThread = ThreadManager.findThreadById(threadedInteractions, parentId);
 
       if (!updatedThread) {
-        console.error("[Reply] Failed to find updated thread");
         return res.status(500).json({ message: "Failed to find updated thread" });
       }
 
-      // Return the updated thread immediately
       res.status(201).json(updatedThread);
-
-      // Asynchronously handle AI response generation
-      (async () => {
-        try {
-          console.log("[Reply] Starting async AI response generation");
-
-          // Build thread context
-          const contextManager = ThreadContextManager.getInstance();
-          const threadContext = await contextManager.buildThreadContext(
-            userReply,
-            parentInteraction,
-            aiFollower
-          );
-
-          console.log("[Reply] Generated thread context");
-
-          // Generate AI response
-          const aiResponse = await generateAIResponse(
-            content,
-            aiFollower.personality,
-            parentInteraction.content || undefined,
-            threadContext
-          );
-
-          console.log("[Reply] Generated AI response with confidence:", aiResponse.confidence);
-
-          if (aiResponse.confidence > 0.7) {
-            // Schedule the AI response
-            const scheduler = ResponseScheduler.getInstance();
-            console.log("[Reply] Scheduling AI response");
-
-            await scheduler.scheduleResponse(postId, aiFollower, userReply.id, aiResponse.content);
-
-            console.log("[Reply] Successfully scheduled AI response");
-          } else {
-            console.log("[Reply] AI response confidence too low, skipping");
-          }
-        } catch (error) {
-          console.error("[Reply] Error scheduling AI response:", error);
-        }
-      })();
-
     } catch (error) {
-      console.error("[Reply] Error handling reply:", error);
+      console.error("Error handling reply:", error);
       res.status(500).json({ message: "Failed to process reply" });
     }
   });
+
 
 
   app.post("/api/followers", async (req, res) => {
