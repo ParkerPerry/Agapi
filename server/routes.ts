@@ -843,24 +843,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     const followerId = parseInt(req.params.id);
+    
+    console.log(`[API] PATCH /api/followers/:id - Request received for ID: ${followerId}`);
+    console.log(`[API] Request body:`, req.body);
 
     try {
       // First verify the follower belongs to the user
       const follower = await storage.getAiFollower(followerId);
       if (!follower || follower.userId !== req.user!.id) {
+        console.log(`[API] Update rejected: Follower not found or belongs to different user`);
         return res.status(404).json({ message: "Follower not found" });
       }
 
-      // Update the follower
-      const updatedFollower = await storage.updateAiFollower(followerId, {
+      // Check if this is Tom (default follower)
+      const isDefaultTom = follower.id === 1 || follower.name.toLowerCase().includes('tom');
+      console.log(`[API] Is default Tom follower: ${isDefaultTom}`);
+      
+      // Create update object with basic fields
+      const updateData: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle">> = {
         name: req.body.name,
         personality: req.body.personality,
         responsiveness: req.body.responsiveness,
-      });
+      };
+      
+      // Add extended fields if not the default Tom follower
+      if (!isDefaultTom) {
+        console.log(`[API] Processing extended fields for non-Tom follower`);
+        
+        // Add optional fields
+        if (req.body.background !== undefined) {
+          updateData.background = req.body.background;
+        }
+        
+        if (req.body.communicationStyle !== undefined) {
+          updateData.communicationStyle = req.body.communicationStyle;
+        }
+        
+        // If we have interests, parse and add them
+        if (req.body.interests !== undefined) {
+          await storage.updateFollowerInterests(followerId, req.body.interests);
+          console.log(`[API] Updated interests: ${JSON.stringify(req.body.interests)}`);
+        }
+        
+        // If we have interaction preferences, parse and add them
+        if (req.body.interactionPreferences !== undefined) {
+          await storage.updateFollowerInteractionPreferences(
+            followerId, 
+            req.body.interactionPreferences.likes || [],
+            req.body.interactionPreferences.dislikes || []
+          );
+          console.log(`[API] Updated interaction preferences`);
+        }
+      }
 
+      // Update the follower with the basic fields
+      console.log(`[API] Updating follower with data:`, updateData);
+      const updatedFollower = await storage.updateAiFollower(followerId, updateData);
+
+      console.log(`[API] Follower updated successfully`);
       res.json(updatedFollower);
     } catch (error) {
-      console.error("Error updating AI follower:", error);
+      console.error("[API] Error updating AI follower:", error);
       res.status(500).json({ message: "Failed to update AI follower" });
     }
   });

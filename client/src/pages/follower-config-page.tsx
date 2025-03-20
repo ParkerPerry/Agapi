@@ -131,16 +131,40 @@ export default function FollowerConfigPage() {
     }
   }, [follower]);
 
-  // Save basic settings
+  // Check if this is the default Tom follower (ID 1 or name includes "Tom")
+  const isDefaultTom = follower?.id === 1 || (follower?.name && follower.name.toLowerCase().includes('tom'));
+  console.log("[ConfigPage] Is default Tom?", isDefaultTom);
+  
+  // Save all settings
   const saveBasicSettings = () => {
     if (!id) return;
     
-    updateFollowerMutation.mutate({
+    // Create an object with the basic settings
+    const updateData: any = {
       id,
       name,
       personality,
       responsiveness,
-    }, {
+    };
+    
+    // Add advanced settings if not the default Tom follower
+    if (!isDefaultTom) {
+      updateData.background = background;
+      updateData.communicationStyle = communicationStyle;
+      
+      // Parse comma-separated interests into an array
+      if (interests) {
+        updateData.interests = interests.split(',').map(item => item.trim()).filter(Boolean);
+      }
+      
+      // Parse likes and dislikes
+      updateData.interactionPreferences = {
+        likes: interactionLikes.split(',').map(item => item.trim()).filter(Boolean),
+        dislikes: interactionDislikes.split(',').map(item => item.trim()).filter(Boolean)
+      };
+    }
+    
+    updateFollowerMutation.mutate(updateData, {
       onSuccess: () => {
         toast({
           title: "Settings Saved",
@@ -319,10 +343,14 @@ export default function FollowerConfigPage() {
                     onChange={(e) => setBackground(e.target.value)}
                     placeholder="Create a background story for your AI follower" 
                     rows={4}
-                    disabled={true}
+                    disabled={isDefaultTom}
                     className="resize-none"
                   />
-                  <p className="text-sm text-muted-foreground">Background stories are generated automatically and cannot be edited directly.</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isDefaultTom 
+                      ? "Background stories are generated automatically and cannot be edited for the default Tom follower."
+                      : "Enter a background story for your AI follower. This helps create a more realistic persona."}
+                  </p>
                 </div>
                 
                 <div className="space-y-2">
@@ -333,10 +361,14 @@ export default function FollowerConfigPage() {
                     onChange={(e) => setInterests(e.target.value)}
                     placeholder="List interests separated by commas" 
                     rows={2}
-                    disabled={true}
+                    disabled={isDefaultTom}
                     className="resize-none"
                   />
-                  <p className="text-sm text-muted-foreground">Interests are generated from your follower's personality and cannot be edited directly.</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isDefaultTom 
+                      ? "Interests are generated from your follower's personality and cannot be edited for the default Tom follower."
+                      : "Enter interests separated by commas (e.g., blockchain, AI, robotics, gaming)"}
+                  </p>
                 </div>
                 
                 <div className="space-y-2">
@@ -347,10 +379,14 @@ export default function FollowerConfigPage() {
                     onChange={(e) => setCommunicationStyle(e.target.value)}
                     placeholder="Describe how your AI follower communicates" 
                     rows={2}
-                    disabled={true}
+                    disabled={isDefaultTom}
                     className="resize-none"
                   />
-                  <p className="text-sm text-muted-foreground">Communication style is derived from personality and cannot be edited directly.</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isDefaultTom 
+                      ? "Communication style is derived from personality and cannot be edited for the default Tom follower."
+                      : "Describe how your AI follower communicates (e.g., formal, casual, technical, humorous)"}
+                  </p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -360,11 +396,16 @@ export default function FollowerConfigPage() {
                       id="likes" 
                       value={interactionLikes}
                       onChange={(e) => setInteractionLikes(e.target.value)}
-                      placeholder="What this AI follower likes" 
+                      placeholder="What this AI follower likes (comma separated)" 
                       rows={2}
-                      disabled={true}
+                      disabled={isDefaultTom}
                       className="resize-none"
                     />
+                    {!isDefaultTom && (
+                      <p className="text-xs text-muted-foreground">
+                        Separate multiple likes with commas
+                      </p>
+                    )}
                   </div>
                   
                   <div className="space-y-2">
@@ -373,11 +414,16 @@ export default function FollowerConfigPage() {
                       id="dislikes" 
                       value={interactionDislikes}
                       onChange={(e) => setInteractionDislikes(e.target.value)}
-                      placeholder="What this AI follower dislikes" 
+                      placeholder="What this AI follower dislikes (comma separated)" 
                       rows={2}
-                      disabled={true}
+                      disabled={isDefaultTom}
                       className="resize-none"
                     />
+                    {!isDefaultTom && (
+                      <p className="text-xs text-muted-foreground">
+                        Separate multiple dislikes with commas
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

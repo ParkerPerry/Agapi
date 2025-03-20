@@ -29,7 +29,9 @@ export interface IStorage {
   createPendingResponse(response: Omit<PendingResponse, "id" | "createdAt">): Promise<PendingResponse>;
   getPendingResponses(): Promise<PendingResponse[]>;
   markPendingResponseProcessed(id: number): Promise<void>;
-  updateAiFollower(id: number, updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness">>): Promise<AiFollower>;
+  updateAiFollower(id: number, updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle">>): Promise<AiFollower>;
+  updateFollowerInterests(id: number, interests: string[]): Promise<void>;
+  updateFollowerInteractionPreferences(id: number, likes: string[], dislikes: string[]): Promise<void>;
   deleteAiFollower(id: number): Promise<void>;
   deactivateAiFollower(id: number): Promise<AiFollower>;
   reactivateAiFollower(id: number): Promise<AiFollower>;
@@ -276,18 +278,58 @@ export class DatabaseStorage implements IStorage {
 
   async updateAiFollower(
     id: number,
-    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness">>
+    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle">>
   ): Promise<AiFollower> {
     try {
+      console.log("[Storage] Updating AI follower:", id, "with:", updates);
       const [updatedFollower] = (await db
         .update(ai_followers)
         .set(updates)
         .where(eq(ai_followers.id, id))
         .returning()) as AiFollower[];
 
+      console.log("[Storage] Updated AI follower successfully");
       return updatedFollower;
     } catch (error) {
       console.error("[Storage] Error updating AI follower:", error);
+      throw error;
+    }
+  }
+  
+  async updateFollowerInterests(id: number, interests: string[]): Promise<void> {
+    try {
+      console.log("[Storage] Updating AI follower interests:", id, "with:", interests);
+      await db
+        .update(ai_followers)
+        .set({ interests })
+        .where(eq(ai_followers.id, id));
+      console.log("[Storage] Updated AI follower interests successfully");
+    } catch (error) {
+      console.error("[Storage] Error updating AI follower interests:", error);
+      throw error;
+    }
+  }
+  
+  async updateFollowerInteractionPreferences(id: number, likes: string[], dislikes: string[]): Promise<void> {
+    try {
+      console.log("[Storage] Updating AI follower interaction preferences:", id);
+      console.log("[Storage] Likes:", likes);
+      console.log("[Storage] Dislikes:", dislikes);
+      
+      // Create the preferences object
+      const interactionPreferences = {
+        likes,
+        dislikes
+      };
+      
+      await db
+        .update(ai_followers)
+        .set({ interactionPreferences })
+        .where(eq(ai_followers.id, id));
+        
+      console.log("[Storage] Updated AI follower interaction preferences successfully");
+    } catch (error) {
+      console.error("[Storage] Error updating AI follower interaction preferences:", error);
       throw error;
     }
   }
