@@ -28,7 +28,7 @@ import { TourProvider } from "@/components/tour/tour-context";
 
 export default function FollowerConfigPage() {
   const { user } = useAuth();
-  const params = useParams();
+  const params = useParams<{ id: string }>();
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const updateFollowerMutation = useUpdateFollower();
@@ -143,7 +143,7 @@ export default function FollowerConfigPage() {
           <main className="container py-6">
             <div className="max-w-3xl mx-auto space-y-6">
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" onClick={() => navigate("/followers")}>
+                <Button variant="ghost" size="icon" onClick={() => navigate("/ai-followers")}>
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <h1 className="text-2xl font-bold">Loading AI Follower Configuration...</h1>
