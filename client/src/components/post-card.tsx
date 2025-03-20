@@ -66,44 +66,67 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
       });
       return res.json();
     },
-    onSuccess: (updatedThread) => {
-      // Immediately update the cached thread with the new reply
-      queryClient.setQueryData(
-        [`/api/posts/${user?.id}`],
-        (oldData: any) => {
-          if (!oldData) return oldData;
-          return oldData.map((post: any) => {
-            if (post.id !== postId) return post;
+    onMutate: async (variables) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: [`/api/posts/${user?.id}`] });
 
-            // Find and update the specific thread
-            const updateThreads = (threads: any[]): any[] => {
-              return threads.map(thread => {
-                if (thread.id === commentId) {
-                  return updatedThread;
-                }
-                if (thread.replies) {
-                  return {
-                    ...thread,
-                    replies: updateThreads(thread.replies)
-                  };
-                }
-                return thread;
-              });
-            };
+      // Get current data
+      const previousData = queryClient.getQueryData([`/api/posts/${user?.id}`]);
 
-            return {
-              ...post,
-              interactions: updateThreads(post.interactions)
-            };
-          });
-        }
-      );
+      // Optimistically update the cache
+      queryClient.setQueryData([`/api/posts/${user?.id}`], (old: any) => {
+        if (!old) return old;
+        return old.map((post: any) => {
+          if (post.id !== postId) return post;
 
-      // Still invalidate the query to get any updates from the server
+          const updateThreads = (threads: any[]): any[] => {
+            return threads.map(thread => {
+              if (thread.id === commentId) {
+                return {
+                  ...thread,
+                  replies: [...(thread.replies || []), {
+                    id: `temp-${Date.now()}`,
+                    type: "reply",
+                    content: variables.content,
+                    userId: user?.id,
+                    createdAt: new Date(),
+                    parentId: commentId
+                  }]
+                };
+              }
+              if (thread.replies) {
+                return {
+                  ...thread,
+                  replies: updateThreads(thread.replies)
+                };
+              }
+              return thread;
+            });
+          };
+
+          return {
+            ...post,
+            interactions: updateThreads(post.interactions)
+          };
+        });
+      });
+
+      return { previousData };
+    },
+    onError: (error, variables, context) => {
+      // Roll back the optimistic update
+      if (context?.previousData) {
+        queryClient.setQueryData([`/api/posts/${user?.id}`], context.previousData);
+      }
+    },
+    onSettled: () => {
+      // Always refetch after error or success to sync with server
       queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
+    },
+    onSuccess: () => {
       form.reset();
       onReply();
-    },
+    }
   });
 
   return (
