@@ -227,7 +227,8 @@ export class DatabaseStorage implements IStorage {
     console.log("[Storage] Creating pending response:", {
       postId: response.postId,
       aiFollowerId: response.aiFollowerId,
-      scheduledFor: response.scheduledFor
+      scheduledFor: response.scheduledFor,
+      hasMetadata: !!response.metadata
     });
 
     try {

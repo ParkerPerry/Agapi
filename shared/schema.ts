@@ -97,6 +97,7 @@ export const pendingResponses = pgTable("pending_responses", {
   aiFollowerId: integer("ai_follower_id").references(() => ai_followers.id),
   scheduledFor: timestamp("scheduled_for").notNull(),
   processed: boolean("processed").notNull().default(false),
+  metadata: text("metadata"), // Stores thread context for threaded replies
   createdAt: timestamp("created_at").defaultNow(),
 });
 

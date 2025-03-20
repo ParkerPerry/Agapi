@@ -167,6 +167,7 @@ export class ResponseScheduler {
         aiFollowerId: follower.id,
         scheduledFor: scheduledTime,
         processed: false,
+        metadata: null, // No thread context for top-level responses
       });
 
       console.log(`[ResponseScheduler] Successfully scheduled response:`, {
