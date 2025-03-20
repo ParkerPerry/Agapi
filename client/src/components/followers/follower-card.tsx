@@ -2,11 +2,12 @@ import { AiFollower } from "@shared/schema";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil, PowerOff } from "lucide-react";
+import { Pencil, PowerOff, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { responsivenessOptions } from "./follower-create-form";
 import { FollowerEditDialog } from "./follower-edit-dialog";
 import { FollowerDeactivateDialog } from "./follower-deactivate-dialog";
+import { useLocation } from "wouter";
 
 interface FollowerCardProps {
   follower: AiFollower;
@@ -16,6 +17,12 @@ interface FollowerCardProps {
 }
 
 export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: FollowerCardProps) {
+  const [_, navigate] = useLocation();
+
+  const handleNavigateToConfig = () => {
+    navigate(`/followers/config/${follower.id}`);
+  };
+
   return (
     <div 
       className={cn(
@@ -47,11 +54,21 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
           </div>
         </div>
         <div className="flex space-x-2">
+          <Button
+            variant="outline"
+            size="icon"
+            title="Advanced Configuration"
+            onClick={handleNavigateToConfig}
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
+          
           <FollowerEditDialog
             trigger={
               <Button
                 variant="outline"
                 size="icon"
+                title="Edit Follower"
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -65,6 +82,7 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
               <Button 
                 variant="outline" 
                 size="icon"
+                title={follower.active ? "Deactivate Follower" : "Activate Follower"}
                 className={cn(
                   follower.active && "hover:bg-destructive/10"
                 )}
