@@ -47,7 +47,11 @@ export default function FollowerConfigPage() {
   // Parse and check the follower ID
   const id = params.id ? parseInt(params.id) : null;
   
-  console.log("[ConfigPage] Params:", params, "ID:", params.id, "Parsed ID:", id);
+  // More detailed logging for debugging
+  console.log("[ConfigPage] URL Parameters:", params);
+  console.log("[ConfigPage] Extracted ID from URL:", params.id);
+  console.log("[ConfigPage] Parsed ID as number:", id);
+  console.log("[ConfigPage] User:", user?.id, user?.username);
 
   // Query status tracking
   const [queryStatus, setQueryStatus] = useState<{
@@ -63,9 +67,19 @@ export default function FollowerConfigPage() {
   });
 
   // Fetch the follower data
+  const apiUrl = `/api/followers/${id}`;
+  console.log(`[ConfigPage] API Request URL: ${apiUrl}`);
+  console.log(`[ConfigPage] Query enabled:`, !!user && !!id && !isNaN(id));
+  
   const { data: follower, isLoading, error } = useQuery<AiFollower>({
-    queryKey: [`/api/followers/${id}`],
+    queryKey: [apiUrl],
     enabled: !!user && !!id && !isNaN(id),
+    onError: (err) => {
+      console.error(`[ConfigPage] API Error:`, err);
+    },
+    onSuccess: (data) => {
+      console.log(`[ConfigPage] API Success:`, data);
+    }
   });
 
   console.log("[ConfigPage] Looking for follower with ID:", id);
