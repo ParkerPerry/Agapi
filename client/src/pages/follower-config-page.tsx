@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { responsivenessOptions } from "@/components/followers/follower-create-form";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { useUpdateFollower } from "@/lib/mutations/follower-mutations";
+import { TourProvider } from "@/components/tour/tour-context";
 
 export default function FollowerConfigPage() {
   const { user } = useAuth();
@@ -136,61 +137,66 @@ export default function FollowerConfigPage() {
   // Show loading state
   if (queryStatus.isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <NavBar />
-        <main className="container py-6">
-          <div className="max-w-3xl mx-auto space-y-6">
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/followers")}>
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <h1 className="text-2xl font-bold">Loading AI Follower Configuration...</h1>
+      <TourProvider>
+        <div className="min-h-screen bg-background">
+          <NavBar />
+          <main className="container py-6">
+            <div className="max-w-3xl mx-auto space-y-6">
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" size="icon" onClick={() => navigate("/followers")}>
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <h1 className="text-2xl font-bold">Loading AI Follower Configuration...</h1>
+              </div>
             </div>
-          </div>
-        </main>
-      </div>
+          </main>
+        </div>
+      </TourProvider>
     );
   }
 
   // Show error state
   if (queryStatus.hasError || (!queryStatus.hasData && !queryStatus.isLoading)) {
     return (
-      <div className="min-h-screen bg-background">
-        <NavBar />
-        <main className="container py-6">
-          <div className="max-w-3xl mx-auto space-y-6">
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/followers")}>
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <h1 className="text-2xl font-bold">AI Follower Not Found</h1>
+      <TourProvider>
+        <div className="min-h-screen bg-background">
+          <NavBar />
+          <main className="container py-6">
+            <div className="max-w-3xl mx-auto space-y-6">
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" size="icon" onClick={() => navigate("/followers")}>
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <h1 className="text-2xl font-bold">AI Follower Not Found</h1>
+              </div>
+              
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex flex-col items-center justify-center p-6 text-center">
+                    <AlertCircle className="h-12 w-12 text-destructive mb-4" />
+                    <h2 className="text-xl font-semibold">Error Loading Follower Configuration</h2>
+                    <p className="text-muted-foreground mt-2">
+                      {queryStatus.errorMsg || "Could not find the requested AI follower. It may have been deleted or you don't have permission to access it."}
+                    </p>
+                    <Button className="mt-4" onClick={() => navigate("/followers")}>
+                      Return to Followers
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center justify-center p-6 text-center">
-                  <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-                  <h2 className="text-xl font-semibold">Error Loading Follower Configuration</h2>
-                  <p className="text-muted-foreground mt-2">
-                    {queryStatus.errorMsg || "Could not find the requested AI follower. It may have been deleted or you don't have permission to access it."}
-                  </p>
-                  <Button className="mt-4" onClick={() => navigate("/followers")}>
-                    Return to Followers
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
-      </div>
+          </main>
+        </div>
+      </TourProvider>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <NavBar />
-      <main className="container py-6">
-        <div className="max-w-3xl mx-auto space-y-6">
+    <TourProvider>
+      <div className="min-h-screen bg-background">
+        <NavBar />
+        <main className="container py-6">
+          <div className="max-w-3xl mx-auto space-y-6">
           {/* Header */}
           <div className="flex items-center space-x-2">
             <Button variant="ghost" size="icon" onClick={() => navigate("/followers")}>
@@ -373,5 +379,6 @@ export default function FollowerConfigPage() {
         </div>
       </main>
     </div>
+    </TourProvider>
   );
 }
