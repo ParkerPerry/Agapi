@@ -143,7 +143,13 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
             </FormItem>
           )}
         />
-        <Button type="submit" size="icon" disabled={replyMutation.isPending}>
+        <Button 
+          type="submit" 
+          size="sm"
+          variant="primary"
+          className="inline-flex items-center justify-center"
+          disabled={replyMutation.isPending}
+        >
           <Send className="h-4 w-4" />
         </Button>
       </form>
