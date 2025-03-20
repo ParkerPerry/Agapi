@@ -1,6 +1,7 @@
 import { storage } from "./storage";
 import { generateAIResponse } from "./openai";
 import { PendingResponse, AiFollower } from "@shared/schema";
+import { ThreadContextData } from "./context-manager";
 import OpenAI from "openai";
 
 export class ResponseScheduler {
@@ -228,6 +229,101 @@ export class ResponseScheduler {
     return !response.processed && new Date(response.scheduledFor) <= new Date();
   }
 
+  /**
+   * Schedule a thread response (reply to an existing interaction)
+   * @param postId The post ID
+   * @param follower The AI follower who will reply
+   * @param parentId The parent interaction ID to reply to
+   * @param contextMetadata JSON string with thread context information
+   * @param isPrimaryTarget Whether this follower is the direct target of the reply (true) or just a potential participant (false)
+   */
+  public async scheduleThreadResponse(
+    postId: number, 
+    follower: AiFollower, 
+    parentId: number, 
+    contextMetadata: string,
+    isPrimaryTarget: boolean = true
+  ): Promise<void> {
+    try {
+      console.log(`[ResponseScheduler] Starting thread response scheduling for post ${postId}, parent ${parentId}, follower ${follower.id}`);
+
+      // Get post content for relevance analysis
+      const post = await storage.getPost(postId);
+      if (!post) {
+        console.error(`[ResponseScheduler] Post ${postId} not found for thread reply`);
+        return;
+      }
+
+      // For thread replies, we adjust the probability based on whether this is the primary target
+      let finalChance: number;
+      
+      if (isPrimaryTarget) {
+        // Higher chance (80-90%) for the AI being directly replied to - more natural conversation flow
+        finalChance = Math.min(80 + (Math.random() * 10), 100);
+        console.log(`[ResponseScheduler] Primary target follower ${follower.id} has ${finalChance}% chance to respond to direct reply`);
+      } else {
+        // For other circle followers who weren't directly addressed, use standard relevance calculation
+        // but with a lower base chance to avoid too much interference
+        const relevanceScore = await this.calculateRelevanceScore(post.content, follower);
+        const baseChance = 20; // Lower base chance (20%) for thread participation
+        const relevanceMultiplier = 2.0;
+        finalChance = Math.min(baseChance * (relevanceScore * relevanceMultiplier), 60); // Cap at 60%
+        
+        console.log(`[ResponseScheduler] Secondary follower ${follower.id} has ${finalChance}% chance to join thread`);
+      }
+
+      // Determine if follower will respond
+      const randomValue = Math.random() * 100;
+      if (randomValue > finalChance) {
+        console.log(`[ResponseScheduler] Follower ${follower.id} chose not to respond to thread:`, {
+          randomValue,
+          requiredChance: finalChance,
+          isPrimaryTarget
+        });
+        return;
+      }
+
+      // Calculate delay based on follower's responsiveness, but shorter for thread replies
+      // Thread replies should generally be faster than top-level comments
+      let delay = this.calculateDelay(follower);
+      
+      // If this is the primary target (the AI being directly replied to), make response faster
+      if (isPrimaryTarget) {
+        delay = Math.max(1, Math.floor(delay * 0.5)); // At least 1 minute, but otherwise halve the delay
+      }
+      
+      const scheduledTime = new Date(Date.now() + delay * 60 * 1000); // Convert minutes to milliseconds
+
+      // Store the thread-specific metadata in the metadata field
+      await storage.createPendingResponse({
+        postId,
+        aiFollowerId: follower.id,
+        scheduledFor: scheduledTime,
+        processed: false,
+        metadata: contextMetadata
+      });
+
+      console.log(`[ResponseScheduler] Successfully scheduled thread response:`, {
+        followerId: follower.id,
+        postId,
+        parentId,
+        scheduledTime,
+        delay,
+        isPrimaryTarget
+      });
+    } catch (error) {
+      console.error(`[ResponseScheduler] Error scheduling thread response:`, error);
+      if (error instanceof Error) {
+        console.error("[ResponseScheduler] Error details:", {
+          message: error.message,
+          stack: error.stack,
+          followerId: follower.id,
+          postId
+        });
+      }
+    }
+  }
+
   private async processResponse(response: PendingResponse): Promise<void> {
     try {
       const post = await storage.getPost(response.postId);
@@ -239,7 +335,49 @@ export class ResponseScheduler {
         return;
       }
 
-      const aiResponse = await generateAIResponse(post.content, follower.personality);
+      // Check if this is a thread response by examining metadata
+      let parentId: number | null = null;
+      let threadContext: ThreadContextData | undefined;
+      
+      if (response.metadata) {
+        try {
+          const metadata = JSON.parse(response.metadata);
+          parentId = metadata.parentInteractionId || null;
+          threadContext = metadata.threadContext;
+          
+          console.log(`[ResponseScheduler] Processing thread response:`, {
+            responseId: response.id,
+            parentId,
+            hasThreadContext: !!threadContext
+          });
+        } catch (error) {
+          console.error(`[ResponseScheduler] Error parsing response metadata:`, error);
+        }
+      }
+
+      // Generate appropriate response depending on whether this is a thread reply or top-level comment
+      let aiResponse;
+      
+      if (parentId) {
+        // For thread replies, use the parent content as context
+        const parentInteraction = await storage.getInteraction(parentId);
+        if (!parentInteraction) {
+          console.error(`[ResponseScheduler] Parent interaction ${parentId} not found`);
+          await storage.markPendingResponseProcessed(response.id);
+          return;
+        }
+        
+        // Generate response with thread context
+        aiResponse = await generateAIResponse(
+          post.content,
+          follower.personality,
+          parentInteraction.content || undefined,
+          threadContext
+        );
+      } else {
+        // For top-level comments, use the post content directly
+        aiResponse = await generateAIResponse(post.content, follower.personality);
+      }
 
       // Only create interaction if confidence is high enough
       if (aiResponse.confidence > 0.7) {
@@ -247,12 +385,12 @@ export class ResponseScheduler {
           postId: post.id,
           aiFollowerId: follower.id,
           userId: null,
-          type: aiResponse.type,
+          type: parentId ? "reply" : aiResponse.type, // Force "reply" type for thread responses
           content: aiResponse.content || null,
-          parentId: null,
+          parentId: parentId, // Use parentId for thread replies, null for top-level
         });
 
-        console.log(`[ResponseScheduler] Created response for follower ${follower.id} on post ${post.id}`);
+        console.log(`[ResponseScheduler] Created ${parentId ? 'thread reply' : 'comment'} for follower ${follower.id} on post ${post.id}`);
       } else {
         console.log(`[ResponseScheduler] Skipped low-confidence response from ${follower.id} for post ${post.id}`);
       }

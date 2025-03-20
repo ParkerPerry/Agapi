@@ -616,10 +616,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Parent interaction not found" });
       }
 
-      const aiFollower = parentInteraction.aiFollowerId ?
+      // Get the AI follower associated with the parent interaction
+      const targetFollower = parentInteraction.aiFollowerId ?
         await storage.getAiFollower(parentInteraction.aiFollowerId)
         : null;
-      if (!aiFollower) {
+      if (!targetFollower) {
         return res.status(404).json({ message: "AI follower not found" });
       }
 
@@ -632,35 +633,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content,
         parentId
       });
+      
+      console.log("[Routes] Created user reply:", {
+        id: userReply.id,
+        postId,
+        parentId,
+        content: content.substring(0, 50)
+      });
 
-      // Build thread context using the context manager
+      // Get circle associated with this post
+      const post = await storage.getPost(postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+
+      const circleId = post.circleId;
+      
+      // Store the thread context in the pending response metadata
       const contextManager = ThreadContextManager.getInstance();
       const threadContext = await contextManager.buildThreadContext(
         userReply,
         parentInteraction,
-        aiFollower
+        targetFollower
       );
-
-      // Generate and save AI response with thread context
-      const aiResponse = await generateAIResponse(
-        content,
-        aiFollower.personality,
-        parentInteraction.content || undefined,
-        threadContext
-      );
-
-      if (aiResponse.confidence > 0.7) {
-        // Save the AI's response
-        const aiReply = await storage.createAiInteraction({
-          postId,
-          aiFollowerId: aiFollower.id,
-          userId: null,
-          type: "reply",
-          content: aiResponse.content || null,
-          parentId
-        });
-
-        console.log("Created AI reply:", aiReply);
+      
+      // Serialize context data for storage
+      const contextMetadata = JSON.stringify({
+        threadContext,
+        parentInteractionId: parentId
+      });
+      
+      // Similar to regular posts, we'll now schedule potential responses
+      // First, calculate a quick scheduled time for the primary target follower (the one being replied to)
+      const scheduler = ResponseScheduler.getInstance();
+      
+      // Schedule a response from the target follower with higher priority
+      await scheduler.scheduleThreadResponse(postId, targetFollower, parentId, contextMetadata);
+      
+      // Additionally, get other followers in the circle who might want to join the conversation
+      // but with lower priority and longer delay
+      const circleFollowers = await storage.getCircleFollowers(circleId);
+      const otherFollowers = circleFollowers.filter(f => f.id !== targetFollower.id);
+      
+      // If we have other followers, give them a chance to join the thread conversation
+      for (const follower of otherFollowers) {
+        // We use a lower relevance boost for other followers as they weren't directly addressed
+        await scheduler.scheduleThreadResponse(postId, follower, parentId, contextMetadata, false);
       }
 
       // Get updated thread structure
