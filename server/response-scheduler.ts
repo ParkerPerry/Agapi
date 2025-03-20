@@ -19,20 +19,77 @@ export class ResponseScheduler {
     return ResponseScheduler.instance;
   }
 
-  private async calculateRelevanceScore(postContent: string, follower: AiFollower): Promise<number> {
+  /**
+   * Calculate the relevance score between content and an AI follower
+   * @param postContent The original post content
+   * @param follower The AI follower to evaluate relevance for
+   * @param threadContext Optional thread context data for thread replies
+   * @returns A relevance score between 0 and 1
+   */
+  private async calculateRelevanceScore(
+    postContent: string, 
+    follower: AiFollower, 
+    threadContext?: ThreadContextData
+  ): Promise<number> {
     try {
+      // Determine if we're dealing with a thread reply or direct post
+      const isThreadReply = !!threadContext;
+      
+      // For thread replies, aggregate recent messages to create a richer context
+      let contentToAnalyze = postContent;
+      
+      if (isThreadReply) {
+        // Log that we're using enhanced thread context
+        console.log("[ResponseScheduler] Using thread context for relevance calculation:", {
+          followerId: follower.id,
+          followerName: follower.name,
+          threadDepth: threadContext.threadDepth || 0
+        });
+
+        // Aggregate content from recent messages in the thread with most recent first
+        // Weight more recent messages higher in the analysis
+        const contextMessages = [];
+        
+        // Add the immediate context (most recent message)
+        if (threadContext.immediateContext) {
+          contextMessages.push(`Most recent message: "${threadContext.immediateContext}"`);
+        }
+        
+        // Add parent message (previous message)
+        if (threadContext.parentMessage) {
+          contextMessages.push(`Previous message: "${threadContext.parentMessage}"`);
+        }
+        
+        // Add original thread topic if available
+        if (threadContext.threadTopic) {
+          contextMessages.push(`Original thread topic: "${threadContext.threadTopic}"`);
+        }
+        
+        // Create an enhanced context combining recent messages with original post
+        contentToAnalyze = `
+          Thread context:
+          ${contextMessages.join("\n")}
+          
+          Original post:
+          "${postContent}"
+        `;
+      }
+      
       console.log("[ResponseScheduler] Starting relevance calculation for:", {
         followerId: follower.id,
         followerName: follower.name,
-        postContentPreview: postContent.substring(0, 100)
+        isThreadReply,
+        contentPreview: isThreadReply 
+          ? "Using aggregated thread context" 
+          : postContent.substring(0, 100)
       });
 
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-      // Build a comprehensive prompt that compares the post content with follower's profile
+      // Build a comprehensive prompt that compares the content with follower's profile
       const systemPrompt = `You are an AI that analyzes content relevance. 
-        Your task is to determine how relevant a social media post is to a specific follower's profile.
-        You must return a high relevance score (0.8-1.0) if the post content strongly matches the follower's expertise.
+        Your task is to determine how relevant ${isThreadReply ? 'a conversation thread' : 'a social media post'} is to a specific follower's profile.
+        You must return a high relevance score (0.8-1.0) if the content strongly matches the follower's expertise.
 
         Follower Profile:
         - Interests: ${follower.interests?.join(', ') || 'None specified'}
@@ -41,10 +98,11 @@ export class ResponseScheduler {
         - Likes: ${follower.interactionPreferences?.likes?.join(', ') || 'None specified'}
         - Dislikes: ${follower.interactionPreferences?.dislikes?.join(', ') || 'None specified'}
 
-        Analyze the post content and calculate a relevance score based on:
+        Analyze the ${isThreadReply ? 'conversation thread' : 'post content'} and calculate a relevance score based on:
         1. Topic alignment with interests (50% weight)
         2. Emotional/personality match (25% weight)
         3. Communication style compatibility (25% weight)
+        ${isThreadReply ? '4. For thread replies, prioritize the most recent messages over the original post (weighted recency)' : ''}
 
         A score above 0.8 means the follower should definitely respond.
         A score between 0.5-0.8 means the follower might be interested.
@@ -57,6 +115,7 @@ export class ResponseScheduler {
             "topicMatch": string explaining topic relevance,
             "personalityMatch": string explaining personality alignment,
             "styleMatch": string explaining communication style fit
+            ${isThreadReply ? ',"threadContextRelevance": string explaining how relevant the recent messages are compared to the original post' : ''}
           }
         }`;
 
@@ -69,7 +128,7 @@ export class ResponseScheduler {
           },
           {
             role: "user",
-            content: `Analyze this post content: "${postContent}"`
+            content: `Analyze this ${isThreadReply ? 'conversation thread' : 'post content'}: ${contentToAnalyze}`
           }
         ],
         response_format: { type: "json_object" }
@@ -85,7 +144,7 @@ export class ResponseScheduler {
       // Detailed logging of the analysis
       console.log("[ResponseScheduler] Relevance analysis complete:", {
         follower: follower.name,
-        postContent: postContent.substring(0, 50) + "...",
+        isThreadReply,
         score: result.relevance,
         reasoning: result.reasoning
       });
@@ -99,7 +158,7 @@ export class ResponseScheduler {
           message: error.message,
           stack: error.stack,
           follower: follower.name,
-          postContent: postContent.substring(0, 50)
+          isThreadReply: !!threadContext
         });
       }
       return 0.5; // Default to neutral on error
@@ -255,6 +314,25 @@ export class ResponseScheduler {
         return;
       }
 
+      // Parse the thread context from metadata
+      let threadContext: ThreadContextData | undefined;
+      try {
+        const metadata = JSON.parse(contextMetadata);
+        threadContext = metadata.threadContext;
+        
+        if (!threadContext) {
+          console.warn(`[ResponseScheduler] No thread context found in metadata for follower ${follower.id}`);
+        } else {
+          console.log(`[ResponseScheduler] Retrieved thread context for follower ${follower.id}:`, {
+            threadDepth: threadContext.threadDepth,
+            hasParentMessage: !!threadContext.parentMessage,
+            hasImmediateContext: !!threadContext.immediateContext
+          });
+        }
+      } catch (error) {
+        console.error(`[ResponseScheduler] Error parsing thread context:`, error);
+      }
+
       // For thread replies, we adjust the probability based on whether this is the primary target
       let finalChance: number;
       
@@ -263,14 +341,19 @@ export class ResponseScheduler {
         finalChance = Math.min(80 + (Math.random() * 10), 100);
         console.log(`[ResponseScheduler] Primary target follower ${follower.id} has ${finalChance}% chance to respond to direct reply`);
       } else {
-        // For other circle followers who weren't directly addressed, use standard relevance calculation
-        // but with a lower base chance to avoid too much interference
-        const relevanceScore = await this.calculateRelevanceScore(post.content, follower);
+        // For other circle followers who weren't directly addressed, use the enhanced relevance calculation
+        // that includes thread context to determine if they should join the conversation
+        const relevanceScore = await this.calculateRelevanceScore(post.content, follower, threadContext);
+        
+        // Log the relevance score with thread context
+        console.log(`[ResponseScheduler] Thread context relevance for follower ${follower.id}: ${relevanceScore}`);
+        
+        // Adjust chance of responding based on relevance to the thread context
         const baseChance = 20; // Lower base chance (20%) for thread participation
-        const relevanceMultiplier = 2.0;
+        const relevanceMultiplier = 2.5; // Slightly higher multiplier for thread context relevance
         finalChance = Math.min(baseChance * (relevanceScore * relevanceMultiplier), 60); // Cap at 60%
         
-        console.log(`[ResponseScheduler] Secondary follower ${follower.id} has ${finalChance}% chance to join thread`);
+        console.log(`[ResponseScheduler] Secondary follower ${follower.id} has ${finalChance}% chance to join thread based on context relevance`);
       }
 
       // Determine if follower will respond
@@ -310,7 +393,8 @@ export class ResponseScheduler {
         parentId,
         scheduledTime,
         delay,
-        isPrimaryTarget
+        isPrimaryTarget,
+        hasThreadContext: !!threadContext
       });
     } catch (error) {
       console.error(`[ResponseScheduler] Error scheduling thread response:`, error);
@@ -343,14 +427,36 @@ export class ResponseScheduler {
       if (response.metadata) {
         try {
           const metadata = JSON.parse(response.metadata);
-          parentId = metadata.parentInteractionId || null;
+          parentId = metadata.parentInteractionId || metadata.parentId || null;
           threadContext = metadata.threadContext;
           
           console.log(`[ResponseScheduler] Processing thread response:`, {
             responseId: response.id,
             parentId,
-            hasThreadContext: !!threadContext
+            hasThreadContext: !!threadContext,
+            threadDepth: threadContext?.threadDepth || 0
           });
+          
+          // If we have thread context, do a final context relevance check before generating a response
+          if (threadContext && !metadata.isPrimaryTarget) {
+            // For secondary participants (not the main target of the reply), do one final
+            // relevance check to ensure the thread is still relevant to this follower
+            const contextRelevanceScore = await this.calculateRelevanceScore(
+              post.content, 
+              follower, 
+              threadContext
+            );
+            
+            // Log the context relevance score for debugging
+            console.log(`[ResponseScheduler] Final thread context relevance for ${follower.name}: ${contextRelevanceScore}`);
+            
+            // Skip if the relevance is too low - this provides a final check before spending tokens on a response
+            if (contextRelevanceScore < 0.3) {
+              console.log(`[ResponseScheduler] Skipping response generation due to low context relevance: ${contextRelevanceScore}`);
+              await storage.markPendingResponseProcessed(response.id);
+              return;
+            }
+          }
         } catch (error) {
           console.error(`[ResponseScheduler] Error parsing response metadata:`, error);
         }
@@ -368,12 +474,48 @@ export class ResponseScheduler {
           return;
         }
         
-        // Generate response with thread context
+        // Gather any previous interactions in the thread to provide richer context
+        // This additional context helps AI followers maintain more coherent thread responses
+        let previousMessages = [];
+        if (threadContext && threadContext.threadDepth > 1) {
+          // Try to fetch a couple of previous messages in the thread
+          const interactions = await storage.getPostInteractions(post.id);
+          
+          // Build a simple message history for this thread if available
+          if (interactions && interactions.length > 0) {
+            let currentId = parentId;
+            let depth = 0;
+            const maxDepth = 3; // Limit to 3 previous messages to keep context manageable
+            
+            // Follow the parent chain up to get previous messages
+            while (currentId && depth < maxDepth) {
+              const interaction = interactions.find(i => i.id === currentId);
+              if (!interaction) break;
+              
+              // Add this message to our history
+              const author = interaction.aiFollowerId 
+                ? (await storage.getAiFollower(interaction.aiFollowerId))?.name || "AI" 
+                : "User";
+                
+              previousMessages.unshift(`${author}: ${interaction.content || ""}`);
+              
+              // Move to parent of this message
+              currentId = interaction.parentId;
+              depth++;
+            }
+            
+            console.log(`[ResponseScheduler] Built thread history with ${previousMessages.length} previous messages`);
+          }
+        }
+        
+        // Generate response with enhanced thread context
         aiResponse = await generateAIResponse(
           post.content,
           follower.personality,
           parentInteraction.content || undefined,
-          threadContext
+          threadContext,
+          // Pass the gathered previous messages if available
+          previousMessages.length > 0 ? previousMessages.join("\n") : undefined
         );
       } else {
         // For top-level comments, use the post content directly
