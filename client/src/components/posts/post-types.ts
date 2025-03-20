@@ -14,6 +14,7 @@ export interface Interaction {
 
 export interface ThreadedInteraction extends Interaction {
   replies?: ThreadedInteraction[];
+  pendingResponses?: PendingResponse[];
 }
 
 // Pending response type

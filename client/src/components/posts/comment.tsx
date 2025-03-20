@@ -15,6 +15,7 @@ export function Comment({ comment, postId, level = 0 }: CommentProps) {
   const isAIComment = !!comment.aiFollowerId;
   const isUserComment = !!comment.userId;
   const hasReplies = comment.replies && comment.replies.length > 0;
+  const pendingResponses = comment.pendingResponses || [];
 
   return (
     <div className={`space-y-4 ${level > 0 ? "ml-8 border-l-2 pl-4" : ""}`}>
@@ -41,25 +42,33 @@ export function Comment({ comment, postId, level = 0 }: CommentProps) {
             </span>
           </div>
           <p className="text-sm mt-1">{comment.content}</p>
-          <div className="flex items-center space-x-2 mt-2">
-            {!isReplying && isAIComment && user && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsReplying(true)}
-                className="reply-button"
-              >
-                Reply
-              </Button>
-            )}
-            {hasReplies && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowReplies(!showReplies)}
-              >
-                {showReplies ? "Hide Replies" : `Show Replies (${comment.replies?.length})`}
-              </Button>
+          <div className="flex items-center justify-between w-full mt-2">
+            <div className="flex items-center space-x-2">
+              {!isReplying && isAIComment && user && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsReplying(true)}
+                  className="reply-button"
+                >
+                  Reply
+                </Button>
+              )}
+              {hasReplies && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowReplies(!showReplies)}
+                >
+                  {showReplies ? "Hide Replies" : `Show Replies (${comment.replies?.length})`}
+                </Button>
+              )}
+            </div>
+            {pendingResponses.length > 0 && (
+              <PendingResponses 
+                pendingResponses={pendingResponses} 
+                postId={postId} 
+              />
             )}
           </div>
         </div>

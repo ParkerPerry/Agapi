@@ -1,9 +1,10 @@
-import { AiFollower, AiInteraction } from "@shared/schema";
+import { AiFollower, AiInteraction, PendingResponse } from "@shared/schema";
 import { storage } from "./storage";
 
 export interface ThreadedInteraction extends AiInteraction {
   aiFollower?: AiFollower;
   replies: ThreadedInteraction[];
+  pendingResponses?: PendingResponse[];
 }
 
 export class ThreadManager {
@@ -15,6 +16,10 @@ export class ThreadManager {
     const interactions = await storage.getPostInteractions(postId);
     console.log(`[ThreadManager] Processing ${interactions.length} interactions for post ${postId}`);
 
+    // Get all pending responses for the post
+    const allPendingResponses = await storage.getPostPendingResponses(postId);
+    console.log(`[ThreadManager] Found ${allPendingResponses.length} pending responses for post ${postId}`);
+
     // Create a map to store interactions by their ID for quick lookup
     const interactionMap = new Map<number, ThreadedInteraction>();
 
@@ -25,11 +30,30 @@ export class ThreadManager {
           await storage.getAiFollower(interaction.aiFollowerId) 
           : undefined;
 
+        // Filter pending responses for this interaction
+        const interactionPendingResponses = allPendingResponses.filter(
+          response => {
+            if (!response.metadata) return false;
+            try {
+              const metadata = JSON.parse(response.metadata);
+              return metadata.parentId === interaction.id;
+            } catch (e) {
+              return false;
+            }
+          }
+        ).map(pr => ({
+          id: pr.id,
+          name: pr.followerName,
+          avatarUrl: pr.followerAvatarUrl,
+          scheduledFor: pr.scheduledFor
+        }));
+        
         // Create the base interaction object with explicit type casting
         const threadedInteraction: ThreadedInteraction = {
           ...interaction,
           aiFollower: follower,
-          replies: []
+          replies: [],
+          pendingResponses: interactionPendingResponses.length > 0 ? interactionPendingResponses : undefined
         };
 
         interactionMap.set(interaction.id, threadedInteraction);
@@ -38,6 +62,7 @@ export class ThreadManager {
           type: interaction.type,
           parentId: interaction.parentId,
           hasFollower: !!follower,
+          pendingResponses: interactionPendingResponses.length,
           content: interaction.content?.substring(0, 50)
         });
       })
