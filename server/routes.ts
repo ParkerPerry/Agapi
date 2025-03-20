@@ -657,9 +657,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         targetFollower
       );
       
-      // Serialize context data for storage
+      // Serialize context data for storage with both parentId and parentInteractionId
+      // (parentInteractionId is included for backwards compatibility)
       const contextMetadata = JSON.stringify({
         threadContext,
+        parentId,
         parentInteractionId: parentId
       });
       
@@ -681,13 +683,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await scheduler.scheduleThreadResponse(postId, follower, parentId, contextMetadata, false);
       }
 
-      // Get updated thread structure
+      // Get updated thread structure with interactions
       const threadedInteractions = await ThreadManager.getThreadedInteractions(postId);
       const updatedThread = ThreadManager.findThreadById(threadedInteractions, parentId);
 
       if (!updatedThread) {
         return res.status(500).json({ message: "Failed to find updated thread" });
       }
+      
+      // Get newly scheduled pending responses for this specific thread
+      const pendingResponses = await storage.getPostPendingResponses(postId);
+      console.log("[Routes] Pending responses for thread:", pendingResponses.length);
+      
+      // Filter for responses specifically targeting the parent interaction
+      const filteredResponses = pendingResponses.filter(response => {
+        try {
+          if (!response.metadata) return false;
+          const metadata = JSON.parse(response.metadata);
+          return metadata.parentInteractionId === parentId || metadata.parentId === parentId;
+        } catch (e) {
+          return false;
+        }
+      });
+      
+      // Format pending responses with follower information
+      const pendingFollowers = await Promise.all(
+        filteredResponses.map(async (response) => {
+          const follower = await storage.getAiFollower(response.aiFollowerId);
+          return follower ? {
+            id: follower.id,
+            name: follower.name,
+            avatarUrl: follower.avatarUrl,
+            scheduledFor: response.scheduledFor
+          } : null;
+        })
+      );
+      
+      // Filter out nulls and add to the updated thread
+      const validPendingFollowers = pendingFollowers
+        .filter((f): f is NonNullable<typeof f> => f !== null)
+        .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime());
+      
+      // Attach the pending responses to the thread
+      if (validPendingFollowers.length > 0) {
+        updatedThread.pendingResponses = validPendingFollowers;
+      }
+      
+      console.log("[Routes] Thread reply response includes", 
+        validPendingFollowers.length, "pending responses");
 
       res.status(201).json(updatedThread);
     } catch (error) {
