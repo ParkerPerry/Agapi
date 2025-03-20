@@ -2,11 +2,12 @@ import { AiFollower } from "@shared/schema";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil, PowerOff } from "lucide-react";
+import { Pencil, PowerOff, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { responsivenessOptions } from "./follower-create-form";
 import { FollowerEditDialog } from "./follower-edit-dialog";
 import { FollowerDeactivateDialog } from "./follower-deactivate-dialog";
+import { useLocation } from "wouter";
 
 interface FollowerCardProps {
   follower: AiFollower;
@@ -16,6 +17,8 @@ interface FollowerCardProps {
 }
 
 export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: FollowerCardProps) {
+  const [, navigate] = useLocation();
+  
   return (
     <div 
       className={cn(
@@ -59,6 +62,15 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
             follower={follower}
             onEdit={onEdit}
           />
+
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => navigate(`/follower-config/${follower.id}`)}
+            className="bg-muted hover:bg-muted/80"
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
 
           <FollowerDeactivateDialog
             trigger={
