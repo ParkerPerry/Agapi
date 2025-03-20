@@ -807,6 +807,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get pending invitations for a circle
+  app.get("/api/circles/:id/pending-invitations", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      // Check if user has owner/collaborator permissions
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage, "collaborator");
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const invitations = await storage.getCircleInvitations(circleId);
+      const pendingInvitations = invitations.filter(inv => inv.status === "pending");
+
+      // Get invitee details for each invitation
+      const invitationsWithUsers = await Promise.all(
+        pendingInvitations.map(async (invitation) => {
+          const invitee = await storage.getUser(invitation.inviteeId);
+          return {
+            ...invitation,
+            invitee: invitee ? {
+              id: invitee.id,
+              username: invitee.username,
+              avatar: invitee.avatar
+            } : null
+          };
+        })
+      );
+
+      res.json(invitationsWithUsers);
+    } catch (error) {
+      console.error("Error getting circle pending invitations:", error);
+      res.status(500).json({ message: "Failed to get pending invitations" });
+    }
+  });
+
+  // Resend an invitation
+  app.post("/api/circles/invitations/:id/resend", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const invitationId = parseInt(req.params.id);
+    try {
+      const invitation = await storage.getCircleInvitation(invitationId);
+      if (!invitation) {
+        return res.status(404).json({ message: "Invitation not found" });
+      }
+
+      // Verify circle ownership/permissions
+      const hasPermission = await hasCirclePermission(invitation.circleId, req.user!.id, storage, "collaborator");
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Update invitation timestamp and reset status if it was declined
+      const updatedInvitation = await storage.resendCircleInvitation(invitationId);
+
+      // Get circle and invitee details for notification
+      const [circle, invitee] = await Promise.all([
+        storage.getCircle(invitation.circleId),
+        storage.getUser(invitation.inviteeId)
+      ]);
+
+      // Create a new notification for the invitee
+      if (circle && invitee) {
+        await storage.createNotification({
+          userId: invitee.id,
+          type: "circle_invitation",
+          message: `You have been re-invited to join the circle "${circle.name}"`,
+          metadata: {
+            circleId: circle.id,
+            invitationId: updatedInvitation.id
+          }
+        });
+      }
+
+      res.json(updatedInvitation);
+    } catch (error) {
+      console.error("Error resending invitation:", error);
+      res.status(500).json({ message: "Failed to resend invitation" });
+    }
+  });
+
   // Deactivate a circle member
   app.post("/api/circles/:id/members/:userId/deactivate", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);

@@ -40,6 +40,34 @@ export function useDeleteCircle() {
   });
 }
 
+export function useResendInvitation() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (invitationId: number) => {
+      const res = await apiRequest("POST", `/api/circles/invitations/${invitationId}/resend`);
+      return res.json();
+    },
+    onSuccess: (_data, _variables) => {
+      // Invalidate both the general invitations and specific circle's pending invitations
+      queryClient.invalidateQueries({ queryKey: ["/api/circles/invitations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
+      toast({
+        title: "Invitation resent",
+        description: "The invitation has been resent successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to resend the invitation. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+}
+
 export function useRespondToInvitation() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
