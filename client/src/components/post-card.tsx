@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { formatRelativeTime } from "@/utils/date";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -56,6 +56,7 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
       content: "",
     },
   });
+  const queryClient = useQueryClient();
 
   const replyMutation = useMutation({
     mutationFn: async ({ content }: { content: string }) => {
@@ -65,8 +66,64 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
       });
       return res.json();
     },
-    onSuccess: () => {
+    onMutate: async (newReply) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: [`/api/posts/${user?.id}`] });
+
+      // Get the current posts data
+      const previousPosts = queryClient.getQueryData([`/api/posts/${user?.id}`]);
+
+      // Create an optimistic update
+      queryClient.setQueryData([`/api/posts/${user?.id}`], (old: any) => {
+        const posts = [...old];
+        const postIndex = posts.findIndex(p => p.id === postId);
+        if (postIndex > -1) {
+          const post = {...posts[postIndex]};
+          // Find the comment and add the optimistic reply
+          const addReplyToComment = (comments: any[]) => {
+            return comments.map(comment => {
+              if (comment.id === commentId) {
+                return {
+                  ...comment,
+                  replies: [...(comment.replies || []), {
+                    id: Date.now(), // Temporary ID
+                    content: newReply.content,
+                    userId: user?.id,
+                    createdAt: new Date(),
+                    type: 'reply',
+                    parentId: commentId
+                  }]
+                };
+              }
+              if (comment.replies) {
+                return {
+                  ...comment,
+                  replies: addReplyToComment(comment.replies)
+                };
+              }
+              return comment;
+            });
+          };
+
+          post.interactions = addReplyToComment(post.interactions);
+          posts[postIndex] = post;
+        }
+        return posts;
+      });
+
+      return { previousPosts };
+    },
+    onError: (_err, _newReply, context) => {
+      // If the mutation fails, roll back to the previous value
+      if (context?.previousPosts) {
+        queryClient.setQueryData([`/api/posts/${user?.id}`], context.previousPosts);
+      }
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure we're up to date
       queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
+    },
+    onSuccess: () => {
       form.reset();
       onReply();
     },
