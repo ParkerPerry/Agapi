@@ -378,13 +378,28 @@ export class ResponseScheduler {
       
       const scheduledTime = new Date(Date.now() + delay * 60 * 1000); // Convert minutes to milliseconds
 
+      // Parse existing metadata to include isPrimaryTarget flag
+      let updatedMetadata;
+      try {
+        const parsedMetadata = JSON.parse(contextMetadata);
+        
+        // Add isPrimaryTarget flag to metadata
+        updatedMetadata = JSON.stringify({
+          ...parsedMetadata,
+          isPrimaryTarget
+        });
+      } catch (error) {
+        console.error("[ResponseScheduler] Error parsing metadata to add isPrimaryTarget flag:", error);
+        updatedMetadata = contextMetadata; // Fallback to original metadata
+      }
+      
       // Store the thread-specific metadata in the metadata field
       await storage.createPendingResponse({
         postId,
         aiFollowerId: follower.id,
         scheduledFor: scheduledTime,
         processed: false,
-        metadata: contextMetadata
+        metadata: updatedMetadata
       });
 
       console.log(`[ResponseScheduler] Successfully scheduled thread response:`, {
@@ -499,8 +514,8 @@ export class ResponseScheduler {
                 
               previousMessages.unshift(`${author}: ${interaction.content || ""}`);
               
-              // Move to parent of this message
-              currentId = interaction.parentId;
+              // Move to parent of this message (safely handle null)
+              currentId = interaction.parentId || null;
               depth++;
             }
             

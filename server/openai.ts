@@ -64,7 +64,8 @@ export async function generateAIResponse(
   postContent: string,
   personality: string,
   previousMessage?: string,
-  threadContext?: ThreadContextData
+  threadContext?: ThreadContextData,
+  previousMessages?: string
 ): Promise<AIResponse> {
   try {
     const contextManager = ThreadContextManager.getInstance();
@@ -72,19 +73,28 @@ export async function generateAIResponse(
     // Build comprehensive conversation history
     let conversationHistory = "";
     if (threadContext) {
-      const depthAwareHistory = threadContext.threadDepth <= 3
-        ? `Recent conversation history:
-           Last message: "${threadContext.immediateContext}"
-           Earlier message: "${threadContext.parentMessage}"
-           Topic started with: "${threadContext.threadTopic || 'various topics'}"
-
-           Current message to respond to: "${postContent}"`
-        : `You're deep in a conversation thread. 
-           Latest message: "${postContent}"
-
-           Note: Given your personality, you might not remember exactly how this conversation started.`;
-
-      conversationHistory = depthAwareHistory;
+      // If we have detailed previous messages history, use that for richer context
+      if (previousMessages) {
+        conversationHistory = `Recent conversation history:
+           ${previousMessages}
+           
+           Current message to respond to: "${postContent}"`;
+      } else {
+        // Otherwise use the basic thread context
+        const depthAwareHistory = threadContext.threadDepth <= 3
+          ? `Recent conversation history:
+             Last message: "${threadContext.immediateContext}"
+             Earlier message: "${threadContext.parentMessage}"
+             Topic started with: "${threadContext.threadTopic || 'various topics'}"
+  
+             Current message to respond to: "${postContent}"`
+          : `You're deep in a conversation thread. 
+             Latest message: "${postContent}"
+  
+             Note: Given your personality, you might not remember exactly how this conversation started.`;
+  
+        conversationHistory = depthAwareHistory;
+      }
     }
 
     const response = await openai.chat.completions.create({
