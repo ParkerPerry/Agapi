@@ -32,16 +32,22 @@ export function useUpdateFollower() {
       name: string;
       personality: string;
       responsiveness: "instant" | "active" | "casual" | "zen";
+      background?: string;
+      communicationStyle?: string;
+      interests?: string[];
+      interactionPreferences?: {
+        likes: string[];
+        dislikes: string[];
+      };
     }) => {
-      const res = await apiRequest("PATCH", `/api/followers/${data.id}`, {
-        name: data.name,
-        personality: data.personality,
-        responsiveness: data.responsiveness,
-      });
+      console.log("[Mutation] Updating follower:", data);
+      const res = await apiRequest("PATCH", `/api/followers/${data.id}`, data);
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      // Invalidate both the follower list and the specific follower
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/followers/${variables.id}`] });
       toast({
         title: "Follower updated",
         description: "The AI follower has been updated successfully.",
