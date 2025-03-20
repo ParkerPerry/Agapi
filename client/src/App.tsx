@@ -7,7 +7,6 @@ import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
 import AiFollowersPage from "@/pages/ai-followers-page";
 import CirclesPage from "@/pages/circles-page";
-import FollowerConfigPage from "@/pages/follower-config-page";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { createWebSocket, closeWebSocket } from "@/lib/websocket";
@@ -19,7 +18,6 @@ function Router() {
       <ProtectedRoute path="/" component={HomePage} />
       <ProtectedRoute path="/ai-followers" component={AiFollowersPage} />
       <ProtectedRoute path="/circles" component={CirclesPage} />
-      <ProtectedRoute path="/follower-config/:id" component={FollowerConfigPage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
