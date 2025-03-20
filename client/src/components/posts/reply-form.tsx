@@ -16,6 +16,10 @@ export function ReplyForm({ postId, commentId, aiFollowerName, onReply }: ReplyF
     },
   });
 
+  // Extract the circleId from the URL query parameters
+  const params = new URLSearchParams(window.location.search);
+  const circleId = params.get('circle') || '';
+
   const replyMutation = useMutation({
     mutationFn: async ({ content }: { content: string }) => {
       const res = await apiRequest("POST", `/api/posts/${postId}/reply`, {
@@ -24,8 +28,23 @@ export function ReplyForm({ postId, commentId, aiFollowerName, onReply }: ReplyF
       });
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate both user posts and circle posts queries to ensure UI updates properly
       queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
+      
+      // If we're in a circle view, invalidate that circle's posts query
+      if (circleId) {
+        queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/posts`] });
+      }
+      
+      // Always invalidate all possible circles that might contain this post
+      queryClient.invalidateQueries({ 
+        predicate: (query) => {
+          const queryKey = query.queryKey[0] as string;
+          return queryKey.startsWith('/api/circles/') && queryKey.endsWith('/posts');
+        } 
+      });
+      
       form.reset();
       onReply();
     },
