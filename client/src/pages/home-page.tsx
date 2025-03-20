@@ -2,78 +2,60 @@ import { useAuth } from "@/hooks/use-auth";
 import { NavBar } from "@/components/nav-bar";
 import { PostForm } from "@/components/post-form";
 import { PostCard } from "@/components/post-card";
-import { CirclePanel } from "@/components/circle-panel";
 import { useQuery } from "@tanstack/react-query";
-import { Post, Circle } from "@shared/schema";
+import { Post } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TourProvider } from "@/components/tour/tour-context";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useCallback } from "react";
+import { createWebSocket, subscribeToWebSocket } from "@/lib/websocket";
 
 export default function HomePage() {
   const { user } = useAuth();
-  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
-  // Get circle ID from URL query parameter
-  const params = new URLSearchParams(window.location.search);
-  const circleId = params.get('circle');
-
-  // Get circle data based on ID or default
-  const { data: circle, isLoading: isLoadingCircle } = useQuery<Circle>({
-    queryKey: [circleId ? `/api/circles/${circleId}` : "/api/circles/default"],
-    enabled: !!user,
+  const { data: posts, isLoading, refetch } = useQuery<(Post & { interactions: any[] })[]>({
+    queryKey: [`/api/posts/${user?.id}`],
   });
 
-  // Get posts for the circle
-  const { data: posts, isLoading: isLoadingPosts } = useQuery<(Post & { interactions: any[] })[]>({
-    queryKey: [`/api/circles/${circle?.id}/posts`],
-    enabled: !!circle,
-  });
+  // Handle real-time updates
+  const handleWebSocketMessage = useCallback((data: any) => {
+    if (data.type === 'thread-update' || data.type === 'post-update') {
+      refetch();
+    }
+  }, [refetch]);
 
-  const isLoading = isLoadingCircle || isLoadingPosts;
+  // Initialize WebSocket connection
+  useEffect(() => {
+    if (user) {
+      const ws = createWebSocket();
+      const unsubscribe = subscribeToWebSocket('*', handleWebSocketMessage);
+
+      return () => {
+        unsubscribe();
+        if (ws) {
+          ws.close();
+        }
+      };
+    }
+  }, [user, handleWebSocketMessage]);
 
   return (
-    <TourProvider>
-      <div className="min-h-screen bg-background">
-        <NavBar />
-        <main className="container py-6">
-          <div className="flex gap-6">
-            {/* Left panel with collapsible state */}
-            <div className={cn(
-              "transition-all duration-300",
-              isPanelCollapsed ? "w-16" : "w-80"
-            )}>
-              {circle && (
-                <CirclePanel 
-                  circleId={circle.id} 
-                  isCollapsed={isPanelCollapsed}
-                  onCollapse={setIsPanelCollapsed}
-                />
-              )}
-            </div>
+    <div className="min-h-screen bg-background">
+      <NavBar />
+      <main className="container py-6">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <PostForm />
 
-            {/* Main content - expands when panel is collapsed */}
-            <div className="flex-1 space-y-6">
-              <div className="post-form">
-                <PostForm defaultCircleId={circle?.id} />
+          {isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="h-12 w-[250px]" />
+                <Skeleton className="h-24 w-full" />
               </div>
-
-              {isLoadingPosts ? (
-                Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="space-y-3">
-                    <Skeleton className="h-12 w-[250px]" />
-                    <Skeleton className="h-24 w-full" />
-                  </div>
-                ))
-              ) : posts?.map((post) => (
-                <div key={post.id} className="post-card">
-                  <PostCard post={post} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </main>
-      </div>
-    </TourProvider>
+            ))
+          ) : posts?.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </main>
+    </div>
   );
 }
