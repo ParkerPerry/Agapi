@@ -44,12 +44,22 @@ export default function FollowerConfigPage() {
   const [communicationStyle, setCommunicationStyle] = useState("");
   const [interests, setInterests] = useState("");
 
-  // Parse and check the follower ID
-  const id = params.id ? parseInt(params.id) : null;
+  // Extract follower ID from URL with enhanced logging
+  console.log("[ConfigPage] URL Parameters from useParams:", params);
+  console.log("[ConfigPage] Current location pathname:", window.location.pathname);
   
-  // More detailed logging for debugging
-  console.log("[ConfigPage] URL Parameters:", params);
-  console.log("[ConfigPage] Extracted ID from URL:", params.id);
+  // Attempt to extract ID from URL directly as fallback
+  const pathParts = window.location.pathname.split('/');
+  const pathId = pathParts[pathParts.length - 1];
+  console.log("[ConfigPage] Path parts:", pathParts);
+  console.log("[ConfigPage] Last path segment:", pathId);
+  
+  // Use params.id if available, otherwise try extracting from pathname directly
+  const extractedId = params.id || pathId;
+  console.log("[ConfigPage] Extracted ID:", extractedId);
+  
+  // Parse the ID to number 
+  const id = extractedId && !isNaN(parseInt(extractedId)) ? parseInt(extractedId) : null;
   console.log("[ConfigPage] Parsed ID as number:", id);
   console.log("[ConfigPage] User:", user?.id, user?.username);
 
@@ -74,11 +84,15 @@ export default function FollowerConfigPage() {
   const { data: follower, isLoading, error } = useQuery<AiFollower>({
     queryKey: [apiUrl],
     enabled: !!user && !!id && !isNaN(id),
-    onError: (err) => {
-      console.error(`[ConfigPage] API Error:`, err);
+    // Using retry callback for error handling
+    retry: (failureCount, error) => {
+      console.error(`[ConfigPage] API Error (attempt ${failureCount}):`, error);
+      return failureCount < 2; // Only retry twice
     },
-    onSuccess: (data) => {
+    // Using callbacks for data and status tracking
+    select: (data) => {
       console.log(`[ConfigPage] API Success:`, data);
+      return data;
     }
   });
 

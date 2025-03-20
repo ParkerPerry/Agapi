@@ -796,23 +796,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get a single AI follower by ID
   app.get("/api/followers/:id", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
+    console.log(`[API] GET /api/followers/:id - Request received for ID: ${req.params.id}`);
+    console.log(`[API] Authentication status: ${req.isAuthenticated()}`);
+    
+    if (!req.isAuthenticated()) {
+      console.log(`[API] Request rejected: User not authenticated`);
+      return res.sendStatus(401);
+    }
     
     const followerId = parseInt(req.params.id);
+    console.log(`[API] Parsed follower ID: ${followerId}, isNaN: ${isNaN(followerId)}`);
+    
     if (isNaN(followerId)) {
+      console.log(`[API] Request rejected: Invalid follower ID format`);
       return res.status(400).json({ message: "Invalid follower ID" });
     }
     
     try {
+      console.log(`[API] Looking up follower with ID: ${followerId} for user: ${req.user!.id}`);
+      
       // First verify the follower belongs to the user
       const follower = await storage.getAiFollower(followerId);
-      if (!follower || follower.userId !== req.user!.id) {
+      console.log(`[API] Follower lookup result:`, follower ? 
+        `Found (userId: ${follower.userId}, name: ${follower.name})` : 
+        `Not found`);
+      
+      if (!follower) {
+        console.log(`[API] Request rejected: Follower not found`);
         return res.status(404).json({ message: "Follower not found" });
       }
       
+      if (follower.userId !== req.user!.id) {
+        console.log(`[API] Request rejected: Follower belongs to different user (${follower.userId})`);
+        return res.status(404).json({ message: "Follower not found" });
+      }
+      
+      console.log(`[API] Sending successful response for follower: ${follower.name}`);
       res.json(follower);
     } catch (error) {
-      console.error("Error getting AI follower:", error);
+      console.error("[API] Error getting AI follower:", error);
       res.status(500).json({ message: "Failed to get AI follower" });
     }
   });
