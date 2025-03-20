@@ -73,6 +73,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const scheduler = ResponseScheduler.getInstance();
   scheduler.start();
 
+  // Add new delete-all endpoint before the existing notification routes
+  app.delete("/api/notifications/delete-all", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      // Delete all notifications for the current user
+      // Requires importing db and notifications from database library (e.g., knex)
+      // const { db, notifications } = require('./database'); //Example - Needs proper import based on your DB setup.
+      //await db.delete().from('notifications').where({userId: req.user!.id}); // Example using Knex - Adapt to your ORM
+      await storage.deleteAllNotifications(req.user!.id); // Assuming storage has this method.
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error deleting all notifications:", error);
+      res.status(500).json({ message: "Failed to delete all notifications" });
+    }
+  });
+
+
   // Add notification routes
   app.get("/api/notifications", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);

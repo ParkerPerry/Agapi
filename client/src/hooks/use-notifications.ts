@@ -23,10 +23,10 @@ export function useNotifications() {
     },
   });
 
-  const markAllAsReadMutation = useMutation({
-    mutationFn: async () => {
-      await fetch("/api/notifications/read-all", {
-        method: "PATCH",
+  const deleteNotificationMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await fetch(`/api/notifications/${id}`, {
+        method: "DELETE",
       });
     },
     onSuccess: () => {
@@ -35,9 +35,9 @@ export function useNotifications() {
     },
   });
 
-  const deleteNotificationMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await fetch(`/api/notifications/${id}`, {
+  const deleteAllNotificationsMutation = useMutation({
+    mutationFn: async () => {
+      await fetch("/api/notifications/delete-all", {
         method: "DELETE",
       });
     },
@@ -51,7 +51,7 @@ export function useNotifications() {
     notifications,
     unreadCount: unreadCountData.count,
     markAsRead: markAsReadMutation.mutate,
-    markAllAsRead: markAllAsReadMutation.mutate,
     deleteNotification: deleteNotificationMutation.mutate,
+    deleteAllNotifications: deleteAllNotificationsMutation.mutate,
   };
 }

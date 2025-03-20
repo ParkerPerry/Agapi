@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useLocation } from "wouter";
-import { Bell, Check, Trash2, X } from "lucide-react";
+import { Bell, Trash2, X } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,7 @@ import type { Notification } from "@shared/schema";
 
 export function NotificationDropdown() {
   const [_, setLocation] = useLocation();
-  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+  const { notifications, unreadCount, markAsRead, deleteNotification, deleteAllNotifications } = useNotifications();
 
   const handleAction = (notification: Notification) => {
     if (notification.metadata?.actionUrl) {
@@ -46,11 +46,11 @@ export function NotificationDropdown() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => markAllAsRead()}
+              onClick={() => deleteAllNotifications()}
               className="h-auto p-2"
             >
-              <Check className="h-4 w-4 mr-2" />
-              Mark all read
+              <Trash2 className="h-4 w-4 mr-2" />
+              Dismiss all
             </Button>
           )}
         </div>
@@ -65,11 +65,11 @@ export function NotificationDropdown() {
                 <div
                   key={notification.id}
                   className={cn(
-                    "grid grid-cols-[1fr,16px] items-start gap-4 p-4 hover:bg-muted/50 cursor-pointer",
+                    "grid grid-cols-[1fr,16px] items-start gap-4 p-4 hover:bg-muted/50",
                     !notification.read && "bg-muted/30"
                   )}
                 >
-                  <div onClick={() => handleAction(notification)}>
+                  <div onClick={() => handleAction(notification)} className="cursor-pointer">
                     <p className="text-sm">{notification.content}</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {new Date(notification.createdAt!).toLocaleDateString()}
@@ -78,7 +78,7 @@ export function NotificationDropdown() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-4 w-4 opacity-0 group-hover:opacity-100"
+                    className="h-4 w-4"
                     onClick={() => deleteNotification(notification.id)}
                   >
                     <X className="h-3 w-3" />
