@@ -793,6 +793,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const followers = await storage.getAiFollowers(req.user!.id);
     res.json(followers);
   });
+  
+  app.get("/api/followers/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const followerId = parseInt(req.params.id);
+      const follower = await storage.getAiFollower(followerId);
+      
+      // Check if follower exists and belongs to the requesting user
+      if (!follower || follower.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Follower not found" });
+      }
+      
+      res.json(follower);
+    } catch (error) {
+      console.error("Error getting AI follower:", error);
+      res.status(500).json({ message: "Failed to get AI follower" });
+    }
+  });
 
   app.patch("/api/followers/:id", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
