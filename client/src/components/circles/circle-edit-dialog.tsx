@@ -31,7 +31,7 @@ export function CircleEditDialog({ circle, onEdit }: CircleEditDialogProps) {
 
   const form = useForm<InsertCircle>({
     defaultValues: {
-      name: circle.name || "",
+      name: circle.name,
       description: circle.description || "",
       icon: circle.icon || "🔵",
       color: circle.color || "#3b82f6",

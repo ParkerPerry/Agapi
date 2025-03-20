@@ -36,7 +36,7 @@ export function CircleCard({
         circle.isDefault && "bg-muted",
         status === "deactivated" && "opacity-75"
       )}
-      style={{ borderColor: circle.color || undefined }}
+      style={{ borderColor: circle.color }}
     >
       {/* Status badges */}
       <div className="absolute top-2 right-2 flex gap-2">
