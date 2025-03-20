@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { formatRelativeTime } from "@/utils/date";
 import { ReplyForm } from "./reply-form";
+import { PendingResponses } from "./pending-responses";
 import { CommentProps } from "./post-types";
 
 export function Comment({ comment, postId, level = 0 }: CommentProps) {
