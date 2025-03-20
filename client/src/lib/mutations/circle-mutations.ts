@@ -115,3 +115,45 @@ export function useReactivateCircleMember() {
     },
   });
 }
+
+// Add these new mutations after the existing ones
+
+export function useRevokeInvitation() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (invitationId: number) => {
+      await apiRequest("DELETE", `/api/circles/invitations/${invitationId}`);
+    },
+    onSuccess: (_data, _variables, context) => {
+      // Invalidate all circle-related queries to ensure UI is updated
+      queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/circles/invitations"] });
+      toast({
+        title: "Invitation revoked",
+        description: "The invitation has been cancelled.",
+      });
+    },
+  });
+}
+
+export function useResendInvitation() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (invitationId: number) => {
+      const res = await apiRequest("POST", `/api/circles/invitations/${invitationId}/resend`);
+      return res.json();
+    },
+    onSuccess: (_data, _variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/circles/invitations"] });
+      toast({
+        title: "Invitation resent",
+        description: "A new invitation has been sent.",
+      });
+    },
+  });
+}
