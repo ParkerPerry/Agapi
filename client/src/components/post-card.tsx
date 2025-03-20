@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { formatRelativeTime } from "@/utils/date";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -51,6 +51,7 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
   onReply: () => void;
 }) {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const form = useForm({
     defaultValues: {
       content: "",
@@ -65,7 +66,40 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
       });
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (updatedThread) => {
+      // Immediately update the cached thread with the new reply
+      queryClient.setQueryData(
+        [`/api/posts/${user?.id}`],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          return oldData.map((post: any) => {
+            if (post.id !== postId) return post;
+
+            // Find and update the specific thread
+            const updateThreads = (threads: any[]): any[] => {
+              return threads.map(thread => {
+                if (thread.id === commentId) {
+                  return updatedThread;
+                }
+                if (thread.replies) {
+                  return {
+                    ...thread,
+                    replies: updateThreads(thread.replies)
+                  };
+                }
+                return thread;
+              });
+            };
+
+            return {
+              ...post,
+              interactions: updateThreads(post.interactions)
+            };
+          });
+        }
+      );
+
+      // Still invalidate the query to get any updates from the server
       queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
       form.reset();
       onReply();
