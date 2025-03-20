@@ -164,7 +164,7 @@ export default function FollowerConfigPage() {
           <main className="container py-6">
             <div className="max-w-3xl mx-auto space-y-6">
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" onClick={() => navigate("/followers")}>
+                <Button variant="ghost" size="icon" onClick={() => navigate("/ai-followers")}>
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <h1 className="text-2xl font-bold">AI Follower Not Found</h1>
@@ -178,7 +178,7 @@ export default function FollowerConfigPage() {
                     <p className="text-muted-foreground mt-2">
                       {queryStatus.errorMsg || "Could not find the requested AI follower. It may have been deleted or you don't have permission to access it."}
                     </p>
-                    <Button className="mt-4" onClick={() => navigate("/followers")}>
+                    <Button className="mt-4" onClick={() => navigate("/ai-followers")}>
                       Return to Followers
                     </Button>
                   </div>
@@ -199,7 +199,7 @@ export default function FollowerConfigPage() {
           <div className="max-w-3xl mx-auto space-y-6">
           {/* Header */}
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/followers")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/ai-followers")}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <h1 className="text-2xl font-bold">AI Follower Configuration</h1>

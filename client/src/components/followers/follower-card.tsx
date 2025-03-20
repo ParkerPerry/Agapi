@@ -20,7 +20,7 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
   const [_, navigate] = useLocation();
 
   const handleNavigateToConfig = () => {
-    navigate(`/followers/config/${follower.id}`);
+    navigate(`/ai-followers/config/${follower.id}`);
   };
 
   return (

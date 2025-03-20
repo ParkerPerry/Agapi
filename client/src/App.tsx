@@ -19,7 +19,7 @@ function Router() {
       <ProtectedRoute path="/" component={HomePage} />
       <ProtectedRoute path="/ai-followers" component={AiFollowersPage} />
       <ProtectedRoute path="/circles" component={CirclesPage} />
-      <ProtectedRoute path="/followers/config/:id" component={FollowerConfigPage} />
+      <ProtectedRoute path="/ai-followers/config/:id" component={FollowerConfigPage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
