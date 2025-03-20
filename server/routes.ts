@@ -623,7 +623,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "AI follower not found" });
       }
 
-      // Save the user's reply
+      // Save the user's reply immediately
       const userReply = await storage.createAiInteraction({
         postId,
         userId: req.user!.id,
@@ -633,37 +633,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         parentId
       });
 
-      // Build thread context using the context manager
-      const contextManager = ThreadContextManager.getInstance();
-      const threadContext = await contextManager.buildThreadContext(
-        userReply,
-        parentInteraction,
-        aiFollower
-      );
-
-      // Generate and save AI response with thread context
-      const aiResponse = await generateAIResponse(
-        content,
-        aiFollower.personality,
-        parentInteraction.content || undefined,
-        threadContext
-      );
-
-      if (aiResponse.confidence > 0.7) {
-        // Save the AI's response
-        const aiReply = await storage.createAiInteraction({
-          postId,
-          aiFollowerId: aiFollower.id,
-          userId: null,
-          type: "reply",
-          content: aiResponse.content || null,
-          parentId
-        });
-
-        console.log("Created AI reply:", aiReply);
-      }
-
-      // Get updated thread structure
+      // Get the updated thread structure first
       const threadedInteractions = await ThreadManager.getThreadedInteractions(postId);
       const updatedThread = ThreadManager.findThreadById(threadedInteractions, parentId);
 
@@ -671,7 +641,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ message: "Failed to find updated thread" });
       }
 
+      // Return the updated thread immediately
       res.status(201).json(updatedThread);
+
+      // Asynchronously handle AI response generation
+      (async () => {
+        try {
+          // Build thread context
+          const contextManager = ThreadContextManager.getInstance();
+          const threadContext = await contextManager.buildThreadContext(
+            userReply,
+            parentInteraction,
+            aiFollower
+          );
+
+          // Generate AI response
+          const aiResponse = await generateAIResponse(
+            content,
+            aiFollower.personality,
+            parentInteraction.content || undefined,
+            threadContext
+          );
+
+          if (aiResponse.confidence > 0.7) {
+            // Schedule the AI's response
+            const scheduler = ResponseScheduler.getInstance();
+            await scheduler.scheduleResponse(postId, aiFollower, {
+              parentId,
+              content: aiResponse.content || undefined
+            });
+          }
+        } catch (error) {
+          console.error("Error scheduling AI response:", error);
+        }
+      })();
+
     } catch (error) {
       console.error("Error handling reply:", error);
       res.status(500).json({ message: "Failed to process reply" });
