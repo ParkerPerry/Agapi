@@ -78,7 +78,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      await storage.deleteAllNotifications(req.user!.id); 
+      // Delete all notifications for the current user
+      // Requires importing db and notifications from database library (e.g., knex)
+      // const { db, notifications } = require('./database'); //Example - Needs proper import based on your DB setup.
+      //await db.delete().from('notifications').where({userId: req.user!.id}); // Example using Knex - Adapt to your ORM
+      await storage.deleteAllNotifications(req.user!.id); // Assuming storage has this method.
       res.sendStatus(200);
     } catch (error) {
       console.error("Error deleting all notifications:", error);
@@ -174,105 +178,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get pending invitations" });
     }
   });
-  // Add this new endpoint before other circle routes
-  app.get("/api/circles/:id/invitations/outgoing", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
-    const circleId = parseInt(req.params.id);
-    try {
-      // Check if user has permission to view circle details
-      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage, "collaborator");
-      if (!hasPermission) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      // Get all pending invitations for this circle
-      const invitations = await storage.getCircleInvitations(circleId);
-
-      // Get user details for each invitee
-      const invitationsWithUsers = await Promise.all(
-        invitations
-          .filter(inv => inv.status === "pending")
-          .map(async (invitation) => {
-            const invitee = await storage.getUserById(invitation.inviteeId);
-            return {
-              ...invitation,
-              invitee: invitee ? {
-                id: invitee.id,
-                username: invitee.username
-              } : null
-            };
-          })
-      );
-
-      res.json(invitationsWithUsers);
-    } catch (error) {
-      console.error("Error getting outgoing invitations:", error);
-      res.status(500).json({ message: "Failed to get outgoing invitations" });
-    }
-  });
-
-  // Add revoke invitation endpoint
-  app.delete("/api/circles/invitations/:id", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
-    const invitationId = parseInt(req.params.id);
-    try {
-      const invitation = await storage.getCircleInvitation(invitationId);
-      if (!invitation) {
-        return res.status(404).json({ message: "Invitation not found" });
-      }
-
-      // Check if user has permission to manage this circle's invitations
-      const hasPermission = await hasCirclePermission(invitation.circleId, req.user!.id, storage, "collaborator");
-      if (!hasPermission) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      // Only allow revoking pending invitations
-      if (invitation.status !== "pending") {
-        return res.status(400).json({ message: "Can only revoke pending invitations" });
-      }
-
-      await storage.deleteCircleInvitation(invitationId);
-      res.sendStatus(200);
-    } catch (error) {
-      console.error("Error revoking invitation:", error);
-      res.status(500).json({ message: "Failed to revoke invitation" });
-    }
-  });
-
-  // Add resend invitation endpoint
-  app.post("/api/circles/invitations/:id/resend", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
-    const invitationId = parseInt(req.params.id);
-    try {
-      const invitation = await storage.getCircleInvitation(invitationId);
-      if (!invitation) {
-        return res.status(404).json({ message: "Invitation not found" });
-      }
-
-      // Check if user has permission to manage this circle's invitations
-      const hasPermission = await hasCirclePermission(invitation.circleId, req.user!.id, storage, "collaborator");
-      if (!hasPermission) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      // Only allow resending pending invitations
-      if (invitation.status !== "pending") {
-        return res.status(400).json({ message: "Can only resend pending invitations" });
-      }
-
-      // Update the invitation timestamp
-      const updatedInvitation = await storage.updateInvitationTimestamp(invitationId);
-      res.json(updatedInvitation);
-    } catch (error) {
-      console.error("Error resending invitation:", error);
-      res.status(500).json({ message: "Failed to resend invitation" });
-    }
-  });
-
   // Create invitation for a circle
   app.post("/api/circles/:id/invitations", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
@@ -389,7 +294,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get circle" });
     }
   });
-
 
 
   // New Circle Management Routes
@@ -773,7 +677,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to process reply" });
     }
   });
-
 
 
 

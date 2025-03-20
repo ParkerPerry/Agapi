@@ -28,7 +28,6 @@ export function CircleCard({
   status = "active",
 }: CircleCardProps) {
   const [, navigate] = useLocation();
-  const borderColor = circle.color || "#e2e8f0";
 
   return (
     <div
@@ -37,7 +36,7 @@ export function CircleCard({
         circle.isDefault && "bg-muted",
         status === "deactivated" && "opacity-75"
       )}
-      style={{ borderColor }}
+      style={{ borderColor: circle.color }}
     >
       {/* Status badges */}
       <div className="absolute top-2 right-2 flex gap-2">
@@ -57,7 +56,7 @@ export function CircleCard({
       <div className="flex items-start space-x-4">
         <div
           className="flex items-center justify-center w-12 h-12 rounded-full text-2xl flex-shrink-0"
-          style={{ backgroundColor: (circle.color || "#e2e8f0") + "20" }}
+          style={{ backgroundColor: circle.color + "20" }}
         >
           {circle.icon}
         </div>

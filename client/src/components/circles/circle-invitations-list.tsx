@@ -8,14 +8,7 @@ import { CircleDetailsDialog } from "./circle-details-dialog";
 import { useQuery } from "@tanstack/react-query";
 
 interface CircleInvitationsListProps {
-  invitations: (CircleInvitation & { 
-    circle: Circle;
-  })[];
-}
-
-interface CircleDetails {
-  members: { username: string }[];
-  followers: unknown[];
+  invitations: (CircleInvitation & { circle: Circle })[];
 }
 
 export function CircleInvitationsList({ invitations }: CircleInvitationsListProps) {
@@ -32,24 +25,22 @@ export function CircleInvitationsList({ invitations }: CircleInvitationsListProp
         <div className="space-y-4">
           {invitations.map((invitation) => {
             // Fetch circle details including members and followers
-            const { data: details } = useQuery<CircleDetails>({
+            const { data: details } = useQuery({
               queryKey: [`/api/circles/${invitation.circle.id}/details`],
               enabled: !!invitation.circle.id,
             });
-
-            const borderColor = invitation.circle.color || "#e2e8f0";
 
             return (
               <div
                 key={invitation.id}
                 className="flex flex-col gap-4 p-4 border rounded-lg"
-                style={{ borderColor }}
+                style={{ borderColor: invitation.circle.color }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div
                       className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
-                      style={{ backgroundColor: (invitation.circle.color || "#e2e8f0") + "20" }}
+                      style={{ backgroundColor: invitation.circle.color + "20" }}
                     >
                       {invitation.circle.icon}
                     </div>

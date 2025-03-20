@@ -2,10 +2,9 @@ import { Circle, User, CircleMember, AiFollower } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Users, Share2, Info, Mail } from "lucide-react";
+import { Users, Share2, Info } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
-import { CircleOutgoingInvitations } from "./circle-outgoing-invitations";
 import {
   Dialog,
   DialogContent,
@@ -50,14 +49,14 @@ export function CircleDetailsDialog({ circleId }: CircleDetailsProps) {
             View detailed information about this circle
           </DialogDescription>
         </DialogHeader>
-
+        
         <ScrollArea className="flex-1">
           <div className="space-y-6 p-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div
                   className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
-                  style={{ backgroundColor: (circle.color || "#e2e8f0") + "20" }}
+                  style={{ backgroundColor: circle.color + "20" }}
                 >
                   {circle.icon}
                 </div>
@@ -137,14 +136,6 @@ export function CircleDetailsDialog({ circleId }: CircleDetailsProps) {
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Invitations
-              </h4>
-              <CircleOutgoingInvitations circleId={circle.id} />
             </div>
           </div>
         </ScrollArea>
