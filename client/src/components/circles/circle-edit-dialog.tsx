@@ -1,5 +1,5 @@
 import { Circle, InsertCircle } from "@shared/schema";
-import { Pencil, Loader2 } from "lucide-react";
+import { Pencil, Loader2, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,

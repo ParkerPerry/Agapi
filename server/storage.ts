@@ -47,6 +47,7 @@ export interface IStorage {
   updateCircle(id: number, updates: Partial<InsertCircle>): Promise<Circle>;
   deleteCircle(id: number): Promise<void>;
   getDefaultCircle(userId: number): Promise<Circle>;
+  setDefaultCircle(userId: number, circleId: number): Promise<Circle>;
   addFollowerToCircle(circleId: number, aiFollowerId: number): Promise<CircleFollower>;
   removeFollowerFromCircle(circleId: number, aiFollowerId: number): Promise<void>;
   getCircleFollowers(circleId: number): Promise<(AiFollower & { muted?: boolean })[]>;
@@ -580,6 +581,32 @@ export class DatabaseStorage implements IStorage {
     }
 
     return defaultCircle;
+  }
+  
+  async setDefaultCircle(userId: number, circleId: number): Promise<Circle> {
+    console.log("[Storage] Setting default circle for user:", userId, "circle:", circleId);
+    
+    // First, unset any existing default circle for this user
+    await db
+      .update(circles)
+      .set({ isDefault: false })
+      .where(and(
+        eq(circles.userId, userId),
+        eq(circles.isDefault, true)
+      ));
+    
+    // Then set the new default circle
+    const [updatedCircle] = (await db
+      .update(circles)
+      .set({ isDefault: true })
+      .where(and(
+        eq(circles.id, circleId),
+        eq(circles.userId, userId)
+      ))
+      .returning()) as Circle[];
+    
+    console.log("[Storage] Successfully set default circle:", updatedCircle);
+    return updatedCircle;
   }
 
   async addFollowerToCircle(circleId: number, aiFollowerId: number): Promise<CircleFollower> {

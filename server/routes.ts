@@ -352,6 +352,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint to set a circle as default
+  app.post("/api/circles/:id/set-default", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      // Verify circle ownership
+      const circle = await storage.getCircle(circleId);
+      if (!circle || circle.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Circle not found" });
+      }
+
+      const updatedCircle = await storage.setDefaultCircle(req.user!.id, circleId);
+      res.json(updatedCircle);
+    } catch (error) {
+      console.error("Error setting default circle:", error);
+      res.status(500).json({ message: "Failed to set default circle" });
+    }
+  });
+
   app.delete("/api/circles/:id", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
