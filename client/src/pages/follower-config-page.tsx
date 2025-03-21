@@ -77,17 +77,19 @@ export default function FollowerConfigPage() {
       }
       
       return response.json() as Promise<AITool[]>;
-    },
-    onSuccess: (tools) => {
-      // Initialize tools in the toolset if follower doesn't have tools configured yet
-      if (!follower?.tools && tools.length > 0) {
-        setToolset(prev => ({
-          ...prev,
-          equipped: tools
-        }));
-      }
     }
   });
+  
+  // Handle tools data when it becomes available
+  useEffect(() => {
+    // Initialize tools in the toolset if follower doesn't have tools configured yet
+    if (availableTools && !follower?.tools && availableTools.length > 0) {
+      setToolset(prev => ({
+        ...prev,
+        equipped: availableTools
+      }));
+    }
+  }, [availableTools, follower]);
   
   // Helper function to equip or unequip a specific tool
   const toggleToolEquipped = (toolId: string, enabled: boolean) => {
