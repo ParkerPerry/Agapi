@@ -150,10 +150,17 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
           <ScrollArea className="h-full pr-4">
             <div className="space-y-6">
               <div>
-                <h3 className="flex items-center gap-2 font-medium mb-3">
-                  <Users className="h-4 w-4" />
-                  Members ({members.length})
-                </h3>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="flex items-center gap-2 font-medium">
+                    <Users className="h-4 w-4" />
+                    Members ({members.length})
+                  </h3>
+                  
+                  {/* Add member button for circle owner */}
+                  {isOwner && !circle.isDefault && (
+                    <CircleShareDialog circle={circle} />
+                  )}
+                </div>
                 <div className="space-y-2">
                   {members.map((member) => (
                     <div
@@ -179,18 +186,69 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                   ))}
                 </div>
               </div>
-
+              
+              {/* Pending Invitations Section */}
+              {pendingInvitations && pendingInvitations.length > 0 && isOwner && (
+                <>
+                  <div className="mt-4">
+                    <h3 className="flex items-center gap-2 font-medium mb-3 text-sm">
+                      <Mail className="h-4 w-4" />
+                      Pending Invitations ({pendingInvitations.length})
+                    </h3>
+                    <div className="space-y-2">
+                      {pendingInvitations.map((invitation) => (
+                        <div
+                          key={invitation.id}
+                          className="flex items-center justify-between p-2 rounded-lg bg-muted/50"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <Avatar>
+                              <AvatarFallback>
+                                {invitation.inviteeId.toString().charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-medium">
+                                  User #{invitation.inviteeId}
+                                </p>
+                                <Badge variant="outline" className="text-xs">
+                                  {invitation.role}
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                Pending invitation
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <Separator className="my-4"/>
+                </>
+              )}
+              
               <Separator />
 
               <div>
-                <h3 className="flex items-center gap-2 font-medium mb-3">
-                  <Share2 className="h-4 w-4" />
-                  AI Followers ({followers.length})
-                </h3>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="flex items-center gap-2 font-medium">
+                    <Share2 className="h-4 w-4" />
+                    AI Followers ({followers.length})
+                  </h3>
+                  
+                  {/* Add follower button */}
+                  {isOwner && (
+                    <CircleFollowerManager circle={circle} />
+                  )}
+                </div>
+                
                 <div className="space-y-4">
                   {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
                     const ownerMember = members.find(m => m.userId === userId);
                     const ownerName = ownerMember?.username || "Unknown User";
+                    const isCurrentUser = userId === user?.id;
 
                     return (
                       <div key={userId} className="space-y-2">
@@ -210,12 +268,34 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                                 </AvatarFallback>
                               </Avatar>
                               <div>
-                                <p className="text-sm font-medium">{follower.name}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-sm font-medium">{follower.name}</p>
+                                  {!follower.active && (
+                                    <Badge variant="secondary" className="text-xs">Inactive</Badge>
+                                  )}
+                                </div>
                                 <p className="text-xs text-muted-foreground">
                                   {follower.personality}
                                 </p>
                               </div>
                             </div>
+                            
+                            {/* Only show deactivate button for user's own followers */}
+                            {isCurrentUser && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7"
+                                title={follower.active ? "Deactivate follower" : "Activate follower"}
+                                onClick={() => toggleFollowerActiveMutation.mutate(follower.id)}
+                                disabled={toggleFollowerActiveMutation.isPending}
+                              >
+                                <PowerOff className={cn(
+                                  "h-3 w-3",
+                                  follower.active ? "text-destructive" : "text-muted-foreground"
+                                )} />
+                              </Button>
+                            )}
                           </div>
                         ))}
                       </div>
