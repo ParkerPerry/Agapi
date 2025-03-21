@@ -8,7 +8,8 @@ import {
   LogOut, 
   HelpCircle, 
   Circle,
-  MessageCircle
+  MessageCircle,
+  Settings
 } from "lucide-react";
 import { useTour } from "@/components/tour/tour-context";
 import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
