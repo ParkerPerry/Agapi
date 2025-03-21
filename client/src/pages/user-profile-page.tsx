@@ -101,12 +101,29 @@ export default function UserProfilePage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="avatarUrl">Avatar URL</Label>
-                    <Input
-                      id="avatarUrl"
-                      placeholder="https://example.com/avatar.jpg"
-                      disabled={!isEditing}
-                      {...form.register("avatarUrl")}
-                    />
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Input
+                          id="avatarUrl"
+                          placeholder="https://example.com/avatar.jpg"
+                          disabled={!isEditing}
+                          {...form.register("avatarUrl")}
+                        />
+                      </div>
+                      {isEditing && (
+                        <div className="flex items-center">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={form.watch("avatarUrl")} />
+                            <AvatarFallback>{getInitials(user.username)}</AvatarFallback>
+                          </Avatar>
+                        </div>
+                      )}
+                    </div>
+                    {isEditing && (
+                      <p className="text-xs text-muted-foreground">
+                        Enter URL for your avatar image. Preview will appear on the right.
+                      </p>
+                    )}
                   </div>
                   
                   <div className="space-y-2">

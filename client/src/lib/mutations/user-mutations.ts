@@ -18,6 +18,7 @@ export function useUpdateUserProfile() {
         url: "/api/user/profile",
         method: "PATCH",
         data,
+        headers: { "Content-Type": "application/json" }
       });
       return response;
     },

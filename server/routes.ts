@@ -7,7 +7,8 @@ import { ThreadManager } from "./thread-manager";
 import { ResponseScheduler } from "./response-scheduler";
 import { ThreadContextManager } from "./context-manager";
 import { getAvailableTools } from "./tools";
-import {IStorage} from "./storage"
+import { IStorage } from "./storage";
+import { User } from "@shared/schema";
 
 async function hasCirclePermission(
   circleId: number,

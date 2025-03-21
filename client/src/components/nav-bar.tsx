@@ -114,13 +114,21 @@ export function NavBar() {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <Link href="/profile">Profile</Link>
+              <DropdownMenuItem asChild>
+                <Link href="/profile">
+                  <div className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </div>
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <MessageCircle className="mr-2 h-4 w-4" />
-                <Link href="/direct-messages">Messages</Link>
+              <DropdownMenuItem asChild>
+                <Link href="/direct-messages">
+                  <div className="flex items-center">
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    <span>Messages</span>
+                  </div>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
