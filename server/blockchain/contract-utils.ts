@@ -1,72 +1,22 @@
 import { ethers } from 'ethers';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import solc from 'solc';
 import dotenv from 'dotenv';
+import { AIFollowerNFTAbi, AIFollowerNFTBytecode, predeployedContractAddress } from './contract-data';
 
 dotenv.config();
 
 // Contract deployment info
-let deployedContractAddress: string | null = null;
-let deployedContractAbi: any[] | null = null;
+let deployedContractAddress: string | null = predeployedContractAddress || null;
+let deployedContractAbi: any[] = AIFollowerNFTAbi;
 
 // Use environment variables for network settings
 const PROVIDER_URL = process.env.ETH_PROVIDER_URL || 'https://sepolia.base.org';
 const PRIVATE_KEY = process.env.ETH_PRIVATE_KEY || '';
 
 /**
- * Compiles a Solidity smart contract
- * @param contractFileName Name of the contract file without extension
- * @returns Compiled contract output
- */
-export function compileContract(contractFileName: string) {
-  try {
-    // Read the Solidity source code directly from the project root
-    const contractPath = path.resolve('./contracts', `${contractFileName}.sol`);
-    console.log(`Reading contract from: ${contractPath}`);
-    const sourceCode = fs.readFileSync(contractPath, 'utf8');
-    
-    // Prepare input for solc compiler
-    const input = {
-      language: 'Solidity',
-      sources: {
-        [`${contractFileName}.sol`]: {
-          content: sourceCode
-        }
-      },
-      settings: {
-        outputSelection: {
-          '*': {
-            '*': ['*']
-          }
-        }
-      }
-    };
-    
-    // Compile the contract
-    const compiledContract = JSON.parse(solc.compile(JSON.stringify(input)));
-    
-    // Check for compilation errors
-    if (compiledContract.errors) {
-      console.error('Compilation errors:', compiledContract.errors);
-      throw new Error('Contract compilation failed');
-    }
-    
-    // Return the compiled contract
-    return compiledContract.contracts[`${contractFileName}.sol`][contractFileName];
-  } catch (error) {
-    console.error('Error compiling contract:', error);
-    throw error;
-  }
-}
-
-/**
  * Deploys a compiled smart contract to Base Sepolia
- * @param contractName Name of the contract file without extension
  * @returns Deployed contract address and ABI
  */
-export async function deployContract(contractName: string = 'AIFollowerNFT') {
+export async function deployContract() {
   try {
     // If we already have a deployed contract, return that info
     if (deployedContractAddress && deployedContractAbi) {
@@ -79,12 +29,11 @@ export async function deployContract(contractName: string = 'AIFollowerNFT') {
       throw new Error('ETH_PRIVATE_KEY environment variable is required for contract deployment');
     }
     
-    console.log(`Deploying ${contractName} to ${PROVIDER_URL}...`);
+    console.log(`Deploying AIFollowerNFT to ${PROVIDER_URL}...`);
     
-    // Compile the contract
-    const compiledContract = compileContract(contractName);
-    const abi = compiledContract.abi;
-    const bytecode = compiledContract.evm.bytecode.object;
+    // Use the pre-compiled contract data
+    const abi = AIFollowerNFTAbi;
+    const bytecode = AIFollowerNFTBytecode;
     
     // Connect to the network
     const provider = new ethers.JsonRpcProvider(PROVIDER_URL);
@@ -117,10 +66,9 @@ export async function deployContract(contractName: string = 'AIFollowerNFT') {
 export async function getContractInstance() {
   try {
     // If we don't have a deployed contract, deploy one
-    if (!deployedContractAddress || !deployedContractAbi) {
-      const { address, abi } = await deployContract();
+    if (!deployedContractAddress) {
+      const { address } = await deployContract();
       deployedContractAddress = address;
-      deployedContractAbi = abi;
     }
     
     // Connect to the provider
@@ -145,7 +93,7 @@ export async function getContractInstance() {
  * @param address Contract address
  * @param abi Contract ABI
  */
-export function setDeployedContract(address: string, abi: any[]) {
+export function setDeployedContract(address: string, abi: any[] = AIFollowerNFTAbi) {
   deployedContractAddress = address;
   deployedContractAbi = abi;
 }
