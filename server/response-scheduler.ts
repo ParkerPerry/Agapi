@@ -166,9 +166,21 @@ export class ResponseScheduler {
     }
   }
 
-  public async scheduleResponse(postId: number, follower: AiFollower): Promise<void> {
+  public async scheduleResponse(postId: number, follower: AiFollower & { muted?: boolean }): Promise<void> {
     try {
       console.log(`[ResponseScheduler] Starting response scheduling for post ${postId} and follower ${follower.id}`);
+
+      // First, check if this follower is inactive globally
+      if (!follower.active) {
+        console.log(`[ResponseScheduler] Follower ${follower.id} (${follower.name}) is globally inactive and will be skipped`);
+        return;
+      }
+
+      // Check if this follower is muted in this circle
+      if (follower.muted) {
+        console.log(`[ResponseScheduler] Follower ${follower.id} (${follower.name}) is muted in this circle and will be skipped`);
+        return;
+      }
 
       // Get post content for relevance analysis
       const post = await storage.getPost(postId);

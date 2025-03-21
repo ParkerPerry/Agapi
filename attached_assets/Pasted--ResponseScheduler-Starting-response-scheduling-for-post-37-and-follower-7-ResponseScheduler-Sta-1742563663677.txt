@@ -1,0 +1,80 @@
+[ResponseScheduler] Starting response scheduling for post 37 and follower 7
+[ResponseScheduler] Starting relevance calculation for: {
+  followerId: 7,
+  followerName: 'Oliver Twist',
+  isThreadReply: false,
+  contentPreview: "Who here's muted?"
+}
+[ResponseScheduler] Relevance analysis complete: {
+  follower: 'Oliver Twist',
+  isThreadReply: false,
+  score: 0.2,
+  reasoning: {
+    topicMatch: "The post does not align with any of Oliver's interests such as classic literature, street art, humanitarian causes, technology trends, or culinary adventures.",
+    personalityMatch: "The question 'Who here's muted?' lacks the warm, encouraging, and inspirational tone that Oliver prefers. It does not inspire or uplift.",
+    styleMatch: "The communication style is very simple and lacks the blend of old-world charm and modern excitement Oliver appreciates. It also doesn't incorporate any literary references or eloquent expressions."
+  }
+}
+[ResponseScheduler] Post 37 relevance for follower 7: 0.2
+[ResponseScheduler] Response probability calculation: {
+  followerId: 7,
+  followerName: 'Oliver Twist',
+  baseChance: 50,
+  relevanceScore: 0.2,
+  finalChance: 30.000000000000004,
+  expertise: [
+    'classic literature',
+    'street art',
+    'humanitarian causes',
+    'technology trends',
+    'culinary adventures'
+  ],
+  personality: ''
+}
+[ResponseScheduler] Random check: {
+  followerId: 7,
+  randomValue: 95.63093496386736,
+  finalChance: 30.000000000000004,
+  willRespond: false
+}
+[ResponseScheduler] Follower 7 chose not to respond: { randomValue: 95.63093496386736, requiredChance: 30.000000000000004 }
+[ResponseScheduler] Starting response scheduling for post 37 and follower 3
+[ResponseScheduler] Starting relevance calculation for: {
+  followerId: 3,
+  followerName: 'Ledger',
+  isThreadReply: false,
+  contentPreview: "Who here's muted?"
+}
+[ResponseScheduler] Relevance analysis complete: {
+  follower: 'Ledger',
+  isThreadReply: false,
+  score: 0.2,
+  reasoning: {
+    topicMatch: 'The post does not relate to Decentralized Finance, Smart Contracts, NFTs, Blockchain Security, or Cryptocurrency Trends.',
+    personalityMatch: "The content is more of a casual or whimsical question rather than an informative or technical discussion, so it doesn't align with the personality traits of a 'web3 guru'.",
+    styleMatch: 'The post lacks depth or educational value, and does not fit the concise, informative, or technical style that Ledger prefers.'
+  }
+}
+[ResponseScheduler] Post 37 relevance for follower 3: 0.2
+[ResponseScheduler] Response probability calculation: {
+  followerId: 3,
+  followerName: 'Ledger',
+  baseChance: 50,
+  relevanceScore: 0.2,
+  finalChance: 30.000000000000004,
+  expertise: [
+    'Decentralized Finance (DeFi)',
+    'Smart Contracts',
+    'Non-Fungible Tokens (NFTs)',
+    'Blockchain Security',
+    'Cryptocurrency Trends'
+  ],
+  personality: 'web3 guru'
+}
+[ResponseScheduler] Random check: {
+  followerId: 3,
+  randomValue: 95.0844611726061,
+  finalChance: 30.000000000000004,
+  willRespond: false
+}
+[ResponseScheduler] Follower 3 chose not to respond: { randomValue: 95.0844611726061, requiredChance: 30.000000000000004 }
