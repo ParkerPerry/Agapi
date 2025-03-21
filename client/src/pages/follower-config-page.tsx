@@ -80,20 +80,23 @@ export default function FollowerConfigPage() {
     }
   });
   
-  // Handle tools data when it becomes available
+  // Handle initializing tools when available
   useEffect(() => {
-    // Initialize tools in the toolset if availableTools are loaded but follower doesn't have tools configured
-    // Only run this effect if availableTools is available (not null or undefined)
     if (availableTools && availableTools.length > 0) {
-      // We need to check if follower exists before checking its properties
-      if (!follower?.tools) {
-        setToolset(prev => ({
-          ...prev,
-          equipped: availableTools
-        }));
-      }
+      setToolset(prev => ({
+        ...prev,
+        equipped: availableTools
+      }));
     }
-  }, [availableTools, follower]);
+  }, [availableTools]);
+  
+  // Handle follower tools configuration when follower data is loaded
+  useEffect(() => {
+    if (follower && follower.tools) {
+      // If the follower already has tools configured, use those
+      setToolset(follower.tools);
+    }
+  }, [follower]);
   
   // Helper function to equip or unequip a specific tool
   const toggleToolEquipped = (toolId: string, enabled: boolean) => {
