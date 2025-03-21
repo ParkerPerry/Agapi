@@ -482,7 +482,8 @@ export class ResponseScheduler {
       // Generate appropriate response depending on whether this is a thread reply or top-level comment
       let aiResponse;
       
-      if (parentId) {
+      // Explicitly check parentId as number since it could be null from the database schema
+      if (parentId !== null) {
         // For thread replies, use the parent content as context
         const parentInteraction = await storage.getInteraction(parentId);
         if (!parentInteraction) {
@@ -500,7 +501,8 @@ export class ResponseScheduler {
           
           // Build a simple message history for this thread if available
           if (interactions && interactions.length > 0) {
-            let currentId = parentId;
+            // Explicitly define currentId as number | null type to match schema
+            let currentId: number | null = parentId;
             let depth = 0;
             const maxDepth = 3; // Limit to 3 previous messages to keep context manageable
             
@@ -572,13 +574,13 @@ export class ResponseScheduler {
           postId: post.id,
           aiFollowerId: follower.id,
           userId: null,
-          type: parentId ? "reply" : aiResponse.type, // Force "reply" type for thread responses
+          type: parentId !== null ? "reply" : aiResponse.type, // Force "reply" type for thread responses
           content: processedContent,
           parentId: parentId, // Use parentId for thread replies, null for top-level
           toolsUsed: toolsUsed, // Store tool usage information
         });
 
-        console.log(`[ResponseScheduler] Created ${parentId ? 'thread reply' : 'comment'} for follower ${follower.id} on post ${post.id}`);
+        console.log(`[ResponseScheduler] Created ${parentId !== null ? 'thread reply' : 'comment'} for follower ${follower.id} on post ${post.id}`);
       } else {
         console.log(`[ResponseScheduler] Skipped low-confidence response from ${follower.id} for post ${post.id}`);
       }

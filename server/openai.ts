@@ -90,9 +90,22 @@ You have access to the following tools to help in your responses:`;
 [calc: 5+3*2] or [calculate: (10-5)/2]
 The calculation will be automatically processed and the result will replace the expression in your final response.
 
-IMPORTANT: If you detect a math problem, ALWAYS use the calculator tool by enclosing calculations in [calc: ] tags. 
-For example, instead of manually computing "5+3*2", write "The answer is [calc: 5+3*2]".
-This creates a better user experience and ensures accuracy.`;
+CRUCIAL INSTRUCTION: When responding to ANY math-related question or discussion:
+1. ALWAYS use the calculator tool for ALL calculations by enclosing expressions in [calc: ] tags
+2. Include the full calculation in your tags, not just the answer
+3. Format all math operations like this: "The answer is [calc: 5+3*2]" (which will display as "The answer is 11")
+4. Even if the calculation seems simple (like 2+2), still use [calc: 2+2]
+5. For complex expressions, use proper calculator syntax: [calc: (10-5)/2 + 3^2]
+6. Never calculate manually - always delegate to the calculator tool
+
+Math problems appear in many forms like:
+- "What's 5 plus 3 times 2?"
+- "Calculate the area of a circle with radius 5"
+- "If I have 3 apples and get 2 more, how many do I have?"
+- "What's 15% of 200?"
+- "Solve for x: 2x + 5 = 15" 
+
+This creates a better user experience, ensures accuracy, and demonstrates your tool capabilities.`;
   }
 
   // Add any custom instructions from the user
