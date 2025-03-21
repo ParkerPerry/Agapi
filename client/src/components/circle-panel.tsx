@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, Share2, ChevronRight, Pencil, UserPlus, UserMinus, Settings, PlusCircle, PowerOff, Mail, VolumeX, Volume2 } from "lucide-react";
+import { Users, Share2, ChevronRight, Pencil, UserPlus, UserMinus, Settings, PlusCircle, PowerOff, Mail, VolumeX, Volume2, Lock as LockIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { CircleEditDialog } from "@/components/circles/circle-edit-dialog";
@@ -116,11 +116,17 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
               </div>
               <div>
                 <h2 className="text-lg font-semibold">{circle.name}</h2>
-                <div className="flex items-center space-x-2">
-                  <p className="text-sm text-muted-foreground">
-                    Created by {owner.username}
-                  </p>
-                  <Badge variant={circle.visibility === "shared" ? "default" : "outline"} className="text-xs py-0 h-5">
+                <p className="text-sm text-muted-foreground">
+                  Created by {owner.username}
+                </p>
+                <div className="mt-1">
+                  <Badge 
+                    variant={circle.visibility === "shared" ? "default" : "outline"} 
+                    className="text-xs py-0 h-5 flex items-center gap-1"
+                  >
+                    {circle.visibility === "private" && (
+                      <LockIcon className="h-3 w-3" />
+                    )}
                     {circle.visibility}
                   </Badge>
                 </div>
