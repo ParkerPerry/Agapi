@@ -860,7 +860,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`[API] Is default Tom follower: ${isDefaultTom}`);
       
       // Create update object with basic fields
-      const updateData: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle">> = {
+      const updateData: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle" | "tools">> = {
         name: req.body.name,
         personality: req.body.personality,
         responsiveness: req.body.responsiveness,
@@ -877,6 +877,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         if (req.body.communicationStyle !== undefined) {
           updateData.communicationStyle = req.body.communicationStyle;
+        }
+        
+        // If we have tools, add them
+        if (req.body.tools !== undefined) {
+          updateData.tools = req.body.tools;
+          console.log(`[API] Updated tools: ${JSON.stringify(req.body.tools)}`);
         }
         
         // If we have interests, parse and add them
