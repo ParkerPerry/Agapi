@@ -443,6 +443,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Toggle mute status for an AI follower within a specific circle
+  app.patch("/api/circles/:id/followers/:followerId/toggle-mute", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const circleId = parseInt(req.params.id);
+      const followerId = parseInt(req.params.followerId);
+      
+      if (isNaN(circleId) || isNaN(followerId)) {
+        return res.status(400).json({ message: "Invalid circle ID or follower ID" });
+      }
+
+      // Check if user has access to this circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Get the follower to ensure it exists
+      const follower = await storage.getAiFollower(followerId);
+      if (!follower) {
+        return res.status(404).json({ message: "Follower not found" });
+      }
+
+      // Toggle the mute status
+      const updatedCircleFollower = await storage.toggleFollowerMuteInCircle(circleId, followerId);
+      
+      // Return the updated follower with muted status
+      res.json({
+        ...follower,
+        muted: updatedCircleFollower.muted
+      });
+    } catch (error) {
+      console.error("Error toggling follower mute status:", error);
+      res.status(500).json({ message: "Failed to toggle follower mute status" });
+    }
+  });
+
   // Update the existing post creation endpoint to support circles
   app.post("/api/posts", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);

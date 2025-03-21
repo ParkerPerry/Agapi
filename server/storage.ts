@@ -49,7 +49,7 @@ export interface IStorage {
   getDefaultCircle(userId: number): Promise<Circle>;
   addFollowerToCircle(circleId: number, aiFollowerId: number): Promise<CircleFollower>;
   removeFollowerFromCircle(circleId: number, aiFollowerId: number): Promise<void>;
-  getCircleFollowers(circleId: number): Promise<AiFollower[]>;
+  getCircleFollowers(circleId: number): Promise<(AiFollower & { muted?: boolean })[]>;
   toggleFollowerMuteInCircle(circleId: number, aiFollowerId: number, muted?: boolean): Promise<CircleFollower>;
   createPostInCircle(userId: number, circleId: number, content: string): Promise<Post>;
   getCirclePosts(circleId: number): Promise<Post[]>;
@@ -67,7 +67,7 @@ export interface IStorage {
     circle: Circle;
     owner: User;
     members: (CircleMember & { username: string })[];
-    followers: AiFollower[];
+    followers: (AiFollower & { muted?: boolean })[];
   } | undefined>;
   deactivateCircleMember(circleId: number, userId: number): Promise<void>;
   reactivateCircleMember(circleId: number, userId: number): Promise<void>;
@@ -634,10 +634,11 @@ export class DatabaseStorage implements IStorage {
     return updatedFollower;
   }
 
-  async getCircleFollowers(circleId: number): Promise<AiFollower[]> {
+  async getCircleFollowers(circleId: number): Promise<(AiFollower & { muted?: boolean })[]> {
     const followers = await db
       .select({
         follower: ai_followers,
+        muted: circleFollowers.muted,
       })
       .from(circleFollowers)
       .innerJoin(
@@ -646,7 +647,10 @@ export class DatabaseStorage implements IStorage {
       )
       .where(eq(circleFollowers.circleId, circleId));
 
-    return followers.map(f => f.follower);
+    return followers.map(f => ({
+      ...f.follower,
+      muted: f.muted,
+    }));
   }
 
   async createPostInCircle(userId: number, circleId: number, content: string): Promise<Post> {
@@ -779,7 +783,7 @@ export class DatabaseStorage implements IStorage {
     circle: Circle;
     owner: User;
     members: (CircleMember & { username: string })[];
-    followers: AiFollower[];
+    followers: (AiFollower & { muted?: boolean })[];
   } | undefined> {
     const circle = await this.getCircle(id);
     if (!circle) return undefined;
