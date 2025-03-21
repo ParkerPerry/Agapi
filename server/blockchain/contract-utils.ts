@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import solc from 'solc';
 import dotenv from 'dotenv';
 
@@ -21,8 +22,9 @@ const PRIVATE_KEY = process.env.ETH_PRIVATE_KEY || '';
  */
 export function compileContract(contractFileName: string) {
   try {
-    // Read the Solidity source code
-    const contractPath = path.resolve(__dirname, '../../contracts', `${contractFileName}.sol`);
+    // Read the Solidity source code directly from the project root
+    const contractPath = path.resolve('./contracts', `${contractFileName}.sol`);
+    console.log(`Reading contract from: ${contractPath}`);
     const sourceCode = fs.readFileSync(contractPath, 'utf8');
     
     // Prepare input for solc compiler

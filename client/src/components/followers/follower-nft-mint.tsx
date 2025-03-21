@@ -54,7 +54,7 @@ export function FollowerNftMint({ follower }: FollowerNftMintProps) {
   const fetchStatus = async () => {
     try {
       const response = await apiRequest(`/api/nft/status/${follower.id}`, "GET");
-      setStatus(response as MintingStatus);
+      setStatus(response as unknown as MintingStatus);
     } catch (error) {
       console.error('Error fetching NFT status:', error);
       toast({
@@ -80,33 +80,7 @@ export function FollowerNftMint({ follower }: FollowerNftMintProps) {
       const response = await apiRequest(`/api/nft/mint/${follower.id}`, "POST", {
         ownerAddress
       });
-      setStatus(response as MintingStatus);
-      toast({
-        title: 'Success',
-        description: 'NFT minting started successfully',
-      });
-    } catch (error) {
-      console.error('Error minting NFT:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to mint NFT',
-        variant: 'destructive'
-      });
-    } finally {
-      setLoading(false);
-    }
-
-    setLoading(true);
-    try {
-      const response = await apiRequest(`/api/nft/mint/${follower.id}`, {
-        method: 'POST',
-        body: JSON.stringify({ ownerAddress }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      setStatus(response as MintingStatus);
+      setStatus(response as unknown as MintingStatus);
       toast({
         title: 'Success',
         description: 'NFT minting process started',
