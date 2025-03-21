@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { NavBar } from "@/components/nav-bar";
-import { PostForm } from "@/components/post-form";
+import { PostForm } from "@/components/posts";
 import { PostCard } from "@/components/post-card";
 import { useQuery } from "@tanstack/react-query";
 import { Post } from "@shared/schema";
