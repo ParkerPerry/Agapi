@@ -1,12 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { Circle, CircleMember, AiFollower, User } from "@shared/schema";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Circle, CircleMember, AiFollower, User, CircleInvitation } from "@shared/schema";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, Share2, ChevronRight } from "lucide-react";
+import { Users, Share2, ChevronRight, Pencil, UserPlus, UserMinus, Settings, PlusCircle, PowerOff, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { CircleEditDialog } from "@/components/circles/circle-edit-dialog";
+import { CircleShareDialog } from "@/components/circles/circle-share-dialog";
+import { CircleFollowerManager } from "@/components/circles/circle-follower-manager";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 
 interface CircleDetails {
   circle: Circle;
@@ -22,14 +28,41 @@ interface CirclePanelProps {
 }
 
 export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelProps) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  // Fetch circle details
   const { data: circleDetails } = useQuery<CircleDetails>({
     queryKey: [`/api/circles/${circleId}/details`],
     enabled: !!circleId,
+  });
+  
+  // Fetch pending invitations
+  const { data: pendingInvitations } = useQuery<CircleInvitation[]>({
+    queryKey: [`/api/circles/${circleId}/invitations`],
+    enabled: !!circleId,
+  });
+  
+  // Mutation for toggling follower active status
+  const toggleFollowerActiveMutation = useMutation({
+    mutationFn: async (followerId: number) => {
+      await apiRequest("DELETE", `/api/followers/${followerId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/followers`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/details`] });
+      toast({
+        title: "Follower status updated",
+        description: "The AI follower status has been updated successfully.",
+      });
+    },
   });
 
   if (!circleDetails) return null;
 
   const { circle, owner, members, followers } = circleDetails;
+  const isOwner = user?.id === owner.id;
 
   // Group followers by their owners (userId)
   const followersByOwner = followers.reduce((groups, follower) => {
@@ -70,7 +103,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
         isCollapsed && "opacity-0 invisible h-0 overflow-hidden"
       )}>
         <div className="p-4 border-b">
-          <div className="flex items-center">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div
                 className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
@@ -90,6 +123,21 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                 </div>
               </div>
             </div>
+            
+            {/* Circle actions */}
+            {isOwner && (
+              <div className="flex space-x-1">
+                <CircleEditDialog 
+                  circle={circle}
+                  onEdit={(updatedCircle) => {
+                    queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/details`] });
+                  }} 
+                />
+                {!circle.isDefault && (
+                  <CircleShareDialog circle={circle} />
+                )}
+              </div>
+            )}
           </div>
           {circle.description && (
             <p className="text-sm text-muted-foreground mt-2">
