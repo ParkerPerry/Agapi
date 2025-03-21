@@ -2,11 +2,11 @@ import {
   InsertUser, User, Post, AiFollower, AiInteraction, PendingResponse,
   Circle, InsertCircle, CircleFollower, InsertCircleFollower,
   InsertCircleMember, CircleMember, InsertCircleInvitation, CircleInvitation,
-  Notification, InsertNotification,
+  Notification, InsertNotification, DirectChat, InsertDirectChat,
   // Add table imports
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
-  notifications
+  notifications, directChats
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
@@ -80,6 +80,10 @@ export interface IStorage {
   markNotificationRead(id: number): Promise<void>;
   markAllNotificationsRead(userId: number): Promise<void>;
   deleteNotification(id: number): Promise<void>;
+  
+  // Direct chat methods
+  createDirectChatMessage(message: Omit<InsertDirectChat, "createdAt">): Promise<DirectChat>;
+  getDirectChatHistory(userId: number, aiFollowerId: number, limit?: number): Promise<DirectChat[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -918,6 +922,55 @@ export class DatabaseStorage implements IStorage {
     await db
       .delete(notifications)
       .where(eq(notifications.id, id));
+  }
+
+  // Direct chat methods
+  async createDirectChatMessage(message: Omit<InsertDirectChat, "createdAt">): Promise<DirectChat> {
+    try {
+      console.log("[Storage] Creating direct chat message:", {
+        userId: message.userId,
+        aiFollowerId: message.aiFollowerId,
+        isUserMessage: message.isUserMessage,
+        hasToolsUsed: !!message.toolsUsed
+      });
+
+      const [chatMessage] = (await db
+        .insert(directChats)
+        .values(message)
+        .returning()) as DirectChat[];
+
+      console.log("[Storage] Created direct chat message:", {
+        id: chatMessage.id,
+        isUserMessage: chatMessage.isUserMessage
+      });
+
+      return chatMessage;
+    } catch (error) {
+      console.error("[Storage] Error creating direct chat message:", error);
+      throw error;
+    }
+  }
+
+  async getDirectChatHistory(userId: number, aiFollowerId: number, limit: number = 50): Promise<DirectChat[]> {
+    try {
+      console.log("[Storage] Getting direct chat history for user:", userId, "with AI follower:", aiFollowerId);
+      
+      const chatHistory = await db
+        .select()
+        .from(directChats)
+        .where(and(
+          eq(directChats.userId, userId),
+          eq(directChats.aiFollowerId, aiFollowerId)
+        ))
+        .orderBy(desc(directChats.createdAt))
+        .limit(limit);
+      
+      // Return in chronological order (oldest first)
+      return chatHistory.reverse();
+    } catch (error) {
+      console.error("[Storage] Error getting direct chat history:", error);
+      throw error;
+    }
   }
 }
 
