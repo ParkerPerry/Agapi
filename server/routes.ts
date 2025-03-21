@@ -320,6 +320,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get circles" });
     }
   });
+  
+  // Get user's default circle
+  app.get("/api/default-circle", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const defaultCircle = await storage.getDefaultCircle(req.user!.id);
+      res.json(defaultCircle);
+    } catch (error) {
+      console.error("Error getting default circle:", error);
+      res.status(500).json({ message: "Failed to get default circle" });
+    }
+  });
 
   app.post("/api/circles", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
