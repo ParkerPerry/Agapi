@@ -88,7 +88,11 @@ You have access to the following tools to help in your responses:`;
   if (enabledTools.some(tool => tool.id === 'calculator')) {
     toolsPrompt += `\n\nTo use the Calculator tool, include calculations in your response using this format:
 [calc: 5+3*2] or [calculate: (10-5)/2]
-The calculation will be automatically processed and the result will replace the expression in your final response.`;
+The calculation will be automatically processed and the result will replace the expression in your final response.
+
+IMPORTANT: If you detect a math problem, ALWAYS use the calculator tool by enclosing calculations in [calc: ] tags. 
+For example, instead of manually computing "5+3*2", write "The answer is [calc: 5+3*2]".
+This creates a better user experience and ensures accuracy.`;
   }
 
   // Add any custom instructions from the user

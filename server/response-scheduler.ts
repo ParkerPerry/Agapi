@@ -517,7 +517,7 @@ export class ResponseScheduler {
               previousMessages.unshift(`${author}: ${interaction.content || ""}`);
               
               // Move to parent of this message (safely handle null)
-              currentId = interaction.parentId ? interaction.parentId : null;
+              currentId = interaction.parentId || null;
               depth++;
             }
             
