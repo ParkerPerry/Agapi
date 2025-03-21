@@ -531,21 +531,43 @@ export class ResponseScheduler {
           parentInteraction.content || undefined,
           threadContext,
           // Pass the gathered previous messages if available
-          previousMessages.length > 0 ? previousMessages.join("\n") : undefined
+          previousMessages.length > 0 ? previousMessages.join("\n") : undefined,
+          follower // Pass the follower for tool integration
         );
       } else {
         // For top-level comments, use the post content directly
-        aiResponse = await generateAIResponse(post.content, follower.personality);
+        aiResponse = await generateAIResponse(
+          post.content, 
+          follower.personality,
+          undefined,
+          undefined,
+          undefined,
+          follower // Pass the follower for tool integration
+        );
       }
 
       // Only create interaction if confidence is high enough
       if (aiResponse.confidence > 0.7) {
+        // Process the content using any tools the follower has equipped
+        let processedContent = aiResponse.content || null;
+        
+        if (processedContent && follower.tools && follower.tools.equipped && follower.tools.equipped.length > 0) {
+          try {
+            // Process the content with the follower's tools
+            processedContent = processTextWithTools(processedContent, follower);
+            console.log(`[ResponseScheduler] Processed content with AI tools for follower ${follower.id}`);
+          } catch (error) {
+            console.error(`[ResponseScheduler] Error processing content with tools:`, error);
+            // Continue with original content in case of error
+          }
+        }
+        
         await storage.createAiInteraction({
           postId: post.id,
           aiFollowerId: follower.id,
           userId: null,
           type: parentId ? "reply" : aiResponse.type, // Force "reply" type for thread responses
-          content: aiResponse.content || null,
+          content: processedContent,
           parentId: parentId, // Use parentId for thread replies, null for top-level
         });
 
