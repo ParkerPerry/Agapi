@@ -76,7 +76,7 @@ export function CircleCreateForm() {
                       open={showEmojiPicker}
                       onOpenChange={setShowEmojiPicker}
                     >
-                      <DialogContent className="p-0">
+                      <DialogContent className="p-0 overflow-hidden">
                         <EmojiPicker
                           theme={Theme.LIGHT}
                           onEmojiClick={(emoji) => {

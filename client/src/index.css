@@ -48,6 +48,52 @@
   --sidebar-ring: 313 100% 50%;
 }
 
+/* Custom styling for emoji-picker */
+.emoji-picker-custom {
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  border: 1px solid var(--border);
+}
+
+.emoji-picker-custom .epr-search-container input {
+  border-radius: var(--radius);
+  background-color: var(--background);
+  color: var(--foreground);
+  border-color: var(--border);
+  font-family: var(--font-sans);
+}
+
+.emoji-picker-custom .epr-emoji-category-label {
+  background-color: var(--card);
+  color: var(--card-foreground);
+  font-weight: 500;
+}
+
+.emoji-picker-custom .epr-body::-webkit-scrollbar-track {
+  background-color: var(--secondary);
+}
+
+.emoji-picker-custom .epr-body::-webkit-scrollbar-thumb {
+  background-color: var(--muted-foreground);
+  border-radius: var(--radius);
+}
+
+/* Force light theme on emoji picker elements */
+.emoji-picker-custom .epr-body,
+.emoji-picker-custom .epr-header {
+  background-color: #fff;
+}
+
+/* Hide the "What's your mood" caption and ensure proper styling */
+.emoji-picker-custom .epr-preview {
+  display: none !important;
+}
+
+/* Ensure emoji picker dialog has appropriate size and padding */
+.p-0.overflow-hidden {
+  max-height: 450px;
+}
+
 .dark {
   --background: 240 41% 8%;
   --foreground: 218 27% 94%;
