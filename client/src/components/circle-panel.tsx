@@ -108,11 +108,18 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div
-                className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
-                style={{ backgroundColor: circle.color + "20" }}
-              >
-                {circle.icon}
+              <div className="relative">
+                <div
+                  className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
+                  style={{ backgroundColor: circle.color + "20" }}
+                >
+                  {circle.icon}
+                  {circle.visibility === "private" && (
+                    <div className="absolute bottom-0 right-0 bg-background rounded-full p-0.5 shadow-sm">
+                      <LockIcon className="h-3 w-3" />
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <h2 className="text-lg font-semibold">{circle.name}</h2>
@@ -121,12 +128,9 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                 </p>
                 <div className="mt-1">
                   <Badge 
-                    variant={circle.visibility === "shared" ? "default" : "outline"} 
-                    className="text-xs py-0 h-5 flex items-center gap-1"
+                    variant={circle.visibility === "shared" ? "secondary" : "outline"} 
+                    className="text-xs py-0 h-5 text-muted-foreground"
                   >
-                    {circle.visibility === "private" && (
-                      <LockIcon className="h-3 w-3" />
-                    )}
                     {circle.visibility}
                   </Badge>
                 </div>
@@ -324,11 +328,18 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
       {/* Collapsed state content */}
       {isCollapsed && (
         <div className="flex items-center justify-center py-4 mt-6">
-          <div
-            className="flex items-center justify-center w-8 h-8 rounded-full text-lg"
-            style={{ backgroundColor: circle.color + "20" }}
-          >
-            {circle.icon}
+          <div className="relative">
+            <div
+              className="flex items-center justify-center w-8 h-8 rounded-full text-lg"
+              style={{ backgroundColor: circle.color + "20" }}
+            >
+              {circle.icon}
+              {circle.visibility === "private" && (
+                <div className="absolute bottom-0 right-0 bg-background rounded-full p-0.5 shadow-sm">
+                  <LockIcon className="h-2.5 w-2.5" />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
