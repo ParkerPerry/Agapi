@@ -82,12 +82,16 @@ export default function FollowerConfigPage() {
   
   // Handle tools data when it becomes available
   useEffect(() => {
-    // Initialize tools in the toolset if follower doesn't have tools configured yet
-    if (availableTools && !follower?.tools && availableTools.length > 0) {
-      setToolset(prev => ({
-        ...prev,
-        equipped: availableTools
-      }));
+    // Initialize tools in the toolset if availableTools are loaded but follower doesn't have tools configured
+    // Only run this effect if availableTools is available (not null or undefined)
+    if (availableTools && availableTools.length > 0) {
+      // We need to check if follower exists before checking its properties
+      if (!follower?.tools) {
+        setToolset(prev => ({
+          ...prev,
+          equipped: availableTools
+        }));
+      }
     }
   }, [availableTools, follower]);
   
