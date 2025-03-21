@@ -133,9 +133,6 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                     queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/details`] });
                   }} 
                 />
-                {!circle.isDefault && (
-                  <CircleShareDialog circle={circle} />
-                )}
               </div>
             )}
           </div>
