@@ -1,8 +1,10 @@
 // Script to create a test user for the CircleTube application
-require('dotenv').config();
-const { Pool } = require('pg');
-const { scrypt, randomBytes } = require('crypto');
-const { promisify } = require('util');
+import 'dotenv/config';
+import pg from 'pg';
+import { scrypt, randomBytes } from 'crypto';
+import { promisify } from 'util';
+
+const { Pool } = pg;
 
 const scryptAsync = promisify(scrypt);
 

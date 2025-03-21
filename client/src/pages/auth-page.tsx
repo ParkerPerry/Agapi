@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { useEffect } from "react";
+import { TestCredentials } from "@/components/test-credentials";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
@@ -58,6 +59,7 @@ export default function AuthPage() {
               </TabsList>
 
               <TabsContent value="login">
+                <TestCredentials />
                 <Form {...loginForm}>
                   <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))} className="space-y-4">
                     <FormField
