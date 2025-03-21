@@ -50,6 +50,7 @@ export interface IStorage {
   addFollowerToCircle(circleId: number, aiFollowerId: number): Promise<CircleFollower>;
   removeFollowerFromCircle(circleId: number, aiFollowerId: number): Promise<void>;
   getCircleFollowers(circleId: number): Promise<AiFollower[]>;
+  toggleFollowerMuteInCircle(circleId: number, aiFollowerId: number, muted?: boolean): Promise<CircleFollower>;
   createPostInCircle(userId: number, circleId: number, content: string): Promise<Post>;
   getCirclePosts(circleId: number): Promise<Post[]>;
   movePostToCircle(postId: number, circleId: number): Promise<Post>;
@@ -592,6 +593,45 @@ export class DatabaseStorage implements IStorage {
         eq(circleFollowers.circleId, circleId),
         eq(circleFollowers.aiFollowerId, aiFollowerId)
       ));
+  }
+
+  async toggleFollowerMuteInCircle(circleId: number, aiFollowerId: number, muted?: boolean): Promise<CircleFollower> {
+    console.log("[Storage] Toggling follower mute status in circle:", circleId, "for follower:", aiFollowerId);
+    
+    // First get the current state
+    const [circleFollower] = await db
+      .select()
+      .from(circleFollowers)
+      .where(
+        and(
+          eq(circleFollowers.circleId, circleId),
+          eq(circleFollowers.aiFollowerId, aiFollowerId)
+        )
+      );
+    
+    if (!circleFollower) {
+      throw new Error(`Circle follower relationship not found for circle ${circleId} and follower ${aiFollowerId}`);
+    }
+    
+    // If muted param is provided, use it, otherwise toggle the current value
+    const newMutedValue = muted !== undefined ? muted : !circleFollower.muted;
+    
+    console.log("[Storage] Setting muted status to:", newMutedValue);
+    
+    // Update the muted status
+    const [updatedFollower] = await db
+      .update(circleFollowers)
+      .set({ muted: newMutedValue })
+      .where(
+        and(
+          eq(circleFollowers.circleId, circleId),
+          eq(circleFollowers.aiFollowerId, aiFollowerId)
+        )
+      )
+      .returning();
+    
+    console.log("[Storage] Successfully updated follower mute status");
+    return updatedFollower;
   }
 
   async getCircleFollowers(circleId: number): Promise<AiFollower[]> {

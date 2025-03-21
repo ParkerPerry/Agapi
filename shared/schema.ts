@@ -54,6 +54,7 @@ export const circleFollowers = pgTable("circle_followers", {
   circleId: integer("circle_id").references(() => circles.id).notNull(),
   aiFollowerId: integer("ai_follower_id").references(() => ai_followers.id).notNull(),
   addedAt: timestamp("added_at").defaultNow(),
+  muted: boolean("muted").default(false).notNull(),
 });
 
 // Update posts table to include circle_id
@@ -234,6 +235,7 @@ export const insertCircleFollowerSchema = createInsertSchema(circleFollowers)
   .pick({
     circleId: true,
     aiFollowerId: true,
+    muted: true,
   });
 
 export const insertInteractionSchema = createInsertSchema(aiInteractions)
