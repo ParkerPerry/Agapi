@@ -58,6 +58,29 @@ export function CircleEditDialog({ circle, onEdit }: CircleEditDialogProps) {
       });
     },
   });
+  
+  // Mutation to set a circle as default
+  const setDefaultCircleMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", `/api/circles/${circle.id}/set-default`);
+      return res.json();
+    },
+    onSuccess: (updatedCircle) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
+      onEdit?.(updatedCircle);
+      toast({
+        title: "Default circle set",
+        description: `${circle.name} is now your default circle.`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to set default circle. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   return (
     <Dialog>
@@ -155,17 +178,47 @@ export function CircleEditDialog({ circle, onEdit }: CircleEditDialogProps) {
                 )}
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={updateCircleMutation.isPending}
-            >
-              {updateCircleMutation.isPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                "Update Circle"
-              )}
-            </Button>
+            <div className="space-y-4">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={updateCircleMutation.isPending}
+              >
+                {updateCircleMutation.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Update Circle"
+                )}
+              </Button>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant={circle.isDefault ? "outline" : "secondary"}
+                      className="w-full"
+                      disabled={circle.isDefault || setDefaultCircleMutation.isPending}
+                      onClick={() => setDefaultCircleMutation.mutate()}
+                    >
+                      {setDefaultCircleMutation.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Home className="mr-2 h-4 w-4" />
+                          {circle.isDefault ? "Default Circle" : "Set as Default Circle"}
+                        </>
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {circle.isDefault 
+                      ? "This is already your default circle" 
+                      : "Make this your default circle that appears on your home page"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </form>
         </Form>
       </DialogContent>
