@@ -73,6 +73,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Start the response scheduler
   const scheduler = ResponseScheduler.getInstance();
   scheduler.start();
+  
+  // Add user profile update endpoint
+  app.patch("/api/user/profile", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    console.log("[API] PATCH /api/user/profile - Request received");
+    console.log("[API] Request body:", req.body);
+    
+    try {
+      const updates: Partial<Pick<User, "avatarUrl" | "bio">> = {};
+      
+      // Only include provided fields
+      if (req.body.avatarUrl !== undefined) {
+        updates.avatarUrl = req.body.avatarUrl;
+      }
+      
+      if (req.body.bio !== undefined) {
+        updates.bio = req.body.bio;
+      }
+      
+      // Update the user profile
+      const updatedUser = await storage.updateUser(req.user!.id, updates);
+      console.log("[API] User profile updated successfully");
+      
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("[API] Error updating user profile:", error);
+      res.status(500).json({ message: "Failed to update user profile" });
+    }
+  });
 
   // Add new delete-all endpoint before the existing notification routes
   app.delete("/api/notifications/delete-all", async (req, res) => {

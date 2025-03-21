@@ -17,6 +17,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: Partial<Pick<User, "avatarUrl" | "bio">>): Promise<User>;
   createPost(userId: number, content: string): Promise<Post>;
   getPost(id: number): Promise<Post | undefined>;
   getUserPosts(userId: number): Promise<Post[]>;
@@ -101,6 +102,23 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = (await db.insert(users).values(insertUser).returning()) as User[];
     return user;
+  }
+  
+  async updateUser(id: number, updates: Partial<Pick<User, "avatarUrl" | "bio">>): Promise<User> {
+    try {
+      console.log("[Storage] Updating user:", id, "with:", updates);
+      const [updatedUser] = (await db
+        .update(users)
+        .set(updates)
+        .where(eq(users.id, id))
+        .returning()) as User[];
+
+      console.log("[Storage] Updated user successfully");
+      return updatedUser;
+    } catch (error) {
+      console.error("[Storage] Error updating user:", error);
+      throw error;
+    }
   }
 
   async createPost(userId: number, content: string): Promise<Post> {
