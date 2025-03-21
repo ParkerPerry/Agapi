@@ -46,24 +46,26 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
       "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300 border-r shadow-sm bg-card",
       isCollapsed ? "w-14" : "w-72"
     )}>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute right-1 top-2 z-10"
-        onClick={() => onCollapse(!isCollapsed)}
-      >
-        <ChevronRight className={cn(
-          "h-4 w-4 transition-transform",
-          !isCollapsed && "rotate-180"
-        )} />
-      </Button>
+      <div className="absolute top-0 right-0 h-10 flex items-center pr-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 rounded-full flex items-center justify-center"
+          onClick={() => onCollapse(!isCollapsed)}
+        >
+          <ChevronRight className={cn(
+            "h-4 w-4 transition-transform",
+            !isCollapsed && "rotate-180"
+          )} />
+        </Button>
+      </div>
 
       <div className={cn(
         "transition-opacity duration-300",
         isCollapsed && "opacity-0"
       )}>
         <div className="p-4 border-b">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <div className="flex items-center space-x-2">
               <div
                 className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
@@ -73,14 +75,16 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
               </div>
               <div>
                 <h2 className="text-lg font-semibold">{circle.name}</h2>
-                <p className="text-sm text-muted-foreground">
-                  Created by {owner.username}
-                </p>
+                <div className="flex items-center space-x-2">
+                  <p className="text-sm text-muted-foreground">
+                    Created by {owner.username}
+                  </p>
+                  <Badge variant={circle.visibility === "shared" ? "default" : "outline"} className="text-xs py-0 h-5">
+                    {circle.visibility}
+                  </Badge>
+                </div>
               </div>
             </div>
-            <Badge variant={circle.visibility === "shared" ? "default" : "outline"}>
-              {circle.visibility}
-            </Badge>
           </div>
           {circle.description && (
             <p className="text-sm text-muted-foreground mt-2">
