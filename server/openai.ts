@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { ThreadContextManager, ThreadContextData } from "./context-manager";
+import { AiFollower } from "@shared/schema";
 
 // OpenAI configuration remains unchanged
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -60,12 +61,52 @@ export async function generateAIBackground(
   }
 }
 
+/**
+ * Generates the tools information for the AI prompt based on the follower's equipped tools
+ */
+function generateToolsPrompt(follower?: AiFollower): string {
+  if (!follower || !follower.tools || !follower.tools.equipped || follower.tools.equipped.length === 0) {
+    return '';
+  }
+
+  // Filter only enabled tools
+  const enabledTools = follower.tools.equipped.filter(tool => tool.enabled);
+  if (enabledTools.length === 0) {
+    return '';
+  }
+
+  // Generate tools description
+  let toolsPrompt = `\nAVAILABLE TOOLS:
+You have access to the following tools to help in your responses:`;
+
+  // Add each enabled tool
+  enabledTools.forEach(tool => {
+    toolsPrompt += `\n- ${tool.name}: ${tool.description}`;
+  });
+
+  // Add calculator specific information if it's enabled
+  if (enabledTools.some(tool => tool.id === 'calculator')) {
+    toolsPrompt += `\n\nTo use the Calculator tool, include calculations in your response using this format:
+[calc: 5+3*2] or [calculate: (10-5)/2]
+The calculation will be automatically processed and the result will replace the expression in your final response.`;
+  }
+
+  // Add any custom instructions from the user
+  if (follower.tools.customInstructions) {
+    toolsPrompt += `\n\nCUSTOM TOOL INSTRUCTIONS:
+${follower.tools.customInstructions}`;
+  }
+
+  return toolsPrompt;
+}
+
 export async function generateAIResponse(
   postContent: string,
   personality: string,
   previousMessage?: string,
   threadContext?: ThreadContextData,
-  previousMessages?: string
+  previousMessages?: string,
+  follower?: AiFollower
 ): Promise<AIResponse> {
   try {
     const contextManager = ThreadContextManager.getInstance();
@@ -97,6 +138,9 @@ export async function generateAIResponse(
       }
     }
 
+    // Generate tools prompt if the follower has any tools equipped
+    const toolsPrompt = generateToolsPrompt(follower);
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -120,9 +164,10 @@ export async function generateAIResponse(
                - Reference recent messages naturally (don't force it)
                - It's okay to sometimes forget or misremember things
                - Let your personality guide how you maintain conversation threads
-
+            
             CONVERSATION STATE:
             ${conversationHistory || "Starting a new conversation"}
+            ${toolsPrompt}
 
             RESPONSE FORMAT:
             Reply in JSON:

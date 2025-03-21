@@ -3,6 +3,7 @@ import { generateAIResponse } from "./openai";
 import { PendingResponse, AiFollower } from "@shared/schema";
 import { ThreadContextData } from "./context-manager";
 import OpenAI from "openai";
+import { processTextWithTools } from "./tools";
 
 export class ResponseScheduler {
   private static instance: ResponseScheduler;
