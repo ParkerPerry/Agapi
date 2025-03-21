@@ -27,8 +27,10 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
       // If defaultCircleId is provided, create a post in that circle
       // Otherwise, create a post in the user's default circle
       if (defaultCircleId) {
-        const res = await apiRequest("POST", `/api/circles/${defaultCircleId}/posts`, {
+        // Use the regular posts endpoint with circleId in the body
+        const res = await apiRequest("POST", "/api/posts", {
           content: data.content,
+          circleId: defaultCircleId
         });
         return res.json();
       } else {
