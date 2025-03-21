@@ -6,3 +6,4 @@ export * from "./post-header";
 export * from "./post-content";
 export * from "./post-stats";
 export * from "./post-card";
+export * from "./post-form";

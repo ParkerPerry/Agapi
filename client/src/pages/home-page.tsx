@@ -1,7 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { NavBar } from "@/components/nav-bar";
-import { PostForm } from "@/components/post-form";
-import { PostCard } from "@/components/posts/post-card";
+import { PostForm, PostCard } from "@/components/posts";
 import { CirclePanel } from "@/components/circle-panel";
 import { useQuery } from "@tanstack/react-query";
 import { Post, Circle } from "@shared/schema";
