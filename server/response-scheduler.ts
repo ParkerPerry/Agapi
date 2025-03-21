@@ -312,13 +312,25 @@ export class ResponseScheduler {
    */
   public async scheduleThreadResponse(
     postId: number, 
-    follower: AiFollower, 
+    follower: AiFollower & { muted?: boolean }, 
     parentId: number, 
     contextMetadata: string,
     isPrimaryTarget: boolean = true
   ): Promise<void> {
     try {
       console.log(`[ResponseScheduler] Starting thread response scheduling for post ${postId}, parent ${parentId}, follower ${follower.id}`);
+
+      // First, check if follower is inactive globally
+      if (!follower.active) {
+        console.log(`[ResponseScheduler] Follower ${follower.id} (${follower.name}) is globally inactive and will be skipped for thread response`);
+        return;
+      }
+
+      // Check if this follower is muted in this circle
+      if (follower.muted) {
+        console.log(`[ResponseScheduler] Follower ${follower.id} (${follower.name}) is muted in this circle and will be skipped for thread response`);
+        return;
+      }
 
       // Get post content for relevance analysis
       const post = await storage.getPost(postId);
