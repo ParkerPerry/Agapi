@@ -24,18 +24,27 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
 
   const createPostMutation = useMutation({
     mutationFn: async (data: { content: string }) => {
-      if (!defaultCircleId) {
-        throw new Error("No circle selected");
+      // If defaultCircleId is provided, create a post in that circle
+      // Otherwise, create a post in the user's default circle
+      if (defaultCircleId) {
+        const res = await apiRequest("POST", `/api/circles/${defaultCircleId}/posts`, {
+          content: data.content,
+        });
+        return res.json();
+      } else {
+        const res = await apiRequest("POST", "/api/posts", {
+          content: data.content,
+        });
+        return res.json();
       }
-
-      const res = await apiRequest("POST", "/api/posts", {
-        content: data.content,
-        circleId: defaultCircleId,
-      });
-      return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/circles/${defaultCircleId}/posts`] });
+      // Invalidate the appropriate query depending on whether we're in a circle or not
+      if (defaultCircleId) {
+        queryClient.invalidateQueries({ queryKey: [`/api/circles/${defaultCircleId}/posts`] });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+      }
       form.reset({ content: "" });
     },
   });
