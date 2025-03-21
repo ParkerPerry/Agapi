@@ -46,11 +46,15 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
       "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300 border-r shadow-sm bg-card",
       isCollapsed ? "w-14" : "w-72"
     )}>
-      <div className="absolute top-0 right-0 h-10 flex items-center pr-1">
+      {/* The toggle button should always be visible, regardless of panel state */}
+      <div className={cn(
+        "absolute top-0 right-0 h-10 flex items-center",
+        isCollapsed ? "w-full justify-end pr-1" : "pr-1" 
+      )}>
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 rounded-full flex items-center justify-center"
+          className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-muted"
           onClick={() => onCollapse(!isCollapsed)}
         >
           <ChevronRight className={cn(
@@ -60,9 +64,10 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
         </Button>
       </div>
 
+      {/* Expanded content - hidden when collapsed */}
       <div className={cn(
         "transition-opacity duration-300",
-        isCollapsed && "opacity-0"
+        isCollapsed && "opacity-0 invisible h-0 overflow-hidden"
       )}>
         <div className="p-4 border-b">
           <div className="flex items-center">
@@ -175,8 +180,9 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
         </div>
       </div>
 
+      {/* Collapsed state content */}
       {isCollapsed && (
-        <div className="flex items-center justify-center py-4">
+        <div className="flex items-center justify-center py-4 mt-6">
           <div
             className="flex items-center justify-center w-8 h-8 rounded-full text-lg"
             style={{ backgroundColor: circle.color + "20" }}
