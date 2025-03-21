@@ -316,3 +316,48 @@ export type InsertCircleMember = z.infer<typeof insertCircleMemberSchema>;
 export type CircleMember = typeof circleMembers.$inferSelect;
 export type InsertCircleInvitation = z.infer<typeof insertCircleInvitationSchema>;
 export type CircleInvitation = typeof circleInvitations.$inferSelect;
+
+// Table for direct chat messages between users and AI followers
+export const directChats = pgTable("direct_chats", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  aiFollowerId: integer("ai_follower_id").references(() => ai_followers.id).notNull(),
+  content: text("content").notNull(),
+  isUserMessage: boolean("is_user_message").notNull(),
+  toolsUsed: json("tools_used").$type<{
+    used: boolean;
+    tools: Array<{
+      id: string;
+      name: string;
+      usageCount: number;
+      examples: string[];
+    }>;
+  }>(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Direct chats relations
+export const directChatsRelations = relations(directChats, ({ one }) => ({
+  user: one(users, {
+    fields: [directChats.userId],
+    references: [users.id],
+  }),
+  aiFollower: one(ai_followers, {
+    fields: [directChats.aiFollowerId],
+    references: [ai_followers.id],
+  }),
+}));
+
+// Insert schema for direct chats
+export const insertDirectChatSchema = createInsertSchema(directChats)
+  .pick({
+    userId: true,
+    aiFollowerId: true,
+    content: true,
+    isUserMessage: true,
+    toolsUsed: true,
+  });
+
+// Direct chat type definitions
+export type DirectChat = typeof directChats.$inferSelect;
+export type InsertDirectChat = z.infer<typeof insertDirectChatSchema>;
