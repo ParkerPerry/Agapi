@@ -8,8 +8,7 @@ import {
   LogOut, 
   HelpCircle, 
   Circle,
-  MessageCircle,
-  Settings
+  MessageCircle
 } from "lucide-react";
 import { useTour } from "@/components/tour/tour-context";
 import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
@@ -118,10 +117,6 @@ export function NavBar() {
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
                 <Link href="/profile">Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <Link href="/account">Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <MessageCircle className="mr-2 h-4 w-4" />

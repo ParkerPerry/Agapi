@@ -2,14 +2,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
 
-type ComponentType = () => React.JSX.Element;
-
 export function ProtectedRoute({
   path,
   component: Component,
 }: {
   path: string;
-  component: ComponentType;
+  component: () => React.JSX.Element;
 }) {
   const { user, isLoading } = useAuth();
 
