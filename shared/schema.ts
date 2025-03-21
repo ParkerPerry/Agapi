@@ -121,6 +121,15 @@ export const aiInteractions = pgTable("ai_interactions", {
   content: text("content"),
   parentId: integer("parent_id").references((): any => aiInteractions.id),
   createdAt: timestamp("created_at").defaultNow(),
+  toolsUsed: json("tools_used").$type<{
+    used: boolean;
+    tools: Array<{
+      id: string;
+      name: string;
+      usageCount: number;
+      examples: string[];
+    }>;
+  }>(),
 });
 
 export const aiInteractionsRelations = relations(aiInteractions, ({ one }) => ({

@@ -89,17 +89,63 @@ export function processCalculatorExpressions(text: string): string {
 }
 
 /**
- * Processes text to apply all enabled tools for a follower
+ * Structure to track tool usage
  */
-export function processTextWithTools(text: string, follower: AiFollower): string {
+export interface ToolUsageResult {
+  processedText: string;
+  toolsUsed: {
+    used: boolean;
+    tools: {
+      id: string;
+      name: string;
+      usageCount: number;
+      examples: string[];
+    }[];
+  };
+}
+
+/**
+ * Processes text to apply all enabled tools for a follower
+ * Returns both the processed text and information about which tools were used
+ */
+export function processTextWithTools(text: string, follower: AiFollower): ToolUsageResult {
   let processedText = text;
+  const toolsUsed: ToolUsageResult['toolsUsed'] = {
+    used: false,
+    tools: []
+  };
   
   // Apply calculator tool if enabled
   if (hasToolEnabled(follower, 'calculator')) {
-    processedText = processCalculatorExpressions(processedText);
+    // Create a regex to find calculator expressions
+    const calcRegex = /\[(calc|calculate):([^\]]+)\]/gi;
+    const calculatorMatches = [...text.matchAll(calcRegex)];
+    
+    if (calculatorMatches.length > 0) {
+      // Record calculator tool usage
+      toolsUsed.used = true;
+      
+      // Track examples of calculator usage (up to 3)
+      const examples = calculatorMatches
+        .slice(0, 3)
+        .map(match => match[0]);
+      
+      toolsUsed.tools.push({
+        id: 'calculator',
+        name: 'Calculator',
+        usageCount: calculatorMatches.length,
+        examples
+      });
+      
+      // Apply tool
+      processedText = processCalculatorExpressions(processedText);
+    }
   }
   
   // Add other tool processing here as needed
   
-  return processedText;
+  return {
+    processedText,
+    toolsUsed
+  };
 }
