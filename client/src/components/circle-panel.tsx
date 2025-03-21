@@ -44,20 +44,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
     enabled: !!circleId,
   });
   
-  // Mutation for toggling follower active status
-  const toggleFollowerActiveMutation = useMutation({
-    mutationFn: async (followerId: number) => {
-      await apiRequest("DELETE", `/api/followers/${followerId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/followers`] });
-      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/details`] });
-      toast({
-        title: "Follower status updated",
-        description: "The AI follower status has been updated successfully.",
-      });
-    },
-  });
+  // Removed toggle follower active mutation as it was confusing with mute functionality
   
   // Mutation for toggling follower mute status within this circle
   const toggleMuteFollowerMutation = useMutation({
@@ -314,22 +301,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                                 )}
                               </Button>
                               
-                              {/* Only show global activate/deactivate button for user's own followers */}
-                              {isCurrentUser && (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-7 w-7"
-                                  title={follower.active ? "Deactivate follower globally" : "Activate follower globally"}
-                                  onClick={() => toggleFollowerActiveMutation.mutate(follower.id)}
-                                  disabled={toggleFollowerActiveMutation.isPending}
-                                >
-                                  <PowerOff className={cn(
-                                    "h-3 w-3",
-                                    follower.active ? "text-destructive" : "text-muted-foreground"
-                                  )} />
-                                </Button>
-                              )}
+                              {/* Removed deactivate button to avoid confusion with mute functionality */}
                             </div>
                           </div>
                         ))}
