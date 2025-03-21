@@ -10,6 +10,15 @@ export interface Interaction {
   userId?: number;
   parentId?: number;
   createdAt: Date;
+  toolsUsed?: {
+    used: boolean;
+    tools: Array<{
+      id: string;
+      name: string;
+      usageCount: number;
+      examples: string[];
+    }>;
+  };
 }
 
 export interface ThreadedInteraction extends Interaction {

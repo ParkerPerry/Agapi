@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { formatRelativeTime } from "@/utils/date";
 import { ReplyForm } from "./reply-form";
 import { PendingResponses } from "./pending-responses";
+import { ToolsUsedIndicator } from "./tools-used-indicator";
 import { CommentProps } from "./post-types";
 
 export function Comment({ comment, postId, level = 0 }: CommentProps) {
@@ -42,6 +43,12 @@ export function Comment({ comment, postId, level = 0 }: CommentProps) {
             </span>
           </div>
           <p className="text-sm mt-1">{comment.content}</p>
+          
+          {/* Display tool usage indicator for AI comments with tools used */}
+          {isAIComment && comment.toolsUsed && (
+            <ToolsUsedIndicator toolsUsed={comment.toolsUsed} />
+          )}
+          
           <div className="flex items-center justify-between w-full mt-2">
             <div className="flex items-center space-x-2">
               {!isReplying && isAIComment && user && (
