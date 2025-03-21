@@ -34,20 +34,23 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
 
   // Group followers by their owners (userId)
   const followersByOwner = followers.reduce((groups, follower) => {
-    const ownerGroups = groups.get(follower.userId) || [];
-    groups.set(follower.userId, [...ownerGroups, follower]);
+    // Only process followers with a valid userId (non-null)
+    if (typeof follower.userId === 'number') {
+      const ownerGroups = groups.get(follower.userId) || [];
+      groups.set(follower.userId, [...ownerGroups, follower]);
+    }
     return groups;
   }, new Map<number, AiFollower[]>());
 
   return (
     <Card className={cn(
-      "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300",
-      isCollapsed ? "w-16" : "w-80"
+      "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300 border-r rounded-none",
+      isCollapsed ? "w-14" : "w-72"
     )}>
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-2 top-2 z-10"
+        className="absolute right-1 top-2 z-10"
         onClick={() => onCollapse(!isCollapsed)}
       >
         <ChevronRight className={cn(
@@ -170,9 +173,9 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
       </div>
 
       {isCollapsed && (
-        <div className="p-2">
+        <div className="flex items-center justify-center py-4">
           <div
-            className="flex items-center justify-center w-10 h-10 rounded-full text-xl"
+            className="flex items-center justify-center w-8 h-8 rounded-full text-lg"
             style={{ backgroundColor: circle.color + "20" }}
           >
             {circle.icon}

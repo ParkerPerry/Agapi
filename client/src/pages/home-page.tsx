@@ -75,18 +75,20 @@ export default function HomePage() {
           />
         )}
         <div className={cn(
-          "flex-1 overflow-y-auto p-6",
-          circleId && !circlePanelCollapsed ? "ml-80" : "",
-          circleId && circlePanelCollapsed ? "ml-16" : ""
+          "flex-1 overflow-y-auto p-4 md:p-5",
+          circleId && !circlePanelCollapsed ? "pl-2" : "",
+          circleId && circlePanelCollapsed ? "pl-2" : ""
         )}>
-          <div className="max-w-2xl mx-auto space-y-6">
+          <div className="max-w-3xl mx-auto space-y-4">
             {circleData && (
-              <div className="p-4 border rounded-lg mb-4" style={{ borderColor: typeof circleData.color === 'string' ? circleData.color : '#e2e8f0' }}>
-                <h1 className="text-2xl font-bold flex items-center">
+              <div className="p-3 border rounded-lg mb-2" style={{ borderColor: typeof circleData.color === 'string' ? circleData.color : '#e2e8f0' }}>
+                <h1 className="text-xl font-bold flex items-center">
                   <span className="mr-2">{circleData.icon}</span>
                   {circleData.name}
                 </h1>
-                <p className="text-muted-foreground">{circleData.description}</p>
+                {circleData.description && (
+                  <p className="text-muted-foreground text-sm">{circleData.description}</p>
+                )}
               </div>
             )}
             
