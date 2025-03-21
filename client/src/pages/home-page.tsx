@@ -23,9 +23,11 @@ export default function HomePage() {
   const circleIdFromUrl = searchParams.get('circle') ? parseInt(searchParams.get('circle')!) : undefined;
   
   // Query to get user's default circle if no specific circle is selected
-  const { data: defaultCircleData } = useQuery<Circle>({
+  const { data: defaultCircleData, isLoading: isLoadingDefaultCircle } = useQuery<Circle>({
     queryKey: ["/api/default-circle"],
-    enabled: !circleIdFromUrl && !!user,
+    enabled: !!user,
+    // Don't update query cache when url circleId is present, to prevent cache conflicts
+    staleTime: circleIdFromUrl ? Infinity : 0,
   });
   
   // Use the URL circle ID or default to the user's default circle ID

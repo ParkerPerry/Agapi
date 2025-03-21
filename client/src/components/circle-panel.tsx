@@ -146,6 +146,9 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                     queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/details`] });
                   }} 
                 />
+                {!circle.isDefault && circle.visibility === "private" && (
+                  <CircleShareDialog circle={circle} />
+                )}
               </div>
             )}
           </div>

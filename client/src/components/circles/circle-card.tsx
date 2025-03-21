@@ -82,25 +82,29 @@ export function CircleCard({
 
       {/* Secondary actions */}
       <div className="flex flex-wrap gap-2 mt-3 justify-end">
-        {showShareButton && !circle.isDefault && status === "active" && (
+        {/* Share button - show for private non-default circles */}
+        {showShareButton && circle.visibility === "private" && status === "active" && (
           <CircleShareDialog circle={circle} />
         )}
 
+        {/* Follower manager - available for all active circles */}
         {status === "active" && <CircleFollowerManager circle={circle} />}
 
-        {!circle.isDefault && status === "active" && (
-          <>
-            <CircleEditDialog
-              circle={circle}
-              onEdit={onEdit}
-            />
+        {/* Edit button - available for all circles */}
+        {status === "active" && (
+          <CircleEditDialog
+            circle={circle}
+            onEdit={onEdit}
+          />
+        )}
 
-            <CircleDeleteDialog
-              circle={circle}
-              onDelete={onDelete}
-              isDeleting={isDeleting}
-            />
-          </>
+        {/* Delete button - not available for default circles */}
+        {!circle.isDefault && status === "active" && (
+          <CircleDeleteDialog
+            circle={circle}
+            onDelete={onDelete}
+            isDeleting={isDeleting}
+          />
         )}
       </div>
     </div>
