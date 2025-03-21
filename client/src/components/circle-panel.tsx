@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, Share2, ChevronRight, Pencil, UserPlus, UserMinus, Settings, PlusCircle, PowerOff, Mail } from "lucide-react";
+import { Users, Share2, ChevronRight, Pencil, UserPlus, UserMinus, Settings, PlusCircle, PowerOff, Mail, VolumeX, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { CircleEditDialog } from "@/components/circles/circle-edit-dialog";
@@ -18,7 +18,7 @@ interface CircleDetails {
   circle: Circle;
   owner: User;
   members: (CircleMember & { username: string })[];
-  followers: AiFollower[];
+  followers: (AiFollower & { muted?: boolean })[];
 }
 
 interface CirclePanelProps {
@@ -58,6 +58,22 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
       });
     },
   });
+  
+  // Mutation for toggling follower mute status within this circle
+  const toggleMuteFollowerMutation = useMutation({
+    mutationFn: async (followerId: number) => {
+      const res = await apiRequest("PATCH", `/api/circles/${circleId}/followers/${followerId}/toggle-mute`);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/followers`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circleId}/details`] });
+      toast({
+        title: "Follower mute toggled",
+        description: "The AI follower's mute status has been updated in this circle.",
+      });
+    },
+  });
 
   if (!circleDetails) return null;
 
@@ -72,7 +88,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
       groups.set(follower.userId, [...ownerGroups, follower]);
     }
     return groups;
-  }, new Map<number, AiFollower[]>());
+  }, new Map<number, (AiFollower & { muted?: boolean })[]>());
 
   return (
     <div className={cn(
@@ -241,7 +257,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                   )}
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[calc(100vh-20rem)] overflow-y-auto pr-2">
                   {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
                     const ownerMember = members.find(m => m.userId === userId);
                     const ownerName = ownerMember?.username || "Unknown User";
@@ -249,7 +265,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
 
                     return (
                       <div key={userId} className="space-y-2">
-                        <h4 className="text-sm font-medium text-muted-foreground">
+                        <h4 className="text-sm font-medium text-muted-foreground sticky top-0 bg-card py-1 z-10">
                           {ownerName}'s AI Followers
                         </h4>
                         {userFollowers.map((follower) => (
@@ -270,6 +286,9 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                                   {!follower.active && (
                                     <Badge variant="secondary" className="text-xs">Inactive</Badge>
                                   )}
+                                  {follower.muted && (
+                                    <Badge variant="outline" className="text-xs border-amber-500 text-amber-500">Muted</Badge>
+                                  )}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
                                   {follower.personality}
@@ -277,22 +296,41 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                               </div>
                             </div>
                             
-                            {/* Only show deactivate button for user's own followers */}
-                            {isCurrentUser && (
+                            {/* Action buttons for followers */}
+                            <div className="flex space-x-1">
+                              {/* Mute/unmute button for any follower in the circle */}
                               <Button
                                 variant="ghost"
                                 size="icon"
                                 className="h-7 w-7"
-                                title={follower.active ? "Deactivate follower" : "Activate follower"}
-                                onClick={() => toggleFollowerActiveMutation.mutate(follower.id)}
-                                disabled={toggleFollowerActiveMutation.isPending}
+                                title={follower.muted ? "Unmute follower in this circle" : "Mute follower in this circle"}
+                                onClick={() => toggleMuteFollowerMutation.mutate(follower.id)}
+                                disabled={toggleMuteFollowerMutation.isPending}
                               >
-                                <PowerOff className={cn(
-                                  "h-3 w-3",
-                                  follower.active ? "text-destructive" : "text-muted-foreground"
-                                )} />
+                                {follower.muted ? (
+                                  <VolumeX className="h-3 w-3 text-muted-foreground" />
+                                ) : (
+                                  <Volume2 className="h-3 w-3 text-muted-foreground" />
+                                )}
                               </Button>
-                            )}
+                              
+                              {/* Only show global activate/deactivate button for user's own followers */}
+                              {isCurrentUser && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                  title={follower.active ? "Deactivate follower globally" : "Activate follower globally"}
+                                  onClick={() => toggleFollowerActiveMutation.mutate(follower.id)}
+                                  disabled={toggleFollowerActiveMutation.isPending}
+                                >
+                                  <PowerOff className={cn(
+                                    "h-3 w-3",
+                                    follower.active ? "text-destructive" : "text-muted-foreground"
+                                  )} />
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>
