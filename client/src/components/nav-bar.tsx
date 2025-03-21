@@ -36,7 +36,7 @@ export function NavBar() {
           <Link href="/" className="flex items-center space-x-2">
             <div className="relative h-8 w-8 overflow-hidden rounded-md">
               <img 
-                src="/logo.svg" 
+                src="/circle-logo.svg" 
                 alt="CircleTube Logo" 
                 className="h-full w-full object-cover"
               />
