@@ -34,4 +34,13 @@ export const defaultTomConfig: Omit<AiFollower, "id" | "userId"> = {
   responsiveness: "active",
   responseDelay: { min: 0.5, max: 5 },
   responseChance: 90,
+  tools: {
+    equipped: [
+      { id: "calendar_assistant", name: "Calendar Assistant", description: "Helps schedule events and manage calendars", enabled: false },
+      { id: "finance_tracker", name: "Finance Tracker", description: "Tracks expenses, budgets and financial plans", enabled: false },
+      { id: "research_analyst", name: "Research Analyst", description: "Provides detailed analysis and research summaries", enabled: false },
+      { id: "task_manager", name: "Task Manager", description: "Tracks tasks, assigns responsibilities and follows up", enabled: false }
+    ],
+    customInstructions: ""
+  },
 };

@@ -473,7 +473,7 @@ export default function FollowerConfigPage() {
             </CardContent>
           </Card>
           
-          {/* Lower Container - Functional Capabilities (future implementation) */}
+          {/* Lower Container - AI Tools Configuration */}
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
