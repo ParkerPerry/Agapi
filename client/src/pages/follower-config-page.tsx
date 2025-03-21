@@ -201,13 +201,16 @@ export default function FollowerConfigPage() {
         likes: interactionLikes.split(',').map(item => item.trim()).filter(Boolean),
         dislikes: interactionDislikes.split(',').map(item => item.trim()).filter(Boolean)
       };
+      
+      // Add advanced capabilities
+      updateData.capabilities = capabilities;
     }
     
     updateFollowerMutation.mutate(updateData, {
       onSuccess: () => {
         toast({
           title: "Settings Saved",
-          description: "Basic AI follower settings have been updated",
+          description: "AI follower settings have been updated",
         });
       },
       onError: (error) => {
