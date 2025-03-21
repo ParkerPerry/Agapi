@@ -78,12 +78,15 @@ export function CircleCreateForm() {
                     >
                       <DialogContent className="p-0">
                         <EmojiPicker
-                          theme={Theme.AUTO}
+                          theme={Theme.LIGHT}
                           onEmojiClick={(emoji) => {
                             field.onChange(emoji.emoji);
                             setShowEmojiPicker(false);
                           }}
                           width="100%"
+                          previewConfig={{ showPreview: false }}
+                          searchPlaceholder="Search emoji..."
+                          className="emoji-picker-custom"
                         />
                       </DialogContent>
                     </Dialog>
