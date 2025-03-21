@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { NavBar } from "@/components/nav-bar";
 import { PostForm } from "@/components/post-form";
-import { PostCard } from "@/components/post-card";
+import { PostCard } from "@/components/posts/post-card";
 import { CirclePanel } from "@/components/circle-panel";
 import { useQuery } from "@tanstack/react-query";
 import { Post, Circle } from "@shared/schema";
@@ -11,6 +11,7 @@ import { createWebSocket, subscribeToWebSocket } from "@/lib/websocket";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PostWithInteractions } from "@/components/posts/post-types";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -31,7 +32,7 @@ export default function HomePage() {
   // Determine which endpoint to query based on whether we're viewing a specific circle
   const postsEndpoint = circleId ? `/api/circles/${circleId}/posts` : `/api/posts/${user?.id}`;
 
-  const { data: posts, isLoading, refetch } = useQuery<(Post & { interactions: any[] })[]>({
+  const { data: posts, isLoading, refetch } = useQuery<PostWithInteractions[]>({
     queryKey: [postsEndpoint],
     enabled: !!user,
   });
