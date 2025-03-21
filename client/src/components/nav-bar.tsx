@@ -119,6 +119,10 @@ export function NavBar() {
                 <Link href="/profile">Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <Link href="/account">Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
                 <MessageCircle className="mr-2 h-4 w-4" />
                 <Link href="/direct-messages">Messages</Link>
               </DropdownMenuItem>
