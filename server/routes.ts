@@ -990,6 +990,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Direct Chat Endpoints
+  app.get("/api/direct-chat/:followerId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    const followerId = parseInt(req.params.followerId);
+    const userId = req.user!.id;
+    
+    try {
+      // First verify the follower belongs to the user
+      const follower = await storage.getAiFollower(followerId);
+      if (!follower || follower.userId !== userId) {
+        return res.status(404).json({ message: "Follower not found" });
+      }
+      
+      // Get chat history
+      const chatHistory = await storage.getDirectChatHistory(userId, followerId);
+      res.json(chatHistory);
+    } catch (error) {
+      console.error("Error getting direct chat history:", error);
+      res.status(500).json({ message: "Failed to get chat history" });
+    }
+  });
+  
+  app.post("/api/direct-chat/:followerId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    const followerId = parseInt(req.params.followerId);
+    const userId = req.user!.id;
+    const { message } = req.body;
+    
+    if (!message || typeof message !== "string" || message.trim() === "") {
+      return res.status(400).json({ message: "Message cannot be empty" });
+    }
+    
+    try {
+      // First verify the follower belongs to the user
+      const follower = await storage.getAiFollower(followerId);
+      if (!follower || follower.userId !== userId) {
+        return res.status(404).json({ message: "Follower not found" });
+      }
+      
+      // Create user message
+      const userMessage = await storage.createDirectChatMessage({
+        userId,
+        aiFollowerId: followerId,
+        content: message,
+        isUserMessage: true
+      });
+      
+      // Generate AI response immediately (overriding normal responsiveness)
+      const response = await generateAIResponse(message, follower);
+      
+      // Parse the response
+      let content = "";
+      if (response && typeof response === "object") {
+        if ("content" in response && response.content) {
+          content = response.content;
+        }
+      } else if (typeof response === "string") {
+        content = response;
+      }
+      
+      // Create AI response
+      const aiMessage = await storage.createDirectChatMessage({
+        userId,
+        aiFollowerId: followerId,
+        content,
+        isUserMessage: false
+      });
+      
+      // Return both messages
+      res.json([userMessage, aiMessage]);
+    } catch (error) {
+      console.error("Error in direct chat:", error);
+      res.status(500).json({ message: "Failed to process chat message" });
+    }
+  });
+
   // Add endpoint to get circle details including members and followers
   app.get("/api/circles/:id/details", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
