@@ -27,15 +27,16 @@ import { ArrowLeft, AlertCircle } from "lucide-react";
 import { useUpdateFollower } from "@/lib/mutations/follower-mutations";
 import { TourProvider } from "@/components/tour/tour-context";
 
-// Define types for AI follower capabilities
-interface AIRole {
+// Define types for AI follower tools
+interface AITool {
+  id: string;
   name: string;
   description: string;
   enabled: boolean;
 }
 
-interface AICapabilities {
-  roles: AIRole[];
+interface AIToolset {
+  equipped: AITool[];
   customInstructions: string;
 }
 
@@ -57,23 +58,23 @@ export default function FollowerConfigPage() {
   const [communicationStyle, setCommunicationStyle] = useState("");
   const [interests, setInterests] = useState("");
   
-  // Advanced capabilities state
-  const [capabilities, setCapabilities] = useState<AICapabilities>({
-    roles: [
-      { name: "calendar_assistant", description: "Helps schedule events and manage calendars", enabled: false },
-      { name: "finance_tracker", description: "Tracks expenses, budgets and financial plans", enabled: false },
-      { name: "research_analyst", description: "Provides detailed analysis and research summaries", enabled: false },
-      { name: "task_manager", description: "Tracks tasks, assigns responsibilities and follows up", enabled: false }
+  // AI Tool library state
+  const [toolset, setToolset] = useState<AIToolset>({
+    equipped: [
+      { id: "calendar_assistant", name: "Calendar Assistant", description: "Helps schedule events and manage calendars", enabled: false },
+      { id: "finance_tracker", name: "Finance Tracker", description: "Tracks expenses, budgets and financial plans", enabled: false },
+      { id: "research_analyst", name: "Research Analyst", description: "Provides detailed analysis and research summaries", enabled: false },
+      { id: "task_manager", name: "Task Manager", description: "Tracks tasks, assigns responsibilities and follows up", enabled: false }
     ],
     customInstructions: ""
   });
   
-  // Helper function to update a specific role's enabled status
-  const updateRoleEnabled = (roleName: string, enabled: boolean) => {
-    setCapabilities(prevCapabilities => ({
-      ...prevCapabilities,
-      roles: prevCapabilities.roles.map(role => 
-        role.name === roleName ? { ...role, enabled } : role
+  // Helper function to equip or unequip a specific tool
+  const toggleToolEquipped = (toolId: string, enabled: boolean) => {
+    setToolset(prevToolset => ({
+      ...prevToolset,
+      equipped: prevToolset.equipped.map(tool => 
+        tool.id === toolId ? { ...tool, enabled } : tool
       )
     }));
   };
@@ -163,9 +164,9 @@ export default function FollowerConfigPage() {
         setInteractionDislikes(follower.interactionPreferences.dislikes.join(", "));
       }
       
-      // Set capabilities if they exist in the follower data
-      if (follower.capabilities) {
-        setCapabilities(follower.capabilities);
+      // Set tools if they exist in the follower data
+      if (follower.tools) {
+        setToolset(follower.tools);
       }
     }
   }, [follower]);

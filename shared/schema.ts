@@ -89,9 +89,10 @@ export const ai_followers = pgTable("ai_followers", {
     max: number;
   }>().notNull().default({ min: 1, max: 60 }),
   responseChance: integer("response_chance").notNull().default(80),
-  // Advanced capabilities for specialized roles
-  capabilities: json("capabilities").$type<{
-    roles: Array<{
+  // Tool library for AI followers
+  tools: json("tools").$type<{
+    equipped: Array<{
+      id: string;
       name: string;
       description: string;
       enabled: boolean;
