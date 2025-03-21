@@ -46,18 +46,19 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
       "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300 border-r shadow-sm bg-card",
       isCollapsed ? "w-14" : "w-72"
     )}>
-      {!isCollapsed && (
-        <div className="absolute top-0 right-0 h-10 flex items-center pr-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-accent"
-            onClick={() => onCollapse(true)}
-          >
-            <ChevronRight className="h-4 w-4 rotate-180" />
-          </Button>
-        </div>
-      )}
+      <div className="absolute top-0 right-0 h-10 flex items-center pr-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 rounded-full flex items-center justify-center"
+          onClick={() => onCollapse(!isCollapsed)}
+        >
+          <ChevronRight className={cn(
+            "h-4 w-4 transition-transform",
+            !isCollapsed && "rotate-180"
+          )} />
+        </Button>
+      </div>
 
       <div className={cn(
         "transition-opacity duration-300",
@@ -175,24 +176,12 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
       </div>
 
       {isCollapsed && (
-        <div className="flex flex-col items-center justify-center py-4 relative">
+        <div className="flex items-center justify-center py-4">
           <div
             className="flex items-center justify-center w-8 h-8 rounded-full text-lg"
             style={{ backgroundColor: circle.color + "20" }}
           >
             {circle.icon}
-          </div>
-          
-          {/* Button when panel is collapsed - visible and clickable */}
-          <div className="absolute top-0 right-0 h-10 flex items-center pr-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-accent"
-              onClick={() => onCollapse(false)}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       )}
