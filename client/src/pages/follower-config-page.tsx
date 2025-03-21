@@ -203,8 +203,8 @@ export default function FollowerConfigPage() {
         dislikes: interactionDislikes.split(',').map(item => item.trim()).filter(Boolean)
       };
       
-      // Add advanced capabilities
-      updateData.capabilities = capabilities;
+      // Add AI tools
+      updateData.tools = toolset;
     }
     
     updateFollowerMutation.mutate(updateData, {
@@ -478,16 +478,16 @@ export default function FollowerConfigPage() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Functional Capabilities</CardTitle>
+                  <CardTitle>AI Follower Tools</CardTitle>
                   <CardDescription>
-                    Configure advanced roles and behaviors for specific circles
+                    Equip your AI follower with specialized tools to enhance their abilities
                   </CardDescription>
                 </div>
                 <Button 
                   onClick={saveBasicSettings}
                   disabled={updateFollowerMutation.isPending}
                 >
-                  {updateFollowerMutation.isPending ? "Saving..." : "Save Capabilities"}
+                  {updateFollowerMutation.isPending ? "Saving..." : "Save Tools"}
                 </Button>
               </div>
             </CardHeader>
@@ -495,9 +495,9 @@ export default function FollowerConfigPage() {
               {/* Role-based capabilities */}
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium mb-2">Specialized Roles</h3>
+                  <h3 className="text-lg font-medium mb-2">Equip AI Tools</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Enable specialized roles to give your AI follower specific capabilities in circles
+                    Select tools to equip your AI follower with specialized abilities in your circles
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -567,7 +567,7 @@ export default function FollowerConfigPage() {
                   <Label htmlFor="customInstructions">Custom Instructions</Label>
                   <Textarea 
                     id="customInstructions" 
-                    placeholder="Add specific instructions for how this AI follower should behave in specialized roles..."
+                    placeholder="Add custom instructions for how your AI follower should use these tools..."
                     rows={4}
                     className="resize-none"
                     value={capabilities?.customInstructions || ""}
@@ -579,7 +579,7 @@ export default function FollowerConfigPage() {
                     }}
                   />
                   <p className="text-sm text-muted-foreground">
-                    Add specific instructions for how your AI follower should interpret and respond when performing specialized roles.
+                    Provide guidance on how your AI follower should use their equipped tools in different situations.
                   </p>
                 </div>
               </div>
