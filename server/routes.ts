@@ -6,6 +6,7 @@ import { generateAIResponse, generateAIBackground } from "./openai";
 import { ThreadManager } from "./thread-manager";
 import { ResponseScheduler } from "./response-scheduler";
 import { ThreadContextManager } from "./context-manager";
+import { getAvailableTools } from "./tools";
 import {IStorage} from "./storage"
 
 async function hasCirclePermission(
