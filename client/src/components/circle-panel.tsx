@@ -62,7 +62,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
         "transition-opacity duration-300",
         isCollapsed && "opacity-0"
       )}>
-        <CardHeader>
+        <div className="p-4 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div
@@ -72,7 +72,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                 {circle.icon}
               </div>
               <div>
-                <CardTitle>{circle.name}</CardTitle>
+                <h2 className="text-lg font-semibold">{circle.name}</h2>
                 <p className="text-sm text-muted-foreground">
                   Created by {owner.username}
                 </p>
@@ -87,9 +87,9 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
               {circle.description}
             </p>
           )}
-        </CardHeader>
+        </div>
 
-        <CardContent className="flex-1 overflow-hidden">
+        <div className="p-4 flex-1 overflow-hidden">
           <ScrollArea className="h-full pr-4">
             <div className="space-y-6">
               <div>
@@ -168,7 +168,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
               </div>
             </div>
           </ScrollArea>
-        </CardContent>
+        </div>
       </div>
 
       {isCollapsed && (
