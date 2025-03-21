@@ -12,6 +12,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { createWebSocket, closeWebSocket } from "@/lib/websocket";
 import { useEffect } from "react";
+import { TourProvider } from "@/components/tour/tour-context";
 
 function Router() {
   return (
@@ -53,7 +54,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <MainApp />
+        <TourProvider>
+          <MainApp />
+        </TourProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
