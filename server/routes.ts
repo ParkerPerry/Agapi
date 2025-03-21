@@ -9,6 +9,7 @@ import { ThreadContextManager } from "./context-manager";
 import { getAvailableTools } from "./tools";
 import { IStorage } from "./storage";
 import { User } from "@shared/schema";
+import nftRoutes from "./blockchain/routes";
 
 async function hasCirclePermission(
   circleId: number,
@@ -1218,6 +1219,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get deactivated circles" });
     }
   });
+
+  // Register NFT blockchain routes
+  app.use("/api/nft", nftRoutes);
+  console.log("[API] NFT routes registered");
 
   return httpServer;
 }

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { responsivenessOptions } from "./follower-create-form";
 import { FollowerEditDialog } from "./follower-edit-dialog";
 import { FollowerDeactivateDialog } from "./follower-deactivate-dialog";
+import { FollowerNftMint } from "./follower-nft-mint";
 import { useLocation } from "wouter";
 
 interface FollowerCardProps {
@@ -96,6 +97,10 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
             isUpdating={isUpdating}
           />
         </div>
+      </div>
+
+      <div className="flex justify-end">
+        <FollowerNftMint follower={follower} />
       </div>
 
       {follower.background && (
