@@ -741,6 +741,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+  // Get available AI follower tools
+  app.get("/api/tools", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      // Get available tools without exposing implementation details
+      const tools = getAvailableTools();
+      res.json(tools);
+    } catch (error) {
+      console.error("Error getting available tools:", error);
+      res.status(500).json({ message: "Failed to get available tools" });
+    }
+  });
 
   app.post("/api/followers", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
