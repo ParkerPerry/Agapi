@@ -63,50 +63,6 @@ export default function FollowerConfigPage() {
     equipped: [],
     customInstructions: ""
   });
-  
-  // Fetch available tools
-  const { data: availableTools, isLoading: isLoadingTools } = useQuery({
-    queryKey: ['/api/tools'],
-    queryFn: async () => {
-      const response = await fetch('/api/tools', {
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch available tools');
-      }
-      
-      return response.json() as Promise<AITool[]>;
-    }
-  });
-  
-  // Handle initializing tools when available
-  useEffect(() => {
-    if (availableTools && availableTools.length > 0) {
-      setToolset(prev => ({
-        ...prev,
-        equipped: availableTools
-      }));
-    }
-  }, [availableTools]);
-  
-  // Handle follower tools configuration when follower data is loaded
-  useEffect(() => {
-    if (follower && follower.tools) {
-      // If the follower already has tools configured, use those
-      setToolset(follower.tools);
-    }
-  }, [follower]);
-  
-  // Helper function to equip or unequip a specific tool
-  const toggleToolEquipped = (toolId: string, enabled: boolean) => {
-    setToolset(prevToolset => ({
-      ...prevToolset,
-      equipped: prevToolset.equipped.map(tool => 
-        tool.id === toolId ? { ...tool, enabled } : tool
-      )
-    }));
-  };
 
   // Extract follower ID from URL with enhanced logging
   console.log("[ConfigPage] URL Parameters from useParams:", params);
@@ -140,7 +96,7 @@ export default function FollowerConfigPage() {
     hasData: false,
   });
 
-  // Fetch the follower data
+  // IMPORTANT: Fetch the follower data first before any hooks that depend on it
   const apiUrl = `/api/followers/${id}`;
   console.log(`[ConfigPage] API Request URL: ${apiUrl}`);
   console.log(`[ConfigPage] Query enabled:`, !!user && !!id && !isNaN(id));
@@ -148,21 +104,45 @@ export default function FollowerConfigPage() {
   const { data: follower, isLoading, error } = useQuery<AiFollower>({
     queryKey: [apiUrl],
     enabled: !!user && !!id && !isNaN(id),
-    // Using retry callback for error handling
     retry: (failureCount, error) => {
       console.error(`[ConfigPage] API Error (attempt ${failureCount}):`, error);
       return failureCount < 2; // Only retry twice
     },
-    // Using callbacks for data and status tracking
     select: (data) => {
       console.log(`[ConfigPage] API Success:`, data);
       return data;
     }
   });
-
+  
+  // Fetch available tools
+  const { data: availableTools, isLoading: isLoadingTools } = useQuery({
+    queryKey: ['/api/tools'],
+    queryFn: async () => {
+      const response = await fetch('/api/tools', {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch available tools');
+      }
+      
+      return response.json() as Promise<AITool[]>;
+    }
+  });
+  
   console.log("[ConfigPage] Looking for follower with ID:", id);
   console.log("[ConfigPage] Query status:", queryStatus);
 
+  // Handle initializing tools when available
+  useEffect(() => {
+    if (availableTools && availableTools.length > 0) {
+      setToolset(prev => ({
+        ...prev,
+        equipped: availableTools
+      }));
+    }
+  }, [availableTools]);
+  
   // Update query status
   useEffect(() => {
     setQueryStatus({
@@ -199,6 +179,16 @@ export default function FollowerConfigPage() {
       }
     }
   }, [follower]);
+  
+  // Helper function to equip or unequip a specific tool
+  const toggleToolEquipped = (toolId: string, enabled: boolean) => {
+    setToolset(prevToolset => ({
+      ...prevToolset,
+      equipped: prevToolset.equipped.map(tool => 
+        tool.id === toolId ? { ...tool, enabled } : tool
+      )
+    }));
+  };
 
   // Check if this is the default Tom follower (ID 1 or name includes "Tom")
   const isDefaultTom = follower?.id === 1 || (follower?.name && follower.name.toLowerCase().includes('tom'));
@@ -501,90 +491,80 @@ export default function FollowerConfigPage() {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Lower Container - AI Tools Configuration */}
+            
+          {/* Lower Container - Tools & Settings */}
           <Card>
             <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>AI Follower Tools</CardTitle>
-                  <CardDescription>
-                    Equip your AI follower with specialized tools to enhance their abilities
-                  </CardDescription>
-                </div>
-                <Button 
-                  onClick={saveBasicSettings}
-                  disabled={updateFollowerMutation.isPending}
-                >
-                  {updateFollowerMutation.isPending ? "Saving..." : "Save Tools"}
-                </Button>
-              </div>
+              <CardTitle>AI Tools</CardTitle>
+              <CardDescription>Configure special tools that your AI follower can use</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* AI Tool equipping section */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Equip AI Tools</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Select tools to equip your AI follower with specialized abilities in your circles
+              {isLoadingTools ? (
+                <div className="flex justify-center items-center py-4">
+                  <p className="text-muted-foreground">Loading available tools...</p>
+                </div>
+              ) : toolset.equipped && toolset.equipped.length > 0 ? (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Enable tools to give your AI follower special capabilities
                   </p>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {isLoadingTools ? (
-                      <div className="col-span-2 text-center py-4">
-                        <p>Loading available tools...</p>
-                      </div>
-                    ) : (
-                      toolset?.equipped.map(tool => (
-                        <div key={tool.id} className="border rounded-lg p-4 flex flex-col space-y-2">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h4 className="font-medium">{tool.name}</h4>
-                              <p className="text-sm text-muted-foreground">{tool.description}</p>
-                            </div>
-                            <Switch 
-                              checked={tool.enabled}
-                              onCheckedChange={(checked) => toggleToolEquipped(tool.id, checked)}
-                              disabled={isDefaultTom}
-                            />
-                          </div>
+                  {toolset.equipped.map(tool => (
+                    <div key={tool.id} className="flex items-start justify-between gap-4 border rounded-lg p-4 bg-card">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold">{tool.name}</h3>
+                          <Badge variant={tool.enabled ? "default" : "outline"}>
+                            {tool.enabled ? "Enabled" : "Disabled"}
+                          </Badge>
                         </div>
-                      ))
-                    )}
-                    
-                    {!isLoadingTools && (!toolset?.equipped || toolset.equipped.length === 0) && (
-                      <div className="col-span-2 text-center py-4 border rounded-lg">
-                        <p className="text-muted-foreground">No tools available at this time</p>
+                        <p className="text-sm text-muted-foreground mt-1">{tool.description}</p>
                       </div>
-                    )}
+                      
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor={`tool-${tool.id}`} className="text-sm">
+                          {tool.enabled ? "Enabled" : "Disabled"}
+                        </Label>
+                        <Switch 
+                          id={`tool-${tool.id}`}
+                          checked={tool.enabled}
+                          onCheckedChange={(checked) => toggleToolEquipped(tool.id, checked)}
+                          disabled={isDefaultTom}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <div className="mt-6">
+                    <Label htmlFor="customInstructions">Custom Tool Instructions</Label>
+                    <Textarea
+                      id="customInstructions"
+                      value={toolset.customInstructions || ""}
+                      onChange={(e) => setToolset(prev => ({...prev, customInstructions: e.target.value}))}
+                      placeholder="Add custom instructions for tool usage (optional)"
+                      rows={3}
+                      disabled={isDefaultTom}
+                      className="mt-2 resize-none"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Custom instructions to provide additional context for your AI follower on when and how to use tools
+                    </p>
                   </div>
                 </div>
-                
-                <div className="space-y-2 pt-4">
-                  <Label htmlFor="customInstructions">Custom Instructions</Label>
-                  <Textarea 
-                    id="customInstructions" 
-                    placeholder="Add custom instructions for how your AI follower should use these tools..."
-                    rows={4}
-                    className="resize-none"
-                    value={toolset?.customInstructions || ""}
-                    onChange={(e) => {
-                      setToolset({
-                        ...toolset,
-                        customInstructions: e.target.value
-                      });
-                    }}
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Provide guidance on how your AI follower should use their equipped tools in different situations.
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
+                  <h3 className="font-semibold">No Tools Available</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    There are currently no tools available for your AI follower to use.
                   </p>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
-        </div>
-      </main>
-    </div>
+          </div>
+        </main>
+      </div>
     </TourProvider>
   );
 }
