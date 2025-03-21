@@ -505,7 +505,7 @@ export class ResponseScheduler {
             const maxDepth = 3; // Limit to 3 previous messages to keep context manageable
             
             // Follow the parent chain up to get previous messages
-            while (currentId && depth < maxDepth) {
+            while (currentId !== null && depth < maxDepth) {
               const interaction = interactions.find(i => i.id === currentId);
               if (!interaction) break;
               
@@ -516,7 +516,7 @@ export class ResponseScheduler {
                 
               previousMessages.unshift(`${author}: ${interaction.content || ""}`);
               
-              // Move to parent of this message (safely handle null)
+              // Move to parent of this message (safely handle undefined or null)
               currentId = interaction.parentId || null;
               depth++;
             }

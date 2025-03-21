@@ -73,19 +73,29 @@ export function executeTool(toolId: string, input: string): any {
 export function processCalculatorExpressions(text: string): string {
   const calcRegex = /\[(calc|calculate):([^\]]+)\]/gi;
   
-  return text.replace(calcRegex, (match, _, expression) => {
+  let processedText = text;
+  
+  // Process calculator expressions
+  processedText = processedText.replace(calcRegex, (match, _, expression) => {
     try {
+      console.log(`[Calculator] Processing expression: ${expression.trim()}`);
       const result = calculatorTool(expression.trim());
       
       if (result.error) {
+        console.log(`[Calculator] Error: ${result.error}`);
         return `[Calculator Error: ${result.error}]`;
       }
       
-      return result.result.toString();
+      console.log(`[Calculator] Result: ${result.result}`);
+      return `${result.result.toString()}`;
     } catch (error) {
-      return `[Calculator Error: ${error instanceof Error ? error.message : 'Unknown error'}]`;
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.log(`[Calculator] Exception: ${errorMsg}`);
+      return `[Calculator Error: ${errorMsg}]`;
     }
   });
+  
+  return processedText;
 }
 
 /**
@@ -117,14 +127,51 @@ export function processTextWithTools(text: string, follower: AiFollower): ToolUs
   
   // Apply calculator tool if enabled
   if (hasToolEnabled(follower, 'calculator')) {
-    // Create a regex to find calculator expressions
+    // Create regex patterns to find calculator expressions
+    // Standard format for explicit calculator tool usage
     const calcRegex = /\[(calc|calculate):([^\]]+)\]/gi;
+    
+    // Also look for potential math expressions we could auto-process
+    const mathExpressionRegex = /(?:result is|answer is|equals|=)\s*([\d+\-*/()^%\s.]+)(?:\s*$|\s*\.)/gi;
     
     // Collect all matches into an array manually to avoid TypeScript iteration issue
     const calculatorMatches: RegExpExecArray[] = [];
     let match;
     while ((match = calcRegex.exec(text)) !== null) {
       calculatorMatches.push(match);
+    }
+
+    // Auto-process implicit math expressions if we're a math helper
+    if (follower.personality.toLowerCase().includes('math') && calculatorMatches.length === 0) {
+      let mathMatch;
+      let potentialExpressions = [];
+      while ((mathMatch = mathExpressionRegex.exec(text)) !== null) {
+        if (mathMatch[1] && mathMatch[1].trim()) {
+          potentialExpressions.push(mathMatch[1].trim());
+        }
+      }
+      
+      // Log potential auto-processing
+      if (potentialExpressions.length > 0) {
+        console.log(`[Tools] Found ${potentialExpressions.length} potential math expressions to auto-process`);
+        
+        // For math helpers, we'll wrap these in calculator tags and process them
+        for (const expr of potentialExpressions) {
+          // Only auto-process if it looks like a math expression (contains operators)
+          if (/[+\-*/^%()]/.test(expr)) {
+            // Add calculator tags around the expression
+            const replacement = `[calc:${expr}]`;
+            // Replace the expression with calculator tags
+            processedText = processedText.replace(
+              new RegExp(`(result is|answer is|equals|=)\\s*(${expr.replace(/([+\-*/^%()])/g, '\\$1')})`, 'i'),
+              `$1 ${replacement}`
+            );
+            
+            // Add to our matches for tracking
+            calculatorMatches.push([replacement, 'calc', expr] as any);
+          }
+        }
+      }
     }
     
     if (calculatorMatches.length > 0) {
@@ -145,6 +192,8 @@ export function processTextWithTools(text: string, follower: AiFollower): ToolUs
       
       // Apply tool
       processedText = processCalculatorExpressions(processedText);
+      
+      console.log(`[Tools] Processed ${calculatorMatches.length} calculator expressions`);
     }
   }
   
