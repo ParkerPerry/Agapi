@@ -210,8 +210,8 @@ export default function FollowerConfigPage() {
     updateFollowerMutation.mutate(updateData, {
       onSuccess: () => {
         toast({
-          title: "Settings Saved",
-          description: "AI follower settings have been updated",
+          title: "Tools Configured",
+          description: "AI follower tools have been updated",
         });
       },
       onError: (error) => {
@@ -492,7 +492,7 @@ export default function FollowerConfigPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Role-based capabilities */}
+              {/* AI Tool equipping section */}
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-medium mb-2">Equip AI Tools</h3>
@@ -508,9 +508,9 @@ export default function FollowerConfigPage() {
                           <p className="text-sm text-muted-foreground">Helps schedule events and manage calendars</p>
                         </div>
                         <Switch 
-                          checked={capabilities?.roles?.find(r => r.name === "calendar_assistant")?.enabled || false}
+                          checked={toolset?.equipped?.find(tool => tool.id === "calendar_assistant")?.enabled || false}
                           onCheckedChange={(checked) => {
-                            updateRoleEnabled("calendar_assistant", checked);
+                            toggleToolEquipped("calendar_assistant", checked);
                           }}
                         />
                       </div>
@@ -523,9 +523,9 @@ export default function FollowerConfigPage() {
                           <p className="text-sm text-muted-foreground">Tracks expenses, budgets and financial plans</p>
                         </div>
                         <Switch 
-                          checked={capabilities?.roles?.find(r => r.name === "finance_tracker")?.enabled || false}
+                          checked={toolset?.equipped?.find(tool => tool.id === "finance_tracker")?.enabled || false}
                           onCheckedChange={(checked) => {
-                            updateRoleEnabled("finance_tracker", checked);
+                            toggleToolEquipped("finance_tracker", checked);
                           }}
                         />
                       </div>
@@ -538,9 +538,9 @@ export default function FollowerConfigPage() {
                           <p className="text-sm text-muted-foreground">Provides detailed analysis and research summaries</p>
                         </div>
                         <Switch 
-                          checked={capabilities?.roles?.find(r => r.name === "research_analyst")?.enabled || false}
+                          checked={toolset?.equipped?.find(tool => tool.id === "research_analyst")?.enabled || false}
                           onCheckedChange={(checked) => {
-                            updateRoleEnabled("research_analyst", checked);
+                            toggleToolEquipped("research_analyst", checked);
                           }}
                         />
                       </div>
@@ -553,9 +553,9 @@ export default function FollowerConfigPage() {
                           <p className="text-sm text-muted-foreground">Tracks tasks, assigns responsibilities and follows up</p>
                         </div>
                         <Switch 
-                          checked={capabilities?.roles?.find(r => r.name === "task_manager")?.enabled || false}
+                          checked={toolset?.equipped?.find(tool => tool.id === "task_manager")?.enabled || false}
                           onCheckedChange={(checked) => {
-                            updateRoleEnabled("task_manager", checked);
+                            toggleToolEquipped("task_manager", checked);
                           }}
                         />
                       </div>
@@ -570,10 +570,10 @@ export default function FollowerConfigPage() {
                     placeholder="Add custom instructions for how your AI follower should use these tools..."
                     rows={4}
                     className="resize-none"
-                    value={capabilities?.customInstructions || ""}
+                    value={toolset?.customInstructions || ""}
                     onChange={(e) => {
-                      setCapabilities({
-                        ...capabilities,
+                      setToolset({
+                        ...toolset,
                         customInstructions: e.target.value
                       });
                     }}
