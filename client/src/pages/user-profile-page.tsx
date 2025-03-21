@@ -91,7 +91,9 @@ export default function UserProfilePage() {
                 
                 <div className="space-y-2 flex-1">
                   <h3 className="text-xl font-semibold">{user.username}</h3>
-                  <p className="text-sm text-muted-foreground">Member since {new Date(user.createdAt).toLocaleDateString()}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Member since {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                  </p>
                 </div>
               </div>
               

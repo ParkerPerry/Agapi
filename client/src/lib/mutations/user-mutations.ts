@@ -1,21 +1,29 @@
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "../queryClient";
-import { User } from "@shared/schema";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 interface UserProfileUpdate {
   avatarUrl?: string;
   bio?: string;
 }
 
+/**
+ * Mutation hook for updating user profile information
+ */
 export function useUpdateUserProfile() {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: async (data: UserProfileUpdate) => {
-      const res = await apiRequest("PATCH", "/api/user/profile", data);
-      return await res.json() as User;
+      const response = await apiRequest({
+        url: "/api/user/profile",
+        method: "PATCH",
+        data,
+      });
+      return response;
     },
-    onSuccess: (updatedUser) => {
-      // Update user data in cache
-      queryClient.setQueryData(["/api/user"], updatedUser);
+    onSuccess: () => {
+      // Invalidate user data queries to refetch latest profile
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
     },
   });
 }
