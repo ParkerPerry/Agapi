@@ -119,7 +119,13 @@ export function processTextWithTools(text: string, follower: AiFollower): ToolUs
   if (hasToolEnabled(follower, 'calculator')) {
     // Create a regex to find calculator expressions
     const calcRegex = /\[(calc|calculate):([^\]]+)\]/gi;
-    const calculatorMatches = [...text.matchAll(calcRegex)];
+    
+    // Collect all matches into an array manually to avoid TypeScript iteration issue
+    const calculatorMatches: RegExpExecArray[] = [];
+    let match;
+    while ((match = calcRegex.exec(text)) !== null) {
+      calculatorMatches.push(match);
+    }
     
     if (calculatorMatches.length > 0) {
       // Record calculator tool usage

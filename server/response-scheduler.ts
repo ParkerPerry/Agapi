@@ -427,8 +427,9 @@ export class ResponseScheduler {
 
   private async processResponse(response: PendingResponse): Promise<void> {
     try {
-      const post = await storage.getPost(response.postId);
-      const follower = await storage.getAiFollower(response.aiFollowerId);
+      // Use non-null assertion since postId and aiFollowerId are required fields
+      const post = await storage.getPost(response.postId!);
+      const follower = await storage.getAiFollower(response.aiFollowerId!);
 
       if (!post || !follower) {
         console.error(`[ResponseScheduler] Missing post or follower for response ${response.id}`);
@@ -516,7 +517,7 @@ export class ResponseScheduler {
               previousMessages.unshift(`${author}: ${interaction.content || ""}`);
               
               // Move to parent of this message (safely handle null)
-              currentId = interaction.parentId || null;
+              currentId = interaction.parentId ? interaction.parentId : null;
               depth++;
             }
             
@@ -550,12 +551,17 @@ export class ResponseScheduler {
       if (aiResponse.confidence > 0.7) {
         // Process the content using any tools the follower has equipped
         let processedContent = aiResponse.content || null;
+        let toolsUsed = null;
         
         if (processedContent && follower.tools && follower.tools.equipped && follower.tools.equipped.length > 0) {
           try {
-            // Process the content with the follower's tools
-            processedContent = processTextWithTools(processedContent, follower);
-            console.log(`[ResponseScheduler] Processed content with AI tools for follower ${follower.id}`);
+            // Process the content with the follower's tools and track tool usage
+            const processResult = processTextWithTools(processedContent, follower);
+            processedContent = processResult.processedText;
+            toolsUsed = processResult.toolsUsed;
+            
+            console.log(`[ResponseScheduler] Processed content with AI tools for follower ${follower.id}`, 
+              toolsUsed.used ? `- Tools used: ${toolsUsed.tools.map(t => t.name).join(', ')}` : '- No tools used');
           } catch (error) {
             console.error(`[ResponseScheduler] Error processing content with tools:`, error);
             // Continue with original content in case of error
@@ -569,6 +575,7 @@ export class ResponseScheduler {
           type: parentId ? "reply" : aiResponse.type, // Force "reply" type for thread responses
           content: processedContent,
           parentId: parentId, // Use parentId for thread replies, null for top-level
+          toolsUsed: toolsUsed, // Store tool usage information
         });
 
         console.log(`[ResponseScheduler] Created ${parentId ? 'thread reply' : 'comment'} for follower ${follower.id} on post ${post.id}`);
