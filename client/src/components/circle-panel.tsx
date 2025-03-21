@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Circle, CircleMember, AiFollower, User } from "@shared/schema";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -43,8 +42,8 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
   }, new Map<number, AiFollower[]>());
 
   return (
-    <Card className={cn(
-      "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300 border-r rounded-none",
+    <div className={cn(
+      "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300 border-r shadow-sm bg-card",
       isCollapsed ? "w-14" : "w-72"
     )}>
       <Button
@@ -182,6 +181,6 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

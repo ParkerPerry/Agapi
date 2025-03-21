@@ -54,8 +54,8 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => createPostMutation.mutate(data))}>
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="shadow-sm">
+          <CardContent className="pt-4">
             <FormField
               control={form.control}
               name="content"
@@ -64,7 +64,7 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
                   <FormControl>
                     <Textarea
                       placeholder="What's on your mind?"
-                      className="min-h-[100px]"
+                      className="min-h-[100px] resize-none focus-visible:ring-0"
                       {...field}
                     />
                   </FormControl>
@@ -72,7 +72,7 @@ export function PostForm({ defaultCircleId }: PostFormProps) {
               )}
             />
           </CardContent>
-          <CardFooter className="flex justify-end">
+          <CardFooter className="flex justify-end py-2">
             <Button 
               type="submit"
               disabled={createPostMutation.isPending}

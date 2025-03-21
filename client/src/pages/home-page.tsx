@@ -79,7 +79,8 @@ export default function HomePage() {
           circleId && !circlePanelCollapsed ? "pl-2" : "",
           circleId && circlePanelCollapsed ? "pl-2" : ""
         )}>
-          <div className="max-w-3xl mx-auto space-y-4">
+          {/* Content container */}
+          <div className="space-y-4 mx-auto max-w-3xl">
             {circleData && (
               <div className="p-3 border rounded-lg mb-2" style={{ borderColor: typeof circleData.color === 'string' ? circleData.color : '#e2e8f0' }}>
                 <h1 className="text-xl font-bold flex items-center">
