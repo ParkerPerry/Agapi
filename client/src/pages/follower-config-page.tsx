@@ -60,13 +60,33 @@ export default function FollowerConfigPage() {
   
   // AI Tool library state
   const [toolset, setToolset] = useState<AIToolset>({
-    equipped: [
-      { id: "calendar_assistant", name: "Calendar Assistant", description: "Helps schedule events and manage calendars", enabled: false },
-      { id: "finance_tracker", name: "Finance Tracker", description: "Tracks expenses, budgets and financial plans", enabled: false },
-      { id: "research_analyst", name: "Research Analyst", description: "Provides detailed analysis and research summaries", enabled: false },
-      { id: "task_manager", name: "Task Manager", description: "Tracks tasks, assigns responsibilities and follows up", enabled: false }
-    ],
+    equipped: [],
     customInstructions: ""
+  });
+  
+  // Fetch available tools
+  const { data: availableTools, isLoading: isLoadingTools } = useQuery({
+    queryKey: ['/api/tools'],
+    queryFn: async () => {
+      const response = await fetch('/api/tools', {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch available tools');
+      }
+      
+      return response.json() as Promise<AITool[]>;
+    },
+    onSuccess: (tools) => {
+      // Initialize tools in the toolset if follower doesn't have tools configured yet
+      if (!follower?.tools && tools.length > 0) {
+        setToolset(prev => ({
+          ...prev,
+          equipped: tools
+        }));
+      }
+    }
   });
   
   // Helper function to equip or unequip a specific tool
@@ -501,65 +521,33 @@ export default function FollowerConfigPage() {
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="border rounded-lg p-4 flex flex-col space-y-2">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">Calendar Assistant</h4>
-                          <p className="text-sm text-muted-foreground">Helps schedule events and manage calendars</p>
-                        </div>
-                        <Switch 
-                          checked={toolset?.equipped?.find(tool => tool.id === "calendar_assistant")?.enabled || false}
-                          onCheckedChange={(checked) => {
-                            toggleToolEquipped("calendar_assistant", checked);
-                          }}
-                        />
+                    {isLoadingTools ? (
+                      <div className="col-span-2 text-center py-4">
+                        <p>Loading available tools...</p>
                       </div>
-                    </div>
+                    ) : (
+                      toolset?.equipped.map(tool => (
+                        <div key={tool.id} className="border rounded-lg p-4 flex flex-col space-y-2">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-medium">{tool.name}</h4>
+                              <p className="text-sm text-muted-foreground">{tool.description}</p>
+                            </div>
+                            <Switch 
+                              checked={tool.enabled}
+                              onCheckedChange={(checked) => toggleToolEquipped(tool.id, checked)}
+                              disabled={isDefaultTom}
+                            />
+                          </div>
+                        </div>
+                      ))
+                    )}
                     
-                    <div className="border rounded-lg p-4 flex flex-col space-y-2">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">Finance Tracker</h4>
-                          <p className="text-sm text-muted-foreground">Tracks expenses, budgets and financial plans</p>
-                        </div>
-                        <Switch 
-                          checked={toolset?.equipped?.find(tool => tool.id === "finance_tracker")?.enabled || false}
-                          onCheckedChange={(checked) => {
-                            toggleToolEquipped("finance_tracker", checked);
-                          }}
-                        />
+                    {!isLoadingTools && (!toolset?.equipped || toolset.equipped.length === 0) && (
+                      <div className="col-span-2 text-center py-4 border rounded-lg">
+                        <p className="text-muted-foreground">No tools available at this time</p>
                       </div>
-                    </div>
-                    
-                    <div className="border rounded-lg p-4 flex flex-col space-y-2">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">Research Analyst</h4>
-                          <p className="text-sm text-muted-foreground">Provides detailed analysis and research summaries</p>
-                        </div>
-                        <Switch 
-                          checked={toolset?.equipped?.find(tool => tool.id === "research_analyst")?.enabled || false}
-                          onCheckedChange={(checked) => {
-                            toggleToolEquipped("research_analyst", checked);
-                          }}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="border rounded-lg p-4 flex flex-col space-y-2">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">Task Manager</h4>
-                          <p className="text-sm text-muted-foreground">Tracks tasks, assigns responsibilities and follows up</p>
-                        </div>
-                        <Switch 
-                          checked={toolset?.equipped?.find(tool => tool.id === "task_manager")?.enabled || false}
-                          onCheckedChange={(checked) => {
-                            toggleToolEquipped("task_manager", checked);
-                          }}
-                        />
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
                 
