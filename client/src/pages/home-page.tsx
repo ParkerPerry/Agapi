@@ -59,7 +59,7 @@ export default function HomePage() {
       <main className="container py-6">
         <div className="max-w-2xl mx-auto space-y-6">
           {circleData && (
-            <div className="p-4 border rounded-lg mb-4" style={{ borderColor: circleData.color || '#e2e8f0' }}>
+            <div className="p-4 border rounded-lg mb-4" style={{ borderColor: typeof circleData.color === 'string' ? circleData.color : '#e2e8f0' }}>
               <h1 className="text-2xl font-bold flex items-center">
                 <span className="mr-2">{circleData.icon}</span>
                 {circleData.name}
