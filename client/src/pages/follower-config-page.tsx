@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { 
   Select,
   SelectContent,
@@ -25,6 +26,18 @@ import { responsivenessOptions } from "@/components/followers/follower-create-fo
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { useUpdateFollower } from "@/lib/mutations/follower-mutations";
 import { TourProvider } from "@/components/tour/tour-context";
+
+// Define types for AI follower capabilities
+interface AIRole {
+  name: string;
+  description: string;
+  enabled: boolean;
+}
+
+interface AICapabilities {
+  roles: AIRole[];
+  customInstructions: string;
+}
 
 export default function FollowerConfigPage() {
   const { user } = useAuth();
@@ -43,6 +56,27 @@ export default function FollowerConfigPage() {
   const [interactionDislikes, setInteractionDislikes] = useState("");
   const [communicationStyle, setCommunicationStyle] = useState("");
   const [interests, setInterests] = useState("");
+  
+  // Advanced capabilities state
+  const [capabilities, setCapabilities] = useState<AICapabilities>({
+    roles: [
+      { name: "calendar_assistant", description: "Helps schedule events and manage calendars", enabled: false },
+      { name: "finance_tracker", description: "Tracks expenses, budgets and financial plans", enabled: false },
+      { name: "research_analyst", description: "Provides detailed analysis and research summaries", enabled: false },
+      { name: "task_manager", description: "Tracks tasks, assigns responsibilities and follows up", enabled: false }
+    ],
+    customInstructions: ""
+  });
+  
+  // Helper function to update a specific role's enabled status
+  const updateRoleEnabled = (roleName: string, enabled: boolean) => {
+    setCapabilities(prevCapabilities => ({
+      ...prevCapabilities,
+      roles: prevCapabilities.roles.map(role => 
+        role.name === roleName ? { ...role, enabled } : role
+      )
+    }));
+  };
 
   // Extract follower ID from URL with enhanced logging
   console.log("[ConfigPage] URL Parameters from useParams:", params);
@@ -127,6 +161,11 @@ export default function FollowerConfigPage() {
       if (follower.interactionPreferences) {
         setInteractionLikes(follower.interactionPreferences.likes.join(", "));
         setInteractionDislikes(follower.interactionPreferences.dislikes.join(", "));
+      }
+      
+      // Set capabilities if they exist in the follower data
+      if (follower.capabilities) {
+        setCapabilities(follower.capabilities);
       }
     }
   }, [follower]);
@@ -433,18 +472,110 @@ export default function FollowerConfigPage() {
           {/* Lower Container - Functional Capabilities (future implementation) */}
           <Card>
             <CardHeader>
-              <CardTitle>Functional Capabilities</CardTitle>
-              <CardDescription>
-                Configure how your AI follower interacts with content
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Functional Capabilities</CardTitle>
+                  <CardDescription>
+                    Configure advanced roles and behaviors for specific circles
+                  </CardDescription>
+                </div>
+                <Button 
+                  onClick={saveBasicSettings}
+                  disabled={updateFollowerMutation.isPending}
+                >
+                  {updateFollowerMutation.isPending ? "Saving..." : "Save Capabilities"}
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="py-8 flex flex-col items-center justify-center text-center">
-                <div className="space-y-2 max-w-md">
-                  <h3 className="text-lg font-medium">Advanced Configuration Coming Soon</h3>
-                  <p className="text-muted-foreground">
-                    In the future, you'll be able to customize knowledge bases, response behaviors, 
-                    and advanced parameters for your AI follower in this section.
+            <CardContent className="space-y-6">
+              {/* Role-based capabilities */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Specialized Roles</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Enable specialized roles to give your AI follower specific capabilities in circles
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-4 flex flex-col space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium">Calendar Assistant</h4>
+                          <p className="text-sm text-muted-foreground">Helps schedule events and manage calendars</p>
+                        </div>
+                        <Switch 
+                          checked={capabilities?.roles?.find(r => r.name === "calendar_assistant")?.enabled || false}
+                          onCheckedChange={(checked) => {
+                            updateRoleEnabled("calendar_assistant", checked);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="border rounded-lg p-4 flex flex-col space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium">Finance Tracker</h4>
+                          <p className="text-sm text-muted-foreground">Tracks expenses, budgets and financial plans</p>
+                        </div>
+                        <Switch 
+                          checked={capabilities?.roles?.find(r => r.name === "finance_tracker")?.enabled || false}
+                          onCheckedChange={(checked) => {
+                            updateRoleEnabled("finance_tracker", checked);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="border rounded-lg p-4 flex flex-col space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium">Research Analyst</h4>
+                          <p className="text-sm text-muted-foreground">Provides detailed analysis and research summaries</p>
+                        </div>
+                        <Switch 
+                          checked={capabilities?.roles?.find(r => r.name === "research_analyst")?.enabled || false}
+                          onCheckedChange={(checked) => {
+                            updateRoleEnabled("research_analyst", checked);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="border rounded-lg p-4 flex flex-col space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium">Task Manager</h4>
+                          <p className="text-sm text-muted-foreground">Tracks tasks, assigns responsibilities and follows up</p>
+                        </div>
+                        <Switch 
+                          checked={capabilities?.roles?.find(r => r.name === "task_manager")?.enabled || false}
+                          onCheckedChange={(checked) => {
+                            updateRoleEnabled("task_manager", checked);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2 pt-4">
+                  <Label htmlFor="customInstructions">Custom Instructions</Label>
+                  <Textarea 
+                    id="customInstructions" 
+                    placeholder="Add specific instructions for how this AI follower should behave in specialized roles..."
+                    rows={4}
+                    className="resize-none"
+                    value={capabilities?.customInstructions || ""}
+                    onChange={(e) => {
+                      setCapabilities({
+                        ...capabilities,
+                        customInstructions: e.target.value
+                      });
+                    }}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Add specific instructions for how your AI follower should interpret and respond when performing specialized roles.
                   </p>
                 </div>
               </div>

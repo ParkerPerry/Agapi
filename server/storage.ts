@@ -29,7 +29,7 @@ export interface IStorage {
   createPendingResponse(response: Omit<PendingResponse, "id" | "createdAt">): Promise<PendingResponse>;
   getPendingResponses(): Promise<PendingResponse[]>;
   markPendingResponseProcessed(id: number): Promise<void>;
-  updateAiFollower(id: number, updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle">>): Promise<AiFollower>;
+  updateAiFollower(id: number, updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle" | "capabilities">>): Promise<AiFollower>;
   updateFollowerInterests(id: number, interests: string[]): Promise<void>;
   updateFollowerInteractionPreferences(id: number, likes: string[], dislikes: string[]): Promise<void>;
   deleteAiFollower(id: number): Promise<void>;
@@ -278,7 +278,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateAiFollower(
     id: number,
-    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle">>
+    updates: Partial<Pick<AiFollower, "name" | "personality" | "responsiveness" | "background" | "communicationStyle" | "capabilities">>
   ): Promise<AiFollower> {
     try {
       console.log("[Storage] Updating AI follower:", id, "with:", updates);
