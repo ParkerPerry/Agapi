@@ -45,9 +45,33 @@ export default function AiFollowersPage() {
       // Search query filter
       if (searchQuery.trim() !== "") {
         const query = searchQuery.toLowerCase();
+        
+        // Search across all follower details
         const nameMatch = follower.name.toLowerCase().includes(query);
         const personalityMatch = follower.personality.toLowerCase().includes(query);
-        if (!nameMatch && !personalityMatch) return false;
+        const backgroundMatch = follower.background?.toLowerCase().includes(query) || false;
+        const communicationStyleMatch = follower.communicationStyle?.toLowerCase().includes(query) || false;
+        
+        // Search interests
+        const interestsMatch = follower.interests?.some(
+          interest => interest.toLowerCase().includes(query)
+        ) || false;
+        
+        // Search interaction preferences
+        const likesMatch = follower.interactionPreferences?.likes?.some(
+          like => like.toLowerCase().includes(query)
+        ) || false;
+        
+        const dislikesMatch = follower.interactionPreferences?.dislikes?.some(
+          dislike => dislike.toLowerCase().includes(query)
+        ) || false;
+        
+        // Match if any of the fields contain the search term
+        if (!(nameMatch || personalityMatch || backgroundMatch || 
+              communicationStyleMatch || interestsMatch || 
+              likesMatch || dislikesMatch)) {
+          return false;
+        }
       }
       
       return true;

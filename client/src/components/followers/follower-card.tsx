@@ -33,78 +33,78 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
         !follower.active && "opacity-60"
       )}
     >
-      {/* Profile section with avatar and basic info */}
-      <div className="flex items-start space-x-4">
-        <Avatar className="h-12 w-12">
-          <img src={follower.avatarUrl} alt={follower.name} />
-          <AvatarFallback>
-            {follower.name.charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="font-medium">{follower.name}</h3>
-            {!follower.active && (
-              <Badge variant="secondary">Inactive</Badge>
-            )}
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {follower.personality}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
-          </p>
-        </div>
-      </div>
-      
-      {/* Action buttons section below profile info */}
-      <div className="flex justify-end space-x-2">
-        <Button
-          variant="outline"
-          size="sm"
-          title="Advanced Configuration"
-          onClick={handleNavigateToConfig}
-          className="flex items-center gap-1"
-        >
-          <Settings className="h-4 w-4" />
-          <span className="hidden md:inline">Configure</span>
-        </Button>
-        
-        <FollowerEditDialog
-          trigger={
-            <Button
-              variant="outline"
-              size="sm"
-              title="Edit Follower"
-              className="flex items-center gap-1"
-            >
-              <Pencil className="h-4 w-4" />
-              <span className="hidden md:inline">Edit</span>
-            </Button>
-          }
-          follower={follower}
-          onEdit={onEdit}
-        />
+      {/* Combined layout with action buttons on the left */}
+      <div className="flex">
+        {/* Action buttons in vertical column */}
+        <div className="flex flex-col space-y-2 mr-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            title="Advanced Configuration"
+            onClick={handleNavigateToConfig}
+            className="h-8 w-8 rounded-full"
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
+          
+          <FollowerEditDialog
+            trigger={
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Edit Follower"
+                className="h-8 w-8 rounded-full"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            }
+            follower={follower}
+            onEdit={onEdit}
+          />
 
-        <FollowerDeactivateDialog
-          trigger={
-            <Button 
-              variant="outline" 
-              size="sm"
-              title={follower.active ? "Deactivate Follower" : "Activate Follower"}
-              className={cn(
-                "flex items-center gap-1",
-                follower.active && "hover:bg-destructive/10"
+          <FollowerDeactivateDialog
+            trigger={
+              <Button 
+                variant="ghost" 
+                size="icon"
+                title={follower.active ? "Deactivate Follower" : "Activate Follower"}
+                className={cn(
+                  "h-8 w-8 rounded-full",
+                  follower.active && "hover:bg-destructive/10"
+                )}
+              >
+                <PowerOff className="h-4 w-4 text-destructive" />
+              </Button>
+            }
+            follower={follower}
+            onToggleActive={onToggleActive}
+            isUpdating={isUpdating}
+          />
+        </div>
+        
+        {/* Profile section with avatar and basic info */}
+        <div className="flex items-start space-x-4 flex-1">
+          <Avatar className="h-12 w-12">
+            <img src={follower.avatarUrl} alt={follower.name} />
+            <AvatarFallback>
+              {follower.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="font-medium">{follower.name}</h3>
+              {!follower.active && (
+                <Badge variant="secondary">Inactive</Badge>
               )}
-            >
-              <PowerOff className="h-4 w-4 text-destructive" />
-              <span className="hidden md:inline">{follower.active ? "Deactivate" : "Activate"}</span>
-            </Button>
-          }
-          follower={follower}
-          onToggleActive={onToggleActive}
-          isUpdating={isUpdating}
-        />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {follower.personality}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Temporarily hidden NFT feature */}
