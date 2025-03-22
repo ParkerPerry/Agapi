@@ -29,10 +29,32 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
   return (
     <div 
       className={cn(
-        "flex flex-col space-y-4 p-4 border rounded-lg transition-opacity",
+        "flex flex-col space-y-4 p-4 border rounded-lg transition-opacity relative",
         !follower.active && "opacity-60"
       )}
     >
+      {/* Deactivate button positioned in top-right corner */}
+      <div className="absolute top-2 right-2 z-10">
+        <FollowerDeactivateDialog
+          trigger={
+            <Button 
+              variant="ghost" 
+              size="icon"
+              title={follower.active ? "Deactivate Follower" : "Activate Follower"}
+              className={cn(
+                "h-7 w-7 rounded-full hover:bg-muted",
+                follower.active && "hover:bg-destructive/10"
+              )}
+            >
+              <PowerOff className="h-4 w-4 text-destructive" />
+            </Button>
+          }
+          follower={follower}
+          onToggleActive={onToggleActive}
+          isUpdating={isUpdating}
+        />
+      </div>
+      
       {/* Combined layout with action buttons on the left */}
       <div className="flex">
         {/* Action buttons in vertical column */}
@@ -60,25 +82,6 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
             }
             follower={follower}
             onEdit={onEdit}
-          />
-
-          <FollowerDeactivateDialog
-            trigger={
-              <Button 
-                variant="ghost" 
-                size="icon"
-                title={follower.active ? "Deactivate Follower" : "Activate Follower"}
-                className={cn(
-                  "h-8 w-8 rounded-full",
-                  follower.active && "hover:bg-destructive/10"
-                )}
-              >
-                <PowerOff className="h-4 w-4 text-destructive" />
-              </Button>
-            }
-            follower={follower}
-            onToggleActive={onToggleActive}
-            isUpdating={isUpdating}
           />
         </div>
         
