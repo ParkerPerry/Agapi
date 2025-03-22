@@ -33,80 +33,82 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
         !follower.active && "opacity-60"
       )}
     >
-      {/* Deactivate button positioned in top-right corner */}
-      <div className="absolute top-2 right-2 z-10">
-        <FollowerDeactivateDialog
-          trigger={
-            <Button 
-              variant="ghost" 
-              size="icon"
-              title={follower.active ? "Deactivate Follower" : "Activate Follower"}
-              className={cn(
-                "h-7 w-7 rounded-full hover:bg-muted",
-                follower.active && "hover:bg-destructive/10"
-              )}
-            >
-              <PowerOff className="h-4 w-4 text-destructive" />
-            </Button>
-          }
-          follower={follower}
-          onToggleActive={onToggleActive}
-          isUpdating={isUpdating}
-        />
-      </div>
-      
-      {/* Combined layout with action buttons on the left */}
+      {/* Profile section with avatar, action buttons and info */}
       <div className="flex">
-        {/* Action buttons in vertical column */}
-        <div className="flex flex-col space-y-2 mr-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            title="Advanced Configuration"
-            onClick={handleNavigateToConfig}
-            className="h-8 w-8 rounded-full"
-          >
-            <Settings className="h-4 w-4" />
-          </Button>
-          
-          <FollowerEditDialog
-            trigger={
-              <Button
-                variant="ghost"
-                size="icon"
-                title="Edit Follower"
-                className="h-8 w-8 rounded-full"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-            }
-            follower={follower}
-            onEdit={onEdit}
-          />
-        </div>
-        
-        {/* Profile section with avatar and basic info */}
-        <div className="flex items-start space-x-4 flex-1">
-          <Avatar className="h-12 w-12">
+        {/* Avatar with buttons below it */}
+        <div className="flex flex-col items-center mr-4">
+          <Avatar className="h-12 w-12 mb-2">
             <img src={follower.avatarUrl} alt={follower.name} />
             <AvatarFallback>
               {follower.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1">
+          
+          {/* Action buttons in horizontal row beneath avatar */}
+          <div className="flex space-x-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              title="Advanced Configuration"
+              onClick={handleNavigateToConfig}
+              className="h-7 w-7 rounded-full"
+            >
+              <Settings className="h-3.5 w-3.5" />
+            </Button>
+            
+            <FollowerEditDialog
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="Edit Follower"
+                  className="h-7 w-7 rounded-full"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+              }
+              follower={follower}
+              onEdit={onEdit}
+            />
+          </div>
+        </div>
+        
+        {/* Follower info with deactivate button on same line as name */}
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h3 className="font-medium">{follower.name}</h3>
               {!follower.active && (
                 <Badge variant="secondary">Inactive</Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">
-              {follower.personality}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
-            </p>
+            
+            {/* Deactivate button on the same line as the name */}
+            <FollowerDeactivateDialog
+              trigger={
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  title={follower.active ? "Deactivate Follower" : "Activate Follower"}
+                  className={cn(
+                    "h-7 w-7 rounded-full hover:bg-muted",
+                    follower.active && "hover:bg-destructive/10"
+                  )}
+                >
+                  <PowerOff className="h-3.5 w-3.5 text-destructive" />
+                </Button>
+              }
+              follower={follower}
+              onToggleActive={onToggleActive}
+              isUpdating={isUpdating}
+            />
           </div>
+          <p className="text-sm text-muted-foreground">
+            {follower.personality}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {responsivenessOptions.find(opt => opt.value === follower.responsiveness)?.label}
+          </p>
         </div>
       </div>
 
