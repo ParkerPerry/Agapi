@@ -3,22 +3,44 @@ import { NavBar } from "@/components/nav-bar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { AiFollower } from "@shared/schema";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FollowerCreateForm } from "@/components/followers/follower-create-form";
 import { FollowerCard } from "@/components/followers/follower-card";
 import { useUpdateFollower, useDeleteFollower } from "@/lib/mutations/follower-mutations";
 import { TourProvider } from "@/components/tour/tour-context";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, RefreshCw } from "lucide-react";
+import { Search, Filter, RefreshCw, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { X } from "lucide-react";
 
 export default function AiFollowersPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
-  const [personalityFilter, setPersonalityFilter] = useState<string>("");
+  const [interestFilter, setInterestFilter] = useState<string | null>(null);
+  const [availableInterests, setAvailableInterests] = useState<string[]>([]);
+  const [interestPopoverOpen, setInterestPopoverOpen] = useState(false);
 
   // Redirect to login if no user
   if (!user) {
@@ -33,6 +55,19 @@ export default function AiFollowersPage() {
   const updateFollowerMutation = useUpdateFollower();
   const deleteFollowerMutation = useDeleteFollower();
 
+  // Collect all unique interests across all followers
+  useEffect(() => {
+    if (followers) {
+      const allInterests = new Set<string>();
+      followers.forEach(follower => {
+        if (follower.interests && follower.interests.length > 0) {
+          follower.interests.forEach(interest => allInterests.add(interest));
+        }
+      });
+      setAvailableInterests(Array.from(allInterests).sort());
+    }
+  }, [followers]);
+
   // Filter and search followers
   const filteredFollowers = useMemo(() => {
     if (!followers) return [];
@@ -41,6 +76,13 @@ export default function AiFollowersPage() {
       // Status filter
       if (statusFilter === "active" && !follower.active) return false;
       if (statusFilter === "inactive" && follower.active) return false;
+      
+      // Interest filter
+      if (interestFilter) {
+        if (!follower.interests || !follower.interests.includes(interestFilter)) {
+          return false;
+        }
+      }
       
       // Search query filter
       if (searchQuery.trim() !== "") {
@@ -76,13 +118,13 @@ export default function AiFollowersPage() {
       
       return true;
     });
-  }, [followers, searchQuery, statusFilter]);
+  }, [followers, searchQuery, statusFilter, interestFilter]);
 
   // Function to clear all filters
   const clearFilters = () => {
     setSearchQuery("");
     setStatusFilter("all");
-    setPersonalityFilter("");
+    setInterestFilter(null);
   };
 
   return (
@@ -131,6 +173,43 @@ export default function AiFollowersPage() {
                         </SelectContent>
                       </Select>
                       
+                      {/* Interests filter */}
+                      <Popover open={interestPopoverOpen} onOpenChange={setInterestPopoverOpen}>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            className="flex items-center gap-1" 
+                            role="combobox" 
+                            aria-expanded={interestPopoverOpen}
+                          >
+                            <Tag className="h-4 w-4 mr-1" />
+                            {interestFilter || "Interests"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0" align="start" side="bottom">
+                          <Command>
+                            <CommandInput placeholder="Search interests..." />
+                            <CommandList>
+                              <CommandEmpty>No interests found</CommandEmpty>
+                              <CommandGroup>
+                                {availableInterests.map((interest) => (
+                                  <CommandItem
+                                    key={interest}
+                                    value={interest}
+                                    onSelect={(value) => {
+                                      setInterestFilter(value);
+                                      setInterestPopoverOpen(false);
+                                    }}
+                                  >
+                                    {interest}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
                       <Button 
                         variant="outline" 
                         size="icon"
@@ -144,17 +223,47 @@ export default function AiFollowersPage() {
                 </div>
                 
                 {/* Display filter badges */}
-                {(searchQuery || statusFilter !== "all") && (
+                {(searchQuery || statusFilter !== "all" || interestFilter) && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     <div className="text-sm text-muted-foreground">Filters:</div>
                     {searchQuery && (
                       <Badge variant="outline" className="flex items-center gap-1">
                         Search: "{searchQuery}"
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-4 w-4 p-0 ml-1" 
+                          onClick={() => setSearchQuery("")}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
                       </Badge>
                     )}
                     {statusFilter !== "all" && (
                       <Badge variant="outline" className="flex items-center gap-1">
                         Status: {statusFilter}
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-4 w-4 p-0 ml-1" 
+                          onClick={() => setStatusFilter("all")}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </Badge>
+                    )}
+                    {interestFilter && (
+                      <Badge variant="outline" className="flex items-center gap-1">
+                        <Tag className="h-3 w-3 mr-1" />
+                        {interestFilter}
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-4 w-4 p-0 ml-1" 
+                          onClick={() => setInterestFilter(null)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
                       </Badge>
                     )}
                   </div>
