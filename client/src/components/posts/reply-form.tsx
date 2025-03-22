@@ -22,11 +22,11 @@ export function ReplyForm({ postId, commentId, aiFollowerName, onReply }: ReplyF
 
   const replyMutation = useMutation({
     mutationFn: async ({ content }: { content: string }) => {
-      const res = await apiRequest("POST", `/api/posts/${postId}/reply`, {
+      const res = await apiRequest(`/api/posts/${postId}/reply`, "POST", {
         content,
         parentId: commentId,
       });
-      return res.json();
+      return res;
     },
     onSuccess: (data) => {
       // Invalidate both user posts and circle posts queries to ensure UI updates properly
