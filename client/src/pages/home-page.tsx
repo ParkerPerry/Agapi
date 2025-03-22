@@ -3,16 +3,38 @@ import { NavBar } from "@/components/nav-bar";
 import { PostForm } from "@/components/posts/post-form";
 import { PostCard } from "@/components/posts/post-card";
 import { useQuery } from "@tanstack/react-query";
-import { Post } from "@shared/schema";
+import { Post, Circle } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { createWebSocket, subscribeToWebSocket } from "@/lib/websocket";
+import { CirclePanel } from "@/components/circle-panel";
 
 export default function HomePage() {
   const { user } = useAuth();
+  const [circleId, setCircleId] = useState<number | null>(null);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
+  
+  // Parse circle ID from URL query parameters on component mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const circleParam = params.get('circle');
+    if (circleParam) {
+      setCircleId(parseInt(circleParam, 10));
+    } else {
+      setCircleId(null);
+    }
+  }, [window.location.search]);
 
+  // Query for posts - either circle posts or user posts
   const { data: posts, isLoading, refetch } = useQuery<(Post & { interactions: any[] })[]>({
-    queryKey: [`/api/posts/${user?.id}`],
+    queryKey: circleId ? [`/api/circles/${circleId}/posts`] : [`/api/posts/${user?.id}`],
+    enabled: !!user && (circleId !== null || true),
+  });
+
+  // Query for circle details if we're in circle view
+  const { data: circleDetails } = useQuery<Circle>({
+    queryKey: [`/api/circles/${circleId}`],
+    enabled: !!circleId && !!user,
   });
 
   // Handle real-time updates
