@@ -29,7 +29,7 @@ export function CircleShareDialog({ circle }: CircleShareDialogProps) {
 
   const createInvitationMutation = useMutation({
     mutationFn: async ({ username, role }: { username: string; role: "viewer" | "collaborator" }) => {
-      const res = await apiRequest("POST", `/api/circles/${circle.id}/invitations`, { username, role });
+      const res = await apiRequest(`/api/circles/${circle.id}/invitations`, "POST", { username, role });
       return res.json();
     },
     onSuccess: () => {

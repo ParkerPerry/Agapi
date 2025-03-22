@@ -11,7 +11,7 @@ export function useCreateFollower() {
       avatarUrl: string;
       responsiveness: "instant" | "active" | "casual" | "zen";
     }) => {
-      const res = await apiRequest("POST", "/api/followers", data);
+      const res = await apiRequest("/api/followers", "POST", data);
       return res.json();
     },
     onSuccess: () => {
@@ -41,7 +41,7 @@ export function useUpdateFollower() {
       };
     }) => {
       console.log("[Mutation] Updating follower:", data);
-      const res = await apiRequest("PATCH", `/api/followers/${data.id}`, data);
+      const res = await apiRequest(`/api/followers/${data.id}`, "PATCH", data);
       return res.json();
     },
     onSuccess: (_, variables) => {
@@ -60,7 +60,7 @@ export function useDeleteFollower() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (followerId: number) => {
-      await apiRequest("DELETE", `/api/followers/${followerId}`);
+      await apiRequest(`/api/followers/${followerId}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });

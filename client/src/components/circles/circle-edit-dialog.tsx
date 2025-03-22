@@ -46,7 +46,7 @@ export function CircleEditDialog({ circle, onEdit }: CircleEditDialogProps) {
 
   const updateCircleMutation = useMutation({
     mutationFn: async (data: InsertCircle) => {
-      const res = await apiRequest("PATCH", `/api/circles/${circle.id}`, data);
+      const res = await apiRequest(`/api/circles/${circle.id}`, "PATCH", data);
       return res.json();
     },
     onSuccess: (updatedCircle) => {
@@ -62,11 +62,16 @@ export function CircleEditDialog({ circle, onEdit }: CircleEditDialogProps) {
   // Mutation to set a circle as default
   const setDefaultCircleMutation = useMutation({
     mutationFn: async () => {
-      const res = await apiRequest("POST", `/api/circles/${circle.id}/set-default`);
+      const res = await apiRequest(`/api/circles/${circle.id}/set-default`, "POST");
       return res.json();
     },
     onSuccess: (updatedCircle) => {
+      // Invalidate multiple queries to ensure all components are updated
       queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/default-circle"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/circles/default"] });
+      // Also invalidate the specific circle query
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}`] });
       onEdit?.(updatedCircle);
       toast({
         title: "Default circle set",
@@ -116,14 +121,25 @@ export function CircleEditDialog({ circle, onEdit }: CircleEditDialogProps) {
             <FormField
               control={form.control}
               name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
+              render={({ field }) => {
+                // Ensure we have a valid string value
+                const value = typeof field.value === 'string' ? field.value : '';
+                
+                return (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                        value={value}
+                      />
+                    </FormControl>
+                  </FormItem>
+                );
+              }}
             />
             <div className="grid gap-4 md:grid-cols-2">
               <FormField
@@ -168,14 +184,27 @@ export function CircleEditDialog({ circle, onEdit }: CircleEditDialogProps) {
               <FormField
                 control={form.control}
                 name="color"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Color</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="color" className="h-10 px-2" />
-                    </FormControl>
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  // Ensure we have a valid string value
+                  const value = typeof field.value === 'string' ? field.value : '#3b82f6';
+                  
+                  return (
+                    <FormItem>
+                      <FormLabel>Color</FormLabel>
+                      <FormControl>
+                        <Input 
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
+                          value={value}
+                          type="color" 
+                          className="h-10 px-2" 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  );
+                }}
               />
             </div>
             <div className="space-y-4">

@@ -33,7 +33,7 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
 
   const addFollowerMutation = useMutation({
     mutationFn: async (aiFollowerId: number) => {
-      const res = await apiRequest("POST", `/api/circles/${circle.id}/followers`, { aiFollowerId });
+      const res = await apiRequest(`/api/circles/${circle.id}/followers`, "POST", { aiFollowerId });
       return res.json();
     },
     onSuccess: () => {
@@ -47,7 +47,7 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
 
   const removeFollowerMutation = useMutation({
     mutationFn: async (followerId: number) => {
-      await apiRequest("DELETE", `/api/circles/${circle.id}/followers/${followerId}`);
+      await apiRequest(`/api/circles/${circle.id}/followers/${followerId}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/followers`] });

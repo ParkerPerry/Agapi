@@ -49,7 +49,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
   // Mutation for toggling follower mute status within this circle
   const toggleMuteFollowerMutation = useMutation({
     mutationFn: async (followerId: number) => {
-      const res = await apiRequest("PATCH", `/api/circles/${circleId}/followers/${followerId}/toggle-mute`);
+      const res = await apiRequest(`/api/circles/${circleId}/followers/${followerId}/toggle-mute`, "PATCH");
       return res.json();
     },
     onSuccess: () => {

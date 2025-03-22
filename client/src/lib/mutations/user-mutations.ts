@@ -14,12 +14,7 @@ export function useUpdateUserProfile() {
   
   return useMutation({
     mutationFn: async (data: UserProfileUpdate) => {
-      const response = await apiRequest({
-        url: "/api/user/profile",
-        method: "PATCH",
-        data,
-        headers: { "Content-Type": "application/json" }
-      });
+      const response = await apiRequest("/api/user/profile", "PATCH", data);
       return response;
     },
     onSuccess: () => {

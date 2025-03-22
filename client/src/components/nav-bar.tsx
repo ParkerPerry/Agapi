@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,7 +8,8 @@ import {
   LogOut, 
   HelpCircle, 
   Circle,
-  MessageCircle
+  MessageCircle,
+  Loader2
 } from "lucide-react";
 import { useTour } from "@/components/tour/tour-context";
 import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
@@ -22,18 +23,83 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Circle as CircleType } from "@shared/schema";
+
+// Component to handle home navigation with default circle
+function HomeLink() {
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
+  
+  // Fetch default circle
+  const { data: defaultCircle, isLoading } = useQuery<CircleType>({
+    queryKey: ["/api/default-circle"],
+    enabled: !!user,
+  });
+
+  const navigateToHome = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (defaultCircle && defaultCircle.id) {
+      // Navigate to the default circle
+      navigate(`/?circle=${defaultCircle.id}`);
+    } else {
+      // If no default circle, navigate to root
+      navigate("/");
+    }
+  }, [defaultCircle, navigate]);
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-9 w-9" 
+          onClick={navigateToHome}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Loader2 className="h-[1.2rem] w-[1.2rem] animate-spin" />
+          ) : (
+            <Home className="h-[1.2rem] w-[1.2rem]" />
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Home</TooltipContent>
+    </Tooltip>
+  );
+}
 
 export function NavBar() {
   const { user, logoutMutation } = useAuth();
   const { startTour } = useTour();
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo and brand section */}
         <div className="flex items-center">
-          <Link href="/" className="flex items-center space-x-2">
+          {/* Using Button instead of Link to handle default circle navigation */}
+          <Button 
+            variant="ghost" 
+            className="flex items-center space-x-2 px-0 hover:bg-transparent"
+            onClick={e => {
+              e.preventDefault();
+              // Use the same navigate functionality as HomeLink
+              if (user) {
+                const defaultCircle = queryClient.getQueryData<CircleType>(["/api/default-circle"]);
+                if (defaultCircle && defaultCircle.id) {
+                  window.location.href = `/?circle=${defaultCircle.id}`;
+                } else {
+                  window.location.href = "/";
+                }
+              }
+            }}
+          >
             <div className="relative h-8 w-8 overflow-hidden rounded-md">
               <img 
                 src="/circle-logo.svg" 
@@ -44,23 +110,14 @@ export function NavBar() {
             <span className="hidden font-semibold text-lg md:inline-block">
               CircleTube
             </span>
-          </Link>
+          </Button>
         </div>
 
         {/* Main navigation */}
         <div className="flex items-center space-x-1 md:space-x-2">
           <TooltipProvider>
-            {/* Home Link */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link href="/">
-                  <Button variant="ghost" size="icon" className="h-9 w-9">
-                    <Home className="h-[1.2rem] w-[1.2rem]" />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>Home</TooltipContent>
-            </Tooltip>
+            {/* Home Link - now using the HomeLink component */}
+            <HomeLink />
 
             {/* AI Followers Link */}
             <Tooltip>

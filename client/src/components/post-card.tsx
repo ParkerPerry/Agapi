@@ -41,7 +41,7 @@ function ReplyForm({ postId, commentId, aiFollowerName, onReply }: {
 
   const replyMutation = useMutation({
     mutationFn: async ({ content }: { content: string }) => {
-      const res = await apiRequest("POST", `/api/posts/${postId}/reply`, {
+      const res = await apiRequest(`/api/posts/${postId}/reply`, "POST", {
         content,
         parentId: commentId,
       });
@@ -204,7 +204,7 @@ export function PostCard({ post }: PostCardProps) {
     const unsubscribe = subscribeToWebSocket('thread-update', (data) => {
       console.log('Received thread update via WebSocket:', data);
       if (data.postId === post.id && data.thread) {
-        queryClient.setQueryData(['posts', user?.id], (oldData: any) => {
+        queryClient.setQueryData([`/api/posts/${user?.id}`], (oldData: any) => {
           if (!oldData) return oldData;
 
           return oldData.map((p: any) => {
@@ -236,7 +236,7 @@ export function PostCard({ post }: PostCardProps) {
         });
 
         // Invalidate query to ensure we get the latest data
-        queryClient.invalidateQueries(['posts', user?.id]);
+        queryClient.invalidateQueries({ queryKey: [`/api/posts/${user?.id}`] });
       }
     });
 

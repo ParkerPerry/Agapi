@@ -9,7 +9,7 @@ export function useCreateCircle() {
 
   return useMutation({
     mutationFn: async (data: InsertCircle) => {
-      const res = await apiRequest("POST", "/api/circles", data);
+      const res = await apiRequest("/api/circles", "POST", data);
       return res.json();
     },
     onSuccess: () => {
@@ -28,7 +28,7 @@ export function useDeleteCircle() {
 
   return useMutation({
     mutationFn: async (circleId: number) => {
-      await apiRequest("DELETE", `/api/circles/${circleId}`);
+      await apiRequest(`/api/circles/${circleId}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
@@ -52,7 +52,7 @@ export function useRespondToInvitation() {
       invitationId: number;
       status: "accepted" | "declined";
     }) => {
-      const res = await apiRequest("PATCH", `/api/circles/invitations/${invitationId}`, {
+      const res = await apiRequest(`/api/circles/invitations/${invitationId}`, "PATCH", {
         status,
       });
       return res.json();
@@ -75,8 +75,8 @@ export function useDeactivateCircleMember() {
   return useMutation({
     mutationFn: async ({ circleId, userId }: { circleId: number; userId: number }) => {
       await apiRequest(
-        "POST",
-        `/api/circles/${circleId}/members/${userId}/deactivate`
+        `/api/circles/${circleId}/members/${userId}/deactivate`,
+        "POST"
       );
     },
     onSuccess: (_data, variables) => {
@@ -99,8 +99,8 @@ export function useReactivateCircleMember() {
   return useMutation({
     mutationFn: async ({ circleId, userId }: { circleId: number; userId: number }) => {
       await apiRequest(
-        "POST",
-        `/api/circles/${circleId}/members/${userId}/reactivate`
+        `/api/circles/${circleId}/members/${userId}/reactivate`,
+        "POST"
       );
     },
     onSuccess: (_data, variables) => {
