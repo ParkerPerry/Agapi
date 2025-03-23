@@ -12,10 +12,10 @@ import type { AiFollower } from "@shared/schema";
 const cloneFactorySchema = z.object({
   templateFollowerId: z.number().min(1, "Please select a template follower"),
   collectiveName: z.string().min(3, "Name must be at least 3 characters").max(50, "Name must be at most 50 characters"),
-  description: z.string().optional(),
+  description: z.string().default(""),
   cloneCount: z.number().min(1, "Must create at least 1 clone").max(20, "Maximum of 20 clones allowed"),
   variationLevel: z.number().min(0.1, "Variation level must be at least 0.1").max(1, "Variation level must be at most 1"),
-  customInstructions: z.string().optional(),
+  customInstructions: z.string().default(""),
 });
 
 type CloneFactoryFormValues = z.infer<typeof cloneFactorySchema>;

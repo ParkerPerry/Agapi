@@ -7,6 +7,7 @@ import { useState, useMemo, useEffect } from "react";
 import { FollowerCreateForm } from "@/components/followers/follower-create-form";
 import { CollectiveCreateForm } from "@/components/followers/collective-create-form";
 import { CollectivesList } from "@/components/followers/collectives-list";
+import { CloneFactoryForm } from "@/components/followers/clone-factory-form";
 import { FollowerCard } from "@/components/followers/follower-card";
 import { useUpdateFollower, useDeleteFollower } from "@/lib/mutations/follower-mutations";
 import { TourProvider } from "@/components/tour/tour-context";
@@ -144,15 +145,19 @@ export default function AiFollowersPage() {
             <Card>
               <CardHeader>
                 <Tabs defaultValue="individual" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
+                  <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="individual">Create AI Follower</TabsTrigger>
                     <TabsTrigger value="collective">Create AI Collective</TabsTrigger>
+                    <TabsTrigger value="clone">Clone Factory</TabsTrigger>
                   </TabsList>
                   <TabsContent value="individual" className="mt-4">
                     <FollowerCreateForm />
                   </TabsContent>
                   <TabsContent value="collective" className="mt-4">
                     <CollectiveCreateForm />
+                  </TabsContent>
+                  <TabsContent value="clone" className="mt-4">
+                    <CloneFactoryForm />
                   </TabsContent>
                 </Tabs>
               </CardHeader>

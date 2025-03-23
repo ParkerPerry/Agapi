@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { AiFollowerCollective, AiFollower } from '@shared/schema';
+import { formatRelativeTime } from '@/utils/date';
 import {
   Card,
   CardContent,
@@ -20,143 +20,145 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Users, User, ChevronRight, Activity } from 'lucide-react';
 
-type CollectiveWithMembers = AiFollowerCollective & {
-  members: (AiFollower & { collectiveMemberId: number })[];
-};
-
 export function CollectivesList() {
-  const [expandedCollective, setExpandedCollective] = useState<number | null>(null);
-
-  // Fetch user's collectives
-  const { data: collectives, isLoading } = useQuery<AiFollowerCollective[]>({
+  const { data: collectives, isLoading } = useQuery({
     queryKey: ['/api/followers/collectives'],
   });
 
-  // Function to fetch members for a specific collective when expanded
-  const fetchCollectiveMembers = async (collectiveId: number) => {
-    const response = await fetch(`/api/followers/collectives/${collectiveId}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch collective members');
+  const [expandedCollective, setExpandedCollective] = useState<number | null>(null);
+  const [selectedCollectiveMembers, setSelectedCollectiveMembers] = useState<any[]>([]);
+
+  const handleViewMembers = async (collectiveId: number) => {
+    try {
+      if (expandedCollective === collectiveId) {
+        setExpandedCollective(null);
+        return;
+      }
+      
+      setExpandedCollective(collectiveId);
+      
+      // Fetch the members of this collective
+      const response = await fetch(`/api/followers/collectives/${collectiveId}`);
+      const data = await response.json();
+      
+      if (data && data.members) {
+        setSelectedCollectiveMembers(data.members);
+      } else {
+        setSelectedCollectiveMembers([]);
+      }
+    } catch (error) {
+      console.error("Error fetching collective members:", error);
+      setSelectedCollectiveMembers([]);
     }
-    return response.json();
   };
 
-  // Query for expanded collective's members
-  const { data: expandedCollectiveData, isLoading: isLoadingMembers } = useQuery<{ 
-    collective: AiFollowerCollective, 
-    members: (AiFollower & { collectiveMemberId: number })[] 
-  }>({
-    queryKey: ['/api/followers/collectives', expandedCollective],
-    queryFn: () => expandedCollective ? fetchCollectiveMembers(expandedCollective) : Promise.resolve(null),
-    enabled: !!expandedCollective,
-  });
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   if (isLoading) {
-    return <div className="text-center py-8">Loading collectives...</div>;
+    return <div className="flex justify-center py-8">Loading collectives...</div>;
   }
 
   if (!collectives || collectives.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        No AI collectives found. Create one to get started!
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <Users className="w-16 h-16 text-muted-foreground mb-4" />
+        <h3 className="text-xl font-semibold mb-2">No AI Collectives Found</h3>
+        <p className="text-muted-foreground max-w-md">
+          You haven't created any AI collectives yet. Use the Create AI Collective tab or the Clone Factory to create a group of AI followers.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold flex items-center gap-2">
-        <Users className="h-6 w-6" />
-        Your AI Collectives
-      </h2>
-      
-      {collectives.map((collective) => (
-        <Card key={collective.id} className="overflow-hidden">
-          <CardHeader className="pb-2">
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  {collective.name}
-                  <Badge variant="outline" className="ml-2">
-                    {collective.active ? 'Active' : 'Inactive'}
-                  </Badge>
-                </CardTitle>
-                <CardDescription>
-                  {collective.description || `A collective of AI followers with ${collective.personality.substring(0, 30)}... personality`}
-                </CardDescription>
+      <div className="flex flex-col space-y-2">
+        <h2 className="text-2xl font-bold">Your AI Collectives</h2>
+        <p className="text-muted-foreground">
+          AI Collectives are groups of related AI followers that were created together.
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        {collectives.map((collective: any) => (
+          <Card key={collective.id} className="overflow-hidden">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle>{collective.name}</CardTitle>
+                  <CardDescription>
+                    Created {formatRelativeTime(new Date(collective.createdAt))}
+                  </CardDescription>
+                </div>
+                <Badge variant="outline" className="flex items-center">
+                  <Users className="h-3 w-3 mr-1" />
+                  {collective.memberCount || '?'}
+                </Badge>
               </div>
-              <Button
-                variant="ghost"
+            </CardHeader>
+            <CardContent>
+              <p className="line-clamp-2 text-sm">
+                {collective.description || 'No description provided.'}
+              </p>
+            </CardContent>
+            <CardFooter className="pt-2 flex justify-between">
+              <Button 
+                variant="outline" 
                 size="sm"
-                onClick={() => setExpandedCollective(
-                  expandedCollective === collective.id ? null : collective.id
-                )}
+                onClick={() => handleViewMembers(collective.id)}
+                className="flex items-center"
               >
-                {expandedCollective === collective.id ? 'Collapse' : 'View Members'}
-                <ChevronRight className={`ml-1 h-4 w-4 transition-transform ${
+                {expandedCollective === collective.id ? 'Hide Members' : 'View Members'}
+                <ChevronRight className={`ml-2 h-4 w-4 transform transition-transform ${
                   expandedCollective === collective.id ? 'rotate-90' : ''
                 }`} />
               </Button>
-            </div>
-          </CardHeader>
-          
-          {expandedCollective === collective.id && (
-            <CardContent className="pb-3">
-              <div className="border rounded-md p-4">
-                <h3 className="font-medium mb-2 flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Collective Members
-                </h3>
-                
-                {isLoadingMembers ? (
-                  <div className="text-center py-4 text-sm text-muted-foreground">
-                    Loading members...
-                  </div>
-                ) : expandedCollectiveData?.members?.length ? (
-                  <div className="grid gap-2">
-                    {expandedCollectiveData.members.map((follower) => (
-                      <div 
-                        key={follower.id} 
-                        className="flex items-center justify-between p-2 rounded-md hover:bg-muted"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={follower.avatarUrl} alt={follower.name} />
-                            <AvatarFallback>
-                              {follower.name.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">{follower.name}</div>
-                            <div className="text-xs text-muted-foreground truncate max-w-[300px]">
-                              {follower.personality.substring(0, 50)}...
-                            </div>
-                          </div>
+            </CardFooter>
+            
+            {expandedCollective === collective.id && (
+              <div className="px-6 pb-4">
+                <h4 className="font-medium mb-2 text-sm">Collective Members:</h4>
+                {selectedCollectiveMembers.length === 0 ? (
+                  <p className="text-sm text-muted-foreground italic">Loading members...</p>
+                ) : (
+                  <div className="space-y-2">
+                    {selectedCollectiveMembers.map((follower) => (
+                      <div key={follower.id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={follower.avatarUrl} alt={follower.name} />
+                          <AvatarFallback>{getInitials(follower.name)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{follower.name}</p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {follower.personality.substring(0, 40)}...
+                          </p>
                         </div>
-                        <Badge variant={follower.active ? "default" : "secondary"} className="flex items-center gap-1">
+                        <Badge variant="outline" className={`${
+                          follower.responsiveness === 'instant' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                          follower.responsiveness === 'active' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' :
+                          follower.responsiveness === 'casual' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                          'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                        }`}>
                           <Activity className="h-3 w-3 mr-1" />
-                          {follower.active ? 'Active' : 'Inactive'}
+                          {follower.responsiveness}
                         </Badge>
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="text-center py-4 text-sm text-muted-foreground">
-                    No members found in this collective
-                  </div>
                 )}
               </div>
-            </CardContent>
-          )}
-          
-          <CardFooter className="bg-muted/50 p-2 text-xs text-muted-foreground">
-            <div className="flex justify-between w-full">
-              <span>Created: {collective.createdAt ? new Date(collective.createdAt).toLocaleDateString() : 'Unknown'}</span>
-              <span>Personality: {collective.personality.substring(0, 30)}...</span>
-            </div>
-          </CardFooter>
-        </Card>
-      ))}
+            )}
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
