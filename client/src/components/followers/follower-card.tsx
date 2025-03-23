@@ -81,6 +81,11 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
               {!follower.active && (
                 <Badge variant="secondary">Inactive</Badge>
               )}
+              {follower.parentId && (
+                <Badge variant="outline" className="text-xs bg-sky-50 text-sky-700 border-sky-200">
+                  Clone
+                </Badge>
+              )}
             </div>
             
             {/* Deactivate button on the same line as the name */}

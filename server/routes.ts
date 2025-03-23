@@ -991,7 +991,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description,
         cloneCount,
         variationLevel,
-        customInstructions
+        customInstructions,
+        namingOption = 'sequential', // default to sequential naming
+        generateDynamicAvatars = false // default to false
       } = req.body;
       
       // Validate request
@@ -1020,7 +1022,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: description || "",
         cloneCount,
         variationLevel,
-        customInstructions: customInstructions || ""
+        customInstructions: customInstructions || "",
+        namingOption,
+        generateDynamicAvatars
       });
       
       console.log(`[API] Clone process completed, created ${result.followers.length} clones`);
