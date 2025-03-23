@@ -144,10 +144,9 @@ export default function AiFollowersPage() {
             <Card>
               <CardHeader>
                 <Tabs defaultValue="individual" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
+                  <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="individual">Create AI Follower</TabsTrigger>
                     <TabsTrigger value="collective">Create AI Collective</TabsTrigger>
-                    <TabsTrigger value="view-collectives">View Collectives</TabsTrigger>
                   </TabsList>
                   <TabsContent value="individual" className="mt-4">
                     <FollowerCreateForm />
@@ -155,176 +154,188 @@ export default function AiFollowersPage() {
                   <TabsContent value="collective" className="mt-4">
                     <CollectiveCreateForm />
                   </TabsContent>
-                  <TabsContent value="view-collectives" className="mt-4">
-                    <CollectivesList />
-                  </TabsContent>
                 </Tabs>
               </CardHeader>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                  <CardTitle>AI Followers</CardTitle>
+                <Tabs defaultValue="followers" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="followers">AI Followers</TabsTrigger>
+                    <TabsTrigger value="collectives">View Collectives</TabsTrigger>
+                  </TabsList>
                   
-                  <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-                    <div className="relative w-full md:w-64">
-                      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Search followers..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 w-full"
-                      />
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Select
-                        value={statusFilter}
-                        onValueChange={(value: "all" | "active" | "inactive") => setStatusFilter(value)}
-                      >
-                        <SelectTrigger className="w-[140px]">
-                          <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All</SelectItem>
-                          <SelectItem value="active">Active</SelectItem>
-                          <SelectItem value="inactive">Inactive</SelectItem>
-                        </SelectContent>
-                      </Select>
+                  {/* AI Followers Tab Content */}
+                  <TabsContent value="followers" className="mt-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <CardTitle>AI Followers</CardTitle>
                       
-                      {/* Interests filter */}
-                      <Popover open={interestPopoverOpen} onOpenChange={setInterestPopoverOpen}>
-                        <PopoverTrigger asChild>
+                      <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                        <div className="relative w-full md:w-64">
+                          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search followers..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-8 w-full"
+                          />
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <Select
+                            value={statusFilter}
+                            onValueChange={(value: "all" | "active" | "inactive") => setStatusFilter(value)}
+                          >
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All</SelectItem>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="inactive">Inactive</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          
+                          {/* Interests filter */}
+                          <Popover open={interestPopoverOpen} onOpenChange={setInterestPopoverOpen}>
+                            <PopoverTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                className="flex items-center gap-1" 
+                                role="combobox" 
+                                aria-expanded={interestPopoverOpen}
+                              >
+                                <Tag className="h-4 w-4 mr-1" />
+                                {interestFilter || "Interests"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="p-0" align="start" side="bottom">
+                              <Command>
+                                <CommandInput placeholder="Search interests..." />
+                                <CommandList>
+                                  <CommandEmpty>No interests found</CommandEmpty>
+                                  <CommandGroup>
+                                    {availableInterests.map((interest) => (
+                                      <CommandItem
+                                        key={interest}
+                                        value={interest}
+                                        onSelect={(value) => {
+                                          setInterestFilter(value);
+                                          setInterestPopoverOpen(false);
+                                        }}
+                                      >
+                                        {interest}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+
                           <Button 
                             variant="outline" 
-                            className="flex items-center gap-1" 
-                            role="combobox" 
-                            aria-expanded={interestPopoverOpen}
+                            size="icon"
+                            onClick={clearFilters}
+                            title="Clear filters"
                           >
-                            <Tag className="h-4 w-4 mr-1" />
-                            {interestFilter || "Interests"}
+                            <RefreshCw className="h-4 w-4" />
                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="p-0" align="start" side="bottom">
-                          <Command>
-                            <CommandInput placeholder="Search interests..." />
-                            <CommandList>
-                              <CommandEmpty>No interests found</CommandEmpty>
-                              <CommandGroup>
-                                {availableInterests.map((interest) => (
-                                  <CommandItem
-                                    key={interest}
-                                    value={interest}
-                                    onSelect={(value) => {
-                                      setInterestFilter(value);
-                                      setInterestPopoverOpen(false);
-                                    }}
-                                  >
-                                    {interest}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-
-                      <Button 
-                        variant="outline" 
-                        size="icon"
-                        onClick={clearFilters}
-                        title="Clear filters"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                      </Button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                
-                {/* Display filter badges */}
-                {(searchQuery || statusFilter !== "all" || interestFilter) && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <div className="text-sm text-muted-foreground">Filters:</div>
-                    {searchQuery && (
-                      <Badge variant="outline" className="flex items-center gap-1">
-                        Search: "{searchQuery}"
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-4 w-4 p-0 ml-1" 
-                          onClick={() => setSearchQuery("")}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </Badge>
+                    
+                    {/* Display filter badges */}
+                    {(searchQuery || statusFilter !== "all" || interestFilter) && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="text-sm text-muted-foreground">Filters:</div>
+                        {searchQuery && (
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            Search: "{searchQuery}"
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-4 w-4 p-0 ml-1" 
+                              onClick={() => setSearchQuery("")}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </Badge>
+                        )}
+                        {statusFilter !== "all" && (
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            Status: {statusFilter}
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-4 w-4 p-0 ml-1" 
+                              onClick={() => setStatusFilter("all")}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </Badge>
+                        )}
+                        {interestFilter && (
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <Tag className="h-3 w-3 mr-1" />
+                            {interestFilter}
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-4 w-4 p-0 ml-1" 
+                              onClick={() => setInterestFilter(null)}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </Badge>
+                        )}
+                      </div>
                     )}
-                    {statusFilter !== "all" && (
-                      <Badge variant="outline" className="flex items-center gap-1">
-                        Status: {statusFilter}
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-4 w-4 p-0 ml-1" 
-                          onClick={() => setStatusFilter("all")}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </Badge>
-                    )}
-                    {interestFilter && (
-                      <Badge variant="outline" className="flex items-center gap-1">
-                        <Tag className="h-3 w-3 mr-1" />
-                        {interestFilter}
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-4 w-4 p-0 ml-1" 
-                          onClick={() => setInterestFilter(null)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </Badge>
-                    )}
-                  </div>
-                )}
+                    
+                    <div className="mt-4">
+                      {isLoading ? (
+                        <div className="text-center py-8">Loading followers...</div>
+                      ) : filteredFollowers.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground">
+                          {followers?.length ? "No followers match your filters" : "No followers found. Create one to get started!"}
+                        </div>
+                      ) : (
+                        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                          {filteredFollowers.map((follower) => (
+                            <FollowerCard
+                              key={follower.id}
+                              follower={follower}
+                              onEdit={(updatedFollower) => {
+                                updateFollowerMutation.mutate({
+                                  id: updatedFollower.id,
+                                  name: updatedFollower.name,
+                                  personality: updatedFollower.personality,
+                                  responsiveness: updatedFollower.responsiveness,
+                                });
+                              }}
+                              onToggleActive={(followerId) => {
+                                deleteFollowerMutation.mutate(followerId);
+                              }}
+                              isUpdating={deleteFollowerMutation.isPending}
+                            />
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Results count indicator */}
+                      <div className="text-xs text-muted-foreground mt-4 text-right">
+                        {filteredFollowers.length} followers {filteredFollowers.length !== followers?.length && `(out of ${followers?.length})`}
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  {/* View Collectives Tab Content */}
+                  <TabsContent value="collectives" className="mt-4">
+                    <CollectivesList />
+                  </TabsContent>
+                </Tabs>
               </CardHeader>
-              
-              <CardContent>
-                {isLoading ? (
-                  <div className="text-center py-8">Loading followers...</div>
-                ) : filteredFollowers.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    {followers?.length ? "No followers match your filters" : "No followers found. Create one to get started!"}
-                  </div>
-                ) : (
-                  <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                    {filteredFollowers.map((follower) => (
-                      <FollowerCard
-                        key={follower.id}
-                        follower={follower}
-                        onEdit={(updatedFollower) => {
-                          updateFollowerMutation.mutate({
-                            id: updatedFollower.id,
-                            name: updatedFollower.name,
-                            personality: updatedFollower.personality,
-                            responsiveness: updatedFollower.responsiveness,
-                          });
-                        }}
-                        onToggleActive={(followerId) => {
-                          deleteFollowerMutation.mutate(followerId);
-                        }}
-                        isUpdating={deleteFollowerMutation.isPending}
-                      />
-                    ))}
-                  </div>
-                )}
-                
-                {/* Results count indicator */}
-                <div className="text-xs text-muted-foreground mt-4 text-right">
-                  {filteredFollowers.length} followers {filteredFollowers.length !== followers?.length && `(out of ${followers?.length})`}
-                </div>
-              </CardContent>
             </Card>
           </div>
         </main>
