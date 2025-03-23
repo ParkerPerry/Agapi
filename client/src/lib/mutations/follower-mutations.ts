@@ -12,8 +12,7 @@ export function useCreateFollower() {
       avatarUrl: string;
       responsiveness: "instant" | "active" | "casual" | "zen";
     }) => {
-      const res = await apiRequest("/api/followers", "POST", data);
-      return res.json();
+      return await apiRequest("/api/followers", "POST", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
@@ -47,8 +46,9 @@ export function useCreateCollective() {
     }
   >({
     mutationFn: async (data) => {
-      // apiRequest already returns the parsed JSON data
-      return await apiRequest("/api/followers/collective", "POST", data) as CollectiveResponse;
+      // apiRequest already returns the parsed JSON data, but need to cast it properly
+      const response = await apiRequest("/api/followers/collective", "POST", data);
+      return response as unknown as CollectiveResponse;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
@@ -136,15 +136,16 @@ export function useCloneFollower() {
     }
   >({
     mutationFn: async (data) => {
-      // apiRequest already returns the parsed JSON data
-      return await apiRequest("/api/followers/clone", "POST", data);
+      // apiRequest already returns the parsed JSON data, but need to cast it properly
+      const response = await apiRequest("/api/followers/clone", "POST", data);
+      return response as unknown as CloneResponse;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
       queryClient.invalidateQueries({ queryKey: ["/api/followers/collectives"] });
       toast({
         title: "Clone Factory completed",
-        description: `Successfully created ${data?.followers?.length || data?.cloneCount || 'multiple'} clones of your template follower.`,
+        description: `Successfully created ${data?.followers?.length || 'multiple'} clones of your template follower.`,
       });
     },
     onError: (error) => {
