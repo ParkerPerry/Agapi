@@ -3,10 +3,12 @@ import {
   Circle, InsertCircle, CircleFollower, InsertCircleFollower,
   InsertCircleMember, CircleMember, InsertCircleInvitation, CircleInvitation,
   Notification, InsertNotification, DirectChat, InsertDirectChat,
+  AiFollowerCollective, InsertAiFollowerCollective, 
+  AiFollowerCollectiveMember, InsertAiFollowerCollectiveMember,
   // Add table imports
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
-  notifications, directChats
+  notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
