@@ -19,14 +19,25 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Users, User, ChevronRight, Activity } from 'lucide-react';
+import type { AiFollower, AiFollowerCollective } from '@shared/schema';
+
+// Define a type for collective with member count
+interface CollectiveWithMemberCount extends AiFollowerCollective {
+  memberCount?: number;
+}
+
+// Define a type for follower with collective member ID
+interface FollowerWithCollectiveMemberId extends AiFollower {
+  collectiveMemberId: number;
+}
 
 export function CollectivesList() {
-  const { data: collectives, isLoading } = useQuery({
+  const { data: collectives, isLoading } = useQuery<CollectiveWithMemberCount[]>({
     queryKey: ['/api/followers/collectives'],
   });
 
   const [expandedCollective, setExpandedCollective] = useState<number | null>(null);
-  const [selectedCollectiveMembers, setSelectedCollectiveMembers] = useState<any[]>([]);
+  const [selectedCollectiveMembers, setSelectedCollectiveMembers] = useState<FollowerWithCollectiveMemberId[]>([]);
 
   const handleViewMembers = async (collectiveId: number) => {
     try {
@@ -41,7 +52,7 @@ export function CollectivesList() {
       const response = await fetch(`/api/followers/collectives/${collectiveId}`);
       const data = await response.json();
       
-      if (data && data.members) {
+      if (data && Array.isArray(data.members)) {
         setSelectedCollectiveMembers(data.members);
       } else {
         setSelectedCollectiveMembers([]);
@@ -87,7 +98,7 @@ export function CollectivesList() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        {collectives.map((collective: any) => (
+        {Array.isArray(collectives) && collectives.map((collective) => (
           <Card key={collective.id} className="overflow-hidden">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">

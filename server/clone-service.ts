@@ -34,6 +34,7 @@ export async function cloneFollowers(userId: number, request: CloneRequest): Pro
   // Create a new collective to group the clones
   const collective = await storage.createAiFollowerCollective(userId, {
     name: request.collectiveName,
+    personality: templateFollower.personality, // Required field
     description: request.description || `Collection of variations based on ${templateFollower.name}`,
   });
 

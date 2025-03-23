@@ -58,17 +58,17 @@ export function CloneFactoryForm() {
   const onSubmit = async (data: CloneFactoryFormValues) => {
     try {
       setIsSubmitting(true);
-      await cloneFollowerMutation.mutateAsync(data);
+      const result = await cloneFollowerMutation.mutateAsync(data);
       reset();
       toast({
         title: "Success!",
-        description: `Successfully created ${data.cloneCount} variations of the selected AI follower.`,
+        description: `Successfully created ${result.followers?.length || data.cloneCount} variations of the selected AI follower.`,
       });
     } catch (error) {
       console.error("Error cloning followers:", error);
       toast({
         title: "Error",
-        description: "Failed to clone followers. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to clone followers. Please try again.",
         variant: "destructive",
       });
     } finally {
