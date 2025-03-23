@@ -9,6 +9,8 @@ interface CloneRequest {
   cloneCount: number;
   variationLevel: number;
   customInstructions: string;
+  namingOption: 'dynamic' | 'sequential'; // 'dynamic' = LLM generated, 'sequential' = numbers
+  generateDynamicAvatars: boolean; // Whether to generate new avatars for dynamic names
 }
 
 interface CloneResponse {
@@ -31,6 +33,10 @@ export async function cloneFollowers(userId: number, request: CloneRequest): Pro
     throw new Error("Clone count must be between 1 and 20");
   }
 
+  // Set defaults for optional parameters
+  const namingOption = request.namingOption || 'sequential';
+  const generateDynamicAvatars = request.generateDynamicAvatars || false;
+
   // Create a new collective to group the clones
   const collective = await storage.createAiFollowerCollective(userId, {
     name: request.collectiveName,
@@ -49,7 +55,9 @@ export async function cloneFollowers(userId: number, request: CloneRequest): Pro
         userId,
         i + 1,
         request.variationLevel,
-        request.customInstructions
+        request.customInstructions,
+        namingOption,
+        generateDynamicAvatars
       ).then(async (follower) => {
         // Add the new follower to the collective
         await storage.addFollowerToCollective(collective.id, follower.id);
@@ -75,7 +83,9 @@ async function generateFollowerVariation(
   userId: number,
   index: number,
   variationLevel: number,
-  customInstructions?: string
+  customInstructions?: string,
+  namingOption: 'dynamic' | 'sequential' = 'sequential',
+  generateDynamicAvatars: boolean = false
 ): Promise<AiFollower> {
   // Determine variation level descriptions
   let variationDescription: string;
@@ -88,22 +98,38 @@ async function generateFollowerVariation(
     variationDescription = `Create a significant variation of this character that's clearly distinct but inspired by the original. Feel free to reimagine many aspects while keeping a thematic connection to the source.`;
   }
 
+  // Add naming instruction for dynamic names
+  let nameInstruction = "";
+  if (namingOption === 'dynamic') {
+    nameInstruction = `Also generate a unique character name that reflects this variation of ${template.name}. The name should be creative and distinct while maintaining some thematic connection to the original.`;
+  }
+
   // Combine variation description with any custom instructions
   const fullInstructions = [
     variationDescription,
+    nameInstruction,
     customInstructions || "",
     `This is variation #${index} in a series.`
   ].filter(Boolean).join(" ");
-
-  // Create a variation of the name
-  const nameSuffix = index.toString().padStart(2, '0');
-  const newName = `${template.name} v${nameSuffix}`;
 
   // Generate a variation of the personality
   const personalityVariation = adjustPersonalityByVariationLevel(
     template.personality,
     variationLevel
   );
+
+  // Determine name based on naming option
+  let newName: string;
+  
+  if (namingOption === 'sequential') {
+    // Sequential naming: just add a number suffix
+    const nameSuffix = index.toString().padStart(2, '0');
+    newName = `${template.name} ${nameSuffix}`;
+  } else {
+    // For dynamic naming, we'll temporarily use a placeholder that will be replaced by
+    // the name generated in the AI background
+    newName = `${template.name} Variation ${index}`;
+  }
 
   // Use OpenAI to generate a new background with the instructions for variation
   const aiBackground = await generateAIBackground(
@@ -112,11 +138,37 @@ async function generateFollowerVariation(
     fullInstructions
   );
 
+  // If using dynamic naming, the first line of the background might contain the name
+  // Format: "Name: [character name]" or similar
+  if (namingOption === 'dynamic' && aiBackground.background.includes("Name:")) {
+    const nameMatch = aiBackground.background.match(/Name:\s*([^\.]+)/i);
+    if (nameMatch && nameMatch[1]) {
+      newName = nameMatch[1].trim();
+      
+      // Clean up the background by removing the name line
+      aiBackground.background = aiBackground.background.replace(/Name:\s*([^\.]+)/i, "").trim();
+    }
+  }
+
+  // Determine avatar URL - either use the template's avatar or generate a new one for dynamic naming
+  let avatarUrl = template.avatarUrl;
+  if (namingOption === 'dynamic' && generateDynamicAvatars) {
+    // In a real implementation, we would generate a new avatar here
+    // For now, we'll just modify the existing URL slightly to simulate a unique avatar
+    const urlParts = template.avatarUrl.split('.');
+    if (urlParts.length > 1) {
+      const extension = urlParts.pop();
+      avatarUrl = `${urlParts.join('.')}_variant${index}.${extension}`;
+    } else {
+      avatarUrl = `${template.avatarUrl}_variant${index}`;
+    }
+  }
+
   // Create the new follower with variations
   const newFollower = await storage.createAiFollower(userId, {
     name: newName,
     personality: personalityVariation,
-    avatarUrl: template.avatarUrl,
+    avatarUrl: avatarUrl,
     background: aiBackground.background,
     interests: aiBackground.interests,
     communicationStyle: aiBackground.communication_style,
@@ -129,6 +181,7 @@ async function generateFollowerVariation(
     responseDelay: template.responseDelay,
     responseChance: template.responseChance,
     tools: template.tools,
+    parentId: template.id, // Set the parent-child relationship
   });
 
   return newFollower;

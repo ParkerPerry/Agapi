@@ -100,6 +100,8 @@ export const ai_followers = pgTable("ai_followers", {
     }>;
     customInstructions: string;
   }>(),
+  // Parent-child relationship for clones
+  parentId: integer("parent_id").references(() => ai_followers.id),
 });
 
 export const pendingResponses = pgTable("pending_responses", {
@@ -149,6 +151,14 @@ export const aiInteractionsRelations = relations(aiInteractions, ({ one }) => ({
   user: one(users, {
     fields: [aiInteractions.userId],
     references: [users.id],
+  }),
+}));
+
+// Add relation for parent-child AI followers
+export const aiFollowersRelations = relations(ai_followers, ({ one }) => ({
+  parent: one(ai_followers, {
+    fields: [ai_followers.parentId],
+    references: [ai_followers.id],
   }),
 }));
 
