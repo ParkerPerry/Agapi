@@ -37,6 +37,15 @@ export interface IStorage {
   deactivateAiFollower(id: number): Promise<AiFollower>;
   reactivateAiFollower(id: number): Promise<AiFollower>;
   getPostPendingResponses(postId: number): Promise<PendingResponse[]>;
+  
+  // AI Follower Collective methods
+  createAiFollowerCollective(userId: number, collective: InsertAiFollowerCollective): Promise<AiFollowerCollective>;
+  getAiFollowerCollective(id: number): Promise<AiFollowerCollective | undefined>;
+  getUserAiFollowerCollectives(userId: number): Promise<AiFollowerCollective[]>;
+  addFollowerToCollective(collectiveId: number, aiFollowerId: number): Promise<AiFollowerCollectiveMember>;
+  getCollectiveMembers(collectiveId: number): Promise<(AiFollower & { collectiveMemberId: number })[]>;
+  removeFollowerFromCollective(collectiveId: number, aiFollowerId: number): Promise<void>;
+  getFollowerCollectives(aiFollowerId: number): Promise<AiFollowerCollective[]>;
 
   createCircle(userId: number, circle: InsertCircle): Promise<Circle>;
   getCircle(id: number): Promise<Circle | undefined>;

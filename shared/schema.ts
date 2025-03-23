@@ -361,3 +361,63 @@ export const insertDirectChatSchema = createInsertSchema(directChats)
 // Direct chat type definitions
 export type DirectChat = typeof directChats.$inferSelect;
 export type InsertDirectChat = z.infer<typeof insertDirectChatSchema>;
+
+// Table for AI follower collectives
+export const aiFollowerCollectives = pgTable("ai_follower_collectives", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  personality: text("personality").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  active: boolean("active").notNull().default(true),
+});
+
+// Table for AI follower collective memberships
+export const aiFollowerCollectiveMembers = pgTable("ai_follower_collective_members", {
+  id: serial("id").primaryKey(),
+  collectiveId: integer("collective_id").references(() => aiFollowerCollectives.id).notNull(),
+  aiFollowerId: integer("ai_follower_id").references(() => ai_followers.id).notNull(),
+  addedAt: timestamp("added_at").defaultNow(),
+});
+
+// Relations for AI follower collectives
+export const aiFollowerCollectivesRelations = relations(aiFollowerCollectives, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [aiFollowerCollectives.userId],
+    references: [users.id],
+  }),
+  members: many(aiFollowerCollectiveMembers),
+}));
+
+// Relations for AI follower collective members
+export const aiFollowerCollectiveMembersRelations = relations(aiFollowerCollectiveMembers, ({ one }) => ({
+  collective: one(aiFollowerCollectives, {
+    fields: [aiFollowerCollectiveMembers.collectiveId],
+    references: [aiFollowerCollectives.id],
+  }),
+  aiFollower: one(ai_followers, {
+    fields: [aiFollowerCollectiveMembers.aiFollowerId],
+    references: [ai_followers.id],
+  }),
+}));
+
+// Insert schemas for collectives
+export const insertAiFollowerCollectiveSchema = createInsertSchema(aiFollowerCollectives)
+  .pick({
+    name: true,
+    description: true,
+    personality: true,
+  });
+
+export const insertAiFollowerCollectiveMemberSchema = createInsertSchema(aiFollowerCollectiveMembers)
+  .pick({
+    collectiveId: true,
+    aiFollowerId: true,
+  });
+
+// Type definitions for collectives
+export type AiFollowerCollective = typeof aiFollowerCollectives.$inferSelect;
+export type AiFollowerCollectiveMember = typeof aiFollowerCollectiveMembers.$inferSelect;
+export type InsertAiFollowerCollective = z.infer<typeof insertAiFollowerCollectiveSchema>;
+export type InsertAiFollowerCollectiveMember = z.infer<typeof insertAiFollowerCollectiveMemberSchema>;
