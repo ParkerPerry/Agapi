@@ -1026,6 +1026,174 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
+
+  // AI Follower Collective methods
+  async createAiFollowerCollective(userId: number, collective: InsertAiFollowerCollective): Promise<AiFollowerCollective> {
+    try {
+      console.log("[Storage] Creating AI follower collective:", {
+        userId,
+        name: collective.name,
+        personality: collective.personality
+      });
+      
+      const [newCollective] = (await db
+        .insert(aiFollowerCollectives)
+        .values({ ...collective, userId })
+        .returning()) as AiFollowerCollective[];
+      
+      console.log("[Storage] Created AI follower collective:", {
+        id: newCollective.id,
+        name: newCollective.name
+      });
+      
+      return newCollective;
+    } catch (error) {
+      console.error("[Storage] Error creating AI follower collective:", error);
+      throw error;
+    }
+  }
+  
+  async getAiFollowerCollective(id: number): Promise<AiFollowerCollective | undefined> {
+    try {
+      console.log("[Storage] Getting AI follower collective by ID:", id);
+      
+      const [collective] = await db
+        .select()
+        .from(aiFollowerCollectives)
+        .where(eq(aiFollowerCollectives.id, id));
+      
+      if (collective) {
+        console.log("[Storage] Retrieved AI follower collective:", {
+          id: collective.id,
+          name: collective.name,
+          userId: collective.userId
+        });
+      } else {
+        console.log("[Storage] AI follower collective not found");
+      }
+      
+      return collective;
+    } catch (error) {
+      console.error("[Storage] Error getting AI follower collective:", error);
+      throw error;
+    }
+  }
+  
+  async getUserAiFollowerCollectives(userId: number): Promise<AiFollowerCollective[]> {
+    try {
+      console.log("[Storage] Getting AI follower collectives for user:", userId);
+      
+      const collectives = await db
+        .select()
+        .from(aiFollowerCollectives)
+        .where(eq(aiFollowerCollectives.userId, userId))
+        .orderBy(aiFollowerCollectives.createdAt);
+      
+      console.log("[Storage] Retrieved AI follower collectives count:", collectives.length);
+      
+      return collectives;
+    } catch (error) {
+      console.error("[Storage] Error getting user AI follower collectives:", error);
+      throw error;
+    }
+  }
+  
+  async addFollowerToCollective(collectiveId: number, aiFollowerId: number): Promise<AiFollowerCollectiveMember> {
+    try {
+      console.log("[Storage] Adding AI follower to collective:", {
+        collectiveId,
+        aiFollowerId
+      });
+      
+      const [membership] = (await db
+        .insert(aiFollowerCollectiveMembers)
+        .values({ collectiveId, aiFollowerId })
+        .returning()) as AiFollowerCollectiveMember[];
+      
+      console.log("[Storage] Added AI follower to collective:", {
+        id: membership.id,
+        collectiveId: membership.collectiveId,
+        aiFollowerId: membership.aiFollowerId
+      });
+      
+      return membership;
+    } catch (error) {
+      console.error("[Storage] Error adding AI follower to collective:", error);
+      throw error;
+    }
+  }
+  
+  async getCollectiveMembers(collectiveId: number): Promise<(AiFollower & { collectiveMemberId: number })[]> {
+    try {
+      console.log("[Storage] Getting collective members for collective:", collectiveId);
+      
+      const members = await db
+        .select({
+          ...ai_followers,
+          collectiveMemberId: aiFollowerCollectiveMembers.id
+        })
+        .from(aiFollowerCollectiveMembers)
+        .innerJoin(
+          ai_followers,
+          eq(aiFollowerCollectiveMembers.aiFollowerId, ai_followers.id)
+        )
+        .where(eq(aiFollowerCollectiveMembers.collectiveId, collectiveId));
+      
+      console.log("[Storage] Retrieved collective members count:", members.length);
+      
+      return members as (AiFollower & { collectiveMemberId: number })[];
+    } catch (error) {
+      console.error("[Storage] Error getting collective members:", error);
+      throw error;
+    }
+  }
+  
+  async removeFollowerFromCollective(collectiveId: number, aiFollowerId: number): Promise<void> {
+    try {
+      console.log("[Storage] Removing AI follower from collective:", {
+        collectiveId,
+        aiFollowerId
+      });
+      
+      await db
+        .delete(aiFollowerCollectiveMembers)
+        .where(
+          and(
+            eq(aiFollowerCollectiveMembers.collectiveId, collectiveId),
+            eq(aiFollowerCollectiveMembers.aiFollowerId, aiFollowerId)
+          )
+        );
+      
+      console.log("[Storage] Removed AI follower from collective");
+    } catch (error) {
+      console.error("[Storage] Error removing AI follower from collective:", error);
+      throw error;
+    }
+  }
+  
+  async getFollowerCollectives(aiFollowerId: number): Promise<AiFollowerCollective[]> {
+    try {
+      console.log("[Storage] Getting collectives for AI follower:", aiFollowerId);
+      
+      const collectives = await db
+        .select({
+          ...aiFollowerCollectives
+        })
+        .from(aiFollowerCollectiveMembers)
+        .innerJoin(
+          aiFollowerCollectives,
+          eq(aiFollowerCollectiveMembers.collectiveId, aiFollowerCollectives.id)
+        )
+        .where(eq(aiFollowerCollectiveMembers.aiFollowerId, aiFollowerId));
+      
+      console.log("[Storage] Retrieved collectives count for follower:", collectives.length);
+      
+      return collectives as AiFollowerCollective[];
+    } catch (error) {
+      console.error("[Storage] Error getting follower collectives:", error);
+      throw error;
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();

@@ -915,6 +915,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         collectiveName,
         personality
       );
+
+      // First, create the collective in the database
+      const collective = await storage.createAiFollowerCollective(req.user!.id, {
+        name: collectiveName,
+        description: `A collective of ${count} AI followers with the personality: ${personality.substring(0, 50)}...`,
+        personality,
+      });
+      
+      console.log(`[API] Created collective: ${collective.id}`);
       
       const createdFollowers = [];
       
@@ -947,18 +956,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
           responsiveness: responsiveness || "active",
           responseDelay: getDefaultDelay(responsiveness),
           responseChance: responseChance || 80,
+          active: true,
+          tools: null,
         });
+        
+        // Add this follower to the collective
+        const membership = await storage.addFollowerToCollective(collective.id, follower.id);
+        console.log(`[API] Added follower ${follower.id} to collective ${collective.id} with membership ${membership.id}`);
         
         createdFollowers.push(follower);
       }
 
       res.status(201).json({ 
         message: `Successfully created ${count} followers in collective '${collectiveName}'`,
+        collective: collective,
         followers: createdFollowers
       });
     } catch (error) {
       console.error("Error creating AI collective:", error);
       res.status(500).json({ message: "Failed to create AI collective" });
+    }
+  });
+  
+  // Get user's AI collectives
+  app.get("/api/followers/collectives", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
+      res.json(collectives);
+    } catch (error) {
+      console.error("Error getting AI collectives:", error);
+      res.status(500).json({ message: "Failed to get AI collectives" });
+    }
+  });
+  
+  // Get a specific collective with its members
+  app.get("/api/followers/collectives/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    const collectiveId = parseInt(req.params.id);
+    if (isNaN(collectiveId)) {
+      return res.status(400).json({ message: "Invalid collective ID" });
+    }
+    
+    try {
+      // First verify the collective belongs to the user
+      const collective = await storage.getAiFollowerCollective(collectiveId);
+      if (!collective || collective.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Collective not found" });
+      }
+      
+      // Get the members of the collective
+      const members = await storage.getCollectiveMembers(collectiveId);
+      
+      res.json({
+        collective,
+        members
+      });
+    } catch (error) {
+      console.error("Error getting AI collective:", error);
+      res.status(500).json({ message: "Failed to get AI collective" });
     }
   });
 
