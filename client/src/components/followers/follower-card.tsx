@@ -12,7 +12,7 @@ import { FollowerDeactivateDialog } from "./follower-deactivate-dialog";
 import { useLocation } from "wouter";
 
 interface FollowerCardProps {
-  follower: AiFollower;
+  follower: AiFollower & { parentName?: string };
   onEdit: (follower: AiFollower) => void;
   onToggleActive: (followerId: number) => void;
   isUpdating: boolean;
@@ -82,8 +82,12 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
                 <Badge variant="secondary">Inactive</Badge>
               )}
               {follower.parentId && (
-                <Badge variant="outline" className="text-xs bg-sky-50 text-sky-700 border-sky-200">
-                  Clone
+                <Badge 
+                  variant="outline" 
+                  className="text-xs bg-sky-50 text-sky-700 border-sky-200 max-w-[100px] truncate"
+                  title={follower.parentName ? `Clone of ${follower.parentName}` : "Clone"}
+                >
+                  {follower.parentName ? `Clone of ${follower.parentName}` : "Clone"}
                 </Badge>
               )}
             </div>
