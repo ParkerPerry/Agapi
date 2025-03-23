@@ -10,7 +10,12 @@ import type { AiFollower } from "@shared/schema";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
+import { Check, ChevronsUpDown, Info, Search, User } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // Form schema for clone factory
 const cloneFactorySchema = z.object({
@@ -30,6 +35,7 @@ export function CloneFactoryForm() {
   const { toast } = useToast();
   const cloneFollowerMutation = useCloneFollower();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [followerSelectOpen, setFollowerSelectOpen] = useState(false);
 
   // Fetch available followers to use as templates
   const { data: followers, isLoading: isLoadingFollowers } = useQuery({
@@ -108,18 +114,77 @@ export function CloneFactoryForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <label className="text-sm font-medium">Template Follower</label>
-        <select
+        
+        <Popover open={followerSelectOpen} onOpenChange={setFollowerSelectOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={followerSelectOpen}
+              className="w-full justify-between text-left font-normal"
+              disabled={isLoadingFollowers || isSubmitting}
+            >
+              {selectedTemplate ? (
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={selectedTemplate.avatarUrl} alt={selectedTemplate.name} />
+                    <AvatarFallback>{selectedTemplate.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <span>{selectedTemplate.name}</span>
+                </div>
+              ) : (
+                "Select a follower as template"
+              )}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="p-0 w-[300px]">
+            <Command>
+              <CommandInput placeholder="Search followers..." icon={Search} />
+              <CommandEmpty>No followers found.</CommandEmpty>
+              <CommandGroup>
+                <CommandList>
+                  {followers?.map((follower) => (
+                    <CommandItem
+                      key={follower.id}
+                      value={follower.name}
+                      onSelect={() => {
+                        setValue("templateFollowerId", follower.id);
+                        setFollowerSelectOpen(false);
+                      }}
+                    >
+                      <div className="flex items-center gap-2 w-full">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={follower.avatarUrl} alt={follower.name} />
+                          <AvatarFallback>{follower.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span>{follower.name}</span>
+                          <span className="text-xs text-muted-foreground truncate max-w-[200px]">
+                            {follower.personality.substring(0, 40)}...
+                          </span>
+                        </div>
+                        <Check
+                          className={cn(
+                            "ml-auto h-4 w-4",
+                            selectedTemplateId === follower.id ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandList>
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        
+        {/* Hidden input for form handling */}
+        <input 
+          type="hidden" 
           {...register("templateFollowerId", { valueAsNumber: true })}
-          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
-          disabled={isLoadingFollowers || isSubmitting}
-        >
-          <option value={0}>Select a follower as template</option>
-          {followers?.map((follower) => (
-            <option key={follower.id} value={follower.id}>
-              {follower.name}
-            </option>
-          ))}
-        </select>
+        />
+        
         {errors.templateFollowerId && (
           <p className="text-sm text-red-500">{errors.templateFollowerId.message}</p>
         )}

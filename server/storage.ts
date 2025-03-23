@@ -154,17 +154,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAiFollowers(userId: number): Promise<(AiFollower & { parentName?: string })[]> {
-    // Use a join to get parent follower information when available
+    // First get all followers
     const followers = await db
-      .select({
-        ...ai_followers,
-        parentName: sql<string>`parent.name`
-      })
+      .select()
       .from(ai_followers)
-      .leftJoin(ai_followers.as('parent'), eq(ai_followers.parentId, sql<number>`parent.id`))
       .where(eq(ai_followers.userId, userId));
     
-    return followers;
+    // For followers with parentId, look up their parent names
+    const followersWithParentInfo = await Promise.all(
+      followers.map(async (follower) => {
+        if (follower.parentId) {
+          const [parent] = await db
+            .select({ name: ai_followers.name })
+            .from(ai_followers)
+            .where(eq(ai_followers.id, follower.parentId));
+          
+          return {
+            ...follower,
+            parentName: parent?.name
+          };
+        }
+        return follower;
+      })
+    );
+    
+    return followersWithParentInfo;
   }
 
   async getAiFollower(id: number): Promise<AiFollower | undefined> {
