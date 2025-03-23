@@ -11,7 +11,7 @@ export async function apiRequest(
   url: string,
   method: string = "GET",
   data?: unknown | undefined,
-): Promise<Response> {
+): Promise<any> {
   const res = await fetch(url, {
     method: method,
     headers: data ? { "Content-Type": "application/json" } : {},
@@ -27,7 +27,20 @@ export async function apiRequest(
     }
   }
 
-  return res.json();
+  // Check if the response has content before trying to parse as JSON
+  const contentType = res.headers.get('content-type');
+  
+  // If response is empty or not JSON, return an empty object
+  if (res.status === 204 || !contentType || !contentType.includes('application/json')) {
+    return {};
+  }
+  
+  try {
+    return await res.json();
+  } catch (error) {
+    // If JSON parsing fails but the request was successful, return empty object
+    return {};
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
@@ -45,7 +58,21 @@ export const getQueryFn: <T>(options: {
     }
 
     await throwIfResNotOk(res);
-    return await res.json();
+    
+    // Check if the response has content before trying to parse as JSON
+    const contentType = res.headers.get('content-type');
+    
+    // If response is empty or not JSON, return an empty object
+    if (res.status === 204 || !contentType || !contentType.includes('application/json')) {
+      return null;
+    }
+    
+    try {
+      return await res.json();
+    } catch (error) {
+      // If JSON parsing fails but the request was successful, return null
+      return null;
+    }
   };
 
 export const queryClient = new QueryClient({
