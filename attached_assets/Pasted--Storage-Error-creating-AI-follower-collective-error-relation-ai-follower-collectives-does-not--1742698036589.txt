@@ -1,0 +1,50 @@
+[Storage] Error creating AI follower collective: error: relation "ai_follower_collectives" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createAiFollowerCollective (/home/runner/workspace/server/storage.ts:1041:32)
+    at async cloneFollowers (/home/runner/workspace/server/clone-service.ts:35:22)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1017:22) {
+  length: 122,
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '13',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1449',
+  routine: 'parserOpenTable'
+}
+Error in clone factory: error: relation "ai_follower_collectives" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createAiFollowerCollective (/home/runner/workspace/server/storage.ts:1041:32)
+    at async cloneFollowers (/home/runner/workspace/server/clone-service.ts:35:22)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1017:22) {
+  length: 122,
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '13',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1449',
+  routine: 'parserOpenTable'
+}
