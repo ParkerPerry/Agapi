@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import type { AiFollower, AiFollowerCollective } from "@shared/schema";
 
 export function useCreateFollower() {
   const { toast } = useToast();
@@ -24,19 +25,30 @@ export function useCreateFollower() {
   });
 }
 
+// Response type definition from Collective Creation API
+interface CollectiveResponse {
+  message: string;
+  collective: AiFollowerCollective;
+  followers: AiFollower[];
+}
+
 export function useCreateCollective() {
   const { toast } = useToast();
-  return useMutation({
-    mutationFn: async (data: { 
+  return useMutation<
+    CollectiveResponse,
+    Error,
+    { 
       collectiveName: string; 
       personality: string;
       count: number;
       avatarPrefix?: string;
       responsiveness: "instant" | "active" | "casual" | "zen";
       responseChance: number;
-    }) => {
+    }
+  >({
+    mutationFn: async (data) => {
       // apiRequest already returns the parsed JSON data
-      return await apiRequest("/api/followers/collective", "POST", data);
+      return await apiRequest("/api/followers/collective", "POST", data) as CollectiveResponse;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
@@ -102,18 +114,29 @@ export function useDeleteFollower() {
   });
 }
 
+// Response type definition from Clone Factory API
+interface CloneResponse {
+  message: string;
+  collectiveId: number;
+  followers: AiFollower[];
+}
+
 export function useCloneFollower() {
   const { toast } = useToast();
-  return useMutation({
-    mutationFn: async (data: {
+  return useMutation<
+    CloneResponse, 
+    Error,
+    {
       templateFollowerId: number;
       collectiveName: string;
       description: string;
       cloneCount: number;
       variationLevel: number;
       customInstructions: string;
-    }) => {
-      // apiRequest already returns the parsed JSON data, we don't need to call .json() again
+    }
+  >({
+    mutationFn: async (data) => {
+      // apiRequest already returns the parsed JSON data
       return await apiRequest("/api/followers/clone", "POST", data);
     },
     onSuccess: (data) => {
