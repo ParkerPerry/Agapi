@@ -35,8 +35,8 @@ export function useCreateCollective() {
       responsiveness: "instant" | "active" | "casual" | "zen";
       responseChance: number;
     }) => {
-      const res = await apiRequest("/api/followers/collective", "POST", data);
-      return res.json();
+      // apiRequest already returns the parsed JSON data
+      return await apiRequest("/api/followers/collective", "POST", data);
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
@@ -72,8 +72,7 @@ export function useUpdateFollower() {
       };
     }) => {
       console.log("[Mutation] Updating follower:", data);
-      const res = await apiRequest(`/api/followers/${data.id}`, "PATCH", data);
-      return res.json();
+      return await apiRequest(`/api/followers/${data.id}`, "PATCH", data);
     },
     onSuccess: (_, variables) => {
       // Invalidate both the follower list and the specific follower
@@ -114,8 +113,8 @@ export function useCloneFollower() {
       variationLevel: number;
       customInstructions: string;
     }) => {
-      const res = await apiRequest("/api/followers/clone", "POST", data);
-      return res.json();
+      // apiRequest already returns the parsed JSON data, we don't need to call .json() again
+      return await apiRequest("/api/followers/clone", "POST", data);
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
