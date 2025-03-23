@@ -6,21 +6,63 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertUserSchema } from "@shared/schema";
+import { insertUserSchema, Circle } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { useEffect } from "react";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [, setLocation] = useLocation();
 
-  useEffect(() => {
-    if (user) {
+  // Handle successful authentication and redirect
+  const redirectWithDefaultCircle = async () => {
+    try {
+      // Fetch default circle
+      const defaultCircle = await apiRequest("/api/default-circle", "GET") as Circle;
+      if (defaultCircle && defaultCircle.id) {
+        // Store in query cache
+        queryClient.setQueryData(["/api/default-circle"], defaultCircle);
+        // Redirect to home with default circle
+        setLocation(`/?circle=${defaultCircle.id}`);
+      } else {
+        // Fallback to home if no default circle
+        setLocation("/");
+      }
+    } catch (error) {
+      console.error("Error fetching default circle:", error);
+      // Fallback to home page on error
       setLocation("/");
     }
-  }, [user, setLocation]);
+  };
+
+  useEffect(() => {
+    if (user) {
+      redirectWithDefaultCircle();
+    }
+  }, [user]);
+
+  // Setup login with special handling
+  const handleLogin = async (data: any) => {
+    try {
+      await loginMutation.mutateAsync(data);
+      // Redirect is handled by useEffect when user changes
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
+
+  // Setup register with special handling
+  const handleRegister = async (data: any) => {
+    try {
+      await registerMutation.mutateAsync(data);
+      // Redirect is handled by useEffect when user changes
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
+  };
 
   const loginForm = useForm({
     resolver: zodResolver(insertUserSchema),
@@ -59,7 +101,7 @@ export default function AuthPage() {
 
               <TabsContent value="login">
                 <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))} className="space-y-4">
+                  <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
                     <FormField
                       control={loginForm.control}
                       name="username"
@@ -98,7 +140,7 @@ export default function AuthPage() {
 
               <TabsContent value="register">
                 <Form {...registerForm}>
-                  <form onSubmit={registerForm.handleSubmit((data) => registerMutation.mutate(data))} className="space-y-4">
+                  <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-4">
                     <FormField
                       control={registerForm.control}
                       name="username"
