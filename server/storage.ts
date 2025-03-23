@@ -23,7 +23,7 @@ export interface IStorage {
   createPost(userId: number, content: string): Promise<Post>;
   getPost(id: number): Promise<Post | undefined>;
   getUserPosts(userId: number): Promise<Post[]>;
-  getAiFollowers(userId: number): Promise<AiFollower[]>;
+  getAiFollowers(userId: number): Promise<(AiFollower & { parentName?: string })[]>;
   getAiFollower(id: number): Promise<AiFollower | undefined>;
   createAiFollower(userId: number, follower: Omit<AiFollower, "id" | "userId">): Promise<AiFollower>;
   createAiInteraction(interaction: Omit<AiInteraction, "id" | "createdAt">): Promise<AiInteraction>;
@@ -153,11 +153,18 @@ export class DatabaseStorage implements IStorage {
       .orderBy(posts.createdAt);
   }
 
-  async getAiFollowers(userId: number): Promise<AiFollower[]> {
-    return await db
-      .select()
+  async getAiFollowers(userId: number): Promise<(AiFollower & { parentName?: string })[]> {
+    // Use a join to get parent follower information when available
+    const followers = await db
+      .select({
+        ...ai_followers,
+        parentName: sql<string>`parent.name`
+      })
       .from(ai_followers)
+      .leftJoin(ai_followers.as('parent'), eq(ai_followers.parentId, sql<number>`parent.id`))
       .where(eq(ai_followers.userId, userId));
+    
+    return followers;
   }
 
   async getAiFollower(id: number): Promise<AiFollower | undefined> {
