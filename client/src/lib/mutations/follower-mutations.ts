@@ -28,12 +28,12 @@ export function useCreateCollective() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (data: { 
-      name: string; 
-      theme: string;
+      collectiveName: string; 
+      personality: string;
       count: number;
-      skills: string[];
+      avatarPrefix?: string;
       responsiveness: "instant" | "active" | "casual" | "zen";
-      avatarUrlBase: string;
+      responseChance: number;
     }) => {
       const res = await apiRequest("/api/followers/collective", "POST", data);
       return res.json();
@@ -42,7 +42,7 @@ export function useCreateCollective() {
       queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
       toast({
         title: "AI Collective created",
-        description: `Successfully created ${data?.count || 'multiple'} AI followers in the collective.`,
+        description: `Successfully created ${data?.followers?.length || 'multiple'} AI followers in the collective.`,
       });
     },
     onError: (error) => {

@@ -887,6 +887,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to create AI follower" });
     }
   });
+  
+  // Create an AI collective (multiple followers at once)
+  app.post("/api/followers/collective", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const { 
+      collectiveName, 
+      personality, 
+      count, 
+      avatarPrefix,
+      responsiveness,
+      responseChance 
+    } = req.body;
+    
+    if (!collectiveName || !personality || !count || count < 1 || count > 100) {
+      return res.status(400).json({ 
+        message: "Invalid request. Must provide collectiveName, personality, and a count between 1-100" 
+      });
+    }
+
+    try {
+      console.log(`[API] Creating AI collective: ${collectiveName} with ${count} members`);
+      
+      // Generate a collective background that will be used as a base for all members
+      const collectiveBackground = await generateAIBackground(
+        collectiveName,
+        personality
+      );
+      
+      const createdFollowers = [];
+      
+      // Create multiple followers with small variations
+      for (let i = 0; i < count; i++) {
+        // Create variations in name
+        const followerName = `${collectiveName} ${i + 1}`;
+        
+        // Generate a slightly varied background for each follower
+        // Reusing the collective background and adding small variations
+        const followerBackground = {
+          background: collectiveBackground.background,
+          interests: [...collectiveBackground.interests], // Clone the interests array
+          communication_style: collectiveBackground.communication_style,
+          interaction_preferences: {
+            likes: [...collectiveBackground.interaction_preferences.likes],
+            dislikes: [...collectiveBackground.interaction_preferences.dislikes]
+          }
+        };
+        
+        // Create the individual follower
+        const follower = await storage.createAiFollower(req.user!.id, {
+          name: followerName,
+          personality,
+          avatarUrl: avatarPrefix ? `${avatarPrefix}-${i + 1}.png` : null,
+          background: followerBackground.background,
+          interests: followerBackground.interests,
+          communicationStyle: followerBackground.communication_style,
+          interactionPreferences: followerBackground.interaction_preferences,
+          responsiveness: responsiveness || "active",
+          responseDelay: getDefaultDelay(responsiveness),
+          responseChance: responseChance || 80,
+        });
+        
+        createdFollowers.push(follower);
+      }
+
+      res.status(201).json({ 
+        message: `Successfully created ${count} followers in collective '${collectiveName}'`,
+        followers: createdFollowers
+      });
+    } catch (error) {
+      console.error("Error creating AI collective:", error);
+      res.status(500).json({ message: "Failed to create AI collective" });
+    }
+  });
 
   // Helper function to get default delay based on responsiveness
   function getDefaultDelay(responsiveness: string = "active") {
