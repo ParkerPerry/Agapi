@@ -24,6 +24,37 @@ export function useCreateFollower() {
   });
 }
 
+export function useCreateCollective() {
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: async (data: { 
+      name: string; 
+      theme: string;
+      count: number;
+      skills: string[];
+      responsiveness: "instant" | "active" | "casual" | "zen";
+      avatarUrlBase: string;
+    }) => {
+      const res = await apiRequest("/api/followers/collective", "POST", data);
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
+      toast({
+        title: "AI Collective created",
+        description: `Successfully created ${data?.count || 'multiple'} AI followers in the collective.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error creating collective",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+    }
+  });
+}
+
 export function useUpdateFollower() {
   const { toast } = useToast();
   return useMutation({

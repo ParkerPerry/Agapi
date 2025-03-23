@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AiFollower } from "@shared/schema";
 import { useState, useMemo, useEffect } from "react";
 import { FollowerCreateForm } from "@/components/followers/follower-create-form";
+import { CollectiveCreateForm } from "@/components/followers/collective-create-form";
 import { FollowerCard } from "@/components/followers/follower-card";
 import { useUpdateFollower, useDeleteFollower } from "@/lib/mutations/follower-mutations";
 import { TourProvider } from "@/components/tour/tour-context";
@@ -32,6 +33,12 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { X } from "lucide-react";
 
 export default function AiFollowersPage() {
@@ -135,11 +142,19 @@ export default function AiFollowersPage() {
           <div className="space-y-4 max-w-full">
             <Card>
               <CardHeader>
-                <CardTitle>Create AI Follower</CardTitle>
+                <Tabs defaultValue="individual" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="individual">Create AI Follower</TabsTrigger>
+                    <TabsTrigger value="collective">Create AI Collective</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="individual" className="mt-4">
+                    <FollowerCreateForm />
+                  </TabsContent>
+                  <TabsContent value="collective" className="mt-4">
+                    <CollectiveCreateForm />
+                  </TabsContent>
+                </Tabs>
               </CardHeader>
-              <CardContent>
-                <FollowerCreateForm />
-              </CardContent>
             </Card>
 
             <Card>
