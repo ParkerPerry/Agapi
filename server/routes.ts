@@ -10,6 +10,7 @@ import { getAvailableTools } from "./tools";
 import { IStorage } from "./storage";
 import { User } from "@shared/schema";
 import nftRoutes from "./blockchain/routes";
+import { cloneFollowers } from "./clone-service";
 
 async function hasCirclePermission(
   circleId: number,
@@ -992,9 +993,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         variationLevel,
         customInstructions
       } = req.body;
-      
-      // Import clone service
-      const { cloneFollowers } = require('./clone-service');
       
       // Validate request
       if (!templateFollowerId) {
