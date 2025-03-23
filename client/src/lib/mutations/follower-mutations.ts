@@ -102,3 +102,35 @@ export function useDeleteFollower() {
     },
   });
 }
+
+export function useCloneFollower() {
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: async (data: {
+      templateFollowerId: number;
+      collectiveName: string;
+      description: string;
+      cloneCount: number;
+      variationLevel: number;
+      customInstructions: string;
+    }) => {
+      const res = await apiRequest("/api/followers/clone", "POST", data);
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/followers/collectives"] });
+      toast({
+        title: "Clone Factory completed",
+        description: `Successfully created ${data?.followers?.length || data?.cloneCount || 'multiple'} clones of your template follower.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error cloning followers",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+    }
+  });
+}
