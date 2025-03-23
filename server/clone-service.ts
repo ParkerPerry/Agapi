@@ -111,11 +111,14 @@ async function generateFollowerVariation(
     // For medium variation, change some aspects but keep core personality
     if (variationLevel < 0.7) {
       // Get a slightly modified background
-      const background = await generateAIBackground({
+      const background = await generateAIBackground(
         name,
-        personality: template.personality,
-        customInstructions: `Create a variation of this AI follower background. ${customInstructions} Keep similar personality traits but change some specific details.`
-      });
+        template.personality,
+        `Create a variation of this AI follower background. ${customInstructions} Keep similar personality traits but change some specific details.`
+      );
+      
+      // Use template's response settings
+      const responseDelay = template.responseDelay || { min: 5, max: 60 };
       
       return {
         ...template,
@@ -127,16 +130,21 @@ async function generateFollowerVariation(
         interactionPreferences: {
           likes: background.interaction_preferences.likes,
           dislikes: background.interaction_preferences.dislikes,
-        }
+        },
+        responseDelay,
+        responseChance: template.responseChance || 80
       };
     }
     
     // For high variation, significantly change the follower while keeping the template as inspiration
-    const background = await generateAIBackground({
+    const background = await generateAIBackground(
       name,
-      personality: template.personality,
-      customInstructions: `Create a significant variation of this AI follower background. ${customInstructions} Use the original personality as inspiration but create a distinct follower with different traits and interests.`
-    });
+      template.personality,
+      `Create a significant variation of this AI follower background. ${customInstructions} Use the original personality as inspiration but create a distinct follower with different traits and interests.`
+    );
+    
+    // Calculate response delay based on template's responsiveness
+    const responseDelay = template.responseDelay || { min: 5, max: 60 };
     
     return {
       ...baseProperties,
@@ -150,6 +158,8 @@ async function generateFollowerVariation(
         likes: background.interaction_preferences.likes,
         dislikes: background.interaction_preferences.dislikes,
       },
+      responseDelay,
+      responseChance: template.responseChance || 80,
     };
   } catch (error) {
     console.error("[CloneService] Error generating follower variation:", error);

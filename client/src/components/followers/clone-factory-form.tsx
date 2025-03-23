@@ -1,363 +1,198 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { AiFollower } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { useCloneFollower } from "@/lib/mutations/follower-mutations";
-
-// UI Components
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Loader2, Copy, Braces, Sparkles } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import type { AiFollower } from "@shared/schema";
 
 // Form schema for clone factory
-const cloneFormSchema = z.object({
-  templateFollowerId: z.number({
-    required_error: "Please select a template follower",
-  }),
-  collectiveName: z.string().min(3, {
-    message: "Collective name must be at least 3 characters",
-  }),
+const cloneFactorySchema = z.object({
+  templateFollowerId: z.number().min(1, "Please select a template follower"),
+  collectiveName: z.string().min(3, "Name must be at least 3 characters").max(50, "Name must be at most 50 characters"),
   description: z.string().optional(),
-  cloneCount: z.number().min(1).max(20),
-  variationLevel: z.number().min(0.1).max(1),
+  cloneCount: z.number().min(1, "Must create at least 1 clone").max(20, "Maximum of 20 clones allowed"),
+  variationLevel: z.number().min(0.1, "Variation level must be at least 0.1").max(1, "Variation level must be at most 1"),
   customInstructions: z.string().optional(),
 });
 
-type CloneFormValues = z.infer<typeof cloneFormSchema>;
+type CloneFactoryFormValues = z.infer<typeof cloneFactorySchema>;
 
 export function CloneFactoryForm() {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Get existing followers to use as templates
-  const { data: followers, isLoading: isLoadingFollowers } = useQuery<AiFollower[]>({
-    queryKey: ["/api/followers"],
-  });
-  
-  // Clone follower mutation hook (to be implemented)
   const cloneFollowerMutation = useCloneFollower();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Form definition
-  const form = useForm<CloneFormValues>({
-    resolver: zodResolver(cloneFormSchema),
+  // Fetch available followers to use as templates
+  const { data: followers, isLoading: isLoadingFollowers } = useQuery({
+    queryKey: ["/api/followers"],
+    select: (data: AiFollower[]) => data.filter(f => f.active),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<CloneFactoryFormValues>({
+    resolver: zodResolver(cloneFactorySchema),
     defaultValues: {
+      templateFollowerId: 0,
       collectiveName: "",
       description: "",
-      cloneCount: 5,
+      cloneCount: 3,
       variationLevel: 0.5,
       customInstructions: "",
     },
   });
 
-  // Form submission handler
-  async function onSubmit(data: CloneFormValues) {
-    setIsSubmitting(true);
-    
+  const variationLevel = watch("variationLevel");
+  const selectedTemplateId = watch("templateFollowerId");
+  
+  // Get the selected template follower
+  const selectedTemplate = followers?.find(f => f.id === Number(selectedTemplateId));
+
+  const onSubmit = async (data: CloneFactoryFormValues) => {
     try {
-      // Call the mutation to clone followers
-      await cloneFollowerMutation.mutateAsync({
-        templateFollowerId: data.templateFollowerId,
-        collectiveName: data.collectiveName,
-        description: data.description || "",
-        cloneCount: data.cloneCount,
-        variationLevel: data.variationLevel,
-        customInstructions: data.customInstructions || "",
-      });
-      
+      setIsSubmitting(true);
+      await cloneFollowerMutation.mutateAsync(data);
+      reset();
       toast({
         title: "Success!",
-        description: `Created ${data.cloneCount} clones based on your template.`,
-      });
-      
-      // Reset form
-      form.reset({
-        collectiveName: "",
-        description: "",
-        cloneCount: 5,
-        variationLevel: 0.5,
-        customInstructions: "",
+        description: `Successfully created ${data.cloneCount} variations of the selected AI follower.`,
       });
     } catch (error) {
       console.error("Error cloning followers:", error);
       toast({
         title: "Error",
-        description: "Failed to create clones. Please try again.",
+        description: "Failed to clone followers. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
-  // Get the selected template follower
-  const selectedFollowerId = form.watch("templateFollowerId");
-  const selectedFollower = followers?.find(f => f.id === selectedFollowerId);
-
-  // Format the variation level as a percentage
-  const variationLevelPercentage = Math.round(form.watch("variationLevel") * 100);
-
-  if (isLoadingFollowers) {
-    return <div className="text-center py-4">Loading your followers...</div>;
-  }
-
-  if (!followers || followers.length === 0) {
-    return (
-      <Card className="border-dashed border-muted-foreground/50">
-        <CardHeader>
-          <CardTitle>No Template Followers Available</CardTitle>
-          <CardDescription>
-            You need to create at least one AI follower first to use as a template.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Please create an individual AI follower and then return to the Clone Factory.
-          </p>
-        </CardContent>
-        <CardFooter>
-          <Button variant="outline" onClick={() => window.location.reload()}>
-            Refresh
-          </Button>
-        </CardFooter>
-      </Card>
-    );
-  }
+  // Descriptions for variation levels
+  const getVariationDescription = (level: number) => {
+    if (level < 0.3) return "Low variation - Clones will be very similar to the original";
+    if (level < 0.7) return "Medium variation - Clones will have some distinct traits while preserving core personality";
+    return "High variation - Clones will be significantly different while inspired by the original";
+  };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left column - template selection and settings */}
-          <div className="space-y-6">
-            <FormField
-              control={form.control}
-              name="templateFollowerId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Template Follower</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(parseInt(value))}
-                    defaultValue={field.value?.toString()}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a follower as template" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {followers.map((follower) => (
-                        <SelectItem 
-                          key={follower.id} 
-                          value={follower.id.toString()}
-                        >
-                          {follower.name} - {follower.personality.substring(0, 30)}...
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Choose an existing follower as the base template for cloning
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="collectiveName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Collective Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="My Clone Collective" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Name for the new collective of cloned followers
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="A group of clones based on my favorite AI follower"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Brief description of this clone collective
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Right column - clone settings */}
-          <div className="space-y-6">
-            <FormField
-              control={form.control}
-              name="cloneCount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Number of Clones</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={20}
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    How many clones to generate (1-20)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="variationLevel"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Variation Level: {variationLevelPercentage}%</FormLabel>
-                  <FormControl>
-                    <Slider
-                      min={0.1}
-                      max={1}
-                      step={0.05}
-                      defaultValue={[field.value]}
-                      onValueChange={(values) => field.onChange(values[0])}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    How much each clone will vary from the template (10% = very similar, 100% = very different)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="customInstructions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Custom Instructions (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Make each clone have different hobbies but keep the same core personality"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Specific instructions for how clones should vary from the template
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
-
-        {/* Template preview */}
-        {selectedFollower && (
-          <Card className="border border-primary/20 bg-primary/5">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Copy className="h-4 w-4" />
-                    Template Preview
-                  </CardTitle>
-                  <CardDescription>
-                    Your clones will be based on this follower
-                  </CardDescription>
-                </div>
-                <Badge variant="outline" className="ml-2">
-                  {selectedFollower.active ? 'Active' : 'Inactive'}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="font-semibold">{selectedFollower.name}</div>
-                <div className="text-sm">{selectedFollower.personality}</div>
-                <div className="text-xs text-muted-foreground flex flex-wrap gap-1 mt-2">
-                  {selectedFollower.interests?.map((interest, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {interest}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Template Follower</label>
+        <select
+          {...register("templateFollowerId", { valueAsNumber: true })}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+          disabled={isLoadingFollowers || isSubmitting}
+        >
+          <option value={0}>Select a follower as template</option>
+          {followers?.map((follower) => (
+            <option key={follower.id} value={follower.id}>
+              {follower.name}
+            </option>
+          ))}
+        </select>
+        {errors.templateFollowerId && (
+          <p className="text-sm text-red-500">{errors.templateFollowerId.message}</p>
         )}
+      </div>
 
-        <div className="flex justify-end">
-          <Button 
-            type="submit" 
-            disabled={isSubmitting || !form.formState.isValid}
-            className="gap-2"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Cloning...
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-4 w-4" />
-                Clone Followers
-              </>
-            )}
-          </Button>
+      {selectedTemplate && (
+        <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-md">
+          <p className="font-medium">{selectedTemplate.name}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {selectedTemplate.personality.substring(0, 100)}...
+          </p>
         </div>
-      </form>
-    </Form>
+      )}
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Collective Name</label>
+        <input
+          type="text"
+          {...register("collectiveName")}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="Name for the collective of clones"
+          disabled={isSubmitting}
+        />
+        {errors.collectiveName && (
+          <p className="text-sm text-red-500">{errors.collectiveName.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Description (optional)</label>
+        <input
+          type="text"
+          {...register("description")}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="Brief description of this group of clones"
+          disabled={isSubmitting}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Number of Clones</label>
+        <input
+          type="number"
+          {...register("cloneCount", { valueAsNumber: true })}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+          min={1}
+          max={20}
+          disabled={isSubmitting}
+        />
+        {errors.cloneCount && (
+          <p className="text-sm text-red-500">{errors.cloneCount.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">
+          Variation Level: {Math.round(variationLevel * 100)}%
+        </label>
+        <div className="flex items-center space-x-2">
+          <span className="text-xs">Low</span>
+          <input
+            type="range"
+            {...register("variationLevel", { valueAsNumber: true })}
+            min={0.1}
+            max={1}
+            step={0.05}
+            className="flex-1"
+            disabled={isSubmitting}
+          />
+          <span className="text-xs">High</span>
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          {getVariationDescription(variationLevel)}
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Custom Instructions (optional)</label>
+        <textarea
+          {...register("customInstructions")}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="Additional instructions for generating variations (e.g., 'Focus on scientific knowledge', 'Make them nature enthusiasts')"
+          rows={3}
+          disabled={isSubmitting}
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="w-full py-2 mt-4 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50"
+        disabled={isSubmitting || !selectedTemplateId}
+      >
+        {isSubmitting ? "Creating clones..." : "Create Clones"}
+      </button>
+    </form>
   );
 }

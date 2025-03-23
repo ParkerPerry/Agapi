@@ -978,6 +978,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Clone Factory API endpoint
+  app.post("/api/followers/clone", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const userId = req.user!.id;
+      const {
+        templateFollowerId,
+        collectiveName,
+        description,
+        cloneCount,
+        variationLevel,
+        customInstructions
+      } = req.body;
+      
+      // Import clone service
+      const { cloneFollowers } = require('./clone-service');
+      
+      // Validate request
+      if (!templateFollowerId) {
+        return res.status(400).json({ message: "Template follower ID is required" });
+      }
+      
+      if (!collectiveName) {
+        return res.status(400).json({ message: "Collective name is required" });
+      }
+      
+      if (cloneCount < 1 || cloneCount > 20) {
+        return res.status(400).json({ message: "Clone count must be between 1 and 20" });
+      }
+      
+      if (variationLevel < 0.1 || variationLevel > 1) {
+        return res.status(400).json({ message: "Variation level must be between 0.1 and 1" });
+      }
+      
+      console.log(`[API] Starting clone process for follower ID: ${templateFollowerId}`);
+      
+      // Execute clone process
+      const result = await cloneFollowers(userId, {
+        templateFollowerId,
+        collectiveName,
+        description: description || "",
+        cloneCount,
+        variationLevel,
+        customInstructions: customInstructions || ""
+      });
+      
+      console.log(`[API] Clone process completed, created ${result.followers.length} clones`);
+      
+      res.status(201).json({
+        message: `Successfully cloned follower into ${result.followers.length} new followers`,
+        collectiveId: result.collectiveId,
+        followers: result.followers
+      });
+    } catch (error) {
+      console.error("Error in clone factory:", error);
+      res.status(500).json({ 
+        message: "Failed to clone followers",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+  
   // Get user's AI collectives
   app.get("/api/followers/collectives", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);

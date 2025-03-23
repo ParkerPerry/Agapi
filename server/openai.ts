@@ -24,6 +24,7 @@ interface AIBackground {
 export async function generateAIBackground(
   name: string,
   personality: string,
+  customInstructions?: string
 ): Promise<AIBackground> {
   try {
     const response = await openai.chat.completions.create({
@@ -45,7 +46,9 @@ export async function generateAIBackground(
         },
         {
           role: "user",
-          content: `Please generate a JSON background for an AI follower named "${name}" with this personality: "${personality}"`,
+          content: `Please generate a JSON background for an AI follower named "${name}" with this personality: "${personality}"${
+            customInstructions ? ` Additional instructions: ${customInstructions}` : ''
+          }`,
         },
       ],
       response_format: { type: "json_object" },
