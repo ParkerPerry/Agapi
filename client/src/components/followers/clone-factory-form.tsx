@@ -7,6 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useCloneFollower } from "@/lib/mutations/follower-mutations";
 import type { AiFollower } from "@shared/schema";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 // Form schema for clone factory
 const cloneFactorySchema = z.object({
@@ -16,6 +20,8 @@ const cloneFactorySchema = z.object({
   cloneCount: z.number().min(1, "Must create at least 1 clone").max(20, "Maximum of 20 clones allowed"),
   variationLevel: z.number().min(0.1, "Variation level must be at least 0.1").max(1, "Variation level must be at most 1"),
   customInstructions: z.string().default(""),
+  namingOption: z.enum(['dynamic', 'sequential']).default('dynamic'),
+  generateDynamicAvatars: z.boolean().default(true)
 });
 
 type CloneFactoryFormValues = z.infer<typeof cloneFactorySchema>;
@@ -36,6 +42,8 @@ export function CloneFactoryForm() {
     handleSubmit,
     watch,
     reset,
+    setValue,
+    control,
     formState: { errors },
   } = useForm<CloneFactoryFormValues>({
     resolver: zodResolver(cloneFactorySchema),
@@ -46,14 +54,27 @@ export function CloneFactoryForm() {
       cloneCount: 3,
       variationLevel: 0.5,
       customInstructions: "",
+      namingOption: 'dynamic',
+      generateDynamicAvatars: true
     },
   });
 
   const variationLevel = watch("variationLevel");
   const selectedTemplateId = watch("templateFollowerId");
+  const namingOption = watch("namingOption");
   
   // Get the selected template follower
   const selectedTemplate = followers?.find(f => f.id === Number(selectedTemplateId));
+
+  // Automatically update avatar generation based on naming option
+  useEffect(() => {
+    // If sequential naming is selected, disable dynamic avatars
+    if (namingOption === 'sequential') {
+      setValue('generateDynamicAvatars', false);
+    } else {
+      setValue('generateDynamicAvatars', true);
+    }
+  }, [namingOption, setValue]);
 
   const onSubmit = async (data: CloneFactoryFormValues) => {
     try {
@@ -151,6 +172,57 @@ export function CloneFactoryForm() {
         {errors.cloneCount && (
           <p className="text-sm text-red-500">{errors.cloneCount.message}</p>
         )}
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium">Naming Option</label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="w-80">
+                  <strong>Dynamic:</strong> AI generates unique names for each clone and creates unique avatars<br />
+                  <strong>Sequential:</strong> Names like "{selectedTemplate?.name || 'Template'} 01", "{selectedTemplate?.name || 'Template'} 02" with the original avatar
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        
+        <RadioGroup 
+          defaultValue="dynamic" 
+          value={namingOption} 
+          onValueChange={(value) => setValue('namingOption', value as 'dynamic' | 'sequential')}
+          className="flex flex-col space-y-1"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="dynamic" id="dynamic" />
+            <Label htmlFor="dynamic" className="cursor-pointer">Generate unique names (AI-created)</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="sequential" id="sequential" />
+            <Label htmlFor="sequential" className="cursor-pointer">Name sequentially (e.g., {selectedTemplate?.name || 'Template'} 01, {selectedTemplate?.name || 'Template'} 02)</Label>
+          </div>
+        </RadioGroup>
+        
+        <input 
+          type="hidden" 
+          {...register("namingOption")} 
+        />
+        
+        <input 
+          type="hidden" 
+          {...register("generateDynamicAvatars")} 
+        />
+        
+        <p className="text-xs text-muted-foreground">
+          {namingOption === 'dynamic' 
+            ? "Each follower will have a unique AI-generated name and avatar" 
+            : `All followers will use the same avatar as ${selectedTemplate?.name || 'the template'} with numbered names`}
+        </p>
       </div>
 
       <div className="space-y-2">

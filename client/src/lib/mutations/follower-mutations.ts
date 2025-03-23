@@ -133,6 +133,8 @@ export function useCloneFollower() {
       cloneCount: number;
       variationLevel: number;
       customInstructions: string;
+      namingOption?: 'dynamic' | 'sequential';
+      generateDynamicAvatars?: boolean;
     }
   >({
     mutationFn: async (data) => {
