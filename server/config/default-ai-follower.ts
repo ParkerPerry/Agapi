@@ -43,4 +43,5 @@ export const defaultTomConfig: Omit<AiFollower, "id" | "userId"> = {
     ],
     customInstructions: ""
   },
+  parentId: null, // Adding the required parentId property
 };

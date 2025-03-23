@@ -138,15 +138,30 @@ async function generateFollowerVariation(
     fullInstructions
   );
 
-  // If using dynamic naming, the first line of the background might contain the name
+  // If using dynamic naming, extract the name from the background
   // Format: "Name: [character name]" or similar
   if (namingOption === 'dynamic' && aiBackground.background.includes("Name:")) {
-    const nameMatch = aiBackground.background.match(/Name:\s*([^\.]+)/i);
+    // Try different regex patterns to extract the name
+    let nameMatch = aiBackground.background.match(/Name:\s*([^\n\.]+)/i);
+    
+    // If first pattern doesn't work, try a more general one
+    if (!nameMatch || !nameMatch[1]) {
+      nameMatch = aiBackground.background.match(/Name:\s*([^\.]+)/i);
+    }
+    
     if (nameMatch && nameMatch[1]) {
+      // Get the extracted name and clean it up
       newName = nameMatch[1].trim();
       
       // Clean up the background by removing the name line
-      aiBackground.background = aiBackground.background.replace(/Name:\s*([^\.]+)/i, "").trim();
+      aiBackground.background = aiBackground.background
+        .replace(/Name:\s*([^\n\.]+)(\n+|\.)/i, "") // Try removing with newlines
+        .replace(/Name:\s*([^\.]+)/i, "") // Backup pattern
+        .trim();
+      
+      console.log(`Generated dynamic name: ${newName} for variation of ${template.name}`);
+    } else {
+      console.log("Dynamic naming attempted but name couldn't be extracted from:", aiBackground.background.substring(0, 100) + "...");
     }
   }
 

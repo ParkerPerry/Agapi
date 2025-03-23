@@ -27,22 +27,47 @@ export async function generateAIBackground(
   customInstructions?: string
 ): Promise<AIBackground> {
   try {
+    // Check if this is a variation that needs a dynamic name
+    const isDynamicNaming = name.includes("Variation") && customInstructions?.includes("generate a unique character name");
+    
+    let systemPrompt = `You are a creative character developer. Your task is to create a detailed background for an AI social-media follower, responding in JSON format with the following structure:
+      {
+        "background": "A brief but engaging backstory",
+        "interests": ["List of 3-5 specific interests"],
+        "communication_style": "Description of how they communicate",
+        "interaction_preferences": {
+          "likes": ["3-4 specific things they tend to like in posts"],
+          "dislikes": ["2-3 things they tend to dislike or avoid"]
+        }
+      }
+      The JSON response should be consistent with the follower's name and personality description.`;
+    
+    // Add specific instruction for dynamic naming
+    if (isDynamicNaming) {
+      systemPrompt = `You are a creative character developer. Your task is to create a detailed background for an AI social-media follower, responding in JSON format with the following structure:
+        {
+          "background": "Name: [UNIQUE CHARACTER NAME HERE]\\n\\nA brief but engaging backstory",
+          "interests": ["List of 3-5 specific interests"],
+          "communication_style": "Description of how they communicate",
+          "interaction_preferences": {
+            "likes": ["3-4 specific things they tend to like in posts"],
+            "dislikes": ["2-3 things they tend to dislike or avoid"]
+          }
+        }
+        
+        IMPORTANT: The first line of the background MUST start with "Name: " followed by a unique, creative name for this character. This MUST be followed by two line breaks before the actual background text.
+        
+        The name should be thematically related to but distinct from "${name.replace(" Variation", "")}". Create a name that reflects the personality but is original.
+        
+        The JSON response should be consistent with the personality description.`;
+    }
+    
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `You are a creative character developer. Your task is to create a detailed background for an AI social-media follower, responding in JSON format with the following structure:
-            {
-              "background": "A brief but engaging backstory",
-              "interests": ["List of 3-5 specific interests"],
-              "communication_style": "Description of how they communicate",
-              "interaction_preferences": {
-                "likes": ["3-4 specific things they tend to like in posts"],
-                "dislikes": ["2-3 things they tend to dislike or avoid"]
-              }
-            }
-            The JSON response should be consistent with the follower's name and personality description.`,
+          content: systemPrompt,
         },
         {
           role: "user",
