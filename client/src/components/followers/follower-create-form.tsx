@@ -8,8 +8,10 @@ import { Loader2, Plus } from "lucide-react";
 import { useCreateFollower } from "@/lib/mutations/follower-mutations";
 
 function generateUniqueAvatarUrl() {
+  // Generate a random seed for the avatar
   const randomSeed = Math.random().toString(36).substring(7);
-  return `https://api.dicebear.com/7.x/bottts/svg?seed=${randomSeed}`;
+  // Use DiceBear v9 API with the bottts style
+  return `https://api.dicebear.com/9.x/bottts/svg?seed=${randomSeed}`;
 }
 
 export const responsivenessOptions = [

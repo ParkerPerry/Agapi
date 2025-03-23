@@ -153,14 +153,22 @@ async function generateFollowerVariation(
   // Determine avatar URL - either use the template's avatar or generate a new one for dynamic naming
   let avatarUrl = template.avatarUrl;
   if (namingOption === 'dynamic' && generateDynamicAvatars) {
-    // In a real implementation, we would generate a new avatar here
-    // For now, we'll just modify the existing URL slightly to simulate a unique avatar
-    const urlParts = template.avatarUrl.split('.');
-    if (urlParts.length > 1) {
-      const extension = urlParts.pop();
-      avatarUrl = `${urlParts.join('.')}_variant${index}.${extension}`;
+    // Check if the template is using DiceBear
+    if (template.avatarUrl.includes('dicebear.com')) {
+      // For DiceBear v9, update the URL format
+      // Extract the style (collection) and seed from the current URL if possible
+      const currentUrlMatch = template.avatarUrl.match(/\/([^\/]+)\/svg\?seed=([^&]+)/);
+      const style = currentUrlMatch ? currentUrlMatch[1] : 'avataaars';
+      
+      // Generate a unique seed based on the follower's name and a random component
+      const seed = encodeURIComponent(`${newName}-${Math.random().toString(36).substring(2, 8)}`);
+      
+      // Construct a new DiceBear v9 URL
+      avatarUrl = `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}`;
     } else {
-      avatarUrl = `${template.avatarUrl}_variant${index}`;
+      // For non-DiceBear URLs, use the original method
+      const randomSeed = Math.random().toString(36).substring(7);
+      avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${randomSeed}`;
     }
   }
 
