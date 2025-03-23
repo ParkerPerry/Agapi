@@ -39,6 +39,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      
+      // Prefetch default circle when user logs in
+      queryClient.prefetchQuery({
+        queryKey: ["/api/default-circle"],
+        queryFn: () => apiRequest("/api/default-circle", "GET")
+      });
     },
     onError: (error: Error) => {
       toast({
@@ -56,6 +62,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      
+      // Prefetch default circle when user registers
+      queryClient.prefetchQuery({
+        queryKey: ["/api/default-circle"],
+        queryFn: () => apiRequest("/api/default-circle", "GET")
+      });
     },
     onError: (error: Error) => {
       toast({

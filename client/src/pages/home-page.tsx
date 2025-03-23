@@ -14,6 +14,21 @@ export default function HomePage() {
   const [circleId, setCircleId] = useState<number | null>(null);
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
   
+  // Fetch default circle
+  const { data: defaultCircle } = useQuery<Circle>({
+    queryKey: ["/api/default-circle"],
+    enabled: !!user && !circleId,
+  });
+
+  // Redirect to default circle if no circle is specified
+  useEffect(() => {
+    if (defaultCircle && !circleId && window.location.search === '') {
+      // Navigate to default circle
+      window.history.pushState({}, '', `/?circle=${defaultCircle.id}`);
+      setCircleId(defaultCircle.id);
+    }
+  }, [defaultCircle, circleId]);
+
   // Parse circle ID from URL query parameters and update when location changes
   useEffect(() => {
     // Create a function to handle URL changes
