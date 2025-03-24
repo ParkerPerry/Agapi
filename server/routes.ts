@@ -1189,6 +1189,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get AI collective" });
     }
   });
+  
+  // Get members of a collective (dedicated endpoint for just the members)
+  app.get("/api/followers/collectives/:id/members", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    const collectiveId = parseInt(req.params.id);
+    if (isNaN(collectiveId)) {
+      return res.status(400).json({ message: "Invalid collective ID" });
+    }
+    
+    try {
+      // First verify the collective belongs to the user
+      const collective = await storage.getAiFollowerCollective(collectiveId);
+      if (!collective || collective.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Collective not found" });
+      }
+      
+      // Get just the members array
+      const members = await storage.getCollectiveMembers(collectiveId);
+      console.log(`[Storage] Retrieved ${members.length} members for collective ${collectiveId}`);
+      
+      // Return just the members array
+      res.json(members);
+    } catch (error) {
+      console.error(`Error getting AI collective members for ${collectiveId}:`, error);
+      res.status(500).json({ message: "Failed to get AI collective members" });
+    }
+  });
 
   // Helper function to get a random item from an array
   function getRandomItem<T>(array: T[]): T {
