@@ -94,7 +94,7 @@ export function CollectiveCard({
             <p className="text-sm text-muted-foreground italic">No members found in this collective.</p>
           ) : (
             <div className="space-y-2">
-              {Array.isArray(members) && members.length > 0 ? members.map((follower) => (
+              {members.map((follower) => (
                 <div key={follower.id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={follower.avatarUrl} alt={follower.name} />
@@ -116,9 +116,7 @@ export function CollectiveCard({
                     {follower.responsiveness}
                   </Badge>
                 </div>
-              )) : (
-                <p className="text-sm text-muted-foreground italic">No members found in this collective.</p>
-              )}
+              ))}
             </div>
           )}
         </div>
