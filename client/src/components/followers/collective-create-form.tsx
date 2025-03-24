@@ -404,83 +404,14 @@ export function CollectiveCreateForm() {
 
             </div>
 
-            <div className="space-y-4">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full"
-              >
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create Collective ({form.watch("count")} AI followers)
-              </Button>
-              
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={async () => {
-                  console.log("Debug button clicked - testing direct API call");
-                  
-                  try {
-                    // First check if we're authenticated
-                    const authCheckResponse = await fetch('/api/user', {
-                      credentials: 'include'
-                    });
-                    
-                    console.log("Auth check response:", authCheckResponse.status);
-                    
-                    if (authCheckResponse.status === 401) {
-                      console.error('User not authenticated. Please log in.');
-                      alert('Please log in before creating a collective.');
-                      return;
-                    }
-                    
-                    // Test API with a simple direct call
-                    const testData = {
-                      collectiveName: "Test Collective",
-                      personality: "Test personality description for debugging",
-                      count: 3,
-                      avatarPrefix: "",
-                      responsiveness: "active",
-                      responsivenessOptions: ["active"],
-                      responseDelay: {
-                        min: 5,
-                        max: 60
-                      },
-                      namingOption: "sequential",
-                      generateDynamicAvatars: false,
-                      responseChance: 80
-                    };
-                    
-                    console.log("Making test API call with data:", testData);
-                    
-                    const response = await fetch('/api/followers/collective', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      credentials: 'include',
-                      body: JSON.stringify(testData)
-                    });
-                    
-                    console.log('API response status:', response.status);
-                    
-                    if (!response.ok) {
-                      const errorText = await response.text();
-                      console.error('API error:', response.status, errorText);
-                      alert(`Error testing API: ${response.status} ${errorText}`);
-                    } else {
-                      const result = await response.json();
-                      console.log('API success:', result);
-                      alert("API test successful! Check console for details.");
-                    }
-                  } catch (error) {
-                    console.error("Error in test API call:", error);
-                    alert(`Error in test API call: ${error instanceof Error ? error.message : 'Unknown error'}`);
-                  }
-                }}
-              >
-                Debug API Connection
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Create Collective ({form.watch("count")} AI followers)
+            </Button>
           </form>
         </Form>
       </CardContent>
