@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLocation } from "wouter";
 import { useCreateCollective } from "@/lib/mutations/follower-mutations";
+import { queryClient } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -152,14 +153,37 @@ export function CollectiveCreateForm() {
           max: data.responseDelayMax
         },
         namingOption: data.namingOption,
-        generateDynamicAvatars: data.generateDynamicAvatars
+        generateDynamicAvatars: data.generateDynamicAvatars,
+        // Add the default responseChance to avoid type errors
+        responseChance: 80
       };
       
       console.log("Submitting collective data:", mutationData);
       
-      // Cast the data to match the expected mutation type
-      await collectiveCreateMutation.mutateAsync(mutationData as any);
-      setLocation("/ai-followers");
+      try {
+        // Make direct API call instead of using the mutation
+        const response = await fetch('/api/followers/collective', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(mutationData)
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('API error:', response.status, errorText);
+          throw new Error(`API error: ${response.status} ${errorText}`);
+        }
+        
+        const result = await response.json();
+        console.log('API success:', result);
+        
+        // Invalidate queries and redirect
+        queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
+        setLocation("/ai-followers");
+      } catch (apiError) {
+        console.error('API request failed:', apiError);
+        throw apiError;
+      }
     } catch (error) {
       console.error("Error creating collective:", error);
     } finally {
