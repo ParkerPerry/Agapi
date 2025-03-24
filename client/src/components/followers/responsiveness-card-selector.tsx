@@ -54,31 +54,46 @@ export function ResponsivenessCardSelector({ value, onChange }: ResponsivenessOp
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      {options.map((option) => (
-        <Card 
-          key={option.id}
-          onClick={() => onChange(option.id)}
-          className={cn(
-            "cursor-pointer border-2 transition-all duration-200 hover:shadow-md",
-            value === option.id 
-              ? `${option.color} border-2 shadow-sm scale-[1.02]` 
-              : "hover:border-gray-300 hover:dark:border-gray-600"
-          )}
-        >
-          <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full">
-            <div className={cn(
-              "p-2 rounded-full mb-2",
-              value === option.id ? "text-primary" : "text-muted-foreground"
-            )}>
-              {option.icon}
-            </div>
-            <h3 className="font-medium mb-1">{option.label}</h3>
-            <p className="text-xs text-muted-foreground mb-1">{option.description}</p>
-            <span className="text-xs font-semibold">{option.time}</span>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="flex flex-col space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Select the response option for how quickly followers will respond to posts and comments.
+        Each follower in the collective will have this response timing.
+      </p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {options.map((option) => (
+          <Card 
+            key={option.id}
+            onClick={() => onChange(option.id)}
+            className={cn(
+              "cursor-pointer border-2 transition-all duration-200 hover:shadow-md",
+              value === option.id 
+                ? `${option.color} border-2 shadow-sm scale-[1.02]` 
+                : "hover:border-gray-300 hover:dark:border-gray-600"
+            )}
+            tabIndex={0}
+            role="button"
+            aria-pressed={value === option.id}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onChange(option.id);
+              }
+            }}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full">
+              <div className={cn(
+                "p-2 rounded-full mb-2",
+                value === option.id ? "text-primary" : "text-muted-foreground"
+              )}>
+                {option.icon}
+              </div>
+              <h3 className="font-medium mb-1">{option.label}</h3>
+              <p className="text-xs text-muted-foreground mb-1">{option.description}</p>
+              <span className="text-xs font-semibold">{option.time}</span>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

@@ -319,7 +319,7 @@ export function CollectiveCreateForm() {
                   <FormItem>
                     <FormLabel>Response Time</FormLabel>
                     <FormDescription>
-                      Select how quickly followers will respond to posts and comments
+                      Select the response option for how quickly followers will respond to posts and comments
                     </FormDescription>
                     <FormControl>
                       <ResponsivenessCardSelector 
