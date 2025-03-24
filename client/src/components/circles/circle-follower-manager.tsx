@@ -6,7 +6,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -23,13 +22,6 @@ interface CircleFollowerManagerProps {
 export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [pendingFollowers, setPendingFollowers] = useState<{
-    adding: number[];
-    removing: number[];
-  }>({
-    adding: [],
-    removing: [],
-  });
 
   const { data: followers } = useQuery<AiFollower[]>({
     queryKey: ["/api/followers"],
@@ -41,64 +33,29 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
 
   const addFollowerMutation = useMutation({
     mutationFn: async (aiFollowerId: number) => {
-      // Track which follower is being added
-      setPendingFollowers(prev => ({
-        ...prev,
-        adding: [...prev.adding, aiFollowerId]
-      }));
       const res = await apiRequest(`/api/circles/${circle.id}/followers`, "POST", { aiFollowerId });
-      return { result: await res.json(), aiFollowerId };
+      return res.json();
     },
-    onSuccess: (data) => {
-      // Remove from pending list when complete
-      setPendingFollowers(prev => ({
-        ...prev,
-        adding: prev.adding.filter(id => id !== data.aiFollowerId)
-      }));
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/followers`] });
       toast({
         title: "Follower added",
         description: "The AI follower has been added to the circle.",
       });
     },
-    onError: (error, aiFollowerId) => {
-      // Also remove from pending list on error
-      setPendingFollowers(prev => ({
-        ...prev,
-        adding: prev.adding.filter(id => id !== aiFollowerId)
-      }));
-    }
   });
 
   const removeFollowerMutation = useMutation({
     mutationFn: async (followerId: number) => {
-      // Track which follower is being removed
-      setPendingFollowers(prev => ({
-        ...prev,
-        removing: [...prev.removing, followerId]
-      }));
       await apiRequest(`/api/circles/${circle.id}/followers/${followerId}`, "DELETE");
-      return { followerId };
     },
-    onSuccess: (data) => {
-      // Remove from pending list when complete
-      setPendingFollowers(prev => ({
-        ...prev,
-        removing: prev.removing.filter(id => id !== data.followerId)
-      }));
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/followers`] });
       toast({
         title: "Follower removed",
         description: "The AI follower has been removed from the circle.",
       });
     },
-    onError: (error, followerId) => {
-      // Also remove from pending list on error
-      setPendingFollowers(prev => ({
-        ...prev,
-        removing: prev.removing.filter(id => id !== followerId)
-      }));
-    }
   });
 
   return (
@@ -157,22 +114,11 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
                           }
                         }}
                         disabled={
-                          pendingFollowers.adding.includes(follower.id) ||
-                          pendingFollowers.removing.includes(follower.id)
+                          addFollowerMutation.isPending ||
+                          removeFollowerMutation.isPending
                         }
                       >
-                        {pendingFollowers.adding.includes(follower.id) ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                        ) : pendingFollowers.removing.includes(follower.id) ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                        ) : null}
-                        {isInCircle && !pendingFollowers.removing.includes(follower.id) && !pendingFollowers.adding.includes(follower.id) 
-                          ? "Remove" 
-                          : !isInCircle && !pendingFollowers.adding.includes(follower.id) && !pendingFollowers.removing.includes(follower.id)
-                          ? "Add"
-                          : pendingFollowers.adding.includes(follower.id)
-                          ? "Adding..."
-                          : "Removing..."}
+                        {isInCircle ? "Remove" : "Add"}
                       </Button>
                     </div>
                   );
