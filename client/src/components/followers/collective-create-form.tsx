@@ -55,7 +55,8 @@ const collectiveFormSchema = z.object({
     .max(100, { message: "Cannot create more than 100 followers at once" }),
   avatarPrefix: z.string().optional(),
   responsiveness: z.enum(["instant", "active", "casual", "zen"]).default("active"),
-  responseDelay: z.number().min(1).max(1440).default(30), // in minutes
+  responseDelayMin: z.number().min(1).max(1440).default(30), // min response time in minutes
+  responseDelayMax: z.number().min(1).max(1440).default(30), // max response time in minutes
   responseChance: z.number().min(0).max(100).default(80),
   namingOption: z.enum(["sequential", "dynamic"]).default("sequential"),
   generateDynamicAvatars: z.boolean().default(false)
@@ -74,7 +75,8 @@ export function CollectiveCreateForm() {
     count: 5,
     avatarPrefix: "",
     responsiveness: "active",
-    responseDelay: responsivenessValues["active"],
+    responseDelayMin: responsivenessValues["active"],
+    responseDelayMax: responsivenessValues["active"],
     responseChance: 80,
     namingOption: "sequential",
     generateDynamicAvatars: false
@@ -88,24 +90,25 @@ export function CollectiveCreateForm() {
   // Get form values for dynamic UI updates
   const namingOption = form.watch("namingOption");
   const responsiveness = form.watch("responsiveness");
-  const responseDelay = form.watch("responseDelay");
+  const responseDelayMin = form.watch("responseDelayMin");
+  const responseDelayMax = form.watch("responseDelayMax");
 
-  // Synchronize responsiveness dropdown with the response delay slider
+  // Synchronize responsiveness dropdown with the response delay sliders
   useEffect(() => {
     // Update responseDelay when responsiveness changes
     const newDelay = responsivenessValues[responsiveness];
-    if (newDelay !== responseDelay) {
-      form.setValue('responseDelay', newDelay);
-    }
-  }, [responsiveness, responseDelay, form]);
+    form.setValue('responseDelayMin', newDelay);
+    form.setValue('responseDelayMax', newDelay);
+  }, [responsiveness, form]);
 
-  // Update responsiveness when delay slider changes
+  // Update responsiveness when delay slider changes (use min value for UI indication)
   useEffect(() => {
-    const newResponsiveness = getResponsivenessFromDelay(responseDelay);
+    // Only update responsiveness based on min value to avoid conflicts
+    const newResponsiveness = getResponsivenessFromDelay(responseDelayMin);
     if (newResponsiveness !== responsiveness) {
       form.setValue('responsiveness', newResponsiveness as "instant" | "active" | "casual" | "zen");
     }
-  }, [responseDelay, responsiveness, form]);
+  }, [responseDelayMin, responsiveness, form]);
 
   // Automatically update avatar generation based on naming option
   useEffect(() => {
@@ -118,7 +121,23 @@ export function CollectiveCreateForm() {
   const onSubmit = async (data: CollectiveFormValues) => {
     setIsSubmitting(true);
     try {
-      await collectiveCreateMutation.mutateAsync(data);
+      // Convert the form data to the structure expected by the API
+      const mutationData = {
+        collectiveName: data.collectiveName,
+        personality: data.personality,
+        count: data.count,
+        avatarPrefix: data.avatarPrefix,
+        responsiveness: data.responsiveness,
+        responseDelay: {
+          min: data.responseDelayMin,
+          max: data.responseDelayMax
+        },
+        responseChance: data.responseChance,
+        namingOption: data.namingOption,
+        generateDynamicAvatars: data.generateDynamicAvatars
+      };
+      
+      await collectiveCreateMutation.mutateAsync(mutationData);
       setLocation("/ai-followers");
     } catch (error) {
       console.error("Error creating collective:", error);
@@ -276,43 +295,48 @@ export function CollectiveCreateForm() {
               />
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="responseDelay"
-                render={({ field }) => {
-                  // Format the response delay for display
-                  const formatDelay = (delay: number): string => {
-                    if (delay < 60) return `${delay} minute${delay === 1 ? '' : 's'}`;
-                    const hours = Math.floor(delay / 60);
-                    return `${hours} hour${hours === 1 ? '' : 's'}`;
-                  };
-                  
-                  return (
-                    <FormItem>
-                      <FormLabel>Responsiveness - {responsivenessLabels[responsiveness]}</FormLabel>
-                      <FormControl>
-                        <Slider
-                          min={1}
-                          max={1440}
-                          step={1}
-                          value={[field.value]}
-                          onValueChange={(values) => field.onChange(values[0])}
-                        />
-                      </FormControl>
-                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                        <span>Fast ({formatDelay(1)})</span>
-                        <span>Medium ({formatDelay(60)})</span>
-                        <span>Slow ({formatDelay(1440)})</span>
-                      </div>
-                      <FormDescription>
-                        Response time: {formatDelay(field.value)}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
+            <div className="grid grid-cols-1 gap-6">
+              <FormItem>
+                <FormLabel>Response Time Range - {responsivenessLabels[responsiveness]}</FormLabel>
+                <div className="pt-4">
+                  {/* Using a custom dual slider approach without FormField */}
+                  <Slider
+                    min={1}
+                    max={1440}
+                    step={1}
+                    value={[responseDelayMin, responseDelayMax]}
+                    onValueChange={(values) => {
+                      form.setValue('responseDelayMin', values[0]);
+                      form.setValue('responseDelayMax', values[1]);
+                    }}
+                    className="mb-6"
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Fast (1 min)</span>
+                  <span>Medium (1 hour)</span>
+                  <span>Slow (24 hours)</span>
+                </div>
+                <FormDescription>
+                  {(() => {
+                    // Format the response delay for display
+                    const formatDelay = (delay: number): string => {
+                      if (delay < 60) return `${delay} minute${delay === 1 ? '' : 's'}`;
+                      const hours = Math.floor(delay / 60);
+                      return `${hours} hour${hours === 1 ? '' : 's'}`;
+                    };
+                    
+                    const min = formatDelay(responseDelayMin);
+                    const max = formatDelay(responseDelayMax);
+                    
+                    if (responseDelayMin === responseDelayMax) {
+                      return `All followers will respond in ${min}`;
+                    } else {
+                      return `Followers will respond between ${min} and ${max}`;
+                    }
+                  })()}
+                </FormDescription>
+              </FormItem>
 
               <FormField
                 control={form.control}

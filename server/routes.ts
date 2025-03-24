@@ -1023,7 +1023,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           communicationStyle: followerBackground.communication_style,
           interactionPreferences: followerBackground.interaction_preferences,
           responsiveness: responsiveness || "active",
-          responseDelay: responseDelay ? { min: responseDelay, max: responseDelay } : getDefaultDelay(responsiveness),
+          responseDelay: responseDelay 
+            ? responseDelay 
+            : getDefaultDelay(responsiveness),
           responseChance: responseChance || 80,
           active: true,
           tools: null,

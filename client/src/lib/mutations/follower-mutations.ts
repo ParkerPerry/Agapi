@@ -42,7 +42,10 @@ export function useCreateCollective() {
       count: number;
       avatarPrefix?: string;
       responsiveness: "instant" | "active" | "casual" | "zen";
-      responseDelay?: number;
+      responseDelay?: {
+        min: number;
+        max: number;
+      };
       responseChance: number;
       namingOption?: "sequential" | "dynamic";
       generateDynamicAvatars?: boolean;
