@@ -966,7 +966,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (namingOption === 'sequential') {
           // Sequential naming: just add a number suffix
           followerName = `${collectiveName} ${i + 1}`;
-          avatarUrl = avatarPrefix ? `${avatarPrefix}-${i + 1}.png` : null;
+          
+          // Use a default avatar if none provided to avoid database not-null constraint
+          avatarUrl = avatarPrefix 
+            ? `${avatarPrefix}-${i + 1}.png` 
+            : `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(followerName)}`;
         } else {
           // For dynamic naming, we'll add an instruction to generate a unique name
           followerName = `${collectiveName} Variation ${i + 1}`;

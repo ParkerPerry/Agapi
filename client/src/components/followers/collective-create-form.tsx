@@ -141,13 +141,12 @@ export function CollectiveCreateForm() {
   const handleFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault(); // Prevent default form submission
     
-    // Make sure form is valid
-    const formState = form.getValues();
-    const validation = collectiveFormSchema.safeParse(formState);
+    // Trigger form validation through react-hook-form
+    const isValid = await form.trigger();
     
-    if (!validation.success) {
-      console.error("Form validation failed:", validation.error);
-      alert("Please fill out all required fields correctly");
+    if (!isValid) {
+      console.error("Form validation failed through form.trigger()");
+      // Don't alert - the form will show validation errors
       return;
     }
     
