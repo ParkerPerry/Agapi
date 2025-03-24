@@ -899,12 +899,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       count, 
       avatarPrefix,
       responsiveness,
-      responseChance 
+      responseDelay,
+      responseChance,
+      namingOption = 'sequential',
+      generateDynamicAvatars = false
     } = req.body;
     
     if (!collectiveName || !personality || !count || count < 1 || count > 100) {
       return res.status(400).json({ 
         message: "Invalid request. Must provide collectiveName, personality, and a count between 1-100" 
+      });
+    }
+    
+    // Validate naming option
+    if (namingOption !== 'sequential' && namingOption !== 'dynamic') {
+      return res.status(400).json({
+        message: "Invalid namingOption. Must be 'sequential' or 'dynamic'"
       });
     }
 
@@ -930,32 +940,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create multiple followers with small variations
       for (let i = 0; i < count; i++) {
-        // Create variations in name
-        const followerName = `${collectiveName} ${i + 1}`;
+        // Apply naming strategy
+        let followerName = '';
+        let avatarUrl = null;
+        let nameInstruction = '';
         
-        // Generate a slightly varied background for each follower
-        // Reusing the collective background and adding small variations
-        const followerBackground = {
-          background: collectiveBackground.background,
-          interests: [...collectiveBackground.interests], // Clone the interests array
-          communication_style: collectiveBackground.communication_style,
-          interaction_preferences: {
-            likes: [...collectiveBackground.interaction_preferences.likes],
-            dislikes: [...collectiveBackground.interaction_preferences.dislikes]
+        // Determine how to generate follower name
+        if (namingOption === 'sequential') {
+          // Sequential naming: just add a number suffix
+          followerName = `${collectiveName} ${i + 1}`;
+          avatarUrl = avatarPrefix ? `${avatarPrefix}-${i + 1}.png` : null;
+        } else {
+          // For dynamic naming, we'll add an instruction to generate a unique name
+          followerName = `${collectiveName} Variation ${i + 1}`;
+          nameInstruction = `Generate a unique character name that reflects a member of the ${collectiveName} collective with the personality described. The name should be creative and distinct.`;
+        }
+        
+        // Generate background variations with naming instructions
+        let fullPrompt = personality;
+        if (nameInstruction) {
+          fullPrompt = `${personality}\n\n${nameInstruction}`;
+        }
+        
+        // For dynamic naming, generate a unique background for each follower
+        let followerBackground;
+        if (namingOption === 'dynamic') {
+          followerBackground = await generateAIBackground(
+            followerName,
+            fullPrompt,
+            `This is member #${i + 1} of ${count} in the ${collectiveName} collective.`
+          );
+          
+          // If using dynamic naming, extract the name from the background
+          // Format: "Name: [character name]" or similar
+          if (followerBackground.background.includes("Name:")) {
+            // Try different regex patterns to extract the name
+            let nameMatch = followerBackground.background.match(/Name:\s*([^\n\.]+)/i);
+            
+            // If first pattern doesn't work, try a more general one
+            if (!nameMatch || !nameMatch[1]) {
+              nameMatch = followerBackground.background.match(/Name:\s*([^\.]+)/i);
+            }
+            
+            if (nameMatch && nameMatch[1]) {
+              // Get the extracted name and clean it up
+              followerName = nameMatch[1].trim();
+              
+              // Clean up the background by removing the name line
+              followerBackground.background = followerBackground.background
+                .replace(/Name:\s*([^\n\.]+)(\n+|\.)/i, "") 
+                .replace(/Name:\s*([^\.]+)/i, "")
+                .trim();
+            }
           }
-        };
+          
+          // Generate avatar for dynamic names if requested
+          if (generateDynamicAvatars) {
+            // Generate a unique seed based on the follower's name
+            const seed = encodeURIComponent(`${followerName}-${Math.random().toString(36).substring(2, 8)}`);
+            avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${seed}`;
+          }
+        } else {
+          // For sequential naming, use collective background with minor variations
+          followerBackground = {
+            background: collectiveBackground.background,
+            interests: [...collectiveBackground.interests],
+            communication_style: collectiveBackground.communication_style,
+            interaction_preferences: {
+              likes: [...collectiveBackground.interaction_preferences.likes],
+              dislikes: [...collectiveBackground.interaction_preferences.dislikes]
+            }
+          };
+        }
         
         // Create the individual follower
         const follower = await storage.createAiFollower(req.user!.id, {
           name: followerName,
           personality,
-          avatarUrl: avatarPrefix ? `${avatarPrefix}-${i + 1}.png` : null,
+          avatarUrl: avatarUrl,
           background: followerBackground.background,
           interests: followerBackground.interests,
           communicationStyle: followerBackground.communication_style,
           interactionPreferences: followerBackground.interaction_preferences,
           responsiveness: responsiveness || "active",
-          responseDelay: getDefaultDelay(responsiveness),
+          responseDelay: responseDelay ? { min: responseDelay, max: responseDelay } : getDefaultDelay(responsiveness),
           responseChance: responseChance || 80,
           active: true,
           tools: null,
