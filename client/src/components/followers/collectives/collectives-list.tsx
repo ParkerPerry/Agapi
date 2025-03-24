@@ -26,7 +26,7 @@ export function CollectivesList() {
   const [creationTimeFilter, setCreationTimeFilter] = useState('all');
   const [collectivesWithCounts, setCollectivesWithCounts] = useState<CollectiveWithMemberCount[]>([]);
 
-  // Fetch AI collectives
+  // Fetch AI collectives with member counts
   const {
     data: collectives = [],
     isLoading: isLoadingCollectives,
@@ -35,8 +35,32 @@ export function CollectivesList() {
   } = useQuery({
     queryKey: ['ai-follower-collectives'],
     queryFn: async () => {
-      const response = await apiRequest<AiFollowerCollective[]>('/api/followers/collectives');
-      return response;
+      const response = await apiRequest('/api/followers/collectives');
+      
+      // Fetch member counts for each collective
+      const collectivesWithCounts = await Promise.all(
+        response.map(async (collective: AiFollowerCollective) => {
+          try {
+            // Make a separate API call to get the member count for each collective
+            const membersResponse = await apiRequest(
+              `/api/followers/collectives/${collective.id}/members`
+            );
+            
+            return {
+              ...collective,
+              memberCount: Array.isArray(membersResponse) ? membersResponse.length : 0
+            };
+          } catch (error) {
+            console.error(`Error fetching members for collective ${collective.id}:`, error);
+            return {
+              ...collective,
+              memberCount: 0
+            };
+          }
+        })
+      );
+      
+      return collectivesWithCounts;
     }
   });
 
@@ -49,29 +73,40 @@ export function CollectivesList() {
     queryKey: ['collective-members', expandedCollectiveId],
     queryFn: async () => {
       if (!expandedCollectiveId) return [];
-      const response = await apiRequest<FollowerWithCollectiveMemberId[]>(
-        `/api/followers/collectives/${expandedCollectiveId}/members`
-      );
-      return response;
+      try {
+        const response = await apiRequest(
+          `/api/followers/collectives/${expandedCollectiveId}/members`
+        );
+        return Array.isArray(response) ? response : [];
+      } catch (error) {
+        console.error(`Error fetching members for expanded collective ${expandedCollectiveId}:`, error);
+        return [];
+      }
     },
     enabled: !!expandedCollectiveId
   });
 
-  // When collectives data is loaded, fetch member counts for each
+  // Set the collectives with counts from the API response
   useEffect(() => {
-    if (collectives && collectives.length > 0) {
-      const enrichedCollectives: CollectiveWithMemberCount[] = collectives.map((collective: AiFollowerCollective) => {
-        if (expandedCollectiveId === collective.id) {
-          return {
-            ...collective,
-            memberCount: collectiveMembers.length
-          };
-        }
-        return collective;
-      });
-      setCollectivesWithCounts(enrichedCollectives);
+    if (collectives && Array.isArray(collectives) && collectives.length > 0) {
+      setCollectivesWithCounts(collectives);
+    } else {
+      setCollectivesWithCounts([]);
     }
-  }, [collectives, collectiveMembers, expandedCollectiveId]);
+  }, [collectives]);
+  
+  // Update the expanded collective with the latest member count
+  useEffect(() => {
+    if (expandedCollectiveId && Array.isArray(collectiveMembers)) {
+      setCollectivesWithCounts(prev => 
+        prev.map((collective: CollectiveWithMemberCount) => 
+          collective.id === expandedCollectiveId 
+            ? { ...collective, memberCount: collectiveMembers.length }
+            : collective
+        )
+      );
+    }
+  }, [collectiveMembers, expandedCollectiveId]);
 
   const handleViewMembers = (collectiveId: number) => {
     setExpandedCollectiveId(expandedCollectiveId === collectiveId ? null : collectiveId);

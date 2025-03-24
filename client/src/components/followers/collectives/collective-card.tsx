@@ -90,6 +90,8 @@ export function CollectiveCard({
           <h4 className="font-medium mb-2 text-sm">Collective Members:</h4>
           {isLoadingMembers ? (
             <p className="text-sm text-muted-foreground italic">Loading members...</p>
+          ) : !Array.isArray(members) ? (
+            <p className="text-sm text-muted-foreground italic">Error loading members</p>
           ) : members.length === 0 ? (
             <p className="text-sm text-muted-foreground italic">No members found in this collective.</p>
           ) : (
