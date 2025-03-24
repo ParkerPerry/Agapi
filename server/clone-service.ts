@@ -188,6 +188,46 @@ async function generateFollowerVariation(
   }
 
   // Create the new follower with variations
+  // Add variability to response times based on variation level
+  let responseDelay = template.responseDelay;
+  
+  // If the variation level is significant, introduce responsiveness variability
+  if (variationLevel > 0.3) {
+    const delay = template.responseDelay;
+    
+    // Ensure we have min/max values in the delay object
+    if (delay && typeof delay === 'object' && 'min' in delay && 'max' in delay) {
+      // Calculate variation ranges - up to 20% for medium variation, up to 40% for high variation
+      const variationRange = variationLevel < 0.6 ? 0.2 : 0.4;
+      
+      // Randomly shift the min/max values within the variation range
+      // For some followers, make them faster, for others slower
+      const direction = Math.random() > 0.5 ? 1 : -1;
+      const minShift = Math.floor(delay.min * variationRange * direction * Math.random());
+      const maxShift = Math.floor(delay.max * variationRange * direction * Math.random());
+      
+      // Apply shifts but ensure min stays smaller than max and values remain positive
+      const newMin = Math.max(1, delay.min + minShift);
+      const newMax = Math.max(newMin + 1, delay.max + maxShift);
+      
+      responseDelay = {
+        min: newMin,
+        max: newMax
+      };
+      
+      console.log(`Varied response delay for ${newName}: Original ${delay.min}-${delay.max}, New ${responseDelay.min}-${responseDelay.max}`);
+    }
+  }
+  
+  // Also add variability to response chance based on variation level
+  const responseChance = Math.max(
+    10,
+    Math.min(
+      100,
+      template.responseChance + Math.floor((Math.random() * 20 - 10) * variationLevel)
+    )
+  );
+  
   const newFollower = await storage.createAiFollower(userId, {
     name: newName,
     personality: personalityVariation,
@@ -201,8 +241,8 @@ async function generateFollowerVariation(
     },
     active: true,
     responsiveness: template.responsiveness,
-    responseDelay: template.responseDelay,
-    responseChance: template.responseChance,
+    responseDelay: responseDelay,
+    responseChance: responseChance,
     tools: template.tools,
     parentId: template.id, // Set the parent-child relationship
   });
