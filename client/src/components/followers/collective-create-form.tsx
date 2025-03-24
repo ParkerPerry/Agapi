@@ -124,19 +124,16 @@ export function CollectiveCreateForm() {
                 name="count"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Followers</FormLabel>
-                    <div className="flex items-center gap-2">
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min={2}
-                          max={100}
-                          value={field.value}
-                          onChange={(e) => field.onChange(parseInt(e.target.value || "5"))}
-                        />
-                      </FormControl>
-                      <span className="text-sm text-muted-foreground">({field.value} followers)</span>
-                    </div>
+                    <FormLabel>Number of Followers ({field.value})</FormLabel>
+                    <FormControl>
+                      <Slider
+                        min={2}
+                        max={100}
+                        step={1}
+                        value={[field.value]}
+                        onValueChange={(values) => field.onChange(values[0])}
+                      />
+                    </FormControl>
                     <FormDescription>
                       How many followers to create (2-100)
                     </FormDescription>
