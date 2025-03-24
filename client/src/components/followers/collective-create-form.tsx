@@ -6,14 +6,18 @@ import { useLocation } from "wouter";
 import { useCreateCollective } from "@/lib/mutations/follower-mutations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Users } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, Users, LayoutGrid, LucideIcon } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ResponsivenessCardSelector } from "./responsiveness-card-selector";
+import { ResponsivenessIconSelector } from "./responsiveness-icon-selector";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Define form schema for creating a collective
 // Define responsiveness values and their labels
@@ -319,19 +323,39 @@ export function CollectiveCreateForm() {
                   <FormItem>
                     <FormLabel>Response Time</FormLabel>
                     <FormDescription>
-                      Select the response option for how quickly followers will respond to posts and comments
+                      Select how quickly followers will respond to posts and comments
                     </FormDescription>
                     <FormControl>
-                      <ResponsivenessCardSelector 
-                        value={field.value as "instant" | "active" | "casual" | "zen"} 
-                        onChange={(value) => {
-                          field.onChange(value);
-                          // Set min and max values based on the selected responsiveness
-                          const delay = getDefaultDelay(value);
-                          form.setValue('responseDelayMin', delay.min);
-                          form.setValue('responseDelayMax', delay.max);
-                        }}
-                      />
+                      <Tabs defaultValue="cards" className="w-full">
+                        <TabsList className="mb-4 grid grid-cols-2 w-64 mx-auto">
+                          <TabsTrigger value="cards">Card View</TabsTrigger>
+                          <TabsTrigger value="icons">Icon View</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="cards">
+                          <ResponsivenessCardSelector 
+                            value={field.value as "instant" | "active" | "casual" | "zen"} 
+                            onChange={(value) => {
+                              field.onChange(value);
+                              // Set min and max values based on the selected responsiveness
+                              const delay = getDefaultDelay(value);
+                              form.setValue('responseDelayMin', delay.min);
+                              form.setValue('responseDelayMax', delay.max);
+                            }}
+                          />
+                        </TabsContent>
+                        <TabsContent value="icons">
+                          <ResponsivenessIconSelector 
+                            value={field.value as "instant" | "active" | "casual" | "zen"} 
+                            onChange={(value) => {
+                              field.onChange(value);
+                              // Set min and max values based on the selected responsiveness
+                              const delay = getDefaultDelay(value);
+                              form.setValue('responseDelayMin', delay.min);
+                              form.setValue('responseDelayMax', delay.max);
+                            }}
+                          />
+                        </TabsContent>
+                      </Tabs>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
