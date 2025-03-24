@@ -14,6 +14,7 @@ import { Slider } from "@/components/ui/slider";
 import { Loader2, Users } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // Define form schema for creating a collective
 // Define responsiveness values and their labels
@@ -38,6 +39,22 @@ export const getResponsivenessFromDelay = (delay: number): string => {
   if (delay <= 60) return "active";
   if (delay <= 360) return "casual";
   return "zen";
+};
+
+// Get default delay range based on responsiveness level
+export const getDefaultDelay = (responsiveness: string): { min: number; max: number } => {
+  switch (responsiveness) {
+    case "instant":
+      return { min: 0, max: 5 };
+    case "active":
+      return { min: 5, max: 60 };
+    case "casual":
+      return { min: 60, max: 480 }; // 1-8 hours
+    case "zen":
+      return { min: 480, max: 1440 }; // 8-24 hours
+    default:
+      return { min: 5, max: 60 };
+  }
 };
 
 const collectiveFormSchema = z.object({
@@ -75,8 +92,8 @@ export function CollectiveCreateForm() {
     count: 5,
     avatarPrefix: "",
     responsiveness: "active",
-    responseDelayMin: responsivenessValues["active"],
-    responseDelayMax: responsivenessValues["active"],
+    responseDelayMin: getDefaultDelay("active").min,
+    responseDelayMax: getDefaultDelay("active").max,
     responseChance: 80,
     namingOption: "sequential",
     generateDynamicAvatars: false
@@ -96,9 +113,9 @@ export function CollectiveCreateForm() {
   // Synchronize responsiveness dropdown with the response delay sliders
   useEffect(() => {
     // Update responseDelay when responsiveness changes
-    const newDelay = responsivenessValues[responsiveness];
-    form.setValue('responseDelayMin', newDelay);
-    form.setValue('responseDelayMax', newDelay);
+    const newDelay = getDefaultDelay(responsiveness);
+    form.setValue('responseDelayMin', newDelay.min);
+    form.setValue('responseDelayMax', newDelay.max);
   }, [responsiveness, form]);
 
   // Update responsiveness when delay slider changes (use min value for UI indication)
@@ -296,47 +313,94 @@ export function CollectiveCreateForm() {
             )}
 
             <div className="grid grid-cols-1 gap-6">
-              <FormItem>
-                <FormLabel>Response Time Range - {responsivenessLabels[responsiveness]}</FormLabel>
-                <div className="pt-4">
-                  {/* Using a custom dual slider approach without FormField */}
-                  <Slider
-                    min={1}
-                    max={1440}
-                    step={1}
-                    value={[responseDelayMin, responseDelayMax]}
-                    onValueChange={(values) => {
-                      form.setValue('responseDelayMin', values[0]);
-                      form.setValue('responseDelayMax', values[1]);
-                    }}
-                    className="mb-6"
-                  />
-                </div>
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>Fast (1 min)</span>
-                  <span>Medium (1 hour)</span>
-                  <span>Slow (24 hours)</span>
-                </div>
-                <FormDescription>
-                  {(() => {
-                    // Format the response delay for display
-                    const formatDelay = (delay: number): string => {
-                      if (delay < 60) return `${delay} minute${delay === 1 ? '' : 's'}`;
-                      const hours = Math.floor(delay / 60);
-                      return `${hours} hour${hours === 1 ? '' : 's'}`;
-                    };
-                    
-                    const min = formatDelay(responseDelayMin);
-                    const max = formatDelay(responseDelayMax);
-                    
-                    if (responseDelayMin === responseDelayMax) {
-                      return `All followers will respond in ${min}`;
-                    } else {
-                      return `Followers will respond between ${min} and ${max}`;
-                    }
-                  })()}
-                </FormDescription>
-              </FormItem>
+              <FormField
+                control={form.control}
+                name="responsiveness"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Response Time</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        className="flex flex-col space-y-3 pt-1"
+                        defaultValue={field.value}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          // Set min and max values based on the selected responsiveness
+                          const delay = getDefaultDelay(value as any);
+                          form.setValue('responseDelayMin', delay.min);
+                          form.setValue('responseDelayMax', delay.max);
+                        }}
+                      >
+                        <div className="grid grid-cols-4 gap-4">
+                          <div className="flex flex-col items-center">
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="instant" id="r-instant" />
+                              </FormControl>
+                              <Label
+                                htmlFor="r-instant"
+                                className={`cursor-pointer ${field.value === 'instant' ? 'font-medium' : ''}`}
+                              >
+                                Instant
+                              </Label>
+                            </FormItem>
+                            <span className="text-xs mt-1 text-muted-foreground">0-5 min</span>
+                          </div>
+                          
+                          <div className="flex flex-col items-center">
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="active" id="r-active" />
+                              </FormControl>
+                              <Label
+                                htmlFor="r-active"
+                                className={`cursor-pointer ${field.value === 'active' ? 'font-medium' : ''}`}
+                              >
+                                Active
+                              </Label>
+                            </FormItem>
+                            <span className="text-xs mt-1 text-muted-foreground">5-60 min</span>
+                          </div>
+                          
+                          <div className="flex flex-col items-center">
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="casual" id="r-casual" />
+                              </FormControl>
+                              <Label
+                                htmlFor="r-casual"
+                                className={`cursor-pointer ${field.value === 'casual' ? 'font-medium' : ''}`}
+                              >
+                                Casual
+                              </Label>
+                            </FormItem>
+                            <span className="text-xs mt-1 text-muted-foreground">1-8 hrs</span>
+                          </div>
+                          
+                          <div className="flex flex-col items-center">
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="zen" id="r-zen" />
+                              </FormControl>
+                              <Label
+                                htmlFor="r-zen"
+                                className={`cursor-pointer ${field.value === 'zen' ? 'font-medium' : ''}`}
+                              >
+                                Zen
+                              </Label>
+                            </FormItem>
+                            <span className="text-xs mt-1 text-muted-foreground">8-24 hrs</span>
+                          </div>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormDescription>
+                      Select how quickly followers will respond to posts and comments
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
