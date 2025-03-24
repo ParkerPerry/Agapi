@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLocation } from "wouter";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Users } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
 import { getDefaultDelay } from "./collective-create-form";
 import { BasicInfoSection } from "./form-sections/basic-info-section";
 import { NamingOptionsSection } from "./form-sections/naming-options-section";
@@ -41,6 +42,7 @@ export type CollectiveFormValues = z.infer<typeof collectiveFormSchema>;
 export function SimplifiedCollectiveForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   const defaultValues: Partial<CollectiveFormValues> = {
     collectiveName: "",
@@ -77,7 +79,11 @@ export function SimplifiedCollectiveForm() {
       console.log("Auth check response:", authCheck.status);
       
       if (authCheck.status === 401) {
-        alert('Please log in before creating a collective.');
+        toast({
+          title: "Authentication Required",
+          description: "Please log in before creating a collective.",
+          variant: "destructive"
+        });
         setLocation('/auth');
         return;
       }
@@ -114,19 +120,31 @@ export function SimplifiedCollectiveForm() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API error:", errorText);
-        alert(`Error creating collective: ${errorText}`);
+        toast({
+          title: "Error Creating Collective",
+          description: errorText,
+          variant: "destructive"
+        });
       } else {
         const result = await response.json();
         console.log("API success:", result);
         
         // Update UI and redirect
         queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
-        alert("Collective created successfully!");
+        toast({
+          title: "Success!",
+          description: "Collective created successfully!",
+          variant: "default"
+        });
         setLocation("/ai-followers");
       }
     } catch (error) {
       console.error("Error in form submission:", error);
-      alert(`Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`);
+      toast({
+        title: "Submission Error",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }
