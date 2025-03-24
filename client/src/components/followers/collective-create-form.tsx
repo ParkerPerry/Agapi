@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,8 +13,33 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Loader2, Users } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 
 // Define form schema for creating a collective
+// Define responsiveness values and their labels
+export const responsivenessLabels: Record<string, string> = {
+  "instant": "Instant (responds immediately)",
+  "active": "Active (responds within minutes)",
+  "casual": "Casual (responds within hours)",
+  "zen": "Zen (responds within a day)"
+};
+
+// Define response times in minutes for the slider
+export const responsivenessValues: Record<string, number> = {
+  "instant": 1,   // 1 minute
+  "active": 30,   // 30 minutes
+  "casual": 180,  // 3 hours
+  "zen": 1440     // 24 hours
+};
+
+// Get responsiveness level based on delay minutes
+export const getResponsivenessFromDelay = (delay: number): string => {
+  if (delay <= 5) return "instant";
+  if (delay <= 60) return "active";
+  if (delay <= 360) return "casual";
+  return "zen";
+};
+
 const collectiveFormSchema = z.object({
   collectiveName: z
     .string()
@@ -30,7 +55,10 @@ const collectiveFormSchema = z.object({
     .max(100, { message: "Cannot create more than 100 followers at once" }),
   avatarPrefix: z.string().optional(),
   responsiveness: z.enum(["instant", "active", "casual", "zen"]).default("active"),
-  responseChance: z.number().min(0).max(100).default(80)
+  responseDelay: z.number().min(1).max(1440).default(30), // in minutes
+  responseChance: z.number().min(0).max(100).default(80),
+  namingOption: z.enum(["sequential", "dynamic"]).default("sequential"),
+  generateDynamicAvatars: z.boolean().default(false)
 });
 
 type CollectiveFormValues = z.infer<typeof collectiveFormSchema>;
@@ -46,13 +74,46 @@ export function CollectiveCreateForm() {
     count: 5,
     avatarPrefix: "",
     responsiveness: "active",
-    responseChance: 80
+    responseDelay: responsivenessValues["active"],
+    responseChance: 80,
+    namingOption: "sequential",
+    generateDynamicAvatars: false
   };
 
   const form = useForm<CollectiveFormValues>({
     resolver: zodResolver(collectiveFormSchema),
     defaultValues
   });
+
+  // Get form values for dynamic UI updates
+  const namingOption = form.watch("namingOption");
+  const responsiveness = form.watch("responsiveness");
+  const responseDelay = form.watch("responseDelay");
+
+  // Synchronize responsiveness dropdown with the response delay slider
+  useEffect(() => {
+    // Update responseDelay when responsiveness changes
+    const newDelay = responsivenessValues[responsiveness];
+    if (newDelay !== responseDelay) {
+      form.setValue('responseDelay', newDelay);
+    }
+  }, [responsiveness, responseDelay, form]);
+
+  // Update responsiveness when delay slider changes
+  useEffect(() => {
+    const newResponsiveness = getResponsivenessFromDelay(responseDelay);
+    if (newResponsiveness !== responsiveness) {
+      form.setValue('responsiveness', newResponsiveness as "instant" | "active" | "casual" | "zen");
+    }
+  }, [responseDelay, responsiveness, form]);
+
+  // Automatically update avatar generation based on naming option
+  useEffect(() => {
+    // If sequential naming is selected, disable dynamic avatars
+    if (namingOption === 'sequential') {
+      form.setValue('generateDynamicAvatars', false);
+    }
+  }, [namingOption, form]);
 
   const onSubmit = async (data: CollectiveFormValues) => {
     setIsSubmitting(true);
@@ -142,6 +203,61 @@ export function CollectiveCreateForm() {
                 )}
               />
 
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="namingOption"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Naming Method</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select naming method" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="sequential">Sequential (Team Alpha 1, Team Alpha 2...)</SelectItem>
+                          <SelectItem value="dynamic">Dynamic (AI-generated unique names)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        How to name followers in this collective
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {namingOption === 'dynamic' && (
+                  <FormField
+                    control={form.control}
+                    name="generateDynamicAvatars"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel>Generate Unique Avatars</FormLabel>
+                          <FormDescription>
+                            Create unique avatars for each AI follower
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
+            </div>
+            
+            {namingOption === 'sequential' && (
               <FormField
                 control={form.control}
                 name="avatarPrefix"
@@ -158,34 +274,44 @@ export function CollectiveCreateForm() {
                   </FormItem>
                 )}
               />
-            </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
-                name="responsiveness"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Responsiveness</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                name="responseDelay"
+                render={({ field }) => {
+                  // Format the response delay for display
+                  const formatDelay = (delay: number): string => {
+                    if (delay < 60) return `${delay} minute${delay === 1 ? '' : 's'}`;
+                    const hours = Math.floor(delay / 60);
+                    return `${hours} hour${hours === 1 ? '' : 's'}`;
+                  };
+                  
+                  return (
+                    <FormItem>
+                      <FormLabel>Responsiveness - {responsivenessLabels[responsiveness]}</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select responsiveness level" />
-                        </SelectTrigger>
+                        <Slider
+                          min={1}
+                          max={1440}
+                          step={1}
+                          value={[field.value]}
+                          onValueChange={(values) => field.onChange(values[0])}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="instant">Instant (responds immediately)</SelectItem>
-                        <SelectItem value="active">Active (responds within minutes)</SelectItem>
-                        <SelectItem value="casual">Casual (responds within hours)</SelectItem>
-                        <SelectItem value="zen">Zen (responds within a day)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      How quickly all followers will respond to posts
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                        <span>Fast ({formatDelay(1)})</span>
+                        <span>Medium ({formatDelay(60)})</span>
+                        <span>Slow ({formatDelay(1440)})</span>
+                      </div>
+                      <FormDescription>
+                        Response time: {formatDelay(field.value)}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
 
               <FormField
@@ -203,6 +329,11 @@ export function CollectiveCreateForm() {
                         onValueChange={(values) => field.onChange(values[0])}
                       />
                     </FormControl>
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>Never (0%)</span>
+                      <span>Sometimes (50%)</span>
+                      <span>Always (100%)</span>
+                    </div>
                     <FormDescription>
                       Likelihood of followers responding to relevant content
                     </FormDescription>
