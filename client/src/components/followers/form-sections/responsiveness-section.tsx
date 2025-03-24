@@ -1,12 +1,12 @@
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ResponsivenessCardSelector } from "../responsiveness-card-selector"; 
-import { Control } from "react-hook-form";
+import { Control, UseFormReturn } from "react-hook-form";
 import { CollectiveFormValues } from "../simplified-collective-form";
 import { getDefaultDelay } from "../collective-create-form";
 
 interface ResponsivenessSectionProps {
   control: Control<CollectiveFormValues>;
-  form: any; // UseFormReturn but keeping it simple for now
+  form: UseFormReturn<CollectiveFormValues>;
 }
 
 export function ResponsivenessSection({ control, form }: ResponsivenessSectionProps) {
