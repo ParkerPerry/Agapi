@@ -16,8 +16,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ResponsivenessCardSelector } from "./responsiveness-card-selector";
-import { ResponsivenessIconSelector } from "./responsiveness-icon-selector";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Define form schema for creating a collective
 // Define responsiveness values and their labels
@@ -329,42 +327,19 @@ export function CollectiveCreateForm() {
                       Select the response options for how quickly followers will respond to posts and comments
                     </FormDescription>
                     <FormControl>
-                      <Tabs defaultValue="cards" className="w-full">
-                        <TabsList className="mb-4 grid grid-cols-2 w-64 mx-auto">
-                          <TabsTrigger value="cards">Card View</TabsTrigger>
-                          <TabsTrigger value="icons">Icon View</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="cards">
-                          <ResponsivenessCardSelector 
-                            values={field.value} 
-                            onChange={(values) => {
-                              field.onChange(values);
-                              // If there's at least one value selected, use the first one to set primary responsiveness
-                              if (values.length > 0) {
-                                form.setValue('responsiveness', values[0]);
-                                const delay = getDefaultDelay(values[0]);
-                                form.setValue('responseDelayMin', delay.min);
-                                form.setValue('responseDelayMax', delay.max);
-                              }
-                            }}
-                          />
-                        </TabsContent>
-                        <TabsContent value="icons">
-                          <ResponsivenessIconSelector 
-                            values={field.value}
-                            onChange={(values) => {
-                              field.onChange(values);
-                              // If there's at least one value selected, use the first one to set primary responsiveness
-                              if (values.length > 0) {
-                                form.setValue('responsiveness', values[0]);
-                                const delay = getDefaultDelay(values[0]);
-                                form.setValue('responseDelayMin', delay.min);
-                                form.setValue('responseDelayMax', delay.max);
-                              }
-                            }}
-                          />
-                        </TabsContent>
-                      </Tabs>
+                      <ResponsivenessCardSelector 
+                        values={field.value} 
+                        onChange={(values) => {
+                          field.onChange(values);
+                          // If there's at least one value selected, use the first one to set primary responsiveness
+                          if (values.length > 0) {
+                            form.setValue('responsiveness', values[0]);
+                            const delay = getDefaultDelay(values[0]);
+                            form.setValue('responseDelayMin', delay.min);
+                            form.setValue('responseDelayMax', delay.max);
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
