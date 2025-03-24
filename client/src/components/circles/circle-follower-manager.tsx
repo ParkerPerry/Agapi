@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,8 @@ interface CircleFollowerManagerProps {
 export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  // Track pending follower operations locally
+  const [pendingChanges, setPendingChanges] = useState<Record<number, "add" | "remove">>({});
 
   const { data: followers } = useQuery<AiFollower[]>({
     queryKey: ["/api/followers"],
@@ -31,8 +34,17 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
     queryKey: [`/api/circles/${circle.id}/followers`],
   });
 
+  // Reset pending changes when circle followers data is refreshed
+  useEffect(() => {
+    if (circleFollowers) {
+      setPendingChanges({});
+    }
+  }, [circleFollowers]);
+
   const addFollowerMutation = useMutation({
     mutationFn: async (aiFollowerId: number) => {
+      // Optimistically update UI
+      setPendingChanges(prev => ({ ...prev, [aiFollowerId]: "add" }));
       const res = await apiRequest(`/api/circles/${circle.id}/followers`, "POST", { aiFollowerId });
       return res.json();
     },
@@ -43,10 +55,25 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
         description: "The AI follower has been added to the circle.",
       });
     },
+    onError: (error, aiFollowerId) => {
+      // Remove the pending change on error
+      setPendingChanges(prev => {
+        const updated = { ...prev };
+        delete updated[aiFollowerId as number];
+        return updated;
+      });
+      toast({
+        title: "Error",
+        description: "Failed to add follower to the circle.",
+        variant: "destructive",
+      });
+    }
   });
 
   const removeFollowerMutation = useMutation({
     mutationFn: async (followerId: number) => {
+      // Optimistically update UI
+      setPendingChanges(prev => ({ ...prev, [followerId]: "remove" }));
       await apiRequest(`/api/circles/${circle.id}/followers/${followerId}`, "DELETE");
     },
     onSuccess: () => {
@@ -56,6 +83,19 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
         description: "The AI follower has been removed from the circle.",
       });
     },
+    onError: (error, followerId) => {
+      // Remove the pending change on error
+      setPendingChanges(prev => {
+        const updated = { ...prev };
+        delete updated[followerId as number];
+        return updated;
+      });
+      toast({
+        title: "Error",
+        description: "Failed to remove follower from the circle.",
+        variant: "destructive",
+      });
+    }
   });
 
   return (
@@ -81,9 +121,16 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
             ) : (
               <div className="space-y-4">
                 {followers?.map((follower) => {
-                  const isInCircle = circleFollowers?.some(
-                    (f) => f.id === follower.id
-                  );
+                  // Check for pending changes first
+                  const pendingChange = pendingChanges[follower.id];
+                  // Calculate real state considering both server data and pending changes
+                  const isInCircleFromServer = circleFollowers?.some(f => f.id === follower.id);
+                  const isInCircle = pendingChange === "add" ? true : 
+                                    pendingChange === "remove" ? false : 
+                                    isInCircleFromServer;
+                  
+                  const isPending = addFollowerMutation.isPending || removeFollowerMutation.isPending;
+                  
                   return (
                     <div
                       key={follower.id}
@@ -113,10 +160,7 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
                             addFollowerMutation.mutate(follower.id);
                           }
                         }}
-                        disabled={
-                          addFollowerMutation.isPending ||
-                          removeFollowerMutation.isPending
-                        }
+                        disabled={isPending}
                       >
                         {isInCircle ? "Remove" : "Add"}
                       </Button>
