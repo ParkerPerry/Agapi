@@ -42,6 +42,7 @@ export function useCreateCollective() {
       count: number;
       avatarPrefix?: string;
       responsiveness: "instant" | "active" | "casual" | "zen";
+      responsivenessOptions?: ("instant" | "active" | "casual" | "zen")[];
       responseDelay?: {
         min: number;
         max: number;

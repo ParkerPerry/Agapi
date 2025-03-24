@@ -899,6 +899,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       count, 
       avatarPrefix,
       responsiveness,
+      responsivenessOptions = [],
       responseDelay,
       responseChance,
       namingOption = 'sequential',
@@ -1013,6 +1014,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           };
         }
         
+        // Select a random responsiveness option if multiple options are provided
+        const selectedResponsiveness = responsivenessOptions.length > 0 
+          ? getRandomItem(responsivenessOptions) 
+          : (responsiveness || "active");
+        
         // Create the individual follower
         const follower = await storage.createAiFollower(req.user!.id, {
           name: followerName,
@@ -1022,10 +1028,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interests: followerBackground.interests,
           communicationStyle: followerBackground.communication_style,
           interactionPreferences: followerBackground.interaction_preferences,
-          responsiveness: responsiveness || "active",
+          responsiveness: selectedResponsiveness,
           responseDelay: responseDelay 
             ? responseDelay 
-            : getDefaultDelay(responsiveness),
+            : getDefaultDelay(selectedResponsiveness),
           responseChance: responseChance || 80,
           active: true,
           tools: null,
@@ -1154,6 +1160,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get AI collective" });
     }
   });
+
+  // Helper function to get a random item from an array
+  function getRandomItem<T>(array: T[]): T {
+    return array[Math.floor(Math.random() * array.length)];
+  }
 
   // Helper function to get default delay based on responsiveness
   function getDefaultDelay(responsiveness: string = "active") {
