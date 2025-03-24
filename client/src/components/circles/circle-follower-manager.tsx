@@ -45,8 +45,14 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
     mutationFn: async (aiFollowerId: number) => {
       // Optimistically update UI
       setPendingChanges(prev => ({ ...prev, [aiFollowerId]: "add" }));
-      const res = await apiRequest(`/api/circles/${circle.id}/followers`, "POST", { aiFollowerId });
-      return res.json();
+      try {
+        // apiRequest already returns the parsed JSON response
+        return await apiRequest(`/api/circles/${circle.id}/followers`, "POST", { aiFollowerId });
+      } catch (error) {
+        console.error("Error in addFollowerMutation:", error);
+        // We're rethrowing the error so it can be caught by onError
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/followers`] });
@@ -56,6 +62,7 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
       });
     },
     onError: (error, aiFollowerId) => {
+      console.error("Error adding follower:", error);
       // Remove the pending change on error
       setPendingChanges(prev => {
         const updated = { ...prev };
@@ -74,7 +81,13 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
     mutationFn: async (followerId: number) => {
       // Optimistically update UI
       setPendingChanges(prev => ({ ...prev, [followerId]: "remove" }));
-      await apiRequest(`/api/circles/${circle.id}/followers/${followerId}`, "DELETE");
+      try {
+        await apiRequest(`/api/circles/${circle.id}/followers/${followerId}`, "DELETE");
+        return { success: true };
+      } catch (error) {
+        // We're rethrowing the error so it can be caught by onError
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/followers`] });
@@ -84,6 +97,7 @@ export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
       });
     },
     onError: (error, followerId) => {
+      console.error("Error removing follower:", error);
       // Remove the pending change on error
       setPendingChanges(prev => {
         const updated = { ...prev };
