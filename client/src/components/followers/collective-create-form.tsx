@@ -140,6 +140,18 @@ export function CollectiveCreateForm() {
   const onSubmit = async (data: CollectiveFormValues) => {
     setIsSubmitting(true);
     try {
+      // First check if we're authenticated
+      const authCheckResponse = await fetch('/api/user', {
+        credentials: 'include'
+      });
+      
+      if (authCheckResponse.status === 401) {
+        console.error('User not authenticated. Please log in before creating a collective.');
+        alert('Please log in before creating a collective.');
+        setLocation('/auth');
+        return;
+      }
+      
       // Convert the form data to the structure expected by the API
       const mutationData = {
         collectiveName: data.collectiveName,
@@ -165,12 +177,16 @@ export function CollectiveCreateForm() {
         const response = await fetch('/api/followers/collective', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies for auth
           body: JSON.stringify(mutationData)
         });
+        
+        console.log('API response status:', response.status);
         
         if (!response.ok) {
           const errorText = await response.text();
           console.error('API error:', response.status, errorText);
+          alert(`Error creating collective: ${response.status} ${errorText}`);
           throw new Error(`API error: ${response.status} ${errorText}`);
         }
         

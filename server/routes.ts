@@ -891,7 +891,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Create an AI collective (multiple followers at once)
   app.post("/api/followers/collective", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
+    console.log("[API] POST /api/followers/collective - Received request");
+    console.log("[API] Request body:", req.body);
+    console.log("[API] User authenticated:", req.isAuthenticated());
+    
+    if (!req.isAuthenticated()) {
+      console.log("[API] Request rejected: User not authenticated");
+      return res.sendStatus(401);
+    }
 
     const { 
       collectiveName, 
@@ -906,7 +913,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       generateDynamicAvatars = false
     } = req.body;
     
+    console.log("[API] Extracted values:", {
+      collectiveName, 
+      personality, 
+      count,
+      responsivenessOptions,
+      namingOption
+    });
+    
     if (!collectiveName || !personality || !count || count < 1 || count > 100) {
+      console.log("[API] Request rejected: Invalid request parameters");
       return res.status(400).json({ 
         message: "Invalid request. Must provide collectiveName, personality, and a count between 1-100" 
       });
