@@ -155,7 +155,10 @@ export function CollectiveCreateForm() {
         generateDynamicAvatars: data.generateDynamicAvatars
       };
       
-      await collectiveCreateMutation.mutateAsync(mutationData);
+      console.log("Submitting collective data:", mutationData);
+      
+      // Cast the data to match the expected mutation type
+      await collectiveCreateMutation.mutateAsync(mutationData as any);
       setLocation("/ai-followers");
     } catch (error) {
       console.error("Error creating collective:", error);
