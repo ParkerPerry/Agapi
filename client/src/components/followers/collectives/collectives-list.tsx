@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { CollectiveCard } from './collective-card';
 import { CollectiveHeader } from './collective-header';
@@ -17,7 +17,7 @@ interface FollowerWithCollectiveMemberId extends AiFollower {
 
 // Define a type for collective with member count
 interface CollectiveWithMemberCount extends AiFollowerCollective {
-  memberCount?: number;
+  memberCount: number;
 }
 
 export function CollectivesList() {
@@ -40,6 +40,27 @@ export function CollectivesList() {
     }
   });
 
+  // Fetch member counts for all collectives
+  const collectiveMemberCounts = useQueries({
+    queries: collectives.map(collective => ({
+      queryKey: ['collective-member-count', collective.id],
+      queryFn: async () => {
+        try {
+          const members = await apiRequest<FollowerWithCollectiveMemberId[]>(
+            `/api/followers/collectives/${collective.id}/members`
+          );
+          return {
+            collectiveId: collective.id,
+            count: Array.isArray(members) ? members.length : 0
+          };
+        } catch (error) {
+          console.error('Error fetching members for collective', collective.id, error);
+          return { collectiveId: collective.id, count: 0 };
+        }
+      }
+    }))
+  });
+
   // Fetch collective members when a collective is expanded
   const {
     data: collectiveMembers = [],
@@ -52,7 +73,7 @@ export function CollectivesList() {
       const response = await apiRequest<FollowerWithCollectiveMemberId[]>(
         `/api/followers/collectives/${expandedCollectiveId}/members`
       );
-      return response;
+      return response || [];
     },
     enabled: !!expandedCollectiveId
   });
@@ -60,18 +81,36 @@ export function CollectivesList() {
   // When collectives data is loaded, fetch member counts for each
   useEffect(() => {
     if (collectives && collectives.length > 0) {
+      // Create a map of collectiveId -> member count
+      const countMap = new Map<number, number>();
+      
+      // Populate the map with data from member count queries
+      collectiveMemberCounts.forEach(queryResult => {
+        if (queryResult.data) {
+          countMap.set(queryResult.data.collectiveId, queryResult.data.count);
+        }
+      });
+      
+      // Create enriched collectives with member counts
       const enrichedCollectives: CollectiveWithMemberCount[] = collectives.map((collective: AiFollowerCollective) => {
+        // If this is the expanded collective, use the actual members data
         if (expandedCollectiveId === collective.id) {
           return {
             ...collective,
-            memberCount: collectiveMembers.length
+            memberCount: Array.isArray(collectiveMembers) ? collectiveMembers.length : 0
           };
         }
-        return collective;
+        
+        // Otherwise use the count from the map or default to 0
+        return {
+          ...collective,
+          memberCount: countMap.get(collective.id) || 0
+        };
       });
+      
       setCollectivesWithCounts(enrichedCollectives);
     }
-  }, [collectives, collectiveMembers, expandedCollectiveId]);
+  }, [collectives, collectiveMembers, expandedCollectiveId, collectiveMemberCounts]);
 
   const handleViewMembers = (collectiveId: number) => {
     setExpandedCollectiveId(expandedCollectiveId === collectiveId ? null : collectiveId);
