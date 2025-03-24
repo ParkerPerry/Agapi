@@ -1,12 +1,14 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Check } from "lucide-react";
 
 type ResponsivenessOption = "instant" | "active" | "casual" | "zen";
 
 interface ResponsivenessCardSelectorProps {
-  value: ResponsivenessOption;
-  onChange: (value: ResponsivenessOption) => void;
+  values: ResponsivenessOption[];
+  onChange: (values: ResponsivenessOption[]) => void;
 }
 
 interface ResponsivenessCard {
@@ -43,27 +45,47 @@ const responsivenessCards: ResponsivenessCard[] = [
   }
 ];
 
-export function ResponsivenessCardSelector({ value, onChange }: ResponsivenessCardSelectorProps) {
+export function ResponsivenessCardSelector({ values, onChange }: ResponsivenessCardSelectorProps) {
+  const handleToggle = (value: ResponsivenessOption) => {
+    if (values.includes(value)) {
+      // If already selected, remove it
+      onChange(values.filter(v => v !== value));
+    } else {
+      // Add to selection
+      onChange([...values, value]);
+    }
+  };
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {responsivenessCards.map((option) => (
-        <Card 
-          key={option.value}
-          className={cn(
-            "cursor-pointer transition-all hover:bg-muted/50",
-            value === option.value ? "border-2 border-primary bg-muted/30" : "border-border"
-          )}
-          onClick={() => onChange(option.value)}
-        >
-          <CardContent className="p-4 text-center">
-            <h3 className="font-semibold text-lg">{option.label}</h3>
-            <p className="text-xs text-muted-foreground mt-1">{option.description}</p>
-            <div className="mt-3 py-1 bg-muted rounded-full text-xs font-medium">
-              {option.timeRange}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {responsivenessCards.map((option) => {
+        const isSelected = values.includes(option.value);
+        return (
+          <Card 
+            key={option.value}
+            className={cn(
+              "cursor-pointer transition-all hover:bg-muted/50 relative",
+              isSelected ? "border-2 border-primary bg-muted/30" : "border-border"
+            )}
+            onClick={() => handleToggle(option.value)}
+          >
+            {isSelected && (
+              <div className="absolute top-2 right-2">
+                <Badge variant="default" className="h-6 w-6 p-0 flex items-center justify-center rounded-full">
+                  <Check className="h-3 w-3" />
+                </Badge>
+              </div>
+            )}
+            <CardContent className="p-4 text-center">
+              <h3 className="font-semibold text-lg">{option.label}</h3>
+              <p className="text-xs text-muted-foreground mt-1">{option.description}</p>
+              <div className="mt-3 py-1 bg-muted rounded-full text-xs font-medium">
+                {option.timeRange}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

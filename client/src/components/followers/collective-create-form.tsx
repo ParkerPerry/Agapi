@@ -75,6 +75,7 @@ const collectiveFormSchema = z.object({
     .max(100, { message: "Cannot create more than 100 followers at once" }),
   avatarPrefix: z.string().optional(),
   responsiveness: z.enum(["instant", "active", "casual", "zen"]).default("active"),
+  responsivenessMulti: z.array(z.enum(["instant", "active", "casual", "zen"])).default(["active"]),
   responseDelayMin: z.number().min(1).max(1440).default(30), // min response time in minutes
   responseDelayMax: z.number().min(1).max(1440).default(30), // max response time in minutes
   responseChance: z.number().min(0).max(100).default(80),
@@ -95,6 +96,7 @@ export function CollectiveCreateForm() {
     count: 5,
     avatarPrefix: "",
     responsiveness: "active",
+    responsivenessMulti: ["active"],
     responseDelayMin: getDefaultDelay("active").min,
     responseDelayMax: getDefaultDelay("active").max,
     responseChance: 80,
@@ -148,6 +150,7 @@ export function CollectiveCreateForm() {
         count: data.count,
         avatarPrefix: data.avatarPrefix,
         responsiveness: data.responsiveness,
+        responsivenessOptions: data.responsivenessMulti, // Add the multi-select options
         responseDelay: {
           min: data.responseDelayMin,
           max: data.responseDelayMax
@@ -318,12 +321,12 @@ export function CollectiveCreateForm() {
             <div className="grid grid-cols-1 gap-6">
               <FormField
                 control={form.control}
-                name="responsiveness"
+                name="responsivenessMulti"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Response Time</FormLabel>
+                    <FormLabel>Response Time Options</FormLabel>
                     <FormDescription>
-                      Select how quickly followers will respond to posts and comments
+                      Select the response options for how quickly followers will respond to posts and comments
                     </FormDescription>
                     <FormControl>
                       <Tabs defaultValue="cards" className="w-full">
@@ -333,25 +336,31 @@ export function CollectiveCreateForm() {
                         </TabsList>
                         <TabsContent value="cards">
                           <ResponsivenessCardSelector 
-                            value={field.value as "instant" | "active" | "casual" | "zen"} 
-                            onChange={(value) => {
-                              field.onChange(value);
-                              // Set min and max values based on the selected responsiveness
-                              const delay = getDefaultDelay(value);
-                              form.setValue('responseDelayMin', delay.min);
-                              form.setValue('responseDelayMax', delay.max);
+                            values={field.value} 
+                            onChange={(values) => {
+                              field.onChange(values);
+                              // If there's at least one value selected, use the first one to set primary responsiveness
+                              if (values.length > 0) {
+                                form.setValue('responsiveness', values[0]);
+                                const delay = getDefaultDelay(values[0]);
+                                form.setValue('responseDelayMin', delay.min);
+                                form.setValue('responseDelayMax', delay.max);
+                              }
                             }}
                           />
                         </TabsContent>
                         <TabsContent value="icons">
                           <ResponsivenessIconSelector 
-                            value={field.value as "instant" | "active" | "casual" | "zen"} 
-                            onChange={(value) => {
-                              field.onChange(value);
-                              // Set min and max values based on the selected responsiveness
-                              const delay = getDefaultDelay(value);
-                              form.setValue('responseDelayMin', delay.min);
-                              form.setValue('responseDelayMax', delay.max);
+                            values={field.value}
+                            onChange={(values) => {
+                              field.onChange(values);
+                              // If there's at least one value selected, use the first one to set primary responsiveness
+                              if (values.length > 0) {
+                                form.setValue('responsiveness', values[0]);
+                                const delay = getDefaultDelay(values[0]);
+                                form.setValue('responseDelayMin', delay.min);
+                                form.setValue('responseDelayMax', delay.max);
+                              }
                             }}
                           />
                         </TabsContent>

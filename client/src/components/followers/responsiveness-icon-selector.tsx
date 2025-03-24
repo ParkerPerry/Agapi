@@ -5,14 +5,16 @@ import {
   Zap, 
   Watch, 
   Coffee, 
-  Leaf
+  Leaf,
+  Check
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type ResponsivenessOption = "instant" | "active" | "casual" | "zen";
 
 interface ResponsivenessIconSelectorProps {
-  value: ResponsivenessOption;
-  onChange: (value: ResponsivenessOption) => void;
+  values: ResponsivenessOption[];
+  onChange: (values: ResponsivenessOption[]) => void;
 }
 
 interface ResponsivenessButton {
@@ -49,21 +51,44 @@ const responsivenessButtons: ResponsivenessButton[] = [
   }
 ];
 
-export function ResponsivenessIconSelector({ value, onChange }: ResponsivenessIconSelectorProps) {
+export function ResponsivenessIconSelector({ values, onChange }: ResponsivenessIconSelectorProps) {
+  const handleToggle = (value: ResponsivenessOption) => {
+    if (values.includes(value)) {
+      // If already selected, remove it
+      onChange(values.filter(v => v !== value));
+    } else {
+      // Add to selection
+      onChange([...values, value]);
+    }
+  };
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {responsivenessButtons.map((option) => (
-        <Button
-          key={option.value}
-          variant={value === option.value ? "default" : "outline"}
-          className="h-auto py-6 flex flex-col items-center justify-center"
-          onClick={() => onChange(option.value)}
-        >
-          {option.icon}
-          <span className="font-medium">{option.label}</span>
-          <span className="text-xs mt-1">{option.timeRange}</span>
-        </Button>
-      ))}
+      {responsivenessButtons.map((option) => {
+        const isSelected = values.includes(option.value);
+        return (
+          <Button
+            key={option.value}
+            variant={isSelected ? "default" : "outline"}
+            className={cn(
+              "h-auto py-6 flex flex-col items-center justify-center relative",
+              isSelected ? "border-2 border-primary" : ""
+            )}
+            onClick={() => handleToggle(option.value)}
+          >
+            {isSelected && (
+              <div className="absolute top-2 right-2">
+                <Badge variant="secondary" className="h-5 w-5 p-0 flex items-center justify-center rounded-full bg-white">
+                  <Check className="h-3 w-3 text-primary" />
+                </Badge>
+              </div>
+            )}
+            {option.icon}
+            <span className="font-medium">{option.label}</span>
+            <span className="text-xs mt-1">{option.timeRange}</span>
+          </Button>
+        );
+      })}
     </div>
   );
 }
