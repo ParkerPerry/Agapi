@@ -6,7 +6,7 @@ import { AiFollower } from "@shared/schema";
 import { useState, useMemo, useEffect } from "react";
 import { FollowerCreateForm } from "@/components/followers/follower-create-form";
 import { SimplifiedCollectiveForm } from "@/components/followers/simplified-collective-form";
-import { CollectivesList } from "@/components/followers/collectives-list";
+import { CollectivesList } from "@/components/followers/collectives";
 import { CloneFactoryForm } from "@/components/followers/clone-factory-form";
 import { FollowerCard } from "@/components/followers/follower-card";
 import { useUpdateFollower, useDeleteFollower } from "@/lib/mutations/follower-mutations";

@@ -35,9 +35,7 @@ export function CollectivesList() {
   } = useQuery({
     queryKey: ['ai-follower-collectives'],
     queryFn: async () => {
-      const response = await apiRequest('/api/followers/collectives', {
-        method: 'GET'
-      });
+      const response = await apiRequest<AiFollowerCollective[]>('/api/followers/collectives');
       return response;
     }
   });
@@ -51,9 +49,8 @@ export function CollectivesList() {
     queryKey: ['collective-members', expandedCollectiveId],
     queryFn: async () => {
       if (!expandedCollectiveId) return [];
-      const response = await apiRequest(
-        `/api/followers/collectives/${expandedCollectiveId}/members`,
-        { method: 'GET' }
+      const response = await apiRequest<FollowerWithCollectiveMemberId[]>(
+        `/api/followers/collectives/${expandedCollectiveId}/members`
       );
       return response;
     },
@@ -63,7 +60,7 @@ export function CollectivesList() {
   // When collectives data is loaded, fetch member counts for each
   useEffect(() => {
     if (collectives && collectives.length > 0) {
-      const enrichedCollectives: CollectiveWithMemberCount[] = collectives.map((collective) => {
+      const enrichedCollectives: CollectiveWithMemberCount[] = collectives.map((collective: AiFollowerCollective) => {
         if (expandedCollectiveId === collective.id) {
           return {
             ...collective,
@@ -81,7 +78,7 @@ export function CollectivesList() {
   };
 
   // Filter collectives based on search and time
-  const filteredCollectives = collectivesWithCounts.filter((collective) => {
+  const filteredCollectives = collectivesWithCounts.filter((collective: CollectiveWithMemberCount) => {
     // Search filter
     const matchesSearch = searchQuery === '' 
       || collective.name.toLowerCase().includes(searchQuery.toLowerCase())
