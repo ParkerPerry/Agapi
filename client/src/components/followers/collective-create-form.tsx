@@ -11,10 +11,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Users } from "lucide-react";
+import { Loader2, Users, LayoutGrid, LucideIcon } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ResponsivenessCardSelector } from "./responsiveness-card-selector";
+import { ResponsivenessIconSelector } from "./responsiveness-icon-selector";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Define form schema for creating a collective
 // Define responsiveness values and their labels
@@ -319,84 +322,41 @@ export function CollectiveCreateForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Response Time</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        className="flex flex-col space-y-3 pt-1"
-                        defaultValue={field.value}
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          // Set min and max values based on the selected responsiveness
-                          const delay = getDefaultDelay(value as any);
-                          form.setValue('responseDelayMin', delay.min);
-                          form.setValue('responseDelayMax', delay.max);
-                        }}
-                      >
-                        <div className="grid grid-cols-4 gap-4">
-                          <div className="flex flex-col items-center">
-                            <FormItem className="flex items-center space-x-2 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="instant" id="r-instant" />
-                              </FormControl>
-                              <Label
-                                htmlFor="r-instant"
-                                className={`cursor-pointer ${field.value === 'instant' ? 'font-medium' : ''}`}
-                              >
-                                Instant
-                              </Label>
-                            </FormItem>
-                            <span className="text-xs mt-1 text-muted-foreground">0-5 min</span>
-                          </div>
-                          
-                          <div className="flex flex-col items-center">
-                            <FormItem className="flex items-center space-x-2 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="active" id="r-active" />
-                              </FormControl>
-                              <Label
-                                htmlFor="r-active"
-                                className={`cursor-pointer ${field.value === 'active' ? 'font-medium' : ''}`}
-                              >
-                                Active
-                              </Label>
-                            </FormItem>
-                            <span className="text-xs mt-1 text-muted-foreground">5-60 min</span>
-                          </div>
-                          
-                          <div className="flex flex-col items-center">
-                            <FormItem className="flex items-center space-x-2 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="casual" id="r-casual" />
-                              </FormControl>
-                              <Label
-                                htmlFor="r-casual"
-                                className={`cursor-pointer ${field.value === 'casual' ? 'font-medium' : ''}`}
-                              >
-                                Casual
-                              </Label>
-                            </FormItem>
-                            <span className="text-xs mt-1 text-muted-foreground">1-8 hrs</span>
-                          </div>
-                          
-                          <div className="flex flex-col items-center">
-                            <FormItem className="flex items-center space-x-2 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="zen" id="r-zen" />
-                              </FormControl>
-                              <Label
-                                htmlFor="r-zen"
-                                className={`cursor-pointer ${field.value === 'zen' ? 'font-medium' : ''}`}
-                              >
-                                Zen
-                              </Label>
-                            </FormItem>
-                            <span className="text-xs mt-1 text-muted-foreground">8-24 hrs</span>
-                          </div>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
                     <FormDescription>
                       Select how quickly followers will respond to posts and comments
                     </FormDescription>
+                    <FormControl>
+                      <Tabs defaultValue="cards" className="w-full">
+                        <TabsList className="mb-4 grid grid-cols-2 w-64 mx-auto">
+                          <TabsTrigger value="cards">Card View</TabsTrigger>
+                          <TabsTrigger value="icons">Icon View</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="cards">
+                          <ResponsivenessCardSelector 
+                            value={field.value as "instant" | "active" | "casual" | "zen"} 
+                            onChange={(value) => {
+                              field.onChange(value);
+                              // Set min and max values based on the selected responsiveness
+                              const delay = getDefaultDelay(value);
+                              form.setValue('responseDelayMin', delay.min);
+                              form.setValue('responseDelayMax', delay.max);
+                            }}
+                          />
+                        </TabsContent>
+                        <TabsContent value="icons">
+                          <ResponsivenessIconSelector 
+                            value={field.value as "instant" | "active" | "casual" | "zen"} 
+                            onChange={(value) => {
+                              field.onChange(value);
+                              // Set min and max values based on the selected responsiveness
+                              const delay = getDefaultDelay(value);
+                              form.setValue('responseDelayMin', delay.min);
+                              form.setValue('responseDelayMax', delay.max);
+                            }}
+                          />
+                        </TabsContent>
+                      </Tabs>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
