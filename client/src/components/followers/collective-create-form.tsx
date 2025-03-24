@@ -137,74 +137,90 @@ export function CollectiveCreateForm() {
     }
   }, [namingOption, form]);
 
-  const onSubmit = async (data: CollectiveFormValues) => {
+  // Create a direct submit handler instead of using form's onSubmit
+  const handleFormSubmit = async (event: React.FormEvent) => {
+    event.preventDefault(); // Prevent default form submission
+    
+    // Make sure form is valid
+    const formState = form.getValues();
+    const validation = collectiveFormSchema.safeParse(formState);
+    
+    if (!validation.success) {
+      console.error("Form validation failed:", validation.error);
+      alert("Please fill out all required fields correctly");
+      return;
+    }
+    
     setIsSubmitting(true);
+    console.log("Form submit clicked - custom handler");
+    
     try {
-      // First check if we're authenticated
-      const authCheckResponse = await fetch('/api/user', {
-        credentials: 'include'
-      });
+      // Check authentication
+      const authCheck = await fetch('/api/user', { credentials: 'include' });
+      console.log("Auth check response:", authCheck.status);
       
-      if (authCheckResponse.status === 401) {
-        console.error('User not authenticated. Please log in before creating a collective.');
+      if (authCheck.status === 401) {
         alert('Please log in before creating a collective.');
         setLocation('/auth');
         return;
       }
       
-      // Convert the form data to the structure expected by the API
-      const mutationData = {
+      // Get form values
+      const data = form.getValues();
+      
+      // Create payload
+      const payload = {
         collectiveName: data.collectiveName,
         personality: data.personality,
         count: data.count,
         avatarPrefix: data.avatarPrefix,
         responsiveness: data.responsiveness,
-        responsivenessOptions: data.responsivenessMulti, // Add the multi-select options
+        responsivenessOptions: data.responsivenessMulti,
         responseDelay: {
           min: data.responseDelayMin,
           max: data.responseDelayMax
         },
         namingOption: data.namingOption,
         generateDynamicAvatars: data.generateDynamicAvatars,
-        // Add the default responseChance to avoid type errors
         responseChance: 80
       };
       
-      console.log("Submitting collective data:", mutationData);
+      console.log("Submitting data:", payload);
       
-      try {
-        // Make direct API call instead of using the mutation
-        const response = await fetch('/api/followers/collective', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // Include cookies for auth
-          body: JSON.stringify(mutationData)
-        });
-        
-        console.log('API response status:', response.status);
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('API error:', response.status, errorText);
-          alert(`Error creating collective: ${response.status} ${errorText}`);
-          throw new Error(`API error: ${response.status} ${errorText}`);
-        }
-        
+      // Make the API call
+      const response = await fetch('/api/followers/collective', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload)
+      });
+      
+      console.log("API response status:", response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API error:", errorText);
+        alert(`Error creating collective: ${errorText}`);
+      } else {
         const result = await response.json();
-        console.log('API success:', result);
+        console.log("API success:", result);
         
-        // Invalidate queries and redirect
+        // Update UI and redirect
         queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
+        alert("Collective created successfully!");
         setLocation("/ai-followers");
-      } catch (apiError) {
-        console.error('API request failed:', apiError);
-        throw apiError;
       }
     } catch (error) {
-      console.error("Error creating collective:", error);
+      console.error("Error in form submission:", error);
+      alert(`Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`);
     } finally {
       setIsSubmitting(false);
     }
+  };
+  
+  // Legacy onSubmit kept for reference but not used
+  const onSubmit = async (data: CollectiveFormValues) => {
+    console.log("Legacy onSubmit called - NOT USED");
   };
 
   return (
@@ -220,7 +236,7 @@ export function CollectiveCreateForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleFormSubmit} className="space-y-6">
             <FormField
               control={form.control}
               name="collectiveName"
@@ -389,14 +405,83 @@ export function CollectiveCreateForm() {
 
             </div>
 
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full"
-            >
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Collective ({form.watch("count")} AI followers)
-            </Button>
+            <div className="space-y-4">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full"
+              >
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create Collective ({form.watch("count")} AI followers)
+              </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={async () => {
+                  console.log("Debug button clicked - testing direct API call");
+                  
+                  try {
+                    // First check if we're authenticated
+                    const authCheckResponse = await fetch('/api/user', {
+                      credentials: 'include'
+                    });
+                    
+                    console.log("Auth check response:", authCheckResponse.status);
+                    
+                    if (authCheckResponse.status === 401) {
+                      console.error('User not authenticated. Please log in.');
+                      alert('Please log in before creating a collective.');
+                      return;
+                    }
+                    
+                    // Test API with a simple direct call
+                    const testData = {
+                      collectiveName: "Test Collective",
+                      personality: "Test personality description for debugging",
+                      count: 3,
+                      avatarPrefix: "",
+                      responsiveness: "active",
+                      responsivenessOptions: ["active"],
+                      responseDelay: {
+                        min: 5,
+                        max: 60
+                      },
+                      namingOption: "sequential",
+                      generateDynamicAvatars: false,
+                      responseChance: 80
+                    };
+                    
+                    console.log("Making test API call with data:", testData);
+                    
+                    const response = await fetch('/api/followers/collective', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      credentials: 'include',
+                      body: JSON.stringify(testData)
+                    });
+                    
+                    console.log('API response status:', response.status);
+                    
+                    if (!response.ok) {
+                      const errorText = await response.text();
+                      console.error('API error:', response.status, errorText);
+                      alert(`Error testing API: ${response.status} ${errorText}`);
+                    } else {
+                      const result = await response.json();
+                      console.log('API success:', result);
+                      alert("API test successful! Check console for details.");
+                    }
+                  } catch (error) {
+                    console.error("Error in test API call:", error);
+                    alert(`Error in test API call: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                  }
+                }}
+              >
+                Debug API Connection
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>
