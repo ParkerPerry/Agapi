@@ -28,7 +28,7 @@ export async function generateAIBackground(
 ): Promise<AIBackground> {
   try {
     // Check if this is a variation that needs a dynamic name
-    const isDynamicNaming = name.includes("Variation") && customInstructions?.includes("generate a unique character name");
+    const isDynamicNaming = name.includes("Variation") || customInstructions?.includes("generate a unique character name");
     
     let systemPrompt = `You are a creative character developer. Your task is to create a detailed background for an AI social-media follower, responding in JSON format with the following structure:
       {

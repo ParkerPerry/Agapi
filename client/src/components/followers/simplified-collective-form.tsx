@@ -63,13 +63,8 @@ export function SimplifiedCollectiveForm() {
   // Get form values for dynamic UI updates
   const namingOption = form.watch("namingOption");
 
-  // Automatically update avatar generation based on naming option
-  useEffect(() => {
-    // If sequential naming is selected, disable dynamic avatars
-    if (namingOption === 'sequential') {
-      form.setValue('generateDynamicAvatars', false);
-    }
-  }, [namingOption, form]);
+  // No longer needed - avatar generation is now independent of naming option
+  // Keeping this space for future enhancements if needed
 
   // Basic form submission function
   const onSubmit = async (data: CollectiveFormValues) => {

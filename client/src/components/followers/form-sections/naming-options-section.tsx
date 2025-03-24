@@ -41,8 +41,7 @@ export function NamingOptionsSection({ control, namingOption }: NamingOptionsSec
         )}
       />
 
-      {namingOption === 'dynamic' && (
-        <FormField
+      <FormField
           control={control}
           name="generateDynamicAvatars"
           render={({ field }) => (
@@ -62,7 +61,6 @@ export function NamingOptionsSection({ control, namingOption }: NamingOptionsSec
             </FormItem>
           )}
         />
-      )}
 
       {namingOption === 'sequential' && (
         <FormField
