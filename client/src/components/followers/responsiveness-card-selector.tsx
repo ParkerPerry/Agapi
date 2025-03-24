@@ -1,89 +1,81 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { CheckCircle2, MessageCircle, Zap, CoffeeIcon, Brain } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
 
-type ResponsivenessOption = "instant" | "active" | "casual" | "zen";
-
-interface ResponsivenessCardSelectorProps {
-  values: ResponsivenessOption[];
-  onChange: (values: ResponsivenessOption[]) => void;
-}
-
-interface ResponsivenessCard {
-  value: ResponsivenessOption;
+interface ResponsivenessOption {
+  id: string;
   label: string;
   description: string;
-  timeRange: string;
+  icon: React.ReactNode;
 }
 
-const responsivenessCards: ResponsivenessCard[] = [
+export const responsivenessOptions: ResponsivenessOption[] = [
   {
-    value: "instant",
+    id: "instant",
     label: "Instant",
-    description: "Responds immediately",
-    timeRange: "0-5 min"
+    description: "Responds within 1-5 minutes",
+    icon: <Zap className="h-5 w-5" />,
   },
   {
-    value: "active",
+    id: "active",
     label: "Active",
-    description: "Responds within minutes",
-    timeRange: "5-60 min"
+    description: "Responds within 5-30 minutes",
+    icon: <MessageCircle className="h-5 w-5" />,
   },
   {
-    value: "casual",
+    id: "casual",
     label: "Casual",
-    description: "Responds within hours",
-    timeRange: "1-8 hrs"
+    description: "Responds within 30-120 minutes",
+    icon: <CoffeeIcon className="h-5 w-5" />,
   },
   {
-    value: "zen",
+    id: "zen",
     label: "Zen",
-    description: "Responds within a day",
-    timeRange: "8-24 hrs"
-  }
+    description: "Responds within 2-24 hours",
+    icon: <Brain className="h-5 w-5" />,
+  },
 ];
 
+interface ResponsivenessCardSelectorProps {
+  values: string[];
+  onChange: (values: string[]) => void;
+}
+
 export function ResponsivenessCardSelector({ values, onChange }: ResponsivenessCardSelectorProps) {
-  const handleToggle = (value: ResponsivenessOption) => {
-    if (values.includes(value)) {
-      // If already selected, remove it
-      onChange(values.filter(v => v !== value));
+  const toggleValue = (id: string) => {
+    if (values.includes(id)) {
+      // Only allow removing if there will still be at least one option selected
+      if (values.length > 1) {
+        onChange(values.filter((value) => value !== id));
+      }
     } else {
-      // Add to selection
-      onChange([...values, value]);
+      onChange([...values, id]);
     }
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {responsivenessCards.map((option) => {
-        const isSelected = values.includes(option.value);
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {responsivenessOptions.map((option) => {
+        const isSelected = values.includes(option.id);
         return (
-          <Card 
-            key={option.value}
+          <div
+            key={option.id}
             className={cn(
-              "cursor-pointer transition-all hover:bg-muted/50 relative",
-              isSelected ? "border-2 border-primary bg-muted/30" : "border-border"
+              "flex items-start p-4 rounded-lg border-2 transition-all cursor-pointer relative",
+              isSelected
+                ? "border-primary bg-primary/5"
+                : "border-muted-foreground/20 hover:border-muted-foreground/40"
             )}
-            onClick={() => handleToggle(option.value)}
+            onClick={() => toggleValue(option.id)}
           >
             {isSelected && (
-              <div className="absolute top-2 right-2">
-                <Badge variant="default" className="h-6 w-6 p-0 flex items-center justify-center rounded-full">
-                  <Check className="h-3 w-3" />
-                </Badge>
-              </div>
+              <CheckCircle2 className="absolute top-2 right-2 h-5 w-5 text-primary" />
             )}
-            <CardContent className="p-4 text-center">
-              <h3 className="font-semibold text-lg">{option.label}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{option.description}</p>
-              <div className="mt-3 py-1 bg-muted rounded-full text-xs font-medium">
-                {option.timeRange}
-              </div>
-            </CardContent>
-          </Card>
+            <div className="mr-4 mt-1 text-primary">{option.icon}</div>
+            <div>
+              <h4 className="font-medium mb-1">{option.label}</h4>
+              <p className="text-sm text-muted-foreground">{option.description}</p>
+            </div>
+          </div>
         );
       })}
     </div>
