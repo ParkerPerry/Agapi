@@ -47,7 +47,6 @@ export function useCreateCollective() {
         min: number;
         max: number;
       };
-      responseChance: number;
       namingOption?: "sequential" | "dynamic";
       generateDynamicAvatars?: boolean;
     }

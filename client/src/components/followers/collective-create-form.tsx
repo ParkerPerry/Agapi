@@ -76,7 +76,6 @@ const collectiveFormSchema = z.object({
   responsivenessMulti: z.array(z.enum(["instant", "active", "casual", "zen"])).default(["active"]),
   responseDelayMin: z.number().min(1).max(1440).default(30), // min response time in minutes
   responseDelayMax: z.number().min(1).max(1440).default(30), // max response time in minutes
-  responseChance: z.number().min(0).max(100).default(80),
   namingOption: z.enum(["sequential", "dynamic"]).default("sequential"),
   generateDynamicAvatars: z.boolean().default(false)
 });
@@ -97,7 +96,6 @@ export function CollectiveCreateForm() {
     responsivenessMulti: ["active"],
     responseDelayMin: getDefaultDelay("active").min,
     responseDelayMax: getDefaultDelay("active").max,
-    responseChance: 80,
     namingOption: "sequential",
     generateDynamicAvatars: false
   };
@@ -153,7 +151,6 @@ export function CollectiveCreateForm() {
           min: data.responseDelayMin,
           max: data.responseDelayMax
         },
-        responseChance: data.responseChance,
         namingOption: data.namingOption,
         generateDynamicAvatars: data.generateDynamicAvatars
       };
@@ -346,33 +343,7 @@ export function CollectiveCreateForm() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="responseChance"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Response Chance ({field.value}%)</FormLabel>
-                    <FormControl>
-                      <Slider
-                        min={0}
-                        max={100}
-                        step={5}
-                        value={[field.value]}
-                        onValueChange={(values) => field.onChange(values[0])}
-                      />
-                    </FormControl>
-                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                      <span>Never (0%)</span>
-                      <span>Sometimes (50%)</span>
-                      <span>Always (100%)</span>
-                    </div>
-                    <FormDescription>
-                      Likelihood of followers responding to relevant content
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
             </div>
 
             <Button
