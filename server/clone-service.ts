@@ -165,9 +165,9 @@ async function generateFollowerVariation(
     }
   }
 
-  // Determine avatar URL - either use the template's avatar or generate a new one for dynamic naming
+  // Determine avatar URL - either use the template's avatar or generate a new one
   let avatarUrl = template.avatarUrl;
-  if (namingOption === 'dynamic' && generateDynamicAvatars) {
+  if (generateDynamicAvatars) {
     // Check if the template is using DiceBear
     if (template.avatarUrl.includes('dicebear.com')) {
       // For DiceBear v9, update the URL format

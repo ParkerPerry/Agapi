@@ -971,10 +971,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           avatarUrl = avatarPrefix 
             ? `${avatarPrefix}-${i + 1}.png` 
             : `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(followerName)}`;
+            
+          // If dynamic avatar generation is requested, override with a unique avatar
+          if (generateDynamicAvatars) {
+            const seed = encodeURIComponent(`${followerName}-${Math.random().toString(36).substring(2, 8)}`);
+            avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${seed}`;
+          }
         } else {
           // For dynamic naming, we'll add an instruction to generate a unique name
           followerName = `${collectiveName} Variation ${i + 1}`;
           nameInstruction = `Generate a unique character name that reflects a member of the ${collectiveName} collective with the personality described. The name should be creative and distinct.`;
+          
+          // Generate a placeholder avatar URL that will be replaced if generateDynamicAvatars is true
+          avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(followerName)}`;
         }
         
         // Generate background variations with naming instructions
@@ -1015,7 +1024,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
           
-          // Generate avatar for dynamic names if requested
+          // Generate avatar if requested (independent of naming option)
           if (generateDynamicAvatars) {
             // Generate a unique seed based on the follower's name
             const seed = encodeURIComponent(`${followerName}-${Math.random().toString(36).substring(2, 8)}`);
