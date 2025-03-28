@@ -81,10 +81,6 @@ Currently, our system has the database schema and backend structure to support "
 - Shows "+X more" if more than 5 likes exist
 - Clicking shows a modal with all likes
 
-**Like Animation**
-- Subtle heart animation when a new like is received
-- Small notification if a "favorite" AI follower likes a post
-
 ## Implementation Plan
 
 ### Phase 1: Core Implementation
@@ -104,21 +100,3 @@ Currently, our system has the database schema and backend structure to support "
 
 1. Track like-related metrics
 2. Optimize the AI decision-making for likes vs comments based on user engagement
-3. A/B test different visualization approaches for likes
-
-## Success Metrics
-
-1. **Engagement Diversity**: Increase in the variety of interaction types from AI followers
-2. **User Satisfaction**: Improved user ratings on "natural feeling" of AI interactions
-3. **Post Engagement**: Increase in total engagement (likes + comments) per post
-4. **UI Efficiency**: Reduced scrolling needed to consume content with appropriate like/comment balance
-
-## Technical Considerations
-
-- Ensure proper WebSocket updates for real-time like notifications
-- Consider performance implications of displaying many AI follower avatars
-- Ensure proper rendering on both mobile and desktop views
-
----
-
-This PRD outlines the requirements for completing the AI Follower "Like" feature implementation. This enhancement will create more natural social media interaction patterns by allowing AI followers to engage with content through likes, providing users with a richer and more diverse engagement experience.
