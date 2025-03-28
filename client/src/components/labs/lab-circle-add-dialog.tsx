@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Circle } from "@shared/schema";
+import type { Circle } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
@@ -62,13 +62,29 @@ const LabCircleAddDialog = ({
 
   // Fetch user's circles
   const {
-    data: circles,
+    data: circlesData,
     isLoading: isCirclesLoading,
     error: circlesError,
-  } = useQuery<Circle[]>({
+  } = useQuery({
     queryKey: ["/api/circles"],
     enabled: open,
   });
+
+  // Extract all circles from response (API returns object with 'private' and 'shared' properties)
+  const circles = React.useMemo(() => {
+    if (!circlesData) return [];
+    
+    const allCircles: Circle[] = [];
+    if (circlesData && typeof circlesData === 'object') {
+      if ('private' in circlesData && Array.isArray(circlesData.private)) {
+        allCircles.push(...circlesData.private);
+      }
+      if ('shared' in circlesData && Array.isArray(circlesData.shared)) {
+        allCircles.push(...circlesData.shared);
+      }
+    }
+    return allCircles;
+  }, [circlesData]);
 
   const handleAddCircle = async () => {
     if (!selectedCircleId || isSubmitting) return;
