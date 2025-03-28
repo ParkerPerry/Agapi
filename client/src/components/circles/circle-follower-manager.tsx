@@ -60,10 +60,13 @@ export function CircleFollowerManager({ circle, readOnly = false }: CircleFollow
   });
   
   // Extract follower IDs from circle members
-  const circleFollowerIds = circleMembers
-    .filter(member => member.type === "ai_follower")
-    .map(member => member.aiFollowerId)
-    .filter((id): id is number => id !== null);
+  // Ensure circleMembers is an array and handle missing properties
+  const circleFollowerIds = Array.isArray(circleMembers) 
+    ? circleMembers
+        .filter(member => member && typeof member === 'object' && 'type' in member && member.type === "ai_follower")
+        .map(member => 'aiFollowerId' in member ? member.aiFollowerId : null)
+        .filter((id): id is number => id !== null)
+    : [];
   
   // Fetch available AI followers
   const {
@@ -160,14 +163,41 @@ export function CircleFollowerManager({ circle, readOnly = false }: CircleFollow
     }
   };
   
-  // Get circle followers with their full information
-  const circleFollowers = circleMembers
-    .filter(member => member.type === "ai_follower" && member.aiFollowerId)
-    .map(member => {
-      const follower = followers.find(f => f.id === member.aiFollowerId);
-      return { ...member, follower };
-    })
-    .filter(member => member.follower);
+  // For the circle followers, we'll use a custom approach since the schema might have changed
+  // Here, we'll identify AI followers based on available properties and populate with data
+  const circleFollowers = Array.isArray(circleMembers)
+    ? circleMembers
+        .filter(member => 
+          member && 
+          typeof member === 'object' && 
+          // If member has follower or aiFollowerId property, it's likely an AI follower
+          (('follower' in member && member.follower) || 
+           ('aiFollowerId' in member && member.aiFollowerId) ||
+           // The schema may have changed to use userId with null value to indicate AI follower
+           ('userId' in member && member.userId === null))
+        )
+        .map(member => {
+          // Determine follower ID based on available properties
+          const followerId = 
+            ('aiFollowerId' in member) ? member.aiFollowerId :
+            ('follower' in member && typeof member.follower === 'object' && 'id' in member.follower) ? member.follower.id :
+            null;
+          
+          // If we have a valid follower ID, find the follower data
+          if (followerId) {
+            const follower = followers.find(f => f.id === followerId);
+            return { ...member, follower, aiFollowerId: followerId };
+          }
+          
+          // If the member already has follower data, use it
+          if ('follower' in member && member.follower) {
+            return { ...member, aiFollowerId: member.follower.id };
+          }
+          
+          return { ...member, follower: null, aiFollowerId: null };
+        })
+        .filter(member => member.follower)
+    : [];
   
   // Loading state
   if (isLoadingMembers || isLoadingFollowers) {

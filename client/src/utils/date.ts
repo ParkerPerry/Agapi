@@ -1,82 +1,47 @@
-import { format, formatDistanceToNow, isToday, isYesterday } from "date-fns";
+import { format, formatDistanceToNow, parseISO } from "date-fns";
 
 /**
- * Format a date relative to now (e.g., "5 minutes ago", "2 days ago")
+ * Format a date relative to the current time
+ * e.g., "2 hours ago", "5 days ago", etc.
  */
 export function formatRelativeTime(date: string | Date): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-  
-  try {
-    if (isToday(dateObj)) {
-      return `Today at ${format(dateObj, "h:mm a")}`;
-    } else if (isYesterday(dateObj)) {
-      return `Yesterday at ${format(dateObj, "h:mm a")}`;
-    } else {
-      return formatDistanceToNow(dateObj, { addSuffix: true });
-    }
-  } catch (error) {
-    return "Unknown time";
-  }
+  const parsedDate = typeof date === "string" ? parseISO(date) : date;
+  return formatDistanceToNow(parsedDate, { addSuffix: true });
 }
 
 /**
- * Format a date in a simple readable format (Jun 15, 2023 @ 3:45 PM)
+ * Format a date with a specific format pattern
  */
-export function formatSimpleDate(date: string | Date): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-  
-  try {
-    return format(dateObj, "MMM d, yyyy @ h:mm a");
-  } catch (error) {
-    return "Unknown date";
-  }
+export function formatDate(date: string | Date, pattern: string = "PPP"): string {
+  const parsedDate = typeof date === "string" ? parseISO(date) : date;
+  return format(parsedDate, pattern);
 }
 
 /**
- * Format a date for display in tables or lists (Jun 15, 2023)
+ * Format date as "Month day, year"
  */
-export function formatShortDate(date: string | Date): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-  
-  try {
-    return format(dateObj, "MMM d, yyyy");
-  } catch (error) {
-    return "Unknown date";
-  }
+export function formatLongDate(date: string | Date): string {
+  return formatDate(date, "MMMM d, yyyy");
 }
 
 /**
- * Format a time for display (3:45 PM)
+ * Format date and time as "Month day, year at h:mm a"
+ */
+export function formatDateTime(date: string | Date): string {
+  return formatDate(date, "MMMM d, yyyy 'at' h:mm a");
+}
+
+/**
+ * Format time as "h:mm a"
  */
 export function formatTime(date: string | Date): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-  
-  try {
-    return format(dateObj, "h:mm a");
-  } catch (error) {
-    return "Unknown time";
-  }
+  return formatDate(date, "h:mm a");
 }
 
 /**
- * Format a date range for display (Jun 15 - Jun 20, 2023)
+ * Format date in a simple readable format: "MMM d, yyyy"
+ * e.g., "Jan 5, 2025"
  */
-export function formatDateRange(startDate: string | Date, endDate: string | Date): string {
-  const startObj = typeof startDate === "string" ? new Date(startDate) : startDate;
-  const endObj = typeof endDate === "string" ? new Date(endDate) : endDate;
-  
-  try {
-    const sameYear = startObj.getFullYear() === endObj.getFullYear();
-    const sameMonth = startObj.getMonth() === endObj.getMonth();
-    
-    if (sameYear && sameMonth) {
-      return `${format(startObj, "MMM d")} - ${format(endObj, "d, yyyy")}`;
-    } else if (sameYear) {
-      return `${format(startObj, "MMM d")} - ${format(endObj, "MMM d, yyyy")}`;
-    } else {
-      return `${format(startObj, "MMM d, yyyy")} - ${format(endObj, "MMM d, yyyy")}`;
-    }
-  } catch (error) {
-    return "Unknown date range";
-  }
+export function formatSimpleDate(date: string | Date): string {
+  return formatDate(date, "MMM d, yyyy");
 }
