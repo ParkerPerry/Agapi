@@ -1,9 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import { Circle } from "@shared/schema";
+import type { Circle } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
@@ -98,10 +98,26 @@ const LabCreateWizard = ({
 
   // Set up form with default values
   // Fetch user's circles
-  const { data: circles, isLoading: isLoadingCircles } = useQuery({
+  const { data: circlesData, isLoading: isLoadingCircles } = useQuery({
     queryKey: ['/api/circles'],
     refetchOnWindowFocus: false,
   });
+  
+  // Extract all circles from response (API returns object with 'private' and 'shared' properties)
+  const circles = React.useMemo(() => {
+    if (!circlesData) return [];
+    
+    const allCircles: Circle[] = [];
+    if (circlesData && typeof circlesData === 'object') {
+      if ('private' in circlesData && Array.isArray(circlesData.private)) {
+        allCircles.push(...circlesData.private);
+      }
+      if ('shared' in circlesData && Array.isArray(circlesData.shared)) {
+        allCircles.push(...circlesData.shared);
+      }
+    }
+    return allCircles;
+  }, [circlesData]);
 
   const form = useForm<LabFormValues>({
     resolver: zodResolver(labSchema),
