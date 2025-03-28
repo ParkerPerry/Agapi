@@ -1427,6 +1427,45 @@ export class DatabaseStorage implements IStorage {
         role
       });
       
+      // Check if this circle is already added to the lab
+      const existingLabCircle = await db
+        .select()
+        .from(labCircles)
+        .where(and(
+          eq(labCircles.labId, labId),
+          eq(labCircles.circleId, circleId)
+        ))
+        .then(rows => rows[0] as LabCircle | undefined);
+      
+      if (existingLabCircle) {
+        console.log("[Storage] Circle already exists in lab, updating role:", {
+          labId,
+          circleId,
+          oldRole: existingLabCircle.role,
+          newRole: role
+        });
+        
+        // If it exists, update the role if needed
+        if (existingLabCircle.role !== role) {
+          const [updatedLabCircle] = (await db
+            .update(labCircles)
+            .set({ role })
+            .where(and(
+              eq(labCircles.labId, labId),
+              eq(labCircles.circleId, circleId)
+            ))
+            .returning()) as LabCircle[];
+            
+          // Update the lab's updatedAt timestamp
+          await this.updateLab(labId, {});
+          
+          return updatedLabCircle;
+        }
+        
+        return existingLabCircle;
+      }
+      
+      // Otherwise, insert a new record
       const [labCircle] = (await db
         .insert(labCircles)
         .values({ labId, circleId, role })

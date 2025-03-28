@@ -8,7 +8,7 @@ import { ResponseScheduler } from "./response-scheduler";
 import { ThreadContextManager } from "./context-manager";
 import { getAvailableTools } from "./tools";
 import { IStorage } from "./storage";
-import { User, insertLabSchema } from "@shared/schema";
+import { User, insertLabSchema, insertLabCircleSchema } from "@shared/schema";
 import nftRoutes from "./blockchain/routes";
 import { cloneFollowers } from "./clone-service";
 
@@ -1620,6 +1620,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[API] Error creating lab:", error);
       res.status(500).json({ message: "Failed to create lab" });
+    }
+  });
+  
+  // Add circles to a lab (without lab ID in URL path)
+  app.post("/api/labs/circles", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const userId = req.user!.id;
+      const parsedBody = insertLabCircleSchema.safeParse(req.body);
+      
+      if (!parsedBody.success) {
+        return res.status(400).json({ 
+          message: "Invalid lab circle data", 
+          errors: parsedBody.error.errors 
+        });
+      }
+      
+      const { labId, circleId, role } = parsedBody.data;
+      
+      // Verify lab ownership
+      const lab = await storage.getLab(labId);
+      if (!lab || lab.userId !== userId) {
+        return res.status(403).json({ message: "You don't have permission to modify this lab" });
+      }
+      
+      // Add circle to lab
+      const labCircle = await storage.addCircleToLab(labId, circleId, role);
+      res.status(201).json(labCircle);
+    } catch (error) {
+      console.error("[API] Error adding circle to lab:", error);
+      res.status(500).json({ message: "Failed to add circle to lab" });
     }
   });
 

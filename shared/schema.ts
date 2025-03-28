@@ -438,7 +438,6 @@ export const labs = pgTable("labs", {
   userId: integer("user_id").references(() => users.id).notNull(),
   name: text("name").notNull(),
   description: text("description"),
-  circleId: integer("circle_id").references(() => circles.id).notNull(),
   experimentType: text("experiment_type", { 
     enum: ["a_b_test", "multivariate", "exploration"] 
   }).notNull(),
@@ -496,7 +495,6 @@ export const insertLabSchema = createInsertSchema(labs)
   .pick({
     name: true,
     description: true,
-    circleId: true,
     experimentType: true,
     goals: true,
     successMetrics: true,

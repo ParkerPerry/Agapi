@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 import type { Circle } from "@shared/schema";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -49,7 +50,20 @@ import {
 } from "@/components/ui/table";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Beaker, Plus, Trash } from "lucide-react";
+import { Beaker, Plus, Trash, Check, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 
 interface LabCreateWizardProps {
   open: boolean;
@@ -60,7 +74,6 @@ interface LabCreateWizardProps {
 // Define validation schema
 const labSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters").max(100),
-  circleId: z.number().min(1, "Please select a circle"),
   experimentType: z.enum(["a_b_test", "multivariate", "exploration"]),
   description: z.string().optional(),
   goals: z.string().optional(),
@@ -77,6 +90,13 @@ const labSchema = z.object({
         .optional(),
     })
     .optional(),
+  // This is just for the form and won't be sent directly to the API
+  circles: z.array(
+    z.object({
+      id: z.number(),
+      role: z.enum(["control", "treatment", "observation"]).default("treatment"),
+    })
+  ).min(1, "Please select at least one circle"),
 });
 
 type LabFormValues = z.infer<typeof labSchema>;
@@ -123,13 +143,13 @@ const LabCreateWizard = ({
     resolver: zodResolver(labSchema),
     defaultValues: {
       name: "",
-      circleId: 0,
       experimentType: "a_b_test",
       description: "",
       goals: "",
       successMetrics: {
         metrics: [],
       },
+      circles: [],
     },
   });
 
@@ -157,8 +177,8 @@ const LabCreateWizard = ({
     let isValid = false;
 
     if (currentStep === 0) {
-      const { name, experimentType, circleId } = currentValues;
-      isValid = !!(name && name.length >= 3 && experimentType && circleId && circleId > 0);
+      const { name, experimentType, circles } = currentValues;
+      isValid = !!(name && name.length >= 3 && experimentType && circles && circles.length > 0);
     } else if (currentStep === 1) {
       // Description and goals are optional, so we can always proceed
       isValid = true;
@@ -189,7 +209,26 @@ const LabCreateWizard = ({
   const onSubmit = async (data: LabFormValues) => {
     setIsSubmitting(true);
     try {
-      await apiRequest("/api/labs", "POST", data);
+      // Extract the circles data from the form and send as separate data
+      // This is not sent directly to the lab creation endpoint
+      const { circles, ...labData } = data;
+      
+      // Create the lab first
+      const createdLab = await apiRequest("/api/labs", "POST", labData);
+      
+      // Then associate the circles with the lab
+      if (createdLab && circles && circles.length > 0) {
+        // Add each circle to the lab with its role
+        const promises = circles.map(circleObj => 
+          apiRequest("/api/labs/circles", "POST", {
+            labId: createdLab.id,
+            circleId: circleObj.id,
+            role: circleObj.role
+          })
+        );
+        
+        await Promise.all(promises);
+      }
       
       toast({
         title: "Lab created",
@@ -203,6 +242,7 @@ const LabCreateWizard = ({
       form.reset();
       setCurrentStep(0);
     } catch (error) {
+      console.error("Error creating lab:", error);
       toast({
         title: "Failed to create lab",
         description: "There was an error creating the lab. Please try again.",
@@ -294,30 +334,107 @@ const LabCreateWizard = ({
 
                   <FormField
                     control={form.control}
-                    name="circleId"
+                    name="circles"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Primary Circle</FormLabel>
-                        <Select
-                          onValueChange={(value) => field.onChange(parseInt(value))}
-                          value={field.value ? field.value.toString() : ""}
-                          disabled={isLoadingCircles}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a circle" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {Array.isArray(circles) ? circles.map((circle: Circle) => (
-                              <SelectItem key={circle.id} value={circle.id.toString()}>
-                                {circle.name}
-                              </SelectItem>
-                            )) : null}
-                          </SelectContent>
-                        </Select>
+                        <FormLabel>Circle Selection</FormLabel>
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap gap-2 p-2 border rounded-md">
+                            {field.value && field.value.length > 0 ? (
+                              field.value.map((circleObj) => {
+                                const selectedCircle = circles.find(c => c.id === circleObj.id);
+                                return (
+                                  <div 
+                                    key={circleObj.id} 
+                                    className="flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-sm"
+                                  >
+                                    <span>{selectedCircle?.name || `Circle ${circleObj.id}`}</span>
+                                    <Badge variant="secondary" className="ml-1 text-xs">
+                                      {circleObj.role === 'control' ? 'Control' : 
+                                       circleObj.role === 'treatment' ? 'Treatment' : 'Observation'}
+                                    </Badge>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-4 w-4 rounded-full ml-1"
+                                      onClick={() => {
+                                        const newCircles = field.value.filter(
+                                          (item) => item.id !== circleObj.id
+                                        );
+                                        field.onChange(newCircles);
+                                      }}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                );
+                              })
+                            ) : (
+                              <div className="text-sm text-muted-foreground py-2 text-center w-full">
+                                No circles selected yet
+                              </div>
+                            )}
+                          </div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button 
+                                type="button" 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-full"
+                                disabled={isLoadingCircles || circles.length === 0}
+                              >
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Circle
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[250px] p-0" align="start">
+                              <Command>
+                                <CommandInput placeholder="Search circles..." />
+                                <CommandEmpty>No circles found.</CommandEmpty>
+                                <CommandGroup heading="Available Circles">
+                                  {Array.isArray(circles) && circles.map((circle) => {
+                                    const isSelected = field.value?.some(
+                                      (c) => c.id === circle.id
+                                    );
+                                    return (
+                                      <CommandItem
+                                        key={circle.id}
+                                        onSelect={() => {
+                                          if (isSelected) {
+                                            // Remove if already selected
+                                            const newCircles = field.value.filter(
+                                              (item) => item.id !== circle.id
+                                            );
+                                            field.onChange(newCircles);
+                                          } else {
+                                            // Add with default role 'treatment'
+                                            const newCircles = [
+                                              ...(field.value || []),
+                                              { id: circle.id, role: "treatment" as const },
+                                            ];
+                                            field.onChange(newCircles);
+                                          }
+                                        }}
+                                      >
+                                        <Check
+                                          className={cn(
+                                            "mr-2 h-4 w-4",
+                                            isSelected ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                        <span>{circle.name}</span>
+                                      </CommandItem>
+                                    );
+                                  })}
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
                         <FormDescription>
-                          The primary circle that will own this lab.
+                          Select one or more circles to include in this lab experiment.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
