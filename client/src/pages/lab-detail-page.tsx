@@ -59,7 +59,10 @@ export default function LabDetailPage() {
   // Check if we're on the create route
   const [isCreateRoute] = useRoute("/labs/create");
   const isNewLab = isCreateRoute || params().id === "new";
-  const labId = isNewLab ? null : parseInt(params().id);
+  
+  // Parse the lab ID, ensuring we don't get NaN
+  const parsedLabId = parseInt(params().id);
+  const labId = isNewLab || isNaN(parsedLabId) ? null : parsedLabId;
 
   // Form validation schema
   const formSchema = z.object({
@@ -138,6 +141,10 @@ export default function LabDetailPage() {
   const updateLabMutation = useMutation({
     mutationFn: async (data: Partial<InsertLab>) => {
       setIsSaving(true);
+      // Make sure we have a valid lab ID
+      if (!labId) {
+        throw new Error("Invalid lab ID");
+      }
       return await apiRequest(`/api/labs/${labId}`, "PATCH", data);
     },
     onSuccess: () => {
@@ -151,7 +158,8 @@ export default function LabDetailPage() {
       
       setIsSaving(false);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error updating lab:", error);
       toast({
         title: "Error",
         description: "Failed to update lab. Please try again.",
@@ -166,6 +174,17 @@ export default function LabDetailPage() {
   const launchLabMutation = useMutation({
     mutationFn: async () => {
       setIsLaunching(true);
+      
+      // Make sure we have a valid lab ID
+      if (!labId) {
+        throw new Error("Invalid lab ID");
+      }
+      
+      // Before launching, verify there are posts
+      if (lab && lab.posts && lab.posts.length === 0) {
+        throw new Error("No posts created for this lab");
+      }
+      
       return await apiRequest(`/api/labs/${labId}/launch`, "POST");
     },
     onSuccess: () => {
@@ -182,10 +201,21 @@ export default function LabDetailPage() {
       // Set active tab to stats
       setActiveTab("stats");
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error launching lab:", error);
+      
+      let errorMessage = "Failed to launch lab. Please try again.";
+      
+      // Check if we have a specific error message
+      if (error instanceof Error) {
+        if (error.message === "No posts created for this lab") {
+          errorMessage = "You need to create at least one post before launching the lab.";
+        }
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to launch lab. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
       
@@ -224,8 +254,32 @@ export default function LabDetailPage() {
 
   // Handle circle selection
   const handleCircleSelected = (circleId: number) => {
+    console.log(`Circle selected with ID: ${circleId}`);
     setSelectedCircleId(circleId);
+    
+    // Also update the form field value
+    form.setValue("circleId", circleId, { 
+      shouldValidate: true,
+      shouldDirty: true
+    });
+    
+    // If we're editing a lab, immediately update the circle association
+    if (!isNewLab && labId) {
+      updateLabMutation.mutate({ circleId });
+    }
   };
+
+  // Redirect to labs page if lab ID is invalid
+  useEffect(() => {
+    if (!isNewLab && !isLoading && !lab && labId !== null) {
+      toast({
+        title: "Lab not found",
+        description: "The requested lab could not be found. You've been redirected to the labs page.",
+        variant: "destructive"
+      });
+      navigate("/labs");
+    }
+  }, [isNewLab, isLoading, lab, labId, navigate, toast]);
 
   // Loading state
   if (isLoading && !isNewLab) {
