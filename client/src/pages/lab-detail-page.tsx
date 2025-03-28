@@ -1,6 +1,6 @@
 import { useParams, useLocation } from "wouter";
 import { useState, useEffect } from "react";
-import { useLab, useLabPosts, useLabMetrics } from "@/lib/queries/lab-queries";
+import { useLab, useLabPosts, useLabMetrics, Lab, LabPost, LabMetrics } from "@/lib/queries/lab-queries";
 import { useUpdateLabStatus, useCreateLabPost, usePublishLabPost, useCalculateLabMetrics } from "@/lib/mutations/lab-mutations";
 import {
   Card,
@@ -46,6 +46,11 @@ export default function LabDetailPage() {
   const createLabPostMutation = useCreateLabPost();
   const publishLabPostMutation = usePublishLabPost();
   const calculateMetricsMutation = useCalculateLabMetrics();
+  
+  // Helper function to get post status
+  const getPostStatus = (post: LabPost): "draft" | "published" => {
+    return post.published ? "published" : "draft";
+  };
 
   // Update active tab based on lab status
   useEffect(() => {
@@ -287,7 +292,7 @@ export default function LabDetailPage() {
                             <CardContent className="p-4">
                               <p>{post.content}</p>
                               <div className="mt-2 text-sm text-muted-foreground">
-                                Status: {post.status}
+                                Status: {getPostStatus(post)}
                               </div>
                             </CardContent>
                           </Card>
@@ -342,7 +347,7 @@ export default function LabDetailPage() {
                         <div className="flex justify-between items-center">
                           <CardTitle className="text-sm font-medium">Post #{post.order + 1}</CardTitle>
                           <div className="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-800">
-                            {post.status}
+                            {getPostStatus(post)}
                           </div>
                         </div>
                       </CardHeader>
@@ -350,7 +355,7 @@ export default function LabDetailPage() {
                         <p>{post.content}</p>
                       </CardContent>
                       <CardFooter>
-                        {post.status === "draft" ? (
+                        {getPostStatus(post) === "draft" ? (
                           <Button 
                             onClick={() => handlePublishPost(post.id)}
                             disabled={publishLabPostMutation.isPending}
@@ -388,7 +393,7 @@ export default function LabDetailPage() {
             </CardContent>
             <CardFooter className="flex justify-between">
               <span className="text-sm text-muted-foreground">
-                {labPosts?.filter(p => p.status === "published").length || 0}/{labPosts?.length || 0} posts published
+                {labPosts?.filter(p => getPostStatus(p) === "published").length || 0}/{labPosts?.length || 0} posts published
               </span>
               <Button 
                 onClick={() => handleRefreshMetrics()}
