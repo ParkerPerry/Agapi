@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import LabDeleteDialog from "./lab-delete-dialog";
 import LabDetailDialog from "./lab-detail-dialog";
+import LabStatusChangeDialog from "./lab-status-change-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface LabCardProps {
@@ -62,30 +63,16 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [targetStatus, setTargetStatus] = useState<"active" | "draft" | "completed" | "archived" | null>(null);
 
-  const handleStatusChange = async (newStatus: "active" | "draft" | "completed" | "archived") => {
-    if (isUpdatingStatus) return;
-    
-    setIsUpdatingStatus(true);
-    try {
-      await apiRequest(`/api/labs/${lab.id}/status`, "PATCH", { status: newStatus });
-      
-      toast({
-        title: "Status updated",
-        description: `Lab status changed to ${newStatus}.`,
-      });
-      
-      onUpdate();
-    } catch (error) {
-      toast({
-        title: "Failed to update status",
-        description: "There was an error updating the lab status.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUpdatingStatus(false);
-    }
+  const handleOpenStatusDialog = (newStatus: "active" | "draft" | "completed" | "archived") => {
+    setTargetStatus(newStatus);
+    setIsStatusDialogOpen(true);
+  };
+
+  const handleStatusSuccess = () => {
+    onUpdate();
   };
 
   const handleDelete = async () => {
@@ -114,7 +101,7 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
       actions.push(
         <DropdownMenuItem 
           key="activate"
-          onClick={() => handleStatusChange("active")}
+          onClick={() => handleOpenStatusDialog("active")}
         >
           <PlayCircle className="mr-2 h-4 w-4" />
           Activate
@@ -126,7 +113,7 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
       actions.push(
         <DropdownMenuItem 
           key="complete"
-          onClick={() => handleStatusChange("completed")}
+          onClick={() => handleOpenStatusDialog("completed")}
         >
           <CheckCircle className="mr-2 h-4 w-4" />
           Complete
@@ -138,7 +125,7 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
       actions.push(
         <DropdownMenuItem 
           key="archive"
-          onClick={() => handleStatusChange("archived")}
+          onClick={() => handleOpenStatusDialog("archived")}
         >
           <Archive className="mr-2 h-4 w-4" />
           Archive
@@ -217,6 +204,20 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
         onOpenChange={setIsDetailDialogOpen}
         onUpdate={onUpdate}
       />
+      
+      {targetStatus && (
+        <LabStatusChangeDialog
+          labId={lab.id}
+          currentStatus={lab.status}
+          newStatus={targetStatus}
+          open={isStatusDialogOpen}
+          onOpenChange={(open) => {
+            setIsStatusDialogOpen(open);
+            if (!open) setTargetStatus(null);
+          }}
+          onSuccess={handleStatusSuccess}
+        />
+      )}
     </>
   );
 };
