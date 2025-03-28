@@ -1,47 +1,17 @@
-import { format, formatDistanceToNow, parseISO } from "date-fns";
+import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
 
-/**
- * Format a date relative to the current time
- * e.g., "2 hours ago", "5 days ago", etc.
- */
-export function formatRelativeTime(date: string | Date): string {
-  const parsedDate = typeof date === "string" ? parseISO(date) : date;
-  return formatDistanceToNow(parsedDate, { addSuffix: true });
-}
-
-/**
- * Format a date with a specific format pattern
- */
-export function formatDate(date: string | Date, pattern: string = "PPP"): string {
-  const parsedDate = typeof date === "string" ? parseISO(date) : date;
-  return format(parsedDate, pattern);
-}
-
-/**
- * Format date as "Month day, year"
- */
-export function formatLongDate(date: string | Date): string {
-  return formatDate(date, "MMMM d, yyyy");
-}
-
-/**
- * Format date and time as "Month day, year at h:mm a"
- */
-export function formatDateTime(date: string | Date): string {
-  return formatDate(date, "MMMM d, yyyy 'at' h:mm a");
-}
-
-/**
- * Format time as "h:mm a"
- */
-export function formatTime(date: string | Date): string {
-  return formatDate(date, "h:mm a");
-}
-
-/**
- * Format date in a simple readable format: "MMM d, yyyy"
- * e.g., "Jan 5, 2025"
- */
-export function formatSimpleDate(date: string | Date): string {
-  return formatDate(date, "MMM d, yyyy");
+export function formatRelativeTime(date: Date | string | null | undefined): string {
+  if (!date) return '';
+  
+  const dateObj = new Date(date);
+  
+  // Format relative time (e.g., "2h ago", "5m ago")
+  const relativeTime = formatDistanceToNow(dateObj, { addSuffix: true });
+  
+  // For dates older than 24h, show the actual date
+  if (!isToday(dateObj) && !isYesterday(dateObj)) {
+    return format(dateObj, 'M/d/yyyy');
+  }
+  
+  return relativeTime;
 }
