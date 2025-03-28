@@ -1,0 +1,104 @@
+[Storage] Getting labs for user: 1
+[Storage] Retrieved labs count: 0
+1:30:01 PM [express] GET /api/labs 304 in 186ms :: []
+[ResponseScheduler] Processing 0 pending responses
+[Storage] Creating lab: { userId: 1, name: 'test', experimentType: 'a_b_test' }
+[Storage] Error creating lab: error: null value in column "circle_id" of relation "labs" violates not-null constraint
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createLab (/home/runner/workspace/server/storage.ts:1247:25)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1618:22) {
+  length: 313,
+  severity: 'ERROR',
+  code: '23502',
+  detail: 'Failing row contains (2, 1, test, , null, draft, 2025-03-28 13:30:07.998476, null, null, a_b_test, {"metrics": []}, , 2025-03-28 13:30:07.947).',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'labs',
+  column: 'circle_id',
+  dataType: undefined,
+  constraint: undefined,
+  file: 'execMain.c',
+  line: '2006',
+  routine: 'ExecConstraints'
+}
+[API] Error creating lab: error: null value in column "circle_id" of relation "labs" violates not-null constraint
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createLab (/home/runner/workspace/server/storage.ts:1247:25)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1618:22) {
+  length: 313,
+  severity: 'ERROR',
+  code: '23502',
+  detail: 'Failing row contains (2, 1, test, , null, draft, 2025-03-28 13:30:07.998476, null, null, a_b_test, {"metrics": []}, , 2025-03-28 13:30:07.947).',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'labs',
+  column: 'circle_id',
+  dataType: undefined,
+  constraint: undefined,
+  file: 'execMain.c',
+  line: '2006',
+  routine: 'ExecConstraints'
+}
+1:30:08 PM [express] POST /api/labs 500 in 205ms :: {"message":"Failed to create lab"}
+[Storage] Creating lab: { userId: 1, name: 'test', experimentType: 'a_b_test' }
+[Storage] Error creating lab: error: null value in column "circle_id" of relation "labs" violates not-null constraint
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createLab (/home/runner/workspace/server/storage.ts:1247:25)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1618:22) {
+  length: 344,
+  severity: 'ERROR',
+  code: '23502',
+  detail: 'Failing row contains (3, 1, test, test my followers, null, draft, 2025-03-28 13:30:41.126126, null, null, a_b_test, {"metrics": []}, win more leads, 2025-03-28 13:30:41.092).',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'labs',
+  column: 'circle_id',
+  dataType: undefined,
+  constraint: undefined,
+  file: 'execMain.c',
+  line: '2006',
+  routine: 'ExecConstraints'
+}
+[API] Error creating lab: error: null value in column "circle_id" of relation "labs" violates not-null constraint
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createLab (/home/runner/workspace/server/storage.ts:1247:25)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1618:22) {
+  length: 344,
+  severity: 'ERROR',
+  code: '23502',
+  detail: 'Failing row contains (3, 1, test, test my followers, null, draft, 2025-03-28 13:30:41.126126, null, null, a_b_test, {"metrics": []}, win more leads, 2025-03-28 13:30:41.092).',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'labs',
+  column: 'circle_id',
+  dataType: undefined,
+  constraint: undefined,
+  file: 'execMain.c',
+  line: '2006',
+  routine: 'ExecConstraints'
+}
+1:30:41 PM [express] POST /api/labs 500 in 374ms :: {"message":"Failed to create lab"}

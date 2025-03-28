@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
+import { Circle } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
@@ -58,6 +60,7 @@ interface LabCreateWizardProps {
 // Define validation schema
 const labSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters").max(100),
+  circleId: z.number().min(1, "Please select a circle"),
   experimentType: z.enum(["a_b_test", "multivariate", "exploration"]),
   description: z.string().optional(),
   goals: z.string().optional(),
@@ -94,10 +97,17 @@ const LabCreateWizard = ({
   ];
 
   // Set up form with default values
+  // Fetch user's circles
+  const { data: circles, isLoading: isLoadingCircles } = useQuery({
+    queryKey: ['/api/circles'],
+    refetchOnWindowFocus: false,
+  });
+
   const form = useForm<LabFormValues>({
     resolver: zodResolver(labSchema),
     defaultValues: {
       name: "",
+      circleId: 0,
       experimentType: "a_b_test",
       description: "",
       goals: "",
@@ -131,8 +141,8 @@ const LabCreateWizard = ({
     let isValid = false;
 
     if (currentStep === 0) {
-      const { name, experimentType } = currentValues;
-      isValid = !!(name && name.length >= 3 && experimentType);
+      const { name, experimentType, circleId } = currentValues;
+      isValid = !!(name && name.length >= 3 && experimentType && circleId && circleId > 0);
     } else if (currentStep === 1) {
       // Description and goals are optional, so we can always proceed
       isValid = true;
@@ -260,6 +270,38 @@ const LabCreateWizard = ({
                         </FormControl>
                         <FormDescription>
                           A clear, descriptive name for your experiment.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="circleId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Primary Circle</FormLabel>
+                        <Select
+                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          value={field.value ? field.value.toString() : ""}
+                          disabled={isLoadingCircles}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a circle" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Array.isArray(circles) ? circles.map((circle: Circle) => (
+                              <SelectItem key={circle.id} value={circle.id.toString()}>
+                                {circle.name}
+                              </SelectItem>
+                            )) : null}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          The primary circle that will own this lab.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
