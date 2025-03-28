@@ -1,68 +1,90 @@
-import { useState } from "react";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React from "react";
+import { Circle } from "@shared/schema";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { Label } from "@/components/ui/label";
-import { Loader2, Settings } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { CheckCircle2, Beaker, TestTube, Eye } from "lucide-react";
 
 interface LabCircleRoleDialogProps {
-  labId: number;
-  circleId: number;
-  circleName: string;
-  currentRole: "control" | "treatment" | "observation";
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  labId: number;
+  circle: Circle;
+  currentRole: "control" | "treatment" | "observation";
+  onRoleUpdateSuccess: () => void;
 }
 
-const LabCircleRoleDialog = ({
-  labId,
-  circleId,
-  circleName,
-  currentRole,
+const roleInfo = {
+  control: {
+    icon: <CheckCircle2 className="h-5 w-5 text-blue-500" />,
+    title: "Control Group",
+    description: "The baseline for comparison. No experimental content will be shown."
+  },
+  treatment: {
+    icon: <TestTube className="h-5 w-5 text-green-500" />,
+    title: "Treatment Group",
+    description: "Receives the experimental content or intervention being tested."
+  },
+  observation: {
+    icon: <Eye className="h-5 w-5 text-purple-500" />,
+    title: "Observation Group",
+    description: "Monitors the experiment but doesn't participate directly in testing."
+  }
+};
+
+export function LabCircleRoleDialog({
   open,
   onOpenChange,
-  onSuccess,
-}: LabCircleRoleDialogProps) => {
+  labId,
+  circle,
+  currentRole,
+  onRoleUpdateSuccess,
+}: LabCircleRoleDialogProps) {
   const { toast } = useToast();
-  const [selectedRole, setSelectedRole] = useState<"control" | "treatment" | "observation">(currentRole);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [role, setRole] = React.useState<"control" | "treatment" | "observation">(currentRole);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // Reset role when dialog opens
+  React.useEffect(() => {
+    if (open) {
+      setRole(currentRole);
+    }
+  }, [open, currentRole]);
 
   const handleUpdateRole = async () => {
-    if (isSubmitting || selectedRole === currentRole) return;
-    
-    setIsSubmitting(true);
-    try {
-      await apiRequest(`/api/labs/${labId}/circles/${circleId}`, "PATCH", {
-        role: selectedRole,
+    if (role === currentRole) {
+      toast({
+        title: "No change needed",
+        description: `Circle already has the ${role} role.`,
       });
+      onOpenChange(false);
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      await apiRequest(`/api/labs/${labId}/circles/${circle.id}`, "PATCH", { role });
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/labs', labId, 'circles'] });
       
       toast({
         title: "Role updated",
-        description: `Circle ${circleName} now has the role: ${selectedRole}`,
+        description: `Circle role changed to ${role}.`,
       });
       
+      onRoleUpdateSuccess();
       onOpenChange(false);
-      onSuccess();
     } catch (error) {
+      console.error("Error updating circle role:", error);
       toast({
         title: "Failed to update role",
-        description: "There was an error changing the circle's role.",
+        description: "There was an error updating the circle role. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -75,40 +97,41 @@ const LabCircleRoleDialog = ({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Change Circle Role
+            <Beaker className="h-5 w-5" />
+            Update Circle Role
           </DialogTitle>
           <DialogDescription>
-            Change the role of circle "{circleName}" in this lab.
+            Change how this circle participates in the lab experiment.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="role-select">Circle Role</Label>
-            <Select
-              value={selectedRole}
-              onValueChange={(value) =>
-                setSelectedRole(value as "control" | "treatment" | "observation")
-              }
-            >
-              <SelectTrigger id="role-select">
-                <SelectValue placeholder="Select a role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="control">Control</SelectItem>
-                <SelectItem value="treatment">Treatment</SelectItem>
-                <SelectItem value="observation">Observation</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-2">
-              <span className="font-medium">Control:</span> Baseline group with standard content<br />
-              <span className="font-medium">Treatment:</span> Experimental group with modified content<br />
-              <span className="font-medium">Observation:</span> Circle members can view but not participate
-            </p>
+        <div className="py-4">
+          <div className="mb-4">
+            <h4 className="text-sm font-medium">Circle: {circle.name}</h4>
+            <p className="text-sm text-muted-foreground">{circle.description || "No description"}</p>
+          </div>
+
+          <div className="space-y-4">
+            <Label>Select Role</Label>
+            <RadioGroup value={role} onValueChange={(value) => setRole(value as "control" | "treatment" | "observation")}>
+              {Object.entries(roleInfo).map(([key, info]) => (
+                <div key={key} className="flex items-start space-x-2 border rounded-md p-3 hover:bg-accent">
+                  <RadioGroupItem value={key} id={key} className="mt-1" />
+                  <Label htmlFor={key} className="font-normal flex-1 cursor-pointer">
+                    <div className="flex items-center gap-2 font-medium">
+                      {info.icon}
+                      {info.title}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {info.description}
+                    </p>
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
           </div>
         </div>
-
+        
         <DialogFooter>
           <Button
             variant="outline"
@@ -119,21 +142,14 @@ const LabCircleRoleDialog = ({
           </Button>
           <Button
             onClick={handleUpdateRole}
-            disabled={selectedRole === currentRole || isSubmitting}
+            disabled={isSubmitting || role === currentRole}
           >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              "Update Role"
-            )}
+            {isSubmitting ? "Updating..." : "Update Role"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default LabCircleRoleDialog;

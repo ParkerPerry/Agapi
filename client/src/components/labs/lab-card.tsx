@@ -216,7 +216,7 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
             setIsStatusDialogOpen(open);
             if (!open) setTargetStatus(null);
           }}
-          onSuccess={handleStatusSuccess}
+          onStatusChangeSuccess={handleStatusSuccess}
         />
       )}
     </>

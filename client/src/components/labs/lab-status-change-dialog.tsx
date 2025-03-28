@@ -1,102 +1,95 @@
-import React, { useState } from "react";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import React from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle, Info, CheckCircle, PlayCircle, Archive } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 interface LabStatusChangeDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   labId: number;
   currentStatus: string;
   newStatus: "draft" | "active" | "completed" | "archived";
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  onStatusChangeSuccess: () => void;
 }
 
-/**
- * Dialog for confirming lab status changes
- * Displays different messages and icons depending on the status transition
- */
-const LabStatusChangeDialog = ({
+const statusMessages = {
+  draft: {
+    title: "Change lab status to Draft",
+    description: "This will set the lab as a draft. You can continue editing the lab configuration.",
+    confirmText: "Set as Draft",
+    icon: <CheckCircle2 className="h-5 w-5 text-blue-500" />,
+  },
+  active: {
+    title: "Activate this lab?",
+    description: "This will activate the lab and start collecting results. Make sure you've configured everything correctly.",
+    confirmText: "Activate Lab",
+    icon: <CheckCircle2 className="h-5 w-5 text-green-500" />,
+  },
+  completed: {
+    title: "Mark lab as completed?",
+    description: "This will mark the lab as completed and finalize all results. You won't be able to add more data after this.",
+    confirmText: "Complete Lab",
+    icon: <CheckCircle2 className="h-5 w-5 text-orange-500" />,
+  },
+  archived: {
+    title: "Archive this lab?",
+    description: "This will archive the lab. You can still view results but no further changes will be allowed.",
+    confirmText: "Archive Lab",
+    icon: <AlertTriangle className="h-5 w-5 text-red-500" />,
+  },
+};
+
+export function LabStatusChangeDialog({
+  open,
+  onOpenChange,
   labId,
   currentStatus,
   newStatus,
-  open,
-  onOpenChange,
-  onSuccess,
-}: LabStatusChangeDialogProps) => {
+  onStatusChangeSuccess,
+}: LabStatusChangeDialogProps) {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const handleUpdateStatus = async () => {
-    if (isSubmitting) return;
-    
+  const message = statusMessages[newStatus];
+
+  const handleConfirm = async () => {
+    if (currentStatus === newStatus) {
+      toast({
+        title: "No change needed",
+        description: `Lab is already in ${newStatus} status.`,
+      });
+      onOpenChange(false);
+      return;
+    }
+
     setIsSubmitting(true);
+    
     try {
       await apiRequest(`/api/labs/${labId}/status`, "PATCH", { status: newStatus });
       
+      // Invalidate lab queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/labs'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/labs', labId] });
+      
       toast({
         title: "Status updated",
-        description: `Lab status changed to ${newStatus}.`,
+        description: `Lab status changed to ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}.`,
       });
       
+      onStatusChangeSuccess();
       onOpenChange(false);
-      onSuccess();
     } catch (error) {
+      console.error("Error updating lab status:", error);
       toast({
         title: "Failed to update status",
-        description: "There was an error updating the lab status.",
+        description: "There was an error updating the lab status. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const getStatusIcon = () => {
-    switch (newStatus) {
-      case "active":
-        return <PlayCircle className="h-6 w-6 text-green-500" />;
-      case "completed":
-        return <CheckCircle className="h-6 w-6 text-blue-500" />;
-      case "archived":
-        return <Archive className="h-6 w-6 text-gray-500" />;
-      default:
-        return <Info className="h-6 w-6 text-amber-500" />;
-    }
-  };
-
-  const getStatusMessage = () => {
-    switch (newStatus) {
-      case "active":
-        return "This will activate the lab and start collecting metrics. Any treatment groups will receive the experimental content.";
-      case "completed":
-        return "This will mark the lab as completed. You'll still be able to view the results, but no new data will be collected.";
-      case "archived":
-        return "This will archive the lab. It will no longer appear in the main lab list by default, but can still be accessed in archived view.";
-      default:
-        return "Are you sure you want to change the status of this lab?";
-    }
-  };
-
-  const getDialogTitle = () => {
-    switch (newStatus) {
-      case "active":
-        return "Activate Lab";
-      case "completed":
-        return "Complete Lab";
-      case "archived":
-        return "Archive Lab";
-      default:
-        return "Change Lab Status";
     }
   };
 
@@ -105,41 +98,37 @@ const LabStatusChangeDialog = ({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {getStatusIcon()}
-            {getDialogTitle()}
+            {message.icon}
+            {message.title}
           </DialogTitle>
-          <DialogDescription>
-            {getStatusMessage()}
-          </DialogDescription>
+          <DialogDescription>{message.description}</DialogDescription>
         </DialogHeader>
-
-        <div className="my-4 flex justify-center">
-          <div className="p-3 bg-muted rounded-full">
-            {currentStatus === "draft" && newStatus === "active" && (
-              <div className="flex items-center space-x-2 text-sm">
-                <span className="text-muted-foreground">Draft</span>
-                <span className="text-muted-foreground">→</span>
-                <span className="font-medium">Active</span>
-              </div>
-            )}
-            {newStatus === "completed" && (
-              <div className="flex items-center space-x-2 text-sm">
-                <span className="text-muted-foreground">{currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}</span>
-                <span className="text-muted-foreground">→</span>
-                <span className="font-medium">Completed</span>
-              </div>
-            )}
-            {newStatus === "archived" && (
-              <div className="flex items-center space-x-2 text-sm">
-                <span className="text-muted-foreground">{currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}</span>
-                <span className="text-muted-foreground">→</span>
-                <span className="font-medium">Archived</span>
-              </div>
-            )}
-          </div>
+        
+        <div className="mt-4 flex gap-2">
+          {newStatus === "active" && currentStatus === "draft" && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-sm text-amber-800">
+              <p className="font-medium">Before activating:</p>
+              <ul className="list-disc list-inside mt-1">
+                <li>Make sure you've added all necessary circles</li>
+                <li>Defined success metrics for your experiment</li>
+                <li>Set appropriate roles for all circles</li>
+              </ul>
+            </div>
+          )}
+          
+          {newStatus === "completed" && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-sm text-amber-800">
+              <p className="font-medium">This action will:</p>
+              <ul className="list-disc list-inside mt-1">
+                <li>Finalize all data collection</li>
+                <li>Generate final analysis reports</li>
+                <li>Prevent new content from being added</li>
+              </ul>
+            </div>
+          )}
         </div>
-
-        <DialogFooter>
+        
+        <DialogFooter className="mt-4">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
@@ -148,23 +137,16 @@ const LabStatusChangeDialog = ({
             Cancel
           </Button>
           <Button
-            onClick={handleUpdateStatus}
-            disabled={isSubmitting}
             variant={newStatus === "archived" ? "destructive" : "default"}
+            onClick={handleConfirm}
+            disabled={isSubmitting}
           >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              "Confirm"
-            )}
+            {isSubmitting ? "Updating..." : message.confirmText}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default LabStatusChangeDialog;

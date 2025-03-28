@@ -1,138 +1,151 @@
-import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import type { Circle } from "@shared/schema";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React from "react";
+// import { Circle } from "@shared/schema";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { Label } from "@/components/ui/label";
-import { Loader2, PlusCircle, Search } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Check, PlusCircle, UserCircle, CheckCircle2, TestTube, Eye } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+interface LocalCircle {
+  id: number;
+  name: string;
+  description: string | null;
+  icon?: string | null;
+  color?: string | null;
+}
+
+interface CirclesResponse {
+  private?: LocalCircle[];
+  shared?: LocalCircle[];
+}
 
 interface LabCircleAddDialogProps {
-  labId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  labId: number;
+  onAddSuccess: () => void;
   existingCircleIds: number[];
 }
 
-const LabCircleAddDialog = ({
-  labId,
+const roleInfo = {
+  control: {
+    icon: <CheckCircle2 className="h-5 w-5 text-blue-500" />,
+    title: "Control Group",
+    description: "The baseline for comparison. No experimental content will be shown."
+  },
+  treatment: {
+    icon: <TestTube className="h-5 w-5 text-green-500" />,
+    title: "Treatment Group",
+    description: "Receives the experimental content or intervention being tested."
+  },
+  observation: {
+    icon: <Eye className="h-5 w-5 text-purple-500" />,
+    title: "Observation Group",
+    description: "Monitors the experiment but doesn't participate directly in testing."
+  }
+};
+
+export function LabCircleAddDialog({
   open,
   onOpenChange,
-  onSuccess,
+  labId,
+  onAddSuccess,
   existingCircleIds,
-}: LabCircleAddDialogProps) => {
+}: LabCircleAddDialogProps) {
   const { toast } = useToast();
-  const [selectedCircleId, setSelectedCircleId] = useState<number | null>(null);
-  const [selectedRole, setSelectedRole] = useState<"control" | "treatment" | "observation">("treatment");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCircleId, setSelectedCircleId] = React.useState<number | null>(null);
+  const [role, setRole] = React.useState<"control" | "treatment" | "observation">("observation");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // Reset state when dialog opens/closes
-  useEffect(() => {
+  // Reset form when dialog opens
+  React.useEffect(() => {
     if (open) {
       setSelectedCircleId(null);
-      setSelectedRole("treatment");
-      setSearchQuery("");
+      setRole("observation");
     }
   }, [open]);
 
-  // Fetch user's circles
-  const {
-    data: circlesData,
-    isLoading: isCirclesLoading,
-    error: circlesError,
-  } = useQuery({
-    queryKey: ["/api/circles"],
+  // Fetch circles
+  const { data: circlesData, isLoading: isLoadingCircles } = useQuery<CirclesResponse>({
+    queryKey: ['/api/circles'],
     enabled: open,
   });
 
-  // Extract all circles from response (API returns object with 'private' and 'shared' properties)
+  // Debug: log response to check format
+  React.useEffect(() => {
+    if (circlesData) {
+      console.log("Circles data:", circlesData);
+    }
+  }, [circlesData]);
+
+  // The API returns an object with "private" and "shared" keys containing arrays of circles
+  // Extract all circles into a single array
   const circles = React.useMemo(() => {
     if (!circlesData) return [];
     
-    const allCircles: Circle[] = [];
-    if (circlesData && typeof circlesData === 'object') {
-      if ('private' in circlesData && Array.isArray(circlesData.private)) {
-        allCircles.push(...circlesData.private);
-      }
-      if ('shared' in circlesData && Array.isArray(circlesData.shared)) {
-        allCircles.push(...circlesData.shared);
-      }
+    const allCircles: LocalCircle[] = [];
+    
+    // Extract from private and shared properties
+    if (circlesData.private && Array.isArray(circlesData.private)) {
+      allCircles.push(...circlesData.private);
     }
+    
+    if (circlesData.shared && Array.isArray(circlesData.shared)) {
+      allCircles.push(...circlesData.shared);
+    }
+    
     return allCircles;
   }, [circlesData]);
 
+  // Filter out circles that are already in the lab
+  const availableCircles = circles.filter((circle: LocalCircle) => 
+    !existingCircleIds.includes(circle.id)
+  );
+
   const handleAddCircle = async () => {
-    if (!selectedCircleId || isSubmitting) return;
-    
-    setIsSubmitting(true);
-    try {
-      await apiRequest(`/api/labs/${labId}/circles`, "POST", {
-        circleId: selectedCircleId,
-        role: selectedRole,
+    if (!selectedCircleId) {
+      toast({
+        title: "No circle selected",
+        description: "Please select a circle to add to the lab.",
+        variant: "destructive",
       });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      await apiRequest(`/api/labs/${labId}/circles`, "POST", { 
+        circleId: selectedCircleId, 
+        role 
+      });
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/labs', labId, 'circles'] });
       
       toast({
         title: "Circle added",
-        description: "The circle has been added to the lab.",
+        description: `Circle has been added to the lab with ${role} role.`,
       });
       
+      onAddSuccess();
       onOpenChange(false);
-      onSuccess();
     } catch (error) {
+      console.error("Error adding circle to lab:", error);
       toast({
         title: "Failed to add circle",
-        description: "There was an error adding the circle to the lab.",
+        description: "There was an error adding the circle to the lab. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  // Filter out circles that are already in the lab
-  const availableCircles = circles?.filter(
-    (circle) => !existingCircleIds.includes(circle.id)
-  ) || [];
-
-  // Filter circles by search query
-  const filteredCircles = searchQuery
-    ? availableCircles.filter(
-        (circle) =>
-          circle.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (circle.description &&
-            circle.description.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
-    : availableCircles;
-  
-  // Find the selected circle for display
-  const selectedCircle = selectedCircleId 
-    ? availableCircles.find(circle => circle.id === selectedCircleId) 
-    : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -143,136 +156,76 @@ const LabCircleAddDialog = ({
             Add Circle to Lab
           </DialogTitle>
           <DialogDescription>
-            Select a circle to add to your experiment lab and assign a role.
+            Select a circle to add to this lab and assign its experimental role.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="circle-select">Select Circle</Label>
-            {isCirclesLoading ? (
-              <div className="flex items-center justify-center h-[200px]">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : circlesError ? (
-              <div className="text-center py-8 border rounded-md">
-                <p className="text-destructive">Failed to load circles.</p>
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => window.location.reload()}
-                >
-                  Retry
-                </Button>
+        <div className="py-4 space-y-6">
+          {/* Circle Selection */}
+          <div className="space-y-4">
+            <Label>Select Circle</Label>
+            {isLoadingCircles ? (
+              <div className="flex justify-center p-4">
+                <span className="text-sm text-muted-foreground">Loading circles...</span>
               </div>
             ) : availableCircles.length === 0 ? (
-              <div className="text-center py-8 border rounded-md">
-                <p className="text-muted-foreground">
-                  No available circles to add to this lab.
-                </p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  All your circles are already part of this lab or you don't have any circles yet.
-                </p>
-              </div>
-            ) : selectedCircle ? (
-              // Show selected circle
-              <div className="rounded-lg border shadow-md p-3 flex items-start gap-2">
-                <div
-                  className="w-3 h-3 mt-1 rounded-full flex-shrink-0"
-                  style={{
-                    backgroundColor: selectedCircle.color || "#c5c5c5",
-                  }}
-                />
-                <div className="flex-1">
-                  <div className="font-medium">{selectedCircle.name}</div>
-                  {selectedCircle.description && (
-                    <div className="text-xs text-muted-foreground line-clamp-2">
-                      {selectedCircle.description}
-                    </div>
-                  )}
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Visibility: {selectedCircle.visibility}
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="mt-2 text-xs"
-                    onClick={() => setSelectedCircleId(null)}
-                  >
-                    Change
-                  </Button>
-                </div>
+              <div className="border rounded-md p-4 text-center">
+                <span className="text-sm text-muted-foreground">
+                  No available circles to add. All your circles are already part of this lab.
+                </span>
               </div>
             ) : (
-              // Show circle selection
-              <Command className="rounded-lg border shadow-md">
-                <CommandInput
-                  placeholder="Search circles..."
-                  value={searchQuery}
-                  onValueChange={setSearchQuery}
-                  className="border-none focus:ring-0"
-                />
-                <CommandList className="max-h-[200px] overflow-auto">
-                  <CommandEmpty>No circles found.</CommandEmpty>
-                  <CommandGroup>
-                    {filteredCircles.map((circle) => (
-                      <CommandItem
-                        key={circle.id}
-                        value={circle.id.toString()}
-                        onSelect={() => setSelectedCircleId(circle.id)}
-                        className="flex items-start gap-2 p-2 cursor-pointer"
-                      >
-                        <div
-                          className="w-3 h-3 mt-1 rounded-full flex-shrink-0"
-                          style={{
-                            backgroundColor: circle.color || "#c5c5c5",
-                          }}
-                        />
-                        <div className="flex-1">
-                          <div className="font-medium">{circle.name}</div>
-                          {circle.description && (
-                            <div className="text-xs text-muted-foreground line-clamp-1">
-                              {circle.description}
-                            </div>
-                          )}
-                          <div className="text-xs text-muted-foreground mt-1">
-                            Visibility: {circle.visibility}
-                          </div>
+              <ScrollArea className="h-[180px] border rounded-md p-2">
+                <RadioGroup
+                  value={selectedCircleId?.toString() || ""}
+                  onValueChange={(value) => setSelectedCircleId(parseInt(value))}
+                >
+                  {availableCircles.map((circle: LocalCircle) => (
+                    <div 
+                      key={circle.id} 
+                      className="flex items-start space-x-2 mb-2 p-2 hover:bg-accent rounded-md"
+                    >
+                      <RadioGroupItem value={circle.id.toString()} id={`circle-${circle.id}`} className="mt-1" />
+                      <Label htmlFor={`circle-${circle.id}`} className="font-normal flex-1 cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <UserCircle className="h-4 w-4 text-primary" />
+                          <span className="font-medium">{circle.name}</span>
                         </div>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
+                        <p className="text-sm text-muted-foreground line-clamp-1">
+                          {circle.description || "No description"}
+                        </p>
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </ScrollArea>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="role-select">Circle Role</Label>
-            <Select
-              value={selectedRole}
-              onValueChange={(value) =>
-                setSelectedRole(value as "control" | "treatment" | "observation")
-              }
-              disabled={!selectedCircleId}
-            >
-              <SelectTrigger id="role-select">
-                <SelectValue placeholder="Select a role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="control">Control</SelectItem>
-                <SelectItem value="treatment">Treatment</SelectItem>
-                <SelectItem value="observation">Observation</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              <span className="font-medium">Control:</span> Baseline group with standard content<br />
-              <span className="font-medium">Treatment:</span> Experimental group with modified content<br />
-              <span className="font-medium">Observation:</span> Circle members can view but not participate
-            </p>
-          </div>
+          {/* Role Selection */}
+          {selectedCircleId && (
+            <div className="space-y-4">
+              <Label>Assign Role</Label>
+              <RadioGroup value={role} onValueChange={(value) => setRole(value as "control" | "treatment" | "observation")}>
+                {Object.entries(roleInfo).map(([key, info]) => (
+                  <div key={key} className="flex items-start space-x-2 border rounded-md p-3 hover:bg-accent">
+                    <RadioGroupItem value={key} id={`role-${key}`} className="mt-1" />
+                    <Label htmlFor={`role-${key}`} className="font-normal flex-1 cursor-pointer">
+                      <div className="flex items-center gap-2 font-medium">
+                        {info.icon}
+                        {info.title}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {info.description}
+                      </p>
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          )}
         </div>
-
+        
         <DialogFooter>
           <Button
             variant="outline"
@@ -283,21 +236,14 @@ const LabCircleAddDialog = ({
           </Button>
           <Button
             onClick={handleAddCircle}
-            disabled={!selectedCircleId || isSubmitting}
+            disabled={isSubmitting || !selectedCircleId}
           >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Adding...
-              </>
-            ) : (
-              "Add Circle"
-            )}
+            {isSubmitting ? "Adding..." : "Add Circle"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default LabCircleAddDialog;

@@ -491,19 +491,28 @@ const LabDetailDialog = ({
             labId={labId}
             open={isAddCircleOpen}
             onOpenChange={setIsAddCircleOpen}
-            onSuccess={handleCircleUpdate}
+            onAddSuccess={handleCircleUpdate}
             existingCircleIds={circles?.map(c => c.id) || []}
           />
           
           {selectedCircle && (
             <LabCircleRoleDialog
               labId={labId}
-              circleId={selectedCircle.id}
+              circle={{
+                id: selectedCircle.id,
+                name: selectedCircle.name,
+                description: selectedCircle.description,
+                color: selectedCircle.color || null,
+                icon: selectedCircle.icon || null,
+                createdAt: selectedCircle.createdAt || null,
+                userId: selectedCircle.userId || 0,
+                isDefault: selectedCircle.isDefault || false,
+                visibility: selectedCircle.visibility || 'private'
+              }}
               currentRole={selectedCircle.role}
-              circleName={selectedCircle.name}
               open={isRoleDialogOpen}
               onOpenChange={setIsRoleDialogOpen}
-              onSuccess={handleCircleUpdate}
+              onRoleUpdateSuccess={handleCircleUpdate}
             />
           )}
           
@@ -516,7 +525,7 @@ const LabDetailDialog = ({
               onOpenChange={(open) => {
                 if (!open) setTargetStatus(null);
               }}
-              onSuccess={() => {
+              onStatusChangeSuccess={() => {
                 refetchLab();
                 onUpdate();
               }}
