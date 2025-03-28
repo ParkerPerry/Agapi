@@ -435,7 +435,8 @@ export const labs = pgTable("labs", {
   circleId: integer("circle_id").references(() => circles.id).notNull(),
   status: text("status", { enum: ["draft", "active", "completed"] }).default("draft").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  launchedAt: timestamp("launched_at"),
+  completedAt: timestamp("completed_at"),
 });
 
 export const labPosts = pgTable("lab_posts", {

@@ -24,12 +24,19 @@ export function CircleSelect({ onCircleSelect, selectedCircleId }: CircleSelectP
   const [selectedId, setSelectedId] = useState<number | undefined>(selectedCircleId);
   
   // Fetch available circles
-  const { data: circles = [], isLoading } = useQuery<Circle[]>({
+  const { data: circlesData, isLoading } = useQuery<{private: Circle[], shared: Circle[], invited: Circle[]}>({
     queryKey: ["/api/circles"],
     queryFn: async () => {
       return await apiRequest("/api/circles");
     },
   });
+  
+  // Combine all circles into a single array
+  const circles = Array.isArray(circlesData) 
+    ? circlesData 
+    : circlesData
+      ? [...(circlesData.private || []), ...(circlesData.shared || []), ...(circlesData.invited || [])]
+      : [];
   
   // Handle circle selection
   const handleSelect = (value: string) => {
