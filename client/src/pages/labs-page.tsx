@@ -463,7 +463,7 @@ export default function LabsPage() {
                                 Loading circles...
                               </SelectItem>
                             ) : circles && circles.length > 0 ? (
-                              circles.map((circle: any) => (
+                              circles.map((circle: Circle) => (
                                 <SelectItem key={circle.id} value={circle.id.toString()}>
                                   {circle.name || `Circle #${circle.id}`}
                                 </SelectItem>
