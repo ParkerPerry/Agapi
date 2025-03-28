@@ -13,7 +13,7 @@ export function LabsPage() {
   const [, navigate] = useLocation();
   
   // Fetch labs
-  const { data: labs = [], isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["/api/labs"],
     queryFn: async () => {
       // Placeholder for development until the backend API is ready
@@ -21,10 +21,14 @@ export function LabsPage() {
         return await apiRequest("/api/labs");
       } catch (error) {
         // Return empty array for now to allow UI development
-        return [];
+        return { labs: [] };
       }
     },
   });
+  
+  // Make sure labs is an array, even if the API isn't implemented yet
+  const labs = Array.isArray(data) ? data : 
+               (data && Array.isArray(data.labs)) ? data.labs : [];
   
   // Handle create new lab
   const handleCreateLab = () => {

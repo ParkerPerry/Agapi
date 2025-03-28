@@ -1555,6 +1555,273 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ======= Labs API Routes =======
+  
+  // Get all user's labs
+  app.get("/api/labs", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labs = await storage.getUserLabs(req.user!.id);
+      res.json(labs);
+    } catch (error) {
+      console.error("Error getting user labs:", error);
+      res.status(500).json({ message: "Failed to get labs" });
+    }
+  });
+
+  // Get a specific lab
+  app.get("/api/labs/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if the user has permission to view this lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to view this lab" });
+      }
+      
+      res.json(lab);
+    } catch (error) {
+      console.error("Error getting lab:", error);
+      res.status(500).json({ message: "Failed to get lab" });
+    }
+  });
+
+  // Create a new lab
+  app.post("/api/labs", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const { name, description, circleId, status } = req.body;
+      
+      // Basic validation
+      if (!name || !circleId) {
+        return res.status(400).json({ message: "Name and circle ID are required" });
+      }
+      
+      // Create the lab
+      const lab = await storage.createLab(req.user!.id, {
+        name,
+        description,
+        circleId,
+        status: status || "draft"
+      });
+      
+      res.status(201).json(lab);
+    } catch (error) {
+      console.error("Error creating lab:", error);
+      res.status(500).json({ message: "Failed to create lab" });
+    }
+  });
+
+  // Update a lab
+  app.put("/api/labs/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if the user has permission to update this lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to update this lab" });
+      }
+      
+      const { name, description, circleId, status } = req.body;
+      
+      // Update the lab
+      const updatedLab = await storage.updateLab(labId, {
+        name,
+        description,
+        circleId,
+        status
+      });
+      
+      res.json(updatedLab);
+    } catch (error) {
+      console.error("Error updating lab:", error);
+      res.status(500).json({ message: "Failed to update lab" });
+    }
+  });
+
+  // Delete a lab
+  app.delete("/api/labs/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if the user has permission to delete this lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to delete this lab" });
+      }
+      
+      // Delete the lab
+      await storage.deleteLab(labId);
+      
+      res.sendStatus(204);
+    } catch (error) {
+      console.error("Error deleting lab:", error);
+      res.status(500).json({ message: "Failed to delete lab" });
+    }
+  });
+
+  // Get lab posts
+  app.get("/api/labs/:id/posts", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if the user has permission to view this lab's posts
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to view this lab's posts" });
+      }
+      
+      const posts = await storage.getLabPosts(labId);
+      res.json(posts);
+    } catch (error) {
+      console.error("Error getting lab posts:", error);
+      res.status(500).json({ message: "Failed to get lab posts" });
+    }
+  });
+
+  // Create a lab post
+  app.post("/api/labs/:id/posts", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if the user has permission to add posts to this lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to add posts to this lab" });
+      }
+      
+      const { content, postOrder, scheduledFor } = req.body;
+      
+      // Basic validation
+      if (!content) {
+        return res.status(400).json({ message: "Content is required" });
+      }
+      
+      // Count existing posts for this lab to determine post order if not provided
+      const existingPosts = await storage.getLabPosts(labId);
+      const nextOrder = postOrder || existingPosts.length + 1;
+      
+      // Create the lab post
+      const post = await storage.createLabPost({
+        labId,
+        content,
+        postOrder: nextOrder,
+        status: "pending",
+        scheduledFor: scheduledFor ? new Date(scheduledFor) : undefined
+      });
+      
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Error creating lab post:", error);
+      res.status(500).json({ message: "Failed to create lab post" });
+    }
+  });
+
+  // Update a lab post
+  app.put("/api/labs/posts/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const postId = parseInt(req.params.id);
+      const { content, postOrder, status, scheduledFor } = req.body;
+      
+      // Get the post to verify ownership through the lab
+      const posts = await storage.getLabPosts(parseInt(req.body.labId));
+      const post = posts.find(p => p.id === postId);
+      
+      if (!post) {
+        return res.status(404).json({ message: "Lab post not found" });
+      }
+      
+      // Get the lab to verify ownership
+      const lab = await storage.getLab(post.labId);
+      
+      if (!lab || lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to update this post" });
+      }
+      
+      // Update the lab post
+      const updatedPost = await storage.updateLabPost(postId, {
+        content,
+        postOrder,
+        status,
+        scheduledFor: scheduledFor ? new Date(scheduledFor) : undefined
+      });
+      
+      res.json(updatedPost);
+    } catch (error) {
+      console.error("Error updating lab post:", error);
+      res.status(500).json({ message: "Failed to update lab post" });
+    }
+  });
+
+  // Delete a lab post
+  app.delete("/api/labs/posts/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const postId = parseInt(req.params.id);
+      const labId = parseInt(req.query.labId as string);
+      
+      if (!labId) {
+        return res.status(400).json({ message: "Lab ID is required" });
+      }
+      
+      // Get the lab to verify ownership
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to delete this post" });
+      }
+      
+      // Delete the lab post
+      await storage.deleteLabPost(postId);
+      
+      res.sendStatus(204);
+    } catch (error) {
+      console.error("Error deleting lab post:", error);
+      res.status(500).json({ message: "Failed to delete lab post" });
+    }
+  });
+
   // Register NFT blockchain routes
   app.use("/api/nft", nftRoutes);
   console.log("[API] NFT routes registered");

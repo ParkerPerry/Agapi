@@ -5,10 +5,12 @@ import {
   Notification, InsertNotification, DirectChat, InsertDirectChat,
   AiFollowerCollective, InsertAiFollowerCollective, 
   AiFollowerCollectiveMember, InsertAiFollowerCollectiveMember,
+  Lab, InsertLab, LabPost, InsertLabPost,
   // Add table imports
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
-  notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers
+  notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers,
+  labs, labPosts
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
@@ -97,6 +99,19 @@ export interface IStorage {
   // Direct chat methods
   createDirectChatMessage(message: Omit<InsertDirectChat, "createdAt">): Promise<DirectChat>;
   getDirectChatHistory(userId: number, aiFollowerId: number, limit?: number): Promise<DirectChat[]>;
+  
+  // Lab methods
+  createLab(userId: number, lab: InsertLab): Promise<Lab>;
+  getLab(id: number): Promise<Lab | undefined>;
+  getUserLabs(userId: number): Promise<Lab[]>;
+  updateLab(id: number, updates: Partial<InsertLab>): Promise<Lab>;
+  deleteLab(id: number): Promise<void>;
+  
+  // Lab posts methods
+  createLabPost(labPost: InsertLabPost): Promise<LabPost>;
+  getLabPosts(labId: number): Promise<LabPost[]>;
+  updateLabPost(id: number, updates: Partial<InsertLabPost>): Promise<LabPost>;
+  deleteLabPost(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1214,6 +1229,161 @@ export class DatabaseStorage implements IStorage {
       return collectives as AiFollowerCollective[];
     } catch (error) {
       console.error("[Storage] Error getting follower collectives:", error);
+      throw error;
+    }
+  }
+
+  // Lab methods implementation
+  async createLab(userId: number, lab: InsertLab): Promise<Lab> {
+    try {
+      console.log("[Storage] Creating lab for user:", userId);
+      const [newLab] = (await db
+        .insert(labs)
+        .values({ ...lab, userId })
+        .returning()) as Lab[];
+        
+      console.log("[Storage] Created lab:", newLab.id);
+      return newLab;
+    } catch (error) {
+      console.error("[Storage] Error creating lab:", error);
+      throw error;
+    }
+  }
+  
+  async getLab(id: number): Promise<Lab | undefined> {
+    try {
+      console.log("[Storage] Getting lab:", id);
+      const [lab] = await db
+        .select()
+        .from(labs)
+        .where(eq(labs.id, id));
+        
+      console.log("[Storage] Retrieved lab:", lab?.id);
+      return lab;
+    } catch (error) {
+      console.error("[Storage] Error getting lab:", error);
+      throw error;
+    }
+  }
+  
+  async getUserLabs(userId: number): Promise<Lab[]> {
+    try {
+      console.log("[Storage] Getting labs for user:", userId);
+      const userLabs = await db
+        .select()
+        .from(labs)
+        .where(eq(labs.userId, userId))
+        .orderBy(desc(labs.createdAt));
+        
+      console.log("[Storage] Retrieved labs count:", userLabs.length);
+      return userLabs;
+    } catch (error) {
+      console.error("[Storage] Error getting user labs:", error);
+      throw error;
+    }
+  }
+  
+  async updateLab(id: number, updates: Partial<InsertLab>): Promise<Lab> {
+    try {
+      console.log("[Storage] Updating lab:", id, "with:", updates);
+      const [updatedLab] = (await db
+        .update(labs)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(eq(labs.id, id))
+        .returning()) as Lab[];
+        
+      console.log("[Storage] Updated lab:", updatedLab.id);
+      return updatedLab;
+    } catch (error) {
+      console.error("[Storage] Error updating lab:", error);
+      throw error;
+    }
+  }
+  
+  async deleteLab(id: number): Promise<void> {
+    try {
+      console.log("[Storage] Deleting lab:", id);
+      
+      // First delete all associated lab posts
+      await db
+        .delete(labPosts)
+        .where(eq(labPosts.labId, id));
+        
+      console.log("[Storage] Deleted lab posts for lab:", id);
+      
+      // Then delete the lab itself
+      await db
+        .delete(labs)
+        .where(eq(labs.id, id));
+        
+      console.log("[Storage] Successfully deleted lab:", id);
+    } catch (error) {
+      console.error("[Storage] Error deleting lab:", error);
+      throw error;
+    }
+  }
+  
+  // Lab posts methods implementation
+  async createLabPost(labPost: InsertLabPost): Promise<LabPost> {
+    try {
+      console.log("[Storage] Creating lab post for lab:", labPost.labId);
+      const [newLabPost] = (await db
+        .insert(labPosts)
+        .values(labPost)
+        .returning()) as LabPost[];
+        
+      console.log("[Storage] Created lab post:", newLabPost.id);
+      return newLabPost;
+    } catch (error) {
+      console.error("[Storage] Error creating lab post:", error);
+      throw error;
+    }
+  }
+  
+  async getLabPosts(labId: number): Promise<LabPost[]> {
+    try {
+      console.log("[Storage] Getting posts for lab:", labId);
+      const posts = await db
+        .select()
+        .from(labPosts)
+        .where(eq(labPosts.labId, labId))
+        .orderBy(asc(labPosts.postOrder));
+        
+      console.log("[Storage] Retrieved lab posts count:", posts.length);
+      return posts;
+    } catch (error) {
+      console.error("[Storage] Error getting lab posts:", error);
+      throw error;
+    }
+  }
+  
+  async updateLabPost(id: number, updates: Partial<InsertLabPost>): Promise<LabPost> {
+    try {
+      console.log("[Storage] Updating lab post:", id);
+      const [updatedLabPost] = (await db
+        .update(labPosts)
+        .set(updates)
+        .where(eq(labPosts.id, id))
+        .returning()) as LabPost[];
+        
+      console.log("[Storage] Updated lab post:", updatedLabPost.id);
+      return updatedLabPost;
+    } catch (error) {
+      console.error("[Storage] Error updating lab post:", error);
+      throw error;
+    }
+  }
+  
+  async deleteLabPost(id: number): Promise<void> {
+    try {
+      console.log("[Storage] Deleting lab post:", id);
+      await db
+        .delete(labPosts)
+        .where(eq(labPosts.id, id));
+        
+      console.log("[Storage] Successfully deleted lab post:", id);
+    } catch (error) {
+      console.error("[Storage] Error deleting lab post:", error);
       throw error;
     }
   }
