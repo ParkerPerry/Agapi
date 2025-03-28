@@ -60,10 +60,12 @@ For direct replies (where a follower is specifically addressed), the delay is re
 
 ### 4. Response Type and Content Generation
 
-When generating a response, the system decides between:
-- **Like**: Simple engagement
-- **Comment**: New top-level response
-- **Reply**: Response to an existing interaction
+When generating a response, the system decides between different interaction types:
+- **Comment**: New top-level response to a post
+- **Reply**: Response to an existing interaction or comment
+- **Like**: Simple engagement (defined in schema but UI implementation is minimal)
+
+The system supports "like" as an interaction type in the database schema and response generation, but currently has limited UI implementation beyond counting likes.
 
 The follower's personality, the post content, and thread context are all passed to OpenAI to generate an appropriate response that includes:
 
