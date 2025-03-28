@@ -1,0 +1,50 @@
+Storage] Creating lab: { userId: 1, name: 'Ledger', experimentType: 'a_b_test' }
+[Storage] Error creating lab: error: null value in column "circle_id" of relation "labs" violates not-null constraint
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createLab (/home/runner/workspace/server/storage.ts:1247:25)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1618:22) {
+  length: 353,
+  severity: 'ERROR',
+  code: '23502',
+  detail: 'Failing row contains (7, 1, Ledger, ledger hw testing, null, draft, 2025-03-28 14:59:37.149741, null, null, a_b_test, {"metrics": []}, what sells hw wallets, 2025-03-28 14:59:37.116).',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'labs',
+  column: 'circle_id',
+  dataType: undefined,
+  constraint: undefined,
+  file: 'execMain.c',
+  line: '2006',
+  routine: 'ExecConstraints'
+}
+[API] Error creating lab: error: null value in column "circle_id" of relation "labs" violates not-null constraint
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createLab (/home/runner/workspace/server/storage.ts:1247:25)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1618:22) {
+  length: 353,
+  severity: 'ERROR',
+  code: '23502',
+  detail: 'Failing row contains (7, 1, Ledger, ledger hw testing, null, draft, 2025-03-28 14:59:37.149741, null, null, a_b_test, {"metrics": []}, what sells hw wallets, 2025-03-28 14:59:37.116).',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'labs',
+  column: 'circle_id',
+  dataType: undefined,
+  constraint: undefined,
+  file: 'execMain.c',
+  line: '2006',
+  routine: 'ExecConstraints'
+}
+2:59:37 PM [express] POST /api/labs 500 in 395ms :: {"message":"Failed to create lab"}

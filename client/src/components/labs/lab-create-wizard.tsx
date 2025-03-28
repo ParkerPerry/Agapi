@@ -209,25 +209,48 @@ const LabCreateWizard = ({
   const onSubmit = async (data: LabFormValues) => {
     setIsSubmitting(true);
     try {
-      // Extract the circles data from the form and send as separate data
-      // This is not sent directly to the lab creation endpoint
+      // Extract the circles data from the form
       const { circles, ...labData } = data;
       
-      // Create the lab first
-      const createdLab = await apiRequest("/api/labs", "POST", labData);
+      let createdLab;
       
-      // Then associate the circles with the lab
-      if (createdLab && circles && circles.length > 0) {
-        // Add each circle to the lab with its role
-        const promises = circles.map(circleObj => 
-          apiRequest("/api/labs/circles", "POST", {
-            labId: createdLab.id,
-            circleId: circleObj.id,
-            role: circleObj.role
-          })
-        );
+      // Check if we have circles selected
+      if (circles && circles.length > 0) {
+        // If circles are selected, pass the first one directly in the lab creation
+        const firstCircle = circles[0];
         
-        await Promise.all(promises);
+        // Include the first circle's ID directly with the lab
+        const updatedLabData = {
+          ...labData,
+          circleId: firstCircle.id
+        };
+        
+        // Create the lab with the first circle associated
+        createdLab = await apiRequest("/api/labs", "POST", updatedLabData);
+        
+        // If there are additional circles beyond the first one, add them separately
+        if (circles.length > 1) {
+          // Add each additional circle to the lab with its role
+          const promises = circles.slice(1).map(circleObj => 
+            apiRequest("/api/labs/circles", "POST", {
+              labId: createdLab.id,
+              circleId: circleObj.id,
+              role: circleObj.role
+            })
+          );
+          
+          await Promise.all(promises);
+        }
+        
+        // Also update the role of the first circle if it's not the default
+        if (firstCircle.role !== "treatment") {
+          await apiRequest(`/api/labs/${createdLab.id}/circles/${firstCircle.id}`, "PATCH", {
+            role: firstCircle.role
+          });
+        }
+      } else {
+        // No circles selected, create lab without circle association
+        createdLab = await apiRequest("/api/labs", "POST", labData);
       }
       
       toast({

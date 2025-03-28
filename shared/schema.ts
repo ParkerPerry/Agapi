@@ -438,6 +438,8 @@ export const labs = pgTable("labs", {
   userId: integer("user_id").references(() => users.id).notNull(),
   name: text("name").notNull(),
   description: text("description"),
+  // Added circleId field to match the existing database schema, but make it nullable
+  circleId: integer("circle_id").references(() => circles.id),
   experimentType: text("experiment_type", { 
     enum: ["a_b_test", "multivariate", "exploration"] 
   }).notNull(),
@@ -498,6 +500,7 @@ export const insertLabSchema = createInsertSchema(labs)
     experimentType: true,
     goals: true,
     successMetrics: true,
+    circleId: true, // Added circleId to allow direct association with a circle (optional)
   });
 
 export const insertLabCircleSchema = createInsertSchema(labCircles)
