@@ -4,7 +4,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { NavBar } from "@/components/nav-bar";
 import { useCreateLab, useDeleteLab } from "@/lib/mutations/lab-mutations";
 import { useLabs, Lab } from "@/lib/queries/lab-queries";
-import { useCircles, Circle } from "@/lib/queries/circle-queries";
+import { useCircles } from "../lib/queries/circle-queries";
+import type { Circle } from "../lib/queries/circle-queries";
 import {
   Card,
   CardContent,
