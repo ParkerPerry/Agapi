@@ -8,7 +8,7 @@ import { ResponseScheduler } from "./response-scheduler";
 import { ThreadContextManager } from "./context-manager";
 import { getAvailableTools } from "./tools";
 import { IStorage } from "./storage";
-import { User } from "@shared/schema";
+import { User, insertLabSchema } from "@shared/schema";
 import nftRoutes from "./blockchain/routes";
 import { cloneFollowers } from "./clone-service";
 
@@ -1558,6 +1558,299 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register NFT blockchain routes
   app.use("/api/nft", nftRoutes);
   console.log("[API] NFT routes registered");
+
+  // Lab Management Routes
+  console.log("[API] Registering lab management routes");
+  
+  // Get all labs for the current user
+  app.get("/api/labs", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const userId = req.user!.id;
+      const labs = await storage.getUserLabs(userId);
+      res.json(labs);
+    } catch (error) {
+      console.error("[API] Error getting user labs:", error);
+      res.status(500).json({ message: "Failed to get user labs" });
+    }
+  });
+
+  // Get a specific lab by ID
+  app.get("/api/labs/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      res.json(lab);
+    } catch (error) {
+      console.error("[API] Error getting lab:", error);
+      res.status(500).json({ message: "Failed to get lab" });
+    }
+  });
+
+  // Create a new lab
+  app.post("/api/labs", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const userId = req.user!.id;
+      const parsedBody = insertLabSchema.safeParse(req.body);
+
+      if (!parsedBody.success) {
+        return res.status(400).json({ 
+          message: "Invalid lab data", 
+          errors: parsedBody.error.errors 
+        });
+      }
+
+      const newLab = await storage.createLab(userId, parsedBody.data);
+      res.status(201).json(newLab);
+    } catch (error) {
+      console.error("[API] Error creating lab:", error);
+      res.status(500).json({ message: "Failed to create lab" });
+    }
+  });
+
+  // Update an existing lab
+  app.patch("/api/labs/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const updatedLab = await storage.updateLab(labId, req.body);
+      res.json(updatedLab);
+    } catch (error) {
+      console.error("[API] Error updating lab:", error);
+      res.status(500).json({ message: "Failed to update lab" });
+    }
+  });
+
+  // Delete a lab
+  app.delete("/api/labs/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      await storage.deleteLab(labId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("[API] Error deleting lab:", error);
+      res.status(500).json({ message: "Failed to delete lab" });
+    }
+  });
+
+  // Duplicate a lab
+  app.post("/api/labs/:id/duplicate", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const { name } = req.body;
+      const lab = await storage.getLab(labId);
+
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const duplicatedLab = await storage.duplicateLab(labId, name);
+      res.status(201).json(duplicatedLab);
+    } catch (error) {
+      console.error("[API] Error duplicating lab:", error);
+      res.status(500).json({ message: "Failed to duplicate lab" });
+    }
+  });
+
+  // Update lab status
+  app.patch("/api/labs/:id/status", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status || !["draft", "active", "completed", "archived"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status value" });
+      }
+
+      const lab = await storage.getLab(labId);
+
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const updatedLab = await storage.updateLabStatus(labId, status);
+      res.json(updatedLab);
+    } catch (error) {
+      console.error("[API] Error updating lab status:", error);
+      res.status(500).json({ message: "Failed to update lab status" });
+    }
+  });
+
+  // Get circles associated with a lab
+  app.get("/api/labs/:id/circles", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const circles = await storage.getLabCircles(labId);
+      res.json(circles);
+    } catch (error) {
+      console.error("[API] Error getting lab circles:", error);
+      res.status(500).json({ message: "Failed to get lab circles" });
+    }
+  });
+
+  // Add a circle to a lab
+  app.post("/api/labs/:id/circles", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const { circleId, role } = req.body;
+
+      if (!circleId) {
+        return res.status(400).json({ message: "Circle ID is required" });
+      }
+
+      if (role && !["control", "treatment", "observation"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role value" });
+      }
+
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership of the lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized to access this lab" });
+      }
+
+      // Verify the user has permission to access the circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Unauthorized to access this circle" });
+      }
+
+      const labCircle = await storage.addCircleToLab(labId, circleId, role);
+      res.status(201).json(labCircle);
+    } catch (error) {
+      console.error("[API] Error adding circle to lab:", error);
+      res.status(500).json({ message: "Failed to add circle to lab" });
+    }
+  });
+
+  // Remove a circle from a lab
+  app.delete("/api/labs/:labId/circles/:circleId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.labId);
+      const circleId = parseInt(req.params.circleId);
+
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership of the lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      await storage.removeCircleFromLab(labId, circleId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("[API] Error removing circle from lab:", error);
+      res.status(500).json({ message: "Failed to remove circle from lab" });
+    }
+  });
+
+  // Update a circle's role in a lab
+  app.patch("/api/labs/:labId/circles/:circleId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.labId);
+      const circleId = parseInt(req.params.circleId);
+      const { role } = req.body;
+
+      if (!role || !["control", "treatment", "observation"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role value" });
+      }
+
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership of the lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const updatedLabCircle = await storage.updateLabCircleRole(labId, circleId, role);
+      res.json(updatedLabCircle);
+    } catch (error) {
+      console.error("[API] Error updating circle role in lab:", error);
+      res.status(500).json({ message: "Failed to update circle role in lab" });
+    }
+  });
 
   return httpServer;
 }

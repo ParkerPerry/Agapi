@@ -5,10 +5,12 @@ import {
   Notification, InsertNotification, DirectChat, InsertDirectChat,
   AiFollowerCollective, InsertAiFollowerCollective, 
   AiFollowerCollectiveMember, InsertAiFollowerCollectiveMember,
+  Lab, InsertLab, LabCircle, InsertLabCircle,
   // Add table imports
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
-  notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers
+  notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers,
+  labs, labCircles
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
@@ -97,6 +99,21 @@ export interface IStorage {
   // Direct chat methods
   createDirectChatMessage(message: Omit<InsertDirectChat, "createdAt">): Promise<DirectChat>;
   getDirectChatHistory(userId: number, aiFollowerId: number, limit?: number): Promise<DirectChat[]>;
+  
+  // Lab methods
+  createLab(userId: number, lab: InsertLab): Promise<Lab>;
+  getLab(id: number): Promise<Lab | undefined>;
+  getUserLabs(userId: number): Promise<Lab[]>;
+  updateLab(id: number, updates: Partial<Lab>): Promise<Lab>;
+  deleteLab(id: number): Promise<void>;
+  duplicateLab(id: number, newName?: string): Promise<Lab>;
+  updateLabStatus(id: number, status: "draft" | "active" | "completed" | "archived"): Promise<Lab>;
+  
+  // Lab-Circle methods
+  addCircleToLab(labId: number, circleId: number, role?: "control" | "treatment" | "observation"): Promise<LabCircle>;
+  getLabCircles(labId: number): Promise<(Circle & { role: "control" | "treatment" | "observation" })[]>;
+  removeCircleFromLab(labId: number, circleId: number): Promise<void>;
+  updateLabCircleRole(labId: number, circleId: number, role: "control" | "treatment" | "observation"): Promise<LabCircle>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1214,6 +1231,299 @@ export class DatabaseStorage implements IStorage {
       return collectives as AiFollowerCollective[];
     } catch (error) {
       console.error("[Storage] Error getting follower collectives:", error);
+      throw error;
+    }
+  }
+
+  // Lab Management Methods
+  async createLab(userId: number, lab: InsertLab): Promise<Lab> {
+    try {
+      console.log("[Storage] Creating lab:", {
+        userId,
+        name: lab.name,
+        experimentType: lab.experimentType
+      });
+      
+      const [newLab] = (await db
+        .insert(labs)
+        .values({ 
+          ...lab, 
+          userId,
+          updatedAt: new Date() 
+        })
+        .returning()) as Lab[];
+      
+      console.log("[Storage] Created lab:", {
+        id: newLab.id,
+        name: newLab.name
+      });
+      
+      return newLab;
+    } catch (error) {
+      console.error("[Storage] Error creating lab:", error);
+      throw error;
+    }
+  }
+  
+  async getLab(id: number): Promise<Lab | undefined> {
+    try {
+      console.log("[Storage] Getting lab by ID:", id);
+      
+      const [lab] = await db
+        .select()
+        .from(labs)
+        .where(eq(labs.id, id));
+      
+      if (lab) {
+        console.log("[Storage] Retrieved lab:", {
+          id: lab.id,
+          name: lab.name,
+          status: lab.status
+        });
+      } else {
+        console.log("[Storage] Lab not found");
+      }
+      
+      return lab;
+    } catch (error) {
+      console.error("[Storage] Error getting lab:", error);
+      throw error;
+    }
+  }
+  
+  async getUserLabs(userId: number): Promise<Lab[]> {
+    try {
+      console.log("[Storage] Getting labs for user:", userId);
+      
+      const userLabs = await db
+        .select()
+        .from(labs)
+        .where(eq(labs.userId, userId))
+        .orderBy(desc(labs.updatedAt));
+      
+      console.log("[Storage] Retrieved labs count:", userLabs.length);
+      
+      return userLabs;
+    } catch (error) {
+      console.error("[Storage] Error getting user labs:", error);
+      throw error;
+    }
+  }
+  
+  async updateLab(id: number, updates: Partial<Lab>): Promise<Lab> {
+    try {
+      console.log("[Storage] Updating lab:", id, "with:", updates);
+      
+      // Always update the updatedAt timestamp
+      const updatesWithTimestamp = {
+        ...updates,
+        updatedAt: new Date()
+      };
+      
+      const [updatedLab] = (await db
+        .update(labs)
+        .set(updatesWithTimestamp)
+        .where(eq(labs.id, id))
+        .returning()) as Lab[];
+      
+      console.log("[Storage] Updated lab successfully:", {
+        id: updatedLab.id,
+        name: updatedLab.name
+      });
+      
+      return updatedLab;
+    } catch (error) {
+      console.error("[Storage] Error updating lab:", error);
+      throw error;
+    }
+  }
+  
+  async deleteLab(id: number): Promise<void> {
+    try {
+      console.log("[Storage] Deleting lab:", id);
+      
+      // First delete all circle associations
+      await db
+        .delete(labCircles)
+        .where(eq(labCircles.labId, id));
+      
+      console.log("[Storage] Deleted lab circles associations");
+      
+      // Then delete the lab itself
+      await db
+        .delete(labs)
+        .where(eq(labs.id, id));
+      
+      console.log("[Storage] Successfully deleted lab");
+    } catch (error) {
+      console.error("[Storage] Error deleting lab:", error);
+      throw error;
+    }
+  }
+  
+  async duplicateLab(id: number, newName?: string): Promise<Lab> {
+    try {
+      console.log("[Storage] Duplicating lab:", id);
+      
+      // First get the original lab
+      const originalLab = await this.getLab(id);
+      
+      if (!originalLab) {
+        throw new Error(`Lab with id ${id} not found`);
+      }
+      
+      // Create a new lab with the same properties
+      const labCopy: InsertLab = {
+        name: newName || `${originalLab.name} (Copy)`,
+        description: originalLab.description,
+        experimentType: originalLab.experimentType,
+        goals: originalLab.goals,
+        successMetrics: originalLab.successMetrics
+      };
+      
+      // Create the new lab
+      const newLab = await this.createLab(originalLab.userId, labCopy);
+      
+      console.log("[Storage] Created duplicate lab:", {
+        originalId: id,
+        newId: newLab.id,
+        name: newLab.name
+      });
+      
+      // Get all circles associated with the original lab
+      const originalCircles = await this.getLabCircles(id);
+      
+      // Associate the same circles with the new lab
+      for (const circle of originalCircles) {
+        await this.addCircleToLab(newLab.id, circle.id, circle.role as "control" | "treatment" | "observation");
+      }
+      
+      console.log("[Storage] Copied circle associations to new lab");
+      
+      return newLab;
+    } catch (error) {
+      console.error("[Storage] Error duplicating lab:", error);
+      throw error;
+    }
+  }
+  
+  async updateLabStatus(id: number, status: "draft" | "active" | "completed" | "archived"): Promise<Lab> {
+    try {
+      console.log("[Storage] Updating lab status:", id, "to", status);
+      
+      return await this.updateLab(id, { status });
+    } catch (error) {
+      console.error("[Storage] Error updating lab status:", error);
+      throw error;
+    }
+  }
+  
+  // Lab-Circle Methods
+  async addCircleToLab(labId: number, circleId: number, role: "control" | "treatment" | "observation" = "treatment"): Promise<LabCircle> {
+    try {
+      console.log("[Storage] Adding circle to lab:", {
+        labId,
+        circleId,
+        role
+      });
+      
+      const [labCircle] = (await db
+        .insert(labCircles)
+        .values({ labId, circleId, role })
+        .returning()) as LabCircle[];
+      
+      // Update the lab's updatedAt timestamp
+      await this.updateLab(labId, {});
+      
+      console.log("[Storage] Added circle to lab:", {
+        id: labCircle.id,
+        labId: labCircle.labId,
+        circleId: labCircle.circleId,
+        role: labCircle.role
+      });
+      
+      return labCircle;
+    } catch (error) {
+      console.error("[Storage] Error adding circle to lab:", error);
+      throw error;
+    }
+  }
+  
+  async getLabCircles(labId: number): Promise<(Circle & { role: "control" | "treatment" | "observation" })[]> {
+    try {
+      console.log("[Storage] Getting circles for lab:", labId);
+      
+      const labCirclesData = await db
+        .select({
+          ...circles,
+          role: labCircles.role
+        })
+        .from(labCircles)
+        .innerJoin(circles, eq(labCircles.circleId, circles.id))
+        .where(eq(labCircles.labId, labId));
+      
+      console.log("[Storage] Retrieved lab circles count:", labCirclesData.length);
+      
+      return labCirclesData;
+    } catch (error) {
+      console.error("[Storage] Error getting lab circles:", error);
+      throw error;
+    }
+  }
+  
+  async removeCircleFromLab(labId: number, circleId: number): Promise<void> {
+    try {
+      console.log("[Storage] Removing circle from lab:", {
+        labId,
+        circleId
+      });
+      
+      await db
+        .delete(labCircles)
+        .where(
+          and(
+            eq(labCircles.labId, labId),
+            eq(labCircles.circleId, circleId)
+          )
+        );
+      
+      // Update the lab's updatedAt timestamp
+      await this.updateLab(labId, {});
+      
+      console.log("[Storage] Removed circle from lab successfully");
+    } catch (error) {
+      console.error("[Storage] Error removing circle from lab:", error);
+      throw error;
+    }
+  }
+  
+  async updateLabCircleRole(labId: number, circleId: number, role: "control" | "treatment" | "observation"): Promise<LabCircle> {
+    try {
+      console.log("[Storage] Updating lab circle role:", {
+        labId,
+        circleId,
+        role
+      });
+      
+      const [updatedLabCircle] = (await db
+        .update(labCircles)
+        .set({ role })
+        .where(
+          and(
+            eq(labCircles.labId, labId),
+            eq(labCircles.circleId, circleId)
+          )
+        )
+        .returning()) as LabCircle[];
+      
+      // Update the lab's updatedAt timestamp
+      await this.updateLab(labId, {});
+      
+      console.log("[Storage] Updated lab circle role successfully");
+      
+      return updatedLabCircle;
+    } catch (error) {
+      console.error("[Storage] Error updating lab circle role:", error);
       throw error;
     }
   }

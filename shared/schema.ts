@@ -431,3 +431,82 @@ export type AiFollowerCollective = typeof aiFollowerCollectives.$inferSelect;
 export type AiFollowerCollectiveMember = typeof aiFollowerCollectiveMembers.$inferSelect;
 export type InsertAiFollowerCollective = z.infer<typeof insertAiFollowerCollectiveSchema>;
 export type InsertAiFollowerCollectiveMember = z.infer<typeof insertAiFollowerCollectiveMemberSchema>;
+
+// Table for content experiment labs
+export const labs = pgTable("labs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  experimentType: text("experiment_type", { 
+    enum: ["a_b_test", "multivariate", "exploration"] 
+  }).notNull(),
+  status: text("status", { 
+    enum: ["draft", "active", "completed", "archived"] 
+  }).default("draft").notNull(),
+  goals: text("goals"),
+  successMetrics: json("success_metrics").$type<{
+    metrics: Array<{
+      name: string;
+      target: number;
+      priority: "high" | "medium" | "low";
+    }>;
+  }>(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Join table for labs and circles
+export const labCircles = pgTable("lab_circles", {
+  id: serial("id").primaryKey(),
+  labId: integer("lab_id").references(() => labs.id).notNull(),
+  circleId: integer("circle_id").references(() => circles.id).notNull(),
+  role: text("role", { 
+    enum: ["control", "treatment", "observation"] 
+  }).default("treatment").notNull(),
+  addedAt: timestamp("added_at").defaultNow(),
+});
+
+// Relationships for labs
+export const labsRelations = relations(labs, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [labs.userId],
+    references: [users.id],
+  }),
+  circles: many(labCircles),
+}));
+
+// Relationships for lab circles
+export const labCirclesRelations = relations(labCircles, ({ one }) => ({
+  lab: one(labs, {
+    fields: [labCircles.labId],
+    references: [labs.id],
+  }),
+  circle: one(circles, {
+    fields: [labCircles.circleId],
+    references: [circles.id],
+  }),
+}));
+
+// Insert schemas for labs
+export const insertLabSchema = createInsertSchema(labs)
+  .pick({
+    name: true,
+    description: true,
+    experimentType: true,
+    goals: true,
+    successMetrics: true,
+  });
+
+export const insertLabCircleSchema = createInsertSchema(labCircles)
+  .pick({
+    labId: true,
+    circleId: true,
+    role: true,
+  });
+
+// Type definitions for labs
+export type Lab = typeof labs.$inferSelect;
+export type LabCircle = typeof labCircles.$inferSelect;
+export type InsertLab = z.infer<typeof insertLabSchema>;
+export type InsertLabCircle = z.infer<typeof insertLabCircleSchema>;
