@@ -432,11 +432,19 @@ export const labs = pgTable("labs", {
   name: text("name").notNull(),
   description: text("description"),
   userId: integer("user_id").references(() => users.id).notNull(),
-  circleId: integer("circle_id").references(() => circles.id).notNull(),
+  circleId: integer("circle_id").references(() => circles.id), // Keep for backward compatibility
   status: text("status", { enum: ["draft", "active", "completed"] }).default("draft").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   launchedAt: timestamp("launched_at"),
   completedAt: timestamp("completed_at"),
+});
+
+// Many-to-many relationship between labs and circles
+export const labCircles = pgTable("lab_circles", {
+  id: serial("id").primaryKey(),
+  labId: integer("lab_id").references(() => labs.id).notNull(),
+  circleId: integer("circle_id").references(() => circles.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const labPosts = pgTable("lab_posts", {
@@ -460,7 +468,20 @@ export const labsRelations = relations(labs, ({ one, many }) => ({
     fields: [labs.circleId],
     references: [circles.id],
   }),
+  circles: many(labCircles),
   posts: many(labPosts),
+}));
+
+// Relations for lab circles (many-to-many)
+export const labCirclesRelations = relations(labCircles, ({ one }) => ({
+  lab: one(labs, {
+    fields: [labCircles.labId],
+    references: [labs.id],
+  }),
+  circle: one(circles, {
+    fields: [labCircles.circleId],
+    references: [circles.id],
+  }),
 }));
 
 export const labPostsRelations = relations(labPosts, ({ one }) => ({
@@ -475,8 +496,14 @@ export const insertLabSchema = createInsertSchema(labs)
   .pick({
     name: true,
     description: true,
-    circleId: true,
+    circleId: true, // Keep for backward compatibility
     status: true,
+  });
+
+export const insertLabCircleSchema = createInsertSchema(labCircles)
+  .pick({
+    labId: true,
+    circleId: true,
   });
 
 export const insertLabPostSchema = createInsertSchema(labPosts)
@@ -491,8 +518,10 @@ export const insertLabPostSchema = createInsertSchema(labPosts)
 // Type definitions for labs
 export type Lab = typeof labs.$inferSelect;
 export type LabPost = typeof labPosts.$inferSelect;
+export type LabCircle = typeof labCircles.$inferSelect;
 export type InsertLab = z.infer<typeof insertLabSchema>;
 export type InsertLabPost = z.infer<typeof insertLabPostSchema>;
+export type InsertLabCircle = z.infer<typeof insertLabCircleSchema>;
 
 // Type definitions for collectives
 export type AiFollowerCollective = typeof aiFollowerCollectives.$inferSelect;

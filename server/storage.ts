@@ -1266,6 +1266,65 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  // Get all circles associated with a lab
+  async getLabCircles(labId: number): Promise<Circle[]> {
+    try {
+      console.log("[Storage] Getting circles for lab:", labId);
+      const results = await db
+        .select({
+          circle: circles
+        })
+        .from(labCircles)
+        .innerJoin(circles, eq(labCircles.circleId, circles.id))
+        .where(eq(labCircles.labId, labId));
+        
+      const labCirclesList = results.map(result => result.circle);
+      console.log("[Storage] Retrieved lab circles count:", labCirclesList.length);
+      return labCirclesList;
+    } catch (error) {
+      console.error("[Storage] Error getting lab circles:", error);
+      return [];
+    }
+  }
+  
+  // Add a circle to a lab (many-to-many relationship)
+  async addCircleToLab(labId: number, circleId: number): Promise<LabCircle> {
+    try {
+      console.log("[Storage] Adding circle to lab. LabId:", labId, "CircleId:", circleId);
+      const [labCircle] = await db
+        .insert(labCircles)
+        .values({
+          labId,
+          circleId
+        })
+        .returning();
+        
+      console.log("[Storage] Added circle to lab:", labCircle.id);
+      return labCircle;
+    } catch (error) {
+      console.error("[Storage] Error adding circle to lab:", error);
+      throw error;
+    }
+  }
+  
+  // Remove a circle from a lab
+  async removeCircleFromLab(labId: number, circleId: number): Promise<void> {
+    try {
+      console.log("[Storage] Removing circle from lab. LabId:", labId, "CircleId:", circleId);
+      await db
+        .delete(labCircles)
+        .where(and(
+          eq(labCircles.labId, labId),
+          eq(labCircles.circleId, circleId)
+        ));
+        
+      console.log("[Storage] Removed circle from lab. LabId:", labId, "CircleId:", circleId);
+    } catch (error) {
+      console.error("[Storage] Error removing circle from lab:", error);
+      throw error;
+    }
+  }
+  
   async getUserLabs(userId: number): Promise<Lab[]> {
     try {
       console.log("[Storage] Getting labs for user:", userId);
@@ -1311,6 +1370,13 @@ export class DatabaseStorage implements IStorage {
         .where(eq(labPosts.labId, id));
         
       console.log("[Storage] Deleted lab posts for lab:", id);
+      
+      // Delete all lab-circle relationships
+      await db
+        .delete(labCircles)
+        .where(eq(labCircles.labId, id));
+        
+      console.log("[Storage] Deleted lab circles for lab:", id);
       
       // Then delete the lab itself
       await db

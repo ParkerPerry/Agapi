@@ -1587,10 +1587,104 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "You don't have permission to view this lab" });
       }
       
-      res.json(lab);
+      // Get associated circles and lab posts
+      const circles = await storage.getLabCircles(labId);
+      const posts = await storage.getLabPosts(labId);
+      
+      // Return the lab with the associated data
+      res.json({
+        ...lab,
+        circles,
+        posts
+      });
     } catch (error) {
       console.error("Error getting lab:", error);
       res.status(500).json({ message: "Failed to get lab" });
+    }
+  });
+  
+  // Get circles for a specific lab
+  app.get("/api/labs/:id/circles", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if the user has permission to view this lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to view this lab" });
+      }
+      
+      const circles = await storage.getLabCircles(labId);
+      res.json(circles);
+    } catch (error) {
+      console.error("Error getting lab circles:", error);
+      res.status(500).json({ message: "Failed to get lab circles" });
+    }
+  });
+  
+  // Add a circle to a lab
+  app.post("/api/labs/:id/circles", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.id);
+      const { circleId } = req.body;
+      
+      if (!circleId) {
+        return res.status(400).json({ message: "Circle ID is required" });
+      }
+      
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if the user has permission to modify this lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to modify this lab" });
+      }
+      
+      // Add the circle to the lab
+      const labCircle = await storage.addCircleToLab(labId, circleId);
+      res.status(201).json(labCircle);
+    } catch (error) {
+      console.error("Error adding circle to lab:", error);
+      res.status(500).json({ message: "Failed to add circle to lab" });
+    }
+  });
+  
+  // Remove a circle from a lab
+  app.delete("/api/labs/:labId/circles/:circleId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.labId);
+      const circleId = parseInt(req.params.circleId);
+      
+      const lab = await storage.getLab(labId);
+      
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if the user has permission to modify this lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "You don't have permission to modify this lab" });
+      }
+      
+      // Remove the circle from the lab
+      await storage.removeCircleFromLab(labId, circleId);
+      res.sendStatus(204);
+    } catch (error) {
+      console.error("Error removing circle from lab:", error);
+      res.status(500).json({ message: "Failed to remove circle from lab" });
     }
   });
 
@@ -1610,9 +1704,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lab = await storage.createLab(req.user!.id, {
         name,
         description,
-        circleId,
+        circleId, // Keep for backward compatibility
         status: status || "draft"
       });
+      
+      // Add the circle to the lab (many-to-many relationship)
+      await storage.addCircleToLab(lab.id, circleId);
       
       res.status(201).json(lab);
     } catch (error) {
@@ -1640,11 +1737,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { name, description, circleId, status } = req.body;
       
+      // If circleId is provided and it's different from the current primary circle
+      if (circleId && lab.circleId !== circleId) {
+        // Add the new circle to the lab's circles (if it doesn't exist already)
+        try {
+          // First check if this circle is already associated with the lab
+          const labCircles = await storage.getLabCircles(labId);
+          const circleExists = labCircles.some(c => c.id === circleId);
+          
+          if (!circleExists) {
+            await storage.addCircleToLab(labId, circleId);
+          }
+        } catch (err) {
+          console.error("Error updating lab-circle relationship:", err);
+        }
+      }
+      
       // Update the lab
       const updatedLab = await storage.updateLab(labId, {
         name,
         description,
-        circleId,
+        circleId, // Update the primary circle
         status
       });
       
