@@ -34,9 +34,7 @@ const LabDeleteDialog = ({
     
     setIsDeleting(true);
     try {
-      await apiRequest(`/api/labs/${lab.id}`, {
-        method: "DELETE",
-      });
+      await apiRequest(`/api/labs/${lab.id}`, "DELETE");
       
       toast({
         title: "Lab deleted",

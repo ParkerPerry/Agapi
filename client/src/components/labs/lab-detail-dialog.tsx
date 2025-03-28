@@ -127,10 +127,7 @@ const LabDetailDialog = ({
     
     setIsUpdatingStatus(true);
     try {
-      await apiRequest(`/api/labs/${labId}/status`, {
-        method: "PATCH",
-        body: { status: newStatus },
-      });
+      await apiRequest(`/api/labs/${labId}/status`, "PATCH", { status: newStatus });
       
       toast({
         title: "Status updated",
@@ -152,9 +149,7 @@ const LabDetailDialog = ({
 
   const handleDeleteLab = async () => {
     try {
-      await apiRequest(`/api/labs/${labId}`, {
-        method: "DELETE",
-      });
+      await apiRequest(`/api/labs/${labId}`, "DELETE");
       
       toast({
         title: "Lab deleted",
@@ -179,9 +174,7 @@ const LabDetailDialog = ({
 
   const handleRemoveCircle = async (circleId: number) => {
     try {
-      await apiRequest(`/api/labs/${labId}/circles/${circleId}`, {
-        method: "DELETE",
-      });
+      await apiRequest(`/api/labs/${labId}/circles/${circleId}`, "DELETE");
       
       toast({
         title: "Circle removed",

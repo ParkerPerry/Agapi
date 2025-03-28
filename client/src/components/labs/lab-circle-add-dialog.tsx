@@ -75,12 +75,9 @@ const LabCircleAddDialog = ({
     
     setIsSubmitting(true);
     try {
-      await apiRequest(`/api/labs/${labId}/circles`, {
-        method: "POST",
-        body: {
-          circleId: selectedCircleId,
-          role: selectedRole,
-        },
+      await apiRequest(`/api/labs/${labId}/circles`, "POST", {
+        circleId: selectedCircleId,
+        role: selectedRole,
       });
       
       toast({

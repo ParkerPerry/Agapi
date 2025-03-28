@@ -69,10 +69,7 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
     
     setIsUpdatingStatus(true);
     try {
-      await apiRequest(`/api/labs/${lab.id}/status`, {
-        method: "PATCH",
-        body: { status: newStatus },
-      });
+      await apiRequest(`/api/labs/${lab.id}/status`, "PATCH", { status: newStatus });
       
       toast({
         title: "Status updated",
@@ -93,9 +90,7 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
 
   const handleDelete = async () => {
     try {
-      await apiRequest(`/api/labs/${lab.id}`, {
-        method: "DELETE",
-      });
+      await apiRequest(`/api/labs/${lab.id}`, "DELETE");
       
       toast({
         title: "Lab deleted",

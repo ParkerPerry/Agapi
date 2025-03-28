@@ -48,11 +48,8 @@ const LabCircleRoleDialog = ({
     
     setIsSubmitting(true);
     try {
-      await apiRequest(`/api/labs/${labId}/circles/${circleId}`, {
-        method: "PATCH",
-        body: {
-          role: selectedRole,
-        },
+      await apiRequest(`/api/labs/${labId}/circles/${circleId}`, "PATCH", {
+        role: selectedRole,
       });
       
       toast({

@@ -163,10 +163,7 @@ const LabCreateWizard = ({
   const onSubmit = async (data: LabFormValues) => {
     setIsSubmitting(true);
     try {
-      await apiRequest("/api/labs", {
-        method: "POST",
-        body: data,
-      });
+      await apiRequest("/api/labs", "POST", data);
       
       toast({
         title: "Lab created",
