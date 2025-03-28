@@ -128,6 +128,11 @@ const LabCircleAddDialog = ({
             circle.description.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     : availableCircles;
+  
+  // Find the selected circle for display
+  const selectedCircle = selectedCircleId 
+    ? availableCircles.find(circle => circle.id === selectedCircleId) 
+    : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -169,7 +174,37 @@ const LabCircleAddDialog = ({
                   All your circles are already part of this lab or you don't have any circles yet.
                 </p>
               </div>
+            ) : selectedCircle ? (
+              // Show selected circle
+              <div className="rounded-lg border shadow-md p-3 flex items-start gap-2">
+                <div
+                  className="w-3 h-3 mt-1 rounded-full flex-shrink-0"
+                  style={{
+                    backgroundColor: selectedCircle.color || "#c5c5c5",
+                  }}
+                />
+                <div className="flex-1">
+                  <div className="font-medium">{selectedCircle.name}</div>
+                  {selectedCircle.description && (
+                    <div className="text-xs text-muted-foreground line-clamp-2">
+                      {selectedCircle.description}
+                    </div>
+                  )}
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Visibility: {selectedCircle.visibility}
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="mt-2 text-xs"
+                    onClick={() => setSelectedCircleId(null)}
+                  >
+                    Change
+                  </Button>
+                </div>
+              </div>
             ) : (
+              // Show circle selection
               <Command className="rounded-lg border shadow-md">
                 <CommandInput
                   placeholder="Search circles..."
@@ -185,11 +220,7 @@ const LabCircleAddDialog = ({
                         key={circle.id}
                         value={circle.id.toString()}
                         onSelect={() => setSelectedCircleId(circle.id)}
-                        className={`flex items-start gap-2 p-2 cursor-pointer ${
-                          selectedCircleId === circle.id
-                            ? "bg-accent"
-                            : ""
-                        }`}
+                        className="flex items-start gap-2 p-2 cursor-pointer"
                       >
                         <div
                           className="w-3 h-3 mt-1 rounded-full flex-shrink-0"

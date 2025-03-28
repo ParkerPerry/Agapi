@@ -69,9 +69,10 @@ const getExperimentTypeLabel = (type: string) => {
   }
 };
 
-const formatDate = (dateString: string | null) => {
-  if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("en-US", {
+const formatDate = (date: Date | string | null | undefined) => {
+  if (!date) return "N/A";
+  const dateObj = date instanceof Date ? date : new Date(date);
+  return dateObj.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
