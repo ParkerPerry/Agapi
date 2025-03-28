@@ -9,8 +9,7 @@ import {
   HelpCircle, 
   Circle,
   MessageCircle,
-  Loader2,
-  Beaker
+  Loader2
 } from "lucide-react";
 import { useTour } from "@/components/tour/tour-context";
 import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
@@ -142,18 +141,6 @@ export function NavBar() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent>Circles</TooltipContent>
-            </Tooltip>
-
-            {/* Labs Link */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link href="/labs">
-                  <Button variant="ghost" size="icon" className="h-9 w-9">
-                    <Beaker className="h-[1.2rem] w-[1.2rem]" />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>AI Labs</TooltipContent>
             </Tooltip>
 
             {/* Notification Dropdown */}

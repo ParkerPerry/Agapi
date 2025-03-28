@@ -1,123 +1,17 @@
-/**
- * Format a date into a relative time string (e.g., "3 days ago", "just now")
- * @param date Date to format
- * @returns Formatted relative time string
- */
-export function formatRelativeTime(date: Date | null | undefined): string {
-  // Handle null or undefined date
-  if (!date) {
-    return "unknown time";
-  }
-  
-  // Convert string dates to Date objects
-  const dateObj = date instanceof Date ? date : new Date(date);
-  
-  // Check if the date is valid
-  if (isNaN(dateObj.getTime())) {
-    return "invalid date";
-  }
-  
-  const now = new Date();
-  const diff = now.getTime() - dateObj.getTime();
-  
-  // Convert to seconds
-  const seconds = Math.floor(diff / 1000);
-  
-  // Less than a minute
-  if (seconds < 60) {
-    return "just now";
-  }
-  
-  // Less than an hour
-  if (seconds < 3600) {
-    const minutes = Math.floor(seconds / 60);
-    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
-  }
-  
-  // Less than a day
-  if (seconds < 86400) {
-    const hours = Math.floor(seconds / 3600);
-    return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
-  }
-  
-  // Less than a week
-  if (seconds < 604800) {
-    const days = Math.floor(seconds / 86400);
-    return `${days} ${days === 1 ? "day" : "days"} ago`;
-  }
-  
-  // Less than a month
-  if (seconds < 2592000) {
-    const weeks = Math.floor(seconds / 604800);
-    return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
-  }
-  
-  // Less than a year
-  if (seconds < 31536000) {
-    const months = Math.floor(seconds / 2592000);
-    return `${months} ${months === 1 ? "month" : "months"} ago`;
-  }
-  
-  // More than a year
-  const years = Math.floor(seconds / 31536000);
-  return `${years} ${years === 1 ? "year" : "years"} ago`;
-}
+import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
 
-/**
- * Format a date to a standard format (e.g. "Mar 12, 2025")
- * @param date Date to format
- * @returns Formatted date string
- */
-export function formatDate(date: Date | null | undefined): string {
-  // Handle null or undefined date
-  if (!date) {
-    return "N/A";
+export function formatRelativeTime(date: Date | string | null | undefined): string {
+  if (!date) return '';
+  
+  const dateObj = new Date(date);
+  
+  // Format relative time (e.g., "2h ago", "5m ago")
+  const relativeTime = formatDistanceToNow(dateObj, { addSuffix: true });
+  
+  // For dates older than 24h, show the actual date
+  if (!isToday(dateObj) && !isYesterday(dateObj)) {
+    return format(dateObj, 'M/d/yyyy');
   }
   
-  // Convert string dates to Date objects
-  const dateObj = date instanceof Date ? date : new Date(date);
-  
-  // Check if the date is valid
-  if (isNaN(dateObj.getTime())) {
-    return "Invalid date";
-  }
-  
-  const options: Intl.DateTimeFormatOptions = {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  };
-  
-  return dateObj.toLocaleDateString('en-US', options);
-}
-
-/**
- * Format a date to include time (e.g. "Mar 12, 2025, 3:45 PM")
- * @param date Date to format
- * @returns Formatted date and time string
- */
-export function formatDateTime(date: Date | null | undefined): string {
-  // Handle null or undefined date
-  if (!date) {
-    return "N/A";
-  }
-  
-  // Convert string dates to Date objects
-  const dateObj = date instanceof Date ? date : new Date(date);
-  
-  // Check if the date is valid
-  if (isNaN(dateObj.getTime())) {
-    return "Invalid date";
-  }
-  
-  const options: Intl.DateTimeFormatOptions = {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  };
-  
-  return dateObj.toLocaleDateString('en-US', options);
+  return relativeTime;
 }

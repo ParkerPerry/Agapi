@@ -77,7 +77,7 @@ export const ai_followers = pgTable("ai_followers", {
   background: text("background"),
   interests: text("interests").array(),
   communicationStyle: text("communication_style"),
-  interactionPreferences: json("interaction_preferences", { mode: 'jsonb' }).$type<{
+  interactionPreferences: json("interaction_preferences").$type<{
     likes: string[];
     dislikes: string[];
   }>(),
@@ -85,13 +85,13 @@ export const ai_followers = pgTable("ai_followers", {
   responsiveness: text("responsiveness", {
     enum: ["instant", "active", "casual", "zen"]
   }).notNull().default("active"),
-  responseDelay: json("response_delay", { mode: 'jsonb' }).$type<{
+  responseDelay: json("response_delay").$type<{
     min: number;
     max: number;
   }>().notNull().default({ min: 1, max: 60 }),
   responseChance: integer("response_chance").notNull().default(80),
   // Tool library for AI followers
-  tools: json("tools", { mode: 'jsonb' }).$type<{
+  tools: json("tools").$type<{
     equipped: Array<{
       id: string;
       name: string;
@@ -124,7 +124,7 @@ export const aiInteractions = pgTable("ai_interactions", {
   content: text("content"),
   parentId: integer("parent_id").references((): any => aiInteractions.id),
   createdAt: timestamp("created_at").defaultNow(),
-  toolsUsed: json("tools_used", { mode: 'jsonb' }).$type<{
+  toolsUsed: json("tools_used").$type<{
     used: boolean;
     tools: Array<{
       id: string;
@@ -283,7 +283,7 @@ export const notifications = pgTable("notifications", {
   }).notNull(),
   content: text("content").notNull(),
   read: boolean("read").default(false).notNull(),
-  metadata: json("metadata", { mode: 'jsonb' }).$type<{
+  metadata: json("metadata").$type<{
     sourceId?: number;
     sourceType?: string;
     actionUrl?: string;
@@ -334,7 +334,7 @@ export const directChats = pgTable("direct_chats", {
   aiFollowerId: integer("ai_follower_id").references(() => ai_followers.id).notNull(),
   content: text("content").notNull(),
   isUserMessage: boolean("is_user_message").notNull(),
-  toolsUsed: json("tools_used", { mode: 'jsonb' }).$type<{
+  toolsUsed: json("tools_used").$type<{
     used: boolean;
     tools: Array<{
       id: string;
@@ -431,110 +431,3 @@ export type AiFollowerCollective = typeof aiFollowerCollectives.$inferSelect;
 export type AiFollowerCollectiveMember = typeof aiFollowerCollectiveMembers.$inferSelect;
 export type InsertAiFollowerCollective = z.infer<typeof insertAiFollowerCollectiveSchema>;
 export type InsertAiFollowerCollectiveMember = z.infer<typeof insertAiFollowerCollectiveMemberSchema>;
-
-// Lab experiment tables
-export const labs = pgTable("labs", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
-  name: text("name").notNull(),
-  description: text("description"),
-  circleId: integer("circle_id").references(() => circles.id).notNull(),
-  status: text("status", { enum: ["draft", "active", "completed"] }).default("draft").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-  launchedAt: timestamp("launched_at"),
-  completedAt: timestamp("completed_at"),
-});
-
-// Lab prepared posts to be published when lab is launched
-export const labPosts = pgTable("lab_posts", {
-  id: serial("id").primaryKey(),
-  labId: integer("lab_id").references(() => labs.id).notNull(),
-  content: text("content").notNull(),
-  status: text("status", { enum: ["draft", "published"] }).default("draft").notNull(),
-  publishedPostId: integer("published_post_id").references(() => posts.id),
-  createdAt: timestamp("created_at").defaultNow(),
-  publishedAt: timestamp("published_at"),
-  order: integer("order").default(0).notNull(),
-});
-
-// Lab metrics and statistics
-export const labMetrics = pgTable("lab_metrics", {
-  id: serial("id").primaryKey(),
-  labId: integer("lab_id").references(() => labs.id).notNull(),
-  postCount: integer("post_count").default(0).notNull(),
-  commentCount: integer("comment_count").default(0).notNull(),
-  followerCount: integer("follower_count").default(0).notNull(),
-  // Store additional metrics as JSON for flexibility
-  additionalMetrics: json("additional_metrics", { mode: 'jsonb' }).$type<{
-    likeCount?: number;
-    avgResponseTime?: number;
-    engagement?: number;
-    // Can be extended with sentiment and other metrics in the future
-  }>(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Relations for lab tables
-export const labsRelations = relations(labs, ({ one, many }) => ({
-  owner: one(users, {
-    fields: [labs.userId],
-    references: [users.id],
-  }),
-  circle: one(circles, {
-    fields: [labs.circleId],
-    references: [circles.id],
-  }),
-  posts: many(labPosts),
-  metrics: many(labMetrics),
-}));
-
-export const labPostsRelations = relations(labPosts, ({ one }) => ({
-  lab: one(labs, {
-    fields: [labPosts.labId],
-    references: [labs.id],
-  }),
-  publishedPost: one(posts, {
-    fields: [labPosts.publishedPostId],
-    references: [posts.id],
-  }),
-}));
-
-export const labMetricsRelations = relations(labMetrics, ({ one }) => ({
-  lab: one(labs, {
-    fields: [labMetrics.labId],
-    references: [labs.id],
-  }),
-}));
-
-// Insert schemas for lab tables
-export const insertLabSchema = createInsertSchema(labs)
-  .pick({
-    name: true,
-    description: true,
-    circleId: true,
-    status: true,
-  });
-
-export const insertLabPostSchema = createInsertSchema(labPosts)
-  .pick({
-    labId: true,
-    content: true,
-    order: true,
-  });
-
-export const insertLabMetricsSchema = createInsertSchema(labMetrics)
-  .pick({
-    labId: true,
-    postCount: true,
-    commentCount: true,
-    followerCount: true,
-    additionalMetrics: true,
-  });
-
-// Type definitions for lab tables
-export type Lab = typeof labs.$inferSelect;
-export type LabPost = typeof labPosts.$inferSelect;
-export type LabMetrics = typeof labMetrics.$inferSelect;
-export type InsertLab = z.infer<typeof insertLabSchema>;
-export type InsertLabPost = z.infer<typeof insertLabPostSchema>;
-export type InsertLabMetrics = z.infer<typeof insertLabMetricsSchema>;
