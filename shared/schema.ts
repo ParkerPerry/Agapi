@@ -426,6 +426,73 @@ export const insertAiFollowerCollectiveMemberSchema = createInsertSchema(aiFollo
     aiFollowerId: true,
   });
 
+// Labs and experiments
+export const labs = pgTable("labs", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  circleId: integer("circle_id").references(() => circles.id).notNull(),
+  status: text("status", { enum: ["draft", "active", "completed"] }).default("draft").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const labPosts = pgTable("lab_posts", {
+  id: serial("id").primaryKey(),
+  labId: integer("lab_id").references(() => labs.id).notNull(),
+  content: text("content").notNull(),
+  postOrder: integer("post_order").notNull(),
+  status: text("status", { enum: ["pending", "posted", "completed"] }).default("pending").notNull(),
+  scheduledFor: timestamp("scheduled_for"),
+  actualPostedAt: timestamp("actual_posted_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Relations for labs
+export const labsRelations = relations(labs, ({ one, many }) => ({
+  user: one(users, {
+    fields: [labs.userId],
+    references: [users.id],
+  }),
+  circle: one(circles, {
+    fields: [labs.circleId],
+    references: [circles.id],
+  }),
+  posts: many(labPosts),
+}));
+
+export const labPostsRelations = relations(labPosts, ({ one }) => ({
+  lab: one(labs, {
+    fields: [labPosts.labId],
+    references: [labs.id],
+  }),
+}));
+
+// Insert schemas for labs
+export const insertLabSchema = createInsertSchema(labs)
+  .pick({
+    name: true,
+    description: true,
+    circleId: true,
+    status: true,
+  });
+
+export const insertLabPostSchema = createInsertSchema(labPosts)
+  .pick({
+    labId: true,
+    content: true,
+    postOrder: true,
+    status: true,
+    scheduledFor: true,
+  });
+
+// Type definitions for labs
+export type Lab = typeof labs.$inferSelect;
+export type LabPost = typeof labPosts.$inferSelect;
+export type InsertLab = z.infer<typeof insertLabSchema>;
+export type InsertLabPost = z.infer<typeof insertLabPostSchema>;
+
 // Type definitions for collectives
 export type AiFollowerCollective = typeof aiFollowerCollectives.$inferSelect;
 export type AiFollowerCollectiveMember = typeof aiFollowerCollectiveMembers.$inferSelect;

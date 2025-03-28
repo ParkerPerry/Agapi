@@ -1,191 +1,364 @@
-import { Circle, AiFollower } from "@shared/schema";
-import { Users, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Circle, AiFollower, CircleMember } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { useState, useEffect } from "react";
+import { 
+  Loader2, 
+  Search, 
+  UserRoundPlus, 
+  UserRoundMinus, 
+  Users, 
+  Plus, 
+  Filter 
+} from "lucide-react";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CircleFollowerManagerProps {
   circle: Circle;
+  readOnly?: boolean;
 }
 
-export function CircleFollowerManager({ circle }: CircleFollowerManagerProps) {
+export function CircleFollowerManager({ circle, readOnly = false }: CircleFollowerManagerProps) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  // Track pending follower operations locally
-  const [pendingChanges, setPendingChanges] = useState<Record<number, "add" | "remove">>({});
-
-  const { data: followers } = useQuery<AiFollower[]>({
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [selectedFollowerIds, setSelectedFollowerIds] = useState<number[]>([]);
+  
+  // Fetch current circle members (followers)
+  const {
+    data: circleMembers = [],
+    isLoading: isLoadingMembers,
+    refetch: refetchMembers
+  } = useQuery<CircleMember[]>({
+    queryKey: [`/api/circles/${circle.id}/members`],
+    queryFn: async () => {
+      return await apiRequest(`/api/circles/${circle.id}/members`);
+    },
+  });
+  
+  // Extract follower IDs from circle members
+  const circleFollowerIds = circleMembers
+    .filter(member => member.type === "ai_follower")
+    .map(member => member.aiFollowerId)
+    .filter((id): id is number => id !== null);
+  
+  // Fetch available AI followers
+  const {
+    data: followers = [],
+    isLoading: isLoadingFollowers
+  } = useQuery<AiFollower[]>({
     queryKey: ["/api/followers"],
+    queryFn: async () => {
+      return await apiRequest("/api/followers");
+    },
   });
-
-  const { data: circleFollowers, isLoading: isLoadingCircleFollowers } = useQuery<AiFollower[]>({
-    queryKey: [`/api/circles/${circle.id}/followers`],
+  
+  // Filter followers that are not already in the circle
+  const availableFollowers = followers.filter(
+    follower => !circleFollowerIds.includes(follower.id)
+  );
+  
+  // Further filter by search and category
+  const filteredAvailableFollowers = availableFollowers.filter(follower => {
+    const matchesSearch = 
+      follower.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (follower.personality && follower.personality.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesCategory = 
+      filterCategory === "all" || 
+      (follower.category && follower.category === filterCategory);
+    
+    return matchesSearch && matchesCategory;
   });
-
-  // Reset pending changes when circle followers data is refreshed
-  useEffect(() => {
-    if (circleFollowers) {
-      setPendingChanges({});
-    }
-  }, [circleFollowers]);
-
-  const addFollowerMutation = useMutation({
-    mutationFn: async (aiFollowerId: number) => {
-      // Optimistically update UI
-      setPendingChanges(prev => ({ ...prev, [aiFollowerId]: "add" }));
-      try {
-        // apiRequest already returns the parsed JSON response
-        return await apiRequest(`/api/circles/${circle.id}/followers`, "POST", { aiFollowerId });
-      } catch (error) {
-        console.error("Error in addFollowerMutation:", error);
-        // We're rethrowing the error so it can be caught by onError
-        throw error;
-      }
+  
+  // Extract unique categories for the filter dropdown
+  const followerCategories = Array.from(
+    new Set(followers.map(f => f.category).filter(Boolean))
+  );
+  
+  // Mutation for adding followers to circle
+  const addFollowersMutation = useMutation({
+    mutationFn: async (followerIds: number[]) => {
+      return await apiRequest(`/api/circles/${circle.id}/followers`, "POST", { followerIds });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/followers`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/members`] });
+      setSelectedFollowerIds([]);
       toast({
-        title: "Follower added",
-        description: "The AI follower has been added to the circle.",
+        title: "Followers added",
+        description: `${selectedFollowerIds.length} followers have been added to the circle.`,
       });
     },
-    onError: (error, aiFollowerId) => {
-      console.error("Error adding follower:", error);
-      // Remove the pending change on error
-      setPendingChanges(prev => {
-        const updated = { ...prev };
-        delete updated[aiFollowerId as number];
-        return updated;
-      });
+    onError: () => {
       toast({
         title: "Error",
-        description: "Failed to add follower to the circle.",
-        variant: "destructive",
+        description: "Failed to add followers to the circle.",
+        variant: "destructive"
       });
     }
   });
-
+  
+  // Mutation for removing a follower from circle
   const removeFollowerMutation = useMutation({
     mutationFn: async (followerId: number) => {
-      // Optimistically update UI
-      setPendingChanges(prev => ({ ...prev, [followerId]: "remove" }));
-      try {
-        await apiRequest(`/api/circles/${circle.id}/followers/${followerId}`, "DELETE");
-        return { success: true };
-      } catch (error) {
-        // We're rethrowing the error so it can be caught by onError
-        throw error;
-      }
+      return await apiRequest(`/api/circles/${circle.id}/followers/${followerId}`, "DELETE");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/followers`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}/members`] });
       toast({
         title: "Follower removed",
-        description: "The AI follower has been removed from the circle.",
+        description: "The follower has been removed from the circle.",
       });
     },
-    onError: (error, followerId) => {
-      console.error("Error removing follower:", error);
-      // Remove the pending change on error
-      setPendingChanges(prev => {
-        const updated = { ...prev };
-        delete updated[followerId as number];
-        return updated;
-      });
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to remove follower from the circle.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   });
-
+  
+  // Handle follower selection
+  const handleFollowerSelect = (followerId: number) => {
+    setSelectedFollowerIds(prev => {
+      if (prev.includes(followerId)) {
+        return prev.filter(id => id !== followerId);
+      } else {
+        return [...prev, followerId];
+      }
+    });
+  };
+  
+  // Handle bulk add followers
+  const handleAddFollowers = () => {
+    if (selectedFollowerIds.length > 0) {
+      addFollowersMutation.mutate(selectedFollowerIds);
+    }
+  };
+  
+  // Get circle followers with their full information
+  const circleFollowers = circleMembers
+    .filter(member => member.type === "ai_follower" && member.aiFollowerId)
+    .map(member => {
+      const follower = followers.find(f => f.id === member.aiFollowerId);
+      return { ...member, follower };
+    })
+    .filter(member => member.follower);
+  
+  // Loading state
+  if (isLoadingMembers || isLoadingFollowers) {
+    return (
+      <div className="flex justify-center p-6">
+        <Loader2 className="h-5 w-5 animate-spin text-primary" />
+      </div>
+    );
+  }
+  
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Users className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Manage AI Followers</DialogTitle>
-          <DialogDescription>
-            Add or remove AI followers for {circle.name}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <ScrollArea className="h-[300px] pr-4">
-            {isLoadingCircleFollowers ? (
-              <div className="flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {followers?.map((follower) => {
-                  // Check for pending changes first
-                  const pendingChange = pendingChanges[follower.id];
-                  // Calculate real state considering both server data and pending changes
-                  const isInCircleFromServer = circleFollowers?.some(f => f.id === follower.id);
-                  const isInCircle = pendingChange === "add" ? true : 
-                                    pendingChange === "remove" ? false : 
-                                    isInCircleFromServer;
-                  
-                  const isPending = addFollowerMutation.isPending || removeFollowerMutation.isPending;
-                  
-                  return (
-                    <div
-                      key={follower.id}
-                      className="flex items-center justify-between p-2 rounded-lg hover:bg-muted"
+    <div className="space-y-6">
+      {/* Current Followers Section */}
+      <div>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-lg font-semibold">
+            Circle Followers ({circleFollowers.length})
+          </h3>
+        </div>
+        
+        {circleFollowers.length === 0 ? (
+          <Card>
+            <CardContent className="p-6 text-center">
+              <Users className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+              <p className="text-muted-foreground">
+                This circle has no AI followers yet.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-2">
+            {circleFollowers.map(member => (
+              <Card key={member.id} className="overflow-hidden">
+                <CardContent className="p-4 flex justify-between items-center">
+                  <div className="flex items-center">
+                    <div 
+                      className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3"
                     >
-                      <div className="flex items-center space-x-3">
-                        <Avatar>
-                          <img src={follower.avatarUrl} alt={follower.name} />
-                          <AvatarFallback>
-                            {follower.name.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{follower.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {follower.personality}
+                      <Users className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">
+                        {member.follower?.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {member.follower?.personality?.substring(0, 60)}
+                        {member.follower?.personality && member.follower.personality.length > 60 ? "..." : ""}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {!readOnly && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <UserRoundMinus className="h-4 w-4 mr-1" />
+                          Remove
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Remove Follower
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to remove {member.follower?.name} from this circle?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => removeFollowerMutation.mutate(member.aiFollowerId!)}
+                          >
+                            {removeFollowerMutation.isPending ? (
+                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            ) : null}
+                            Remove
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+      
+      {/* Add Followers Section */}
+      {!readOnly && (
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-semibold">
+              Add Followers to Circle
+            </h3>
+            
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleAddFollowers}
+              disabled={selectedFollowerIds.length === 0 || addFollowersMutation.isPending}
+            >
+              {addFollowersMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <UserRoundPlus className="h-4 w-4 mr-2" />
+              )}
+              Add Selected ({selectedFollowerIds.length})
+            </Button>
+          </div>
+          
+          <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search followers..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            
+            <div className="flex-shrink-0 w-full md:w-auto">
+              <Select
+                value={filterCategory}
+                onValueChange={setFilterCategory}
+              >
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filter by category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {followerCategories.map(category => (
+                    <SelectItem key={category} value={category}>
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          {filteredAvailableFollowers.length === 0 ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-muted-foreground">
+                  No followers found matching your criteria.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-2">
+              {filteredAvailableFollowers.map(follower => (
+                <Card key={follower.id} className="overflow-hidden">
+                  <CardContent className="p-4 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <Checkbox 
+                        id={`follower-${follower.id}`}
+                        checked={selectedFollowerIds.includes(follower.id)}
+                        onCheckedChange={() => handleFollowerSelect(follower.id)}
+                        className="mr-3"
+                      />
+                      <div>
+                        <label 
+                          htmlFor={`follower-${follower.id}`}
+                          className="font-medium cursor-pointer"
+                        >
+                          {follower.name}
+                        </label>
+                        <div className="flex items-center text-xs text-muted-foreground">
+                          {follower.category && (
+                            <Badge variant="outline" className="mr-2 text-xs">
+                              {follower.category}
+                            </Badge>
+                          )}
+                          <p>
+                            {follower.personality?.substring(0, 60)}
+                            {follower.personality && follower.personality.length > 60 ? "..." : ""}
                           </p>
                         </div>
                       </div>
-                      <Button
-                        variant={isInCircle ? "destructive" : "secondary"}
-                        size="sm"
-                        onClick={() => {
-                          if (isInCircle) {
-                            removeFollowerMutation.mutate(follower.id);
-                          } else {
-                            addFollowerMutation.mutate(follower.id);
-                          }
-                        }}
-                        disabled={isPending}
-                      >
-                        {isInCircle ? "Remove" : "Add"}
-                      </Button>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </ScrollArea>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </div>
   );
 }
