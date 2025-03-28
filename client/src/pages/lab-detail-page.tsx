@@ -442,11 +442,22 @@ export default function LabDetailPage() {
         {/* Followers Tab */}
         <TabsContent value="followers">
           {!isNewLab && lab?.circleId && (
-            <CircleFollowerManagerWrapper 
-              selectedCircleId={lab.circleId}
-              showCircleSelect={false}
-              showFollowerManager={true}
-            />
+            <Card>
+              <CardHeader>
+                <CardTitle>Manage Followers</CardTitle>
+                <CardDescription>
+                  Add, remove, or configure AI followers for your lab circle.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <CircleFollowerManagerWrapper 
+                  selectedCircleId={lab.circleId}
+                  showCircleSelect={false}
+                  showFollowerManager={true}
+                  readOnly={false}
+                />
+              </CardContent>
+            </Card>
           )}
         </TabsContent>
         

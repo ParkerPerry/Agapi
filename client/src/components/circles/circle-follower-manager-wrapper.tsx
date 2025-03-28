@@ -18,13 +18,19 @@ import { CirclePlus, Loader2 } from "lucide-react";
 interface CircleFollowerManagerWrapperProps {
   selectedCircleId?: number | null;
   onCircleSelect?: (circle: Circle) => void;
+  onCircleSelected?: (circleId: number) => void;
   readOnly?: boolean;
+  showCircleSelect?: boolean;
+  showFollowerManager?: boolean;
 }
 
 export function CircleFollowerManagerWrapper({ 
   selectedCircleId,
   onCircleSelect,
-  readOnly = false 
+  onCircleSelected,
+  readOnly = false,
+  showCircleSelect = true,
+  showFollowerManager = true
 }: CircleFollowerManagerWrapperProps) {
   const [activeTab, setActiveTab] = useState<string>("select");
   const [selectedCircle, setSelectedCircle] = useState<Circle | null>(null);
@@ -48,9 +54,12 @@ export function CircleFollowerManagerWrapper({
   const handleCircleSelect = (circle: Circle) => {
     setSelectedCircle(circle);
     
-    // Call parent handler if provided
+    // Call parent handlers if provided
     if (onCircleSelect) {
       onCircleSelect(circle);
+    }
+    if (onCircleSelected && circle.id) {
+      onCircleSelected(circle.id);
     }
   };
   
@@ -59,9 +68,12 @@ export function CircleFollowerManagerWrapper({
     setSelectedCircle(circle);
     setActiveTab("select"); // Switch back to select tab
     
-    // Call parent handler if provided
+    // Call parent handlers if provided
     if (onCircleSelect) {
       onCircleSelect(circle);
+    }
+    if (onCircleSelected && circle.id) {
+      onCircleSelected(circle.id);
     }
   };
   
@@ -80,7 +92,7 @@ export function CircleFollowerManagerWrapper({
           </div>
         ) : (
           <>
-            {!readOnly && (
+            {!readOnly && showCircleSelect && (
               <Tabs
                 defaultValue="select"
                 value={activeTab}
@@ -108,21 +120,23 @@ export function CircleFollowerManagerWrapper({
               </Tabs>
             )}
             
-            {selectedCircle ? (
-              <div className="mt-4">
-                <CircleFollowerManager
-                  circle={selectedCircle}
-                  readOnly={readOnly}
-                />
-              </div>
-            ) : (
-              <div className="p-6 text-center bg-muted/30 rounded-md">
-                <p className="text-muted-foreground">
-                  {readOnly 
-                    ? "No circle selected." 
-                    : "Select or create a circle above to manage followers."}
-                </p>
-              </div>
+            {showFollowerManager && (
+              selectedCircle ? (
+                <div className={showCircleSelect ? "mt-4" : ""}>
+                  <CircleFollowerManager
+                    circle={selectedCircle}
+                    readOnly={readOnly}
+                  />
+                </div>
+              ) : (
+                <div className="p-6 text-center bg-muted/30 rounded-md">
+                  <p className="text-muted-foreground">
+                    {readOnly 
+                      ? "No circle selected." 
+                      : "Select or create a circle above to manage followers."}
+                  </p>
+                </div>
+              )
             )}
           </>
         )}
