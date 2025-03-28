@@ -1,0 +1,60 @@
+[Storage] Found pending responses for post 33 : []
+[Storage] Found pending responses for post 34 : []
+[Storage] Found pending responses for post 35 : []
+[Storage] Found pending responses for post 36 : []
+1:10:48 PM [express] GET /api/circles/29/posts 304 in 1783ms :: [{"id":32,"userId":1,"circleId":29,"…
+[Permissions] Checking permissions: { circleId: 29, userId: 1, requiredRole: 'viewer' }
+[Permissions] User is circle owner, granting all permissions
+1:10:48 PM [express] GET /api/circles/29/followers 304 in 222ms :: [{"id":26,"userId":1,"name":"Math…
+1:10:48 PM [express] GET /api/followers 304 in 437ms :: [{"id":1,"userId":1,"name":"Tom","personalit…
+[Storage] Getting labs for user: 1
+[Storage] Error getting user labs: error: column "experiment_type" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getUserLabs (/home/runner/workspace/server/storage.ts:1298:24)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1571:20) {
+  length: 115,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '48',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+[API] Error getting user labs: error: column "experiment_type" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getUserLabs (/home/runner/workspace/server/storage.ts:1298:24)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1571:20) {
+  length: 115,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '48',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+1:10:49 PM [express] GET /api/labs 500 in 183ms :: {"message":"Failed to get user labs"}
+[ResponseScheduler] Processing 0 pending responses
