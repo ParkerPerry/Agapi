@@ -19,7 +19,7 @@ Labs will directly integrate with the existing AI follower collectives feature t
 
 Labs will allow users to:
 
-- Select existing AI follower collectives for experiments
+- Select existing AI follower collectives for experiments via adding them to a circle
 - Assign collectives to specific circles within a lab
 - Configure different behavior parameters for collectives in different experimental contexts
 
