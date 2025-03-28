@@ -5,12 +5,12 @@ import {
   Notification, InsertNotification, DirectChat, InsertDirectChat,
   AiFollowerCollective, InsertAiFollowerCollective, 
   AiFollowerCollectiveMember, InsertAiFollowerCollectiveMember,
-  Lab, InsertLab, LabCircle, InsertLabCircle,
+  Lab, InsertLab, LabCircle, InsertLabCircle, LabCollective, InsertLabCollective,
   // Add table imports
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
   notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers,
-  labs, labCircles
+  labs, labCircles, labCollectives
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
@@ -114,6 +114,13 @@ export interface IStorage {
   getLabCircles(labId: number): Promise<(Circle & { role: "control" | "treatment" | "observation" })[]>;
   removeCircleFromLab(labId: number, circleId: number): Promise<void>;
   updateLabCircleRole(labId: number, circleId: number, role: "control" | "treatment" | "observation"): Promise<LabCircle>;
+  
+  // Lab-Collective methods
+  addCollectiveToLab(labId: number, collectiveId: number, role?: "control" | "treatment" | "observation", behaviorConfig?: any): Promise<LabCollective>;
+  getLabCollectives(labId: number): Promise<(AiFollowerCollective & { role: "control" | "treatment" | "observation", behaviorConfig?: any })[]>;
+  removeCollectiveFromLab(labId: number, collectiveId: number): Promise<void>;
+  updateLabCollectiveRole(labId: number, collectiveId: number, role: "control" | "treatment" | "observation"): Promise<LabCollective>;
+  updateLabCollectiveBehavior(labId: number, collectiveId: number, behaviorConfig: any): Promise<LabCollective>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1563,6 +1570,155 @@ export class DatabaseStorage implements IStorage {
       return updatedLabCircle;
     } catch (error) {
       console.error("[Storage] Error updating lab circle role:", error);
+      throw error;
+    }
+  }
+
+  // Lab-Collective methods
+  async addCollectiveToLab(labId: number, collectiveId: number, role: "control" | "treatment" | "observation" = "treatment", behaviorConfig?: any): Promise<LabCollective> {
+    try {
+      console.log("[Storage] Adding collective to lab:", {
+        labId,
+        collectiveId,
+        role
+      });
+      
+      const [labCollective] = (await db
+        .insert(labCollectives)
+        .values({
+          labId,
+          collectiveId,
+          role,
+          behaviorConfig
+        })
+        .returning()) as LabCollective[];
+      
+      // Update the lab's updatedAt timestamp
+      await this.updateLab(labId, {});
+      
+      console.log("[Storage] Added collective to lab:", {
+        id: labCollective.id,
+        labId: labCollective.labId,
+        collectiveId: labCollective.collectiveId,
+        role: labCollective.role
+      });
+      
+      return labCollective;
+    } catch (error) {
+      console.error("[Storage] Error adding collective to lab:", error);
+      throw error;
+    }
+  }
+  
+  async getLabCollectives(labId: number): Promise<(AiFollowerCollective & { role: "control" | "treatment" | "observation", behaviorConfig?: any })[]> {
+    try {
+      console.log("[Storage] Getting collectives for lab:", labId);
+      
+      const collectivesWithRole = await db
+        .select({
+          ...aiFollowerCollectives,
+          role: labCollectives.role,
+          behaviorConfig: labCollectives.behaviorConfig
+        })
+        .from(labCollectives)
+        .innerJoin(
+          aiFollowerCollectives,
+          eq(labCollectives.collectiveId, aiFollowerCollectives.id)
+        )
+        .where(eq(labCollectives.labId, labId));
+      
+      console.log("[Storage] Retrieved collectives for lab:", collectivesWithRole.length);
+      
+      return collectivesWithRole as (AiFollowerCollective & { role: "control" | "treatment" | "observation", behaviorConfig?: any })[];
+    } catch (error) {
+      console.error("[Storage] Error getting lab collectives:", error);
+      throw error;
+    }
+  }
+  
+  async removeCollectiveFromLab(labId: number, collectiveId: number): Promise<void> {
+    try {
+      console.log("[Storage] Removing collective from lab:", {
+        labId,
+        collectiveId
+      });
+      
+      await db
+        .delete(labCollectives)
+        .where(
+          and(
+            eq(labCollectives.labId, labId),
+            eq(labCollectives.collectiveId, collectiveId)
+          )
+        );
+      
+      // Update the lab's updatedAt timestamp
+      await this.updateLab(labId, {});
+      
+      console.log("[Storage] Removed collective from lab successfully");
+    } catch (error) {
+      console.error("[Storage] Error removing collective from lab:", error);
+      throw error;
+    }
+  }
+  
+  async updateLabCollectiveRole(labId: number, collectiveId: number, role: "control" | "treatment" | "observation"): Promise<LabCollective> {
+    try {
+      console.log("[Storage] Updating lab collective role:", {
+        labId,
+        collectiveId,
+        role
+      });
+      
+      const [updatedLabCollective] = (await db
+        .update(labCollectives)
+        .set({ role })
+        .where(
+          and(
+            eq(labCollectives.labId, labId),
+            eq(labCollectives.collectiveId, collectiveId)
+          )
+        )
+        .returning()) as LabCollective[];
+      
+      // Update the lab's updatedAt timestamp
+      await this.updateLab(labId, {});
+      
+      console.log("[Storage] Updated lab collective role successfully");
+      
+      return updatedLabCollective;
+    } catch (error) {
+      console.error("[Storage] Error updating lab collective role:", error);
+      throw error;
+    }
+  }
+  
+  async updateLabCollectiveBehavior(labId: number, collectiveId: number, behaviorConfig: any): Promise<LabCollective> {
+    try {
+      console.log("[Storage] Updating lab collective behavior:", {
+        labId,
+        collectiveId
+      });
+      
+      const [updatedLabCollective] = (await db
+        .update(labCollectives)
+        .set({ behaviorConfig })
+        .where(
+          and(
+            eq(labCollectives.labId, labId),
+            eq(labCollectives.collectiveId, collectiveId)
+          )
+        )
+        .returning()) as LabCollective[];
+      
+      // Update the lab's updatedAt timestamp
+      await this.updateLab(labId, {});
+      
+      console.log("[Storage] Updated lab collective behavior successfully");
+      
+      return updatedLabCollective;
+    } catch (error) {
+      console.error("[Storage] Error updating lab collective behavior:", error);
       throw error;
     }
   }

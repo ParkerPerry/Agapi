@@ -510,8 +510,57 @@ export const insertLabCircleSchema = createInsertSchema(labCircles)
     role: true,
   });
 
+// Lab collectives table to associate AI follower collectives with labs
+export const labCollectives = pgTable("lab_collectives", {
+  id: serial("id").primaryKey(),
+  labId: integer("lab_id").references(() => labs.id).notNull(),
+  collectiveId: integer("collective_id").references(() => aiFollowerCollectives.id).notNull(),
+  role: text("role", { 
+    enum: ["control", "treatment", "observation"] 
+  }).default("treatment").notNull(),
+  behaviorConfig: json("behavior_config").$type<{
+    responseStyle?: string;
+    contextAwareness?: number;
+    experimentalParams?: Record<string, any>;
+  }>(),
+  addedAt: timestamp("added_at").defaultNow(),
+});
+
+// Relationships for lab collectives
+export const labCollectivesRelations = relations(labCollectives, ({ one }) => ({
+  lab: one(labs, {
+    fields: [labCollectives.labId],
+    references: [labs.id],
+  }),
+  collective: one(aiFollowerCollectives, {
+    fields: [labCollectives.collectiveId],
+    references: [aiFollowerCollectives.id],
+  }),
+}));
+
+// Update lab relations to include collectives
+export const labsRelationsUpdated = relations(labs, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [labs.userId],
+    references: [users.id],
+  }),
+  circles: many(labCircles),
+  collectives: many(labCollectives),
+}));
+
+// Insert schema for lab collectives
+export const insertLabCollectiveSchema = createInsertSchema(labCollectives)
+  .pick({
+    labId: true,
+    collectiveId: true,
+    role: true,
+    behaviorConfig: true,
+  });
+
 // Type definitions for labs
 export type Lab = typeof labs.$inferSelect;
 export type LabCircle = typeof labCircles.$inferSelect;
+export type LabCollective = typeof labCollectives.$inferSelect;
 export type InsertLab = z.infer<typeof insertLabSchema>;
 export type InsertLabCircle = z.infer<typeof insertLabCircleSchema>;
+export type InsertLabCollective = z.infer<typeof insertLabCollectiveSchema>;

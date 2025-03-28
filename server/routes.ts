@@ -1884,5 +1884,165 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Lab-collectives endpoints
+  app.get("/api/labs/:id/collectives", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Verify ownership of the lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const collectives = await storage.getLabCollectives(labId);
+      res.json(collectives);
+    } catch (error) {
+      console.error("[API] Error fetching lab collectives:", error);
+      res.status(500).json({ message: "Failed to fetch lab collectives" });
+    }
+  });
+
+  app.post("/api/labs/:id/collectives", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const { collectiveId, role, behaviorConfig } = req.body;
+      
+      if (!collectiveId) {
+        return res.status(400).json({ message: "Collective ID is required" });
+      }
+      
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Verify ownership of the lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      // Validate role if provided
+      if (role && !["control", "treatment", "observation"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role value" });
+      }
+      
+      const labCollective = await storage.addCollectiveToLab(
+        labId,
+        collectiveId,
+        role as "control" | "treatment" | "observation" | undefined,
+        behaviorConfig
+      );
+      
+      res.status(201).json(labCollective);
+    } catch (error) {
+      console.error("[API] Error adding collective to lab:", error);
+      res.status(500).json({ message: "Failed to add collective to lab" });
+    }
+  });
+
+  app.delete("/api/labs/:labId/collectives/:collectiveId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.labId);
+      const collectiveId = parseInt(req.params.collectiveId);
+      
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Verify ownership of the lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      await storage.removeCollectiveFromLab(labId, collectiveId);
+      res.sendStatus(204);
+    } catch (error) {
+      console.error("[API] Error removing collective from lab:", error);
+      res.status(500).json({ message: "Failed to remove collective from lab" });
+    }
+  });
+
+  app.patch("/api/labs/:labId/collectives/:collectiveId/role", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.labId);
+      const collectiveId = parseInt(req.params.collectiveId);
+      const { role } = req.body;
+      
+      if (!role || !["control", "treatment", "observation"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role value" });
+      }
+      
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Verify ownership of the lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const updatedLabCollective = await storage.updateLabCollectiveRole(
+        labId,
+        collectiveId,
+        role as "control" | "treatment" | "observation"
+      );
+      
+      res.json(updatedLabCollective);
+    } catch (error) {
+      console.error("[API] Error updating collective role in lab:", error);
+      res.status(500).json({ message: "Failed to update collective role in lab" });
+    }
+  });
+
+  app.patch("/api/labs/:labId/collectives/:collectiveId/behavior", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.labId);
+      const collectiveId = parseInt(req.params.collectiveId);
+      const { behaviorConfig } = req.body;
+      
+      if (!behaviorConfig) {
+        return res.status(400).json({ message: "Behavior configuration is required" });
+      }
+      
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Verify ownership of the lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const updatedLabCollective = await storage.updateLabCollectiveBehavior(
+        labId,
+        collectiveId,
+        behaviorConfig
+      );
+      
+      res.json(updatedLabCollective);
+    } catch (error) {
+      console.error("[API] Error updating collective behavior in lab:", error);
+      res.status(500).json({ message: "Failed to update collective behavior in lab" });
+    }
+  });
+
   return httpServer;
 }
