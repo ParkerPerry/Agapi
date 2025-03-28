@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { Circle } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
@@ -8,84 +11,67 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { Circle } from "@shared/schema";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Search, Users } from "lucide-react";
+import { Loader2, PlusCircle, Search } from "lucide-react";
 
 interface LabCircleAddDialogProps {
   labId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddCircle: () => void;
+  onSuccess: () => void;
+  existingCircleIds: number[];
 }
 
 const LabCircleAddDialog = ({
   labId,
   open,
   onOpenChange,
-  onAddCircle,
+  onSuccess,
+  existingCircleIds,
 }: LabCircleAddDialogProps) => {
   const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCircleId, setSelectedCircleId] = useState<number | null>(null);
   const [selectedRole, setSelectedRole] = useState<"control" | "treatment" | "observation">("treatment");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Reset state when dialog opens/closes
+  useEffect(() => {
+    if (open) {
+      setSelectedCircleId(null);
+      setSelectedRole("treatment");
+      setSearchQuery("");
+    }
+  }, [open]);
 
   // Fetch user's circles
   const {
     data: circles,
-    isLoading,
-    error,
+    isLoading: isCirclesLoading,
+    error: circlesError,
   } = useQuery<Circle[]>({
     queryKey: ["/api/circles"],
     enabled: open,
   });
 
-  // Fetch circles already in the lab to exclude them
-  const {
-    data: labCircles,
-  } = useQuery<(Circle & { role: string })[]>({
-    queryKey: [`/api/labs/${labId}/circles`],
-    enabled: open && !!labId,
-  });
-
-  // Filter circles that are not already in the lab
-  const filteredCircles = circles?.filter(circle => {
-    // Exclude circles already in the lab
-    const isAlreadyInLab = labCircles?.some(
-      labCircle => labCircle.id === circle.id
-    );
-    
-    // Apply search filter
-    const matchesSearch = searchQuery === "" ||
-      circle.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (circle.description?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
-    
-    return !isAlreadyInLab && matchesSearch;
-  });
-
   const handleAddCircle = async () => {
-    if (!selectedCircleId) return;
+    if (!selectedCircleId || isSubmitting) return;
     
     setIsSubmitting(true);
     try {
@@ -99,16 +85,11 @@ const LabCircleAddDialog = ({
       
       toast({
         title: "Circle added",
-        description: "Circle has been added to the lab successfully.",
+        description: "The circle has been added to the lab.",
       });
       
       onOpenChange(false);
-      onAddCircle();
-      
-      // Reset selections
-      setSelectedCircleId(null);
-      setSelectedRole("treatment");
-      setSearchQuery("");
+      onSuccess();
     } catch (error) {
       toast({
         title: "Failed to add circle",
@@ -120,102 +101,139 @@ const LabCircleAddDialog = ({
     }
   };
 
-  const handleCircleSelect = (circleId: number) => {
-    setSelectedCircleId(circleId === selectedCircleId ? null : circleId);
-  };
+  // Filter out circles that are already in the lab
+  const availableCircles = circles?.filter(
+    (circle) => !existingCircleIds.includes(circle.id)
+  ) || [];
+
+  // Filter circles by search query
+  const filteredCircles = searchQuery
+    ? availableCircles.filter(
+        (circle) =>
+          circle.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (circle.description &&
+            circle.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : availableCircles;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-auto">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Add Circle to Lab</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <PlusCircle className="h-5 w-5" />
+            Add Circle to Lab
+          </DialogTitle>
           <DialogDescription>
-            Select a circle to add to this experiment lab and assign its role.
+            Select a circle to add to your experiment lab and assign a role.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="flex items-center border rounded-md px-3 py-2">
-            <Search className="h-4 w-4 mr-2 text-muted-foreground" />
-            <Input
-              placeholder="Search circles..."
-              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="border rounded-md p-4 space-y-2">
-            <h4 className="font-medium">Circle Role</h4>
-            <p className="text-sm text-muted-foreground mb-2">
-              Determine how this circle will be used in the experiment.
-            </p>
-            <RadioGroup
-              value={selectedRole}
-              onValueChange={(value) => setSelectedRole(value as "control" | "treatment" | "observation")}
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="control" id="control" />
-                <Label htmlFor="control">Control Group</Label>
+        <div className="grid gap-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="circle-select">Select Circle</Label>
+            {isCirclesLoading ? (
+              <div className="flex items-center justify-center h-[200px]">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="treatment" id="treatment" />
-                <Label htmlFor="treatment">Treatment Group</Label>
+            ) : circlesError ? (
+              <div className="text-center py-8 border rounded-md">
+                <p className="text-destructive">Failed to load circles.</p>
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => window.location.reload()}
+                >
+                  Retry
+                </Button>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="observation" id="observation" />
-                <Label htmlFor="observation">Observation Only</Label>
+            ) : availableCircles.length === 0 ? (
+              <div className="text-center py-8 border rounded-md">
+                <p className="text-muted-foreground">
+                  No available circles to add to this lab.
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  All your circles are already part of this lab or you don't have any circles yet.
+                </p>
               </div>
-            </RadioGroup>
+            ) : (
+              <Command className="rounded-lg border shadow-md">
+                <CommandInput
+                  placeholder="Search circles..."
+                  value={searchQuery}
+                  onValueChange={setSearchQuery}
+                  className="border-none focus:ring-0"
+                />
+                <CommandList className="max-h-[200px] overflow-auto">
+                  <CommandEmpty>No circles found.</CommandEmpty>
+                  <CommandGroup>
+                    {filteredCircles.map((circle) => (
+                      <CommandItem
+                        key={circle.id}
+                        value={circle.id.toString()}
+                        onSelect={() => setSelectedCircleId(circle.id)}
+                        className={`flex items-start gap-2 p-2 cursor-pointer ${
+                          selectedCircleId === circle.id
+                            ? "bg-accent"
+                            : ""
+                        }`}
+                      >
+                        <div
+                          className="w-3 h-3 mt-1 rounded-full flex-shrink-0"
+                          style={{
+                            backgroundColor: circle.color || "#c5c5c5",
+                          }}
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium">{circle.name}</div>
+                          {circle.description && (
+                            <div className="text-xs text-muted-foreground line-clamp-1">
+                              {circle.description}
+                            </div>
+                          )}
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Visibility: {circle.visibility}
+                          </div>
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            )}
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-medium">Available Circles</h4>
-            {isLoading ? (
-              <div className="text-center py-4">Loading circles...</div>
-            ) : error ? (
-              <div className="text-center py-4 text-destructive">
-                Failed to load circles.
-              </div>
-            ) : filteredCircles?.length === 0 ? (
-              <div className="text-center py-4 text-muted-foreground">
-                No available circles found.
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-[300px] overflow-auto pr-1">
-                {filteredCircles?.map((circle) => (
-                  <Card 
-                    key={circle.id} 
-                    className={`cursor-pointer border-2 ${
-                      selectedCircleId === circle.id 
-                        ? "border-primary" 
-                        : "hover:border-muted-foreground/20"
-                    }`}
-                    onClick={() => handleCircleSelect(circle.id)}
-                  >
-                    <CardHeader className="p-4 pb-2">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-base">{circle.name}</CardTitle>
-                        <div className="flex items-center text-xs text-muted-foreground">
-                          <Users className="h-3 w-3 mr-1" />
-                          <span>Members: {circle.memberCount || 0}</span>
-                        </div>
-                      </div>
-                      <CardDescription className="line-clamp-2 text-xs">
-                        {circle.description || "No description."}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                ))}
-              </div>
-            )}
+            <Label htmlFor="role-select">Circle Role</Label>
+            <Select
+              value={selectedRole}
+              onValueChange={(value) =>
+                setSelectedRole(value as "control" | "treatment" | "observation")
+              }
+              disabled={!selectedCircleId}
+            >
+              <SelectTrigger id="role-select">
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="control">Control</SelectItem>
+                <SelectItem value="treatment">Treatment</SelectItem>
+                <SelectItem value="observation">Observation</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              <span className="font-medium">Control:</span> Baseline group with standard content<br />
+              <span className="font-medium">Treatment:</span> Experimental group with modified content<br />
+              <span className="font-medium">Observation:</span> Circle members can view but not participate
+            </p>
           </div>
         </div>
 
-        <DialogFooter className="mt-4">
+        <DialogFooter>
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
@@ -223,7 +241,14 @@ const LabCircleAddDialog = ({
             onClick={handleAddCircle}
             disabled={!selectedCircleId || isSubmitting}
           >
-            {isSubmitting ? "Adding..." : "Add Circle"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Adding...
+              </>
+            ) : (
+              "Add Circle"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -7,57 +9,63 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
+import { Loader2, Settings } from "lucide-react";
 
 interface LabCircleRoleDialogProps {
   labId: number;
   circleId: number;
-  initialRole: "control" | "treatment" | "observation";
+  circleName: string;
+  currentRole: "control" | "treatment" | "observation";
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onRoleUpdate: () => void;
+  onSuccess: () => void;
 }
 
 const LabCircleRoleDialog = ({
   labId,
   circleId,
-  initialRole,
+  circleName,
+  currentRole,
   open,
   onOpenChange,
-  onRoleUpdate,
+  onSuccess,
 }: LabCircleRoleDialogProps) => {
   const { toast } = useToast();
-  const [role, setRole] = useState<"control" | "treatment" | "observation">(initialRole);
+  const [selectedRole, setSelectedRole] = useState<"control" | "treatment" | "observation">(currentRole);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleRoleChange = async () => {
-    if (role === initialRole) {
-      onOpenChange(false);
-      return;
-    }
-
+  const handleUpdateRole = async () => {
+    if (isSubmitting || selectedRole === currentRole) return;
+    
     setIsSubmitting(true);
     try {
       await apiRequest(`/api/labs/${labId}/circles/${circleId}`, {
         method: "PATCH",
-        body: { role },
+        body: {
+          role: selectedRole,
+        },
       });
       
       toast({
         title: "Role updated",
-        description: "Circle role has been updated successfully.",
+        description: `Circle ${circleName} now has the role: ${selectedRole}`,
       });
       
       onOpenChange(false);
-      onRoleUpdate();
+      onSuccess();
     } catch (error) {
       toast({
         title: "Failed to update role",
-        description: "There was an error updating the circle role.",
+        description: "There was an error changing the circle's role.",
         variant: "destructive",
       });
     } finally {
@@ -65,67 +73,65 @@ const LabCircleRoleDialog = ({
     }
   };
 
-  const roleDescriptions = {
-    control: "Acts as a baseline for comparison. Content and interactions remain unchanged.",
-    treatment: "Receives experimental interventions or changes to test your hypothesis.",
-    observation: "Only observes the experiment. Not actively included in the results analysis."
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Circle Role</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5" />
+            Change Circle Role
+          </DialogTitle>
           <DialogDescription>
-            Change the role of this circle in the experiment lab.
+            Change the role of circle "{circleName}" in this lab.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-2">
-          <RadioGroup
-            value={role}
-            onValueChange={(value) => setRole(value as "control" | "treatment" | "observation")}
-          >
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <RadioGroupItem value="control" id="control" className="mt-1" />
-                <div>
-                  <Label htmlFor="control" className="text-base font-medium">Control Group</Label>
-                  <p className="text-sm text-muted-foreground">{roleDescriptions.control}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <RadioGroupItem value="treatment" id="treatment" className="mt-1" />
-                <div>
-                  <Label htmlFor="treatment" className="text-base font-medium">Treatment Group</Label>
-                  <p className="text-sm text-muted-foreground">{roleDescriptions.treatment}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <RadioGroupItem value="observation" id="observation" className="mt-1" />
-                <div>
-                  <Label htmlFor="observation" className="text-base font-medium">Observation Group</Label>
-                  <p className="text-sm text-muted-foreground">{roleDescriptions.observation}</p>
-                </div>
-              </div>
-            </div>
-          </RadioGroup>
+        <div className="grid gap-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="role-select">Circle Role</Label>
+            <Select
+              value={selectedRole}
+              onValueChange={(value) =>
+                setSelectedRole(value as "control" | "treatment" | "observation")
+              }
+            >
+              <SelectTrigger id="role-select">
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="control">Control</SelectItem>
+                <SelectItem value="treatment">Treatment</SelectItem>
+                <SelectItem value="observation">Observation</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-2">
+              <span className="font-medium">Control:</span> Baseline group with standard content<br />
+              <span className="font-medium">Treatment:</span> Experimental group with modified content<br />
+              <span className="font-medium">Observation:</span> Circle members can view but not participate
+            </p>
+          </div>
         </div>
 
         <DialogFooter>
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
           <Button
-            onClick={handleRoleChange}
-            disabled={role === initialRole || isSubmitting}
+            onClick={handleUpdateRole}
+            disabled={selectedRole === currentRole || isSubmitting}
           >
-            {isSubmitting ? "Updating..." : "Update Role"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Updating...
+              </>
+            ) : (
+              "Update Role"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

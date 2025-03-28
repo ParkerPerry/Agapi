@@ -1,19 +1,17 @@
 import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Lab } from "@shared/schema";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 
 interface LabDeleteDialogProps {
   lab: Lab;
@@ -29,13 +27,11 @@ const LabDeleteDialog = ({
   onDelete,
 }: LabDeleteDialogProps) => {
   const { toast } = useToast();
-  const [confirmText, setConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-  const expectedConfirmation = lab.name;
 
   const handleDelete = async () => {
-    if (confirmText !== expectedConfirmation) return;
-
+    if (isDeleting) return;
+    
     setIsDeleting(true);
     try {
       await apiRequest(`/api/labs/${lab.id}`, {
@@ -60,45 +56,47 @@ const LabDeleteDialog = ({
     }
   };
 
-  const isConfirmationValid = confirmText === expectedConfirmation;
-
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete Lab</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the lab
-            and all associated data.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+            Delete Lab
+          </DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete the lab "{lab.name}"?
+          </DialogDescription>
+        </DialogHeader>
         
-        <div className="space-y-4 my-4">
-          <p className="text-sm">
-            Please type <span className="font-bold">{expectedConfirmation}</span> to confirm.
+        <div className="py-4">
+          <p className="text-sm text-muted-foreground mb-2">
+            This action cannot be undone. This will:
           </p>
-          <Input
-            value={confirmText}
-            onChange={(e) => setConfirmText(e.target.value)}
-            placeholder="Type lab name to confirm"
-            className="w-full"
-          />
+          <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+            <li>Delete all lab metadata and settings</li>
+            <li>Remove all circle associations from this lab</li>
+            <li>Delete any lab-specific metrics and results</li>
+          </ul>
         </div>
         
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction asChild>
-            <Button 
-              variant="destructive" 
-              onClick={handleDelete} 
-              disabled={!isConfirmationValid || isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete Lab"}
-            </Button>
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete Lab"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
