@@ -3,9 +3,22 @@
  * @param date Date to format
  * @returns Formatted relative time string
  */
-export function formatRelativeTime(date: Date): string {
+export function formatRelativeTime(date: Date | null | undefined): string {
+  // Handle null or undefined date
+  if (!date) {
+    return "unknown time";
+  }
+  
+  // Convert string dates to Date objects
+  const dateObj = date instanceof Date ? date : new Date(date);
+  
+  // Check if the date is valid
+  if (isNaN(dateObj.getTime())) {
+    return "invalid date";
+  }
+  
   const now = new Date();
-  const diff = now.getTime() - date.getTime();
+  const diff = now.getTime() - dateObj.getTime();
   
   // Convert to seconds
   const seconds = Math.floor(diff / 1000);
@@ -55,14 +68,27 @@ export function formatRelativeTime(date: Date): string {
  * @param date Date to format
  * @returns Formatted date string
  */
-export function formatDate(date: Date): string {
+export function formatDate(date: Date | null | undefined): string {
+  // Handle null or undefined date
+  if (!date) {
+    return "N/A";
+  }
+  
+  // Convert string dates to Date objects
+  const dateObj = date instanceof Date ? date : new Date(date);
+  
+  // Check if the date is valid
+  if (isNaN(dateObj.getTime())) {
+    return "Invalid date";
+  }
+  
   const options: Intl.DateTimeFormatOptions = {
     month: 'short',
     day: 'numeric',
     year: 'numeric'
   };
   
-  return date.toLocaleDateString('en-US', options);
+  return dateObj.toLocaleDateString('en-US', options);
 }
 
 /**
@@ -70,7 +96,20 @@ export function formatDate(date: Date): string {
  * @param date Date to format
  * @returns Formatted date and time string
  */
-export function formatDateTime(date: Date): string {
+export function formatDateTime(date: Date | null | undefined): string {
+  // Handle null or undefined date
+  if (!date) {
+    return "N/A";
+  }
+  
+  // Convert string dates to Date objects
+  const dateObj = date instanceof Date ? date : new Date(date);
+  
+  // Check if the date is valid
+  if (isNaN(dateObj.getTime())) {
+    return "Invalid date";
+  }
+  
   const options: Intl.DateTimeFormatOptions = {
     month: 'short',
     day: 'numeric',
@@ -80,5 +119,5 @@ export function formatDateTime(date: Date): string {
     hour12: true
   };
   
-  return date.toLocaleDateString('en-US', options);
+  return dateObj.toLocaleDateString('en-US', options);
 }
