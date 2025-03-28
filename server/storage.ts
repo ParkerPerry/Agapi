@@ -5,10 +5,12 @@ import {
   Notification, InsertNotification, DirectChat, InsertDirectChat,
   AiFollowerCollective, InsertAiFollowerCollective, 
   AiFollowerCollectiveMember, InsertAiFollowerCollectiveMember,
+  Lab, InsertLab, LabPost, InsertLabPost, LabMetrics, InsertLabMetrics,
   // Add table imports
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
-  notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers
+  notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers,
+  labs, labPosts, labMetrics
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
@@ -97,6 +99,25 @@ export interface IStorage {
   // Direct chat methods
   createDirectChatMessage(message: Omit<InsertDirectChat, "createdAt">): Promise<DirectChat>;
   getDirectChatHistory(userId: number, aiFollowerId: number, limit?: number): Promise<DirectChat[]>;
+  
+  // Lab methods
+  createLab(userId: number, lab: InsertLab): Promise<Lab>;
+  getLab(id: number): Promise<Lab | undefined>;
+  getUserLabs(userId: number): Promise<Lab[]>;
+  updateLabStatus(id: number, status: "draft" | "active" | "completed"): Promise<Lab>;
+  deleteLab(id: number): Promise<void>;
+  
+  // Lab post methods
+  createLabPost(labPost: InsertLabPost): Promise<LabPost>;
+  getLabPosts(labId: number): Promise<LabPost[]>;
+  updateLabPost(id: number, content: string): Promise<LabPost>;
+  deleteLabPost(id: number): Promise<void>;
+  publishLabPost(labPostId: number, userId: number): Promise<LabPost>;
+  
+  // Lab metrics methods
+  getLabMetrics(labId: number): Promise<LabMetrics | undefined>;
+  updateLabMetrics(labId: number, updates: Partial<InsertLabMetrics>): Promise<LabMetrics>;
+  calculateLabMetrics(labId: number): Promise<LabMetrics>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1046,6 +1067,468 @@ export class DatabaseStorage implements IStorage {
       return chatHistory.reverse();
     } catch (error) {
       console.error("[Storage] Error getting direct chat history:", error);
+      throw error;
+    }
+  }
+
+  // Lab methods
+  async createLab(userId: number, lab: InsertLab): Promise<Lab> {
+    try {
+      console.log("[Storage] Creating new lab experiment:", {
+        userId,
+        name: lab.name,
+        circleId: lab.circleId
+      });
+      
+      const [newLab] = (await db
+        .insert(labs)
+        .values({ ...lab, userId })
+        .returning()) as Lab[];
+      
+      console.log("[Storage] Created new lab experiment:", {
+        id: newLab.id,
+        name: newLab.name
+      });
+      
+      // Create initial metrics entry
+      await this.createInitialLabMetrics(newLab.id);
+      
+      return newLab;
+    } catch (error) {
+      console.error("[Storage] Error creating lab experiment:", error);
+      throw error;
+    }
+  }
+  
+  async getLab(id: number): Promise<Lab | undefined> {
+    try {
+      console.log("[Storage] Getting lab experiment by ID:", id);
+      
+      const [lab] = await db
+        .select()
+        .from(labs)
+        .where(eq(labs.id, id));
+      
+      if (lab) {
+        console.log("[Storage] Found lab experiment:", {
+          id: lab.id,
+          name: lab.name,
+          status: lab.status
+        });
+      } else {
+        console.log("[Storage] Lab experiment not found");
+      }
+      
+      return lab;
+    } catch (error) {
+      console.error("[Storage] Error getting lab experiment:", error);
+      throw error;
+    }
+  }
+  
+  async getUserLabs(userId: number): Promise<Lab[]> {
+    try {
+      console.log("[Storage] Getting all lab experiments for user:", userId);
+      
+      const userLabs = await db
+        .select()
+        .from(labs)
+        .where(eq(labs.userId, userId))
+        .orderBy(desc(labs.createdAt));
+      
+      console.log("[Storage] Found lab experiments for user:", userLabs.length);
+      
+      return userLabs;
+    } catch (error) {
+      console.error("[Storage] Error getting user lab experiments:", error);
+      throw error;
+    }
+  }
+  
+  async updateLabStatus(id: number, status: "draft" | "active" | "completed"): Promise<Lab> {
+    try {
+      console.log("[Storage] Updating lab experiment status:", {
+        id,
+        status
+      });
+      
+      const updates: Partial<Lab> = { status };
+      
+      // Set appropriate timestamps based on status
+      if (status === "active") {
+        updates.launchedAt = new Date();
+      } else if (status === "completed") {
+        updates.completedAt = new Date();
+      }
+      
+      const [updatedLab] = (await db
+        .update(labs)
+        .set(updates)
+        .where(eq(labs.id, id))
+        .returning()) as Lab[];
+      
+      console.log("[Storage] Updated lab experiment status:", {
+        id: updatedLab.id,
+        status: updatedLab.status
+      });
+      
+      return updatedLab;
+    } catch (error) {
+      console.error("[Storage] Error updating lab experiment status:", error);
+      throw error;
+    }
+  }
+  
+  async deleteLab(id: number): Promise<void> {
+    try {
+      console.log("[Storage] Deleting lab experiment:", id);
+      
+      // First delete all lab posts
+      await db
+        .delete(labPosts)
+        .where(eq(labPosts.labId, id));
+      
+      console.log("[Storage] Deleted lab posts");
+      
+      // Delete lab metrics
+      await db
+        .delete(labMetrics)
+        .where(eq(labMetrics.labId, id));
+      
+      console.log("[Storage] Deleted lab metrics");
+      
+      // Finally delete the lab
+      await db
+        .delete(labs)
+        .where(eq(labs.id, id));
+      
+      console.log("[Storage] Successfully deleted lab experiment");
+    } catch (error) {
+      console.error("[Storage] Error deleting lab experiment:", error);
+      throw error;
+    }
+  }
+  
+  // Lab post methods
+  async createLabPost(labPost: InsertLabPost): Promise<LabPost> {
+    try {
+      console.log("[Storage] Creating new lab post:", {
+        labId: labPost.labId,
+        content: labPost.content.substring(0, 30) + "..."
+      });
+      
+      const [newLabPost] = (await db
+        .insert(labPosts)
+        .values(labPost)
+        .returning()) as LabPost[];
+      
+      console.log("[Storage] Created new lab post:", {
+        id: newLabPost.id,
+        labId: newLabPost.labId
+      });
+      
+      return newLabPost;
+    } catch (error) {
+      console.error("[Storage] Error creating lab post:", error);
+      throw error;
+    }
+  }
+  
+  async getLabPosts(labId: number): Promise<LabPost[]> {
+    try {
+      console.log("[Storage] Getting posts for lab:", labId);
+      
+      const posts = await db
+        .select()
+        .from(labPosts)
+        .where(eq(labPosts.labId, labId))
+        .orderBy(asc(labPosts.order));
+      
+      console.log("[Storage] Found lab posts:", posts.length);
+      
+      return posts;
+    } catch (error) {
+      console.error("[Storage] Error getting lab posts:", error);
+      throw error;
+    }
+  }
+  
+  async updateLabPost(id: number, content: string): Promise<LabPost> {
+    try {
+      console.log("[Storage] Updating lab post:", {
+        id,
+        contentPreview: content.substring(0, 30) + "..."
+      });
+      
+      const [updatedPost] = (await db
+        .update(labPosts)
+        .set({ content })
+        .where(eq(labPosts.id, id))
+        .returning()) as LabPost[];
+      
+      console.log("[Storage] Updated lab post successfully");
+      
+      return updatedPost;
+    } catch (error) {
+      console.error("[Storage] Error updating lab post:", error);
+      throw error;
+    }
+  }
+  
+  async deleteLabPost(id: number): Promise<void> {
+    try {
+      console.log("[Storage] Deleting lab post:", id);
+      
+      await db
+        .delete(labPosts)
+        .where(eq(labPosts.id, id));
+      
+      console.log("[Storage] Deleted lab post successfully");
+    } catch (error) {
+      console.error("[Storage] Error deleting lab post:", error);
+      throw error;
+    }
+  }
+  
+  async publishLabPost(labPostId: number, userId: number): Promise<LabPost> {
+    try {
+      console.log("[Storage] Publishing lab post:", labPostId);
+      
+      // First get the lab post
+      const [labPost] = await db
+        .select()
+        .from(labPosts)
+        .where(eq(labPosts.id, labPostId));
+      
+      if (!labPost) {
+        throw new Error("Lab post not found");
+      }
+      
+      // Get the lab to find the circle ID
+      const lab = await this.getLab(labPost.labId);
+      if (!lab) {
+        throw new Error("Lab not found");
+      }
+      
+      // Create the actual post in the circle
+      const post = await this.createPostInCircle(
+        userId,
+        lab.circleId,
+        labPost.content
+      );
+      
+      console.log("[Storage] Created actual post from lab post:", {
+        labPostId,
+        publishedPostId: post.id
+      });
+      
+      // Update the lab post with the published status and post ID
+      const [updatedLabPost] = (await db
+        .update(labPosts)
+        .set({
+          status: "published",
+          publishedPostId: post.id,
+          publishedAt: new Date()
+        })
+        .where(eq(labPosts.id, labPostId))
+        .returning()) as LabPost[];
+      
+      console.log("[Storage] Updated lab post with published status");
+      
+      // Update lab metrics
+      const currentMetrics = await this.getLabMetrics(lab.id);
+      await this.updateLabMetrics(lab.id, {
+        postCount: currentMetrics ? currentMetrics.postCount + 1 : 1
+      });
+      
+      return updatedLabPost;
+    } catch (error) {
+      console.error("[Storage] Error publishing lab post:", error);
+      throw error;
+    }
+  }
+  
+  // Lab metrics methods
+  async createInitialLabMetrics(labId: number): Promise<LabMetrics> {
+    try {
+      console.log("[Storage] Creating initial metrics for lab:", labId);
+      
+      const initialMetrics: InsertLabMetrics = {
+        labId,
+        postCount: 0,
+        commentCount: 0,
+        followerCount: 0,
+        additionalMetrics: {
+          likeCount: 0,
+          avgResponseTime: 0,
+          engagement: 0
+        }
+      };
+      
+      const [metrics] = (await db
+        .insert(labMetrics)
+        .values(initialMetrics)
+        .returning()) as LabMetrics[];
+      
+      console.log("[Storage] Created initial lab metrics");
+      
+      return metrics;
+    } catch (error) {
+      console.error("[Storage] Error creating initial lab metrics:", error);
+      throw error;
+    }
+  }
+  
+  async getLabMetrics(labId: number): Promise<LabMetrics | undefined> {
+    try {
+      console.log("[Storage] Getting metrics for lab:", labId);
+      
+      const [metrics] = await db
+        .select()
+        .from(labMetrics)
+        .where(eq(labMetrics.labId, labId))
+        .orderBy(desc(labMetrics.updatedAt))
+        .limit(1);
+      
+      if (metrics) {
+        console.log("[Storage] Found lab metrics");
+      } else {
+        console.log("[Storage] Lab metrics not found");
+      }
+      
+      return metrics;
+    } catch (error) {
+      console.error("[Storage] Error getting lab metrics:", error);
+      throw error;
+    }
+  }
+  
+  async updateLabMetrics(labId: number, updates: Partial<InsertLabMetrics>): Promise<LabMetrics> {
+    try {
+      console.log("[Storage] Updating metrics for lab:", labId);
+      
+      // Get current metrics
+      const currentMetrics = await this.getLabMetrics(labId);
+      
+      if (!currentMetrics) {
+        // Create metrics if they don't exist
+        return this.createInitialLabMetrics(labId);
+      }
+      
+      // Prepare updates with current timestamp
+      const metricsUpdates = {
+        ...updates,
+        updatedAt: new Date()
+      };
+      
+      // Handle additional metrics merging if provided
+      if (updates.additionalMetrics && currentMetrics.additionalMetrics) {
+        metricsUpdates.additionalMetrics = {
+          ...currentMetrics.additionalMetrics,
+          ...updates.additionalMetrics
+        };
+      }
+      
+      const [updatedMetrics] = (await db
+        .update(labMetrics)
+        .set(metricsUpdates)
+        .where(eq(labMetrics.id, currentMetrics.id))
+        .returning()) as LabMetrics[];
+      
+      console.log("[Storage] Updated lab metrics successfully");
+      
+      return updatedMetrics;
+    } catch (error) {
+      console.error("[Storage] Error updating lab metrics:", error);
+      throw error;
+    }
+  }
+  
+  async calculateLabMetrics(labId: number): Promise<LabMetrics> {
+    try {
+      console.log("[Storage] Calculating metrics for lab:", labId);
+      
+      // Get the lab
+      const lab = await this.getLab(labId);
+      if (!lab) {
+        throw new Error("Lab not found");
+      }
+      
+      // Get all published posts from this lab
+      const labPostsList = await db
+        .select()
+        .from(labPosts)
+        .where(and(
+          eq(labPosts.labId, labId),
+          eq(labPosts.status, "published")
+        ));
+      
+      const publishedPostIds = labPostsList
+        .filter(post => post.publishedPostId !== null)
+        .map(post => post.publishedPostId!);
+      
+      // Count comments (AI interactions of type comment or reply)
+      let commentCount = 0;
+      let likeCount = 0;
+      
+      if (publishedPostIds.length > 0) {
+        // Get all AI interactions for these posts
+        const interactions = await db
+          .select()
+          .from(aiInteractions)
+          .where(
+            sql`${aiInteractions.postId} IN (${publishedPostIds.join(',')})`
+          );
+        
+        // Count by type
+        commentCount = interactions.filter(
+          int => int.type === "comment" || int.type === "reply"
+        ).length;
+        
+        likeCount = interactions.filter(
+          int => int.type === "like"
+        ).length;
+      }
+      
+      // Get follower count in the lab's circle
+      const followers = await this.getCircleFollowers(lab.circleId);
+      const followerCount = followers.length;
+      
+      // Calculate average response time if possible
+      let avgResponseTime = 0;
+      if (publishedPostIds.length > 0 && commentCount > 0) {
+        // This would be a complex calculation in a real implementation
+        // For now, we'll use a simplified approach
+        avgResponseTime = 120; // mock 2 minutes average
+      }
+      
+      // Calculate engagement score
+      const totalInteractions = commentCount + likeCount;
+      const engagement = publishedPostIds.length > 0
+        ? Math.round((totalInteractions / publishedPostIds.length) * 100) / 100
+        : 0;
+      
+      // Update metrics
+      const metrics = await this.updateLabMetrics(labId, {
+        postCount: publishedPostIds.length,
+        commentCount,
+        followerCount,
+        additionalMetrics: {
+          likeCount,
+          avgResponseTime,
+          engagement
+        }
+      });
+      
+      console.log("[Storage] Calculated and updated lab metrics:", {
+        postCount: metrics.postCount,
+        commentCount: metrics.commentCount,
+        followerCount: metrics.followerCount
+      });
+      
+      return metrics;
+    } catch (error) {
+      console.error("[Storage] Error calculating lab metrics:", error);
       throw error;
     }
   }
