@@ -47,6 +47,7 @@ import {
 } from "lucide-react";
 import LabCircleAddDialog from "./lab-circle-add-dialog";
 import LabCircleRoleDialog from "./lab-circle-role-dialog";
+import LabStatusChangeDialog from "./lab-status-change-dialog";
 
 interface LabDetailDialogProps {
   labId: number;
@@ -99,6 +100,7 @@ const LabDetailDialog = ({
   const [selectedCircle, setSelectedCircle] = useState<LabCircle | null>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [targetStatus, setTargetStatus] = useState<"draft" | "active" | "completed" | "archived" | null>(null);
 
   // Fetch lab details
   const {
@@ -202,7 +204,7 @@ const LabDetailDialog = ({
         <Button 
           key="activate"
           variant="outline" 
-          onClick={() => handleStatusChange("active")}
+          onClick={() => setTargetStatus("active")}
           className="flex items-center gap-2"
         >
           <PlayCircle className="h-4 w-4" />
@@ -216,7 +218,7 @@ const LabDetailDialog = ({
         <Button 
           key="complete"
           variant="outline" 
-          onClick={() => handleStatusChange("completed")}
+          onClick={() => setTargetStatus("completed")}
           className="flex items-center gap-2"
         >
           <CheckCircle className="h-4 w-4" />
@@ -230,7 +232,7 @@ const LabDetailDialog = ({
         <Button 
           key="archive"
           variant="outline" 
-          onClick={() => handleStatusChange("archived")}
+          onClick={() => setTargetStatus("archived")}
           className="flex items-center gap-2"
         >
           <Archive className="h-4 w-4" />
@@ -501,6 +503,22 @@ const LabDetailDialog = ({
               open={isRoleDialogOpen}
               onOpenChange={setIsRoleDialogOpen}
               onSuccess={handleCircleUpdate}
+            />
+          )}
+          
+          {targetStatus && (
+            <LabStatusChangeDialog
+              labId={labId}
+              currentStatus={lab.status}
+              newStatus={targetStatus}
+              open={!!targetStatus}
+              onOpenChange={(open) => {
+                if (!open) setTargetStatus(null);
+              }}
+              onSuccess={() => {
+                refetchLab();
+                onUpdate();
+              }}
             />
           )}
         </>
