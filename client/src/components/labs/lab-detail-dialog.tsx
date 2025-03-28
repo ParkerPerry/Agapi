@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Lab, Circle } from "@shared/schema";
+import { Lab, Circle, AiFollowerCollective } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
@@ -48,6 +48,8 @@ import {
 import LabCircleAddDialog from "./lab-circle-add-dialog";
 import LabCircleRoleDialog from "./lab-circle-role-dialog";
 import LabStatusChangeDialog from "./lab-status-change-dialog";
+import LabCollectiveAddDialog from "./lab-collective-add-dialog";
+import LabCollectiveRoleDialog from "./lab-collective-role-dialog";
 
 interface LabDetailDialogProps {
   labId: number;
@@ -102,6 +104,11 @@ const LabDetailDialog = ({
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [targetStatus, setTargetStatus] = useState<"draft" | "active" | "completed" | "archived" | null>(null);
+  
+  // AI Collective management
+  const [isAddCollectiveOpen, setIsAddCollectiveOpen] = useState(false);
+  const [selectedCollective, setSelectedCollective] = useState<(AiFollowerCollective & { role: string }) | null>(null);
+  const [isCollectiveRoleDialogOpen, setIsCollectiveRoleDialogOpen] = useState(false);
 
   // Fetch lab details
   const {
@@ -123,6 +130,17 @@ const LabDetailDialog = ({
   } = useQuery<LabCircle[]>({
     queryKey: [`/api/labs/${labId}/circles`],
     enabled: open && !!labId && activeTab === "circles",
+  });
+  
+  // Fetch lab collectives
+  const {
+    data: collectives,
+    isLoading: isCollectivesLoading,
+    error: collectivesError,
+    refetch: refetchCollectives,
+  } = useQuery<(AiFollowerCollective & { role: string })[]>({
+    queryKey: [`/api/labs/${labId}/collectives`],
+    enabled: open && !!labId && activeTab === "collectives",
   });
 
   const handleStatusChange = async (newStatus: "active" | "draft" | "completed" | "archived") => {
@@ -190,6 +208,31 @@ const LabDetailDialog = ({
       toast({
         title: "Failed to remove circle",
         description: "There was an error removing the circle.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const handleCollectiveUpdate = () => {
+    refetchCollectives();
+    onUpdate();
+  };
+  
+  const handleRemoveCollective = async (collectiveId: number) => {
+    try {
+      await apiRequest(`/api/labs/${labId}/collectives/${collectiveId}`, "DELETE");
+      
+      toast({
+        title: "Collective removed",
+        description: "The AI collective has been removed from this lab.",
+      });
+      
+      refetchCollectives();
+      onUpdate();
+    } catch (error) {
+      toast({
+        title: "Failed to remove collective",
+        description: "There was an error removing the AI collective.",
         variant: "destructive",
       });
     }
@@ -293,9 +336,10 @@ const LabDetailDialog = ({
           ) : lab ? (
             <div>
               <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="info">Information</TabsTrigger>
                   <TabsTrigger value="circles">Circles</TabsTrigger>
+                  <TabsTrigger value="collectives">AI Collectives</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="info" className="space-y-4 pt-4">
@@ -478,6 +522,113 @@ const LabDetailDialog = ({
                     </CardFooter>
                   </Card>
                 </TabsContent>
+                
+                <TabsContent value="collectives" className="space-y-4 pt-4">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <div>
+                        <CardTitle>AI Collective Assignment</CardTitle>
+                        <CardDescription>
+                          Assign AI follower collectives to different roles in your experiment
+                        </CardDescription>
+                      </div>
+                      <Button onClick={() => setIsAddCollectiveOpen(true)}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Collective
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      {isCollectivesLoading ? (
+                        <div className="py-8 text-center">
+                          <p>Loading AI collectives...</p>
+                        </div>
+                      ) : collectivesError ? (
+                        <div className="py-8 text-center">
+                          <p className="text-destructive">Failed to load AI collectives.</p>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => refetchCollectives()}
+                            className="mt-4"
+                          >
+                            Retry
+                          </Button>
+                        </div>
+                      ) : collectives?.length === 0 ? (
+                        <div className="py-8 text-center border rounded-md bg-muted/20">
+                          <p className="text-muted-foreground mb-4">
+                            No AI collectives assigned to this lab yet.
+                          </p>
+                          <Button onClick={() => setIsAddCollectiveOpen(true)}>
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add Collective
+                          </Button>
+                        </div>
+                      ) : (
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Collective</TableHead>
+                              <TableHead>Role</TableHead>
+                              <TableHead className="w-[120px]">Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {collectives?.map((collective) => (
+                              <TableRow key={collective.id}>
+                                <TableCell>
+                                  <div className="font-medium">{collective.name}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {collective.description?.substring(0, 50) || "No description"}
+                                    {collective.description && collective.description.length > 50 ? "..." : ""}
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <Badge 
+                                    variant="outline" 
+                                    className={getRoleBadgeStyles(collective.role)}
+                                  >
+                                    {collective.role.charAt(0).toUpperCase() + collective.role.slice(1)}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => {
+                                        setSelectedCollective(collective);
+                                        setIsCollectiveRoleDialogOpen(true);
+                                      }}
+                                      title="Change role"
+                                    >
+                                      <Settings className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => handleRemoveCollective(collective.id)}
+                                      className="text-destructive"
+                                      title="Remove from lab"
+                                    >
+                                      <CircleSlash className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      )}
+                    </CardContent>
+                    <CardFooter>
+                      <p className="text-xs text-muted-foreground">
+                        <strong>Control:</strong> Baseline AI follower behavior<br />
+                        <strong>Treatment:</strong> Experimental AI follower behavior<br />
+                        <strong>Observation:</strong> AI followers observe but don't interact
+                      </p>
+                    </CardFooter>
+                  </Card>
+                </TabsContent>
               </Tabs>
             </div>
           ) : null}
@@ -487,6 +638,7 @@ const LabDetailDialog = ({
       {/* Circle dialogs */}
       {lab && (
         <>
+          {/* Circle dialogs */}
           <LabCircleAddDialog
             labId={labId}
             open={isAddCircleOpen}
@@ -507,6 +659,28 @@ const LabDetailDialog = ({
             />
           )}
           
+          {/* Collective dialogs */}
+          <LabCollectiveAddDialog
+            labId={labId}
+            open={isAddCollectiveOpen}
+            onOpenChange={setIsAddCollectiveOpen}
+            onSuccess={handleCollectiveUpdate}
+            existingCollectiveIds={collectives?.map(c => c.id) || []}
+          />
+          
+          {selectedCollective && (
+            <LabCollectiveRoleDialog
+              labId={labId}
+              collectiveId={selectedCollective.id}
+              collectiveName={selectedCollective.name}
+              currentRole={selectedCollective.role as "control" | "treatment" | "observation"}
+              open={isCollectiveRoleDialogOpen}
+              onOpenChange={setIsCollectiveRoleDialogOpen}
+              onSuccess={handleCollectiveUpdate}
+            />
+          )}
+          
+          {/* Status change dialog */}
           {targetStatus && (
             <LabStatusChangeDialog
               labId={labId}
