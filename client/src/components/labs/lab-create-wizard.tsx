@@ -1,0 +1,520 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { Beaker, Plus, Trash } from "lucide-react";
+
+interface LabCreateWizardProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onCreateSuccess: () => void;
+}
+
+// Define validation schema
+const labSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters").max(100),
+  experimentType: z.enum(["a_b_test", "multivariate", "exploration"]),
+  description: z.string().optional(),
+  goals: z.string().optional(),
+  successMetrics: z
+    .object({
+      metrics: z
+        .array(
+          z.object({
+            name: z.string().min(1, "Metric name is required"),
+            target: z.number().min(0, "Target value must be non-negative"),
+            priority: z.enum(["high", "medium", "low"]),
+          })
+        )
+        .optional(),
+    })
+    .optional(),
+});
+
+type LabFormValues = z.infer<typeof labSchema>;
+
+const LabCreateWizard = ({
+  open,
+  onOpenChange,
+  onCreateSuccess,
+}: LabCreateWizardProps) => {
+  const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const steps = [
+    { title: "Basic Information", description: "Enter lab name and type" },
+    { title: "Goals & Description", description: "Define lab purpose and goals" },
+    { title: "Success Metrics", description: "Set metrics to measure success" },
+  ];
+
+  // Set up form with default values
+  const form = useForm<LabFormValues>({
+    resolver: zodResolver(labSchema),
+    defaultValues: {
+      name: "",
+      experimentType: "a_b_test",
+      description: "",
+      goals: "",
+      successMetrics: {
+        metrics: [],
+      },
+    },
+  });
+
+  const { watch, setValue, getValues } = form;
+  const metrics = watch("successMetrics.metrics") || [];
+
+  const addMetric = () => {
+    const currentMetrics = getValues("successMetrics.metrics") || [];
+    setValue("successMetrics.metrics", [
+      ...currentMetrics,
+      { name: "", target: 0, priority: "medium" },
+    ]);
+  };
+
+  const removeMetric = (index: number) => {
+    const currentMetrics = getValues("successMetrics.metrics") || [];
+    setValue(
+      "successMetrics.metrics",
+      currentMetrics.filter((_, i) => i !== index)
+    );
+  };
+
+  const handleNext = async () => {
+    const currentValues = getValues();
+    let isValid = false;
+
+    if (currentStep === 0) {
+      const { name, experimentType } = currentValues;
+      isValid = !!(name && name.length >= 3 && experimentType);
+    } else if (currentStep === 1) {
+      // Description and goals are optional, so we can always proceed
+      isValid = true;
+    } else if (currentStep === 2) {
+      // Metrics are optional
+      isValid = true;
+    }
+
+    if (isValid) {
+      if (currentStep < steps.length - 1) {
+        setCurrentStep((prev) => prev + 1);
+      } else {
+        // Submit the form
+        await onSubmit(currentValues);
+      }
+    } else {
+      // Trigger validation to show errors
+      form.trigger();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  const onSubmit = async (data: LabFormValues) => {
+    setIsSubmitting(true);
+    try {
+      await apiRequest("/api/labs", {
+        method: "POST",
+        body: data,
+      });
+      
+      toast({
+        title: "Lab created",
+        description: "Your new experiment lab has been created successfully.",
+      });
+      
+      onOpenChange(false);
+      onCreateSuccess();
+      
+      // Reset form
+      form.reset();
+      setCurrentStep(0);
+    } catch (error) {
+      toast({
+        title: "Failed to create lab",
+        description: "There was an error creating the lab. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Beaker className="h-5 w-5" />
+            Create Content Lab
+          </DialogTitle>
+          <DialogDescription>
+            Set up a new experiment to test content strategies.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="mb-4 mt-2">
+          <div className="flex justify-between mb-2">
+            {steps.map((step, index) => (
+              <div 
+                key={index} 
+                className={`text-center px-2 ${
+                  index === currentStep 
+                    ? "text-primary" 
+                    : index < currentStep 
+                      ? "text-muted-foreground" 
+                      : "text-muted-foreground/50"
+                }`}
+              >
+                <div className="flex items-center mb-1 gap-2 justify-center">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                    index === currentStep 
+                      ? "bg-primary text-primary-foreground" 
+                      : index < currentStep 
+                        ? "bg-primary/20 text-primary" 
+                        : "bg-muted text-muted-foreground"
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <span className="text-sm font-medium hidden sm:inline">{step.title}</span>
+                </div>
+                <span className="text-xs hidden sm:block">{step.description}</span>
+              </div>
+            ))}
+          </div>
+          <div className="w-full bg-muted h-1 mb-6 mt-2 rounded-full overflow-hidden">
+            <div 
+              className="bg-primary h-full transition-all duration-300 rounded-full"
+              style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Step 1: Basic Information */}
+            {currentStep === 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Basic Information</CardTitle>
+                  <CardDescription>
+                    Enter the essential details for your experiment lab.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Lab Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="E.g., 'Q1 Content Strategy Test'" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          A clear, descriptive name for your experiment.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="experimentType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Experiment Type</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select experiment type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="a_b_test">A/B Test</SelectItem>
+                            <SelectItem value="multivariate">Multivariate Test</SelectItem>
+                            <SelectItem value="exploration">Exploration</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          The type of experiment determines how circles will be used.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Step 2: Goals & Description */}
+            {currentStep === 1 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Goals & Description</CardTitle>
+                  <CardDescription>
+                    Define what you want to achieve with this experiment.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Describe the purpose and context of this experiment..."
+                            className="min-h-[120px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Provide context for other team members.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="goals"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Goals</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="What specific goals are you trying to achieve?"
+                            className="min-h-[120px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          List the specific outcomes you're looking for.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Step 3: Success Metrics */}
+            {currentStep === 2 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Success Metrics</CardTitle>
+                  <CardDescription>
+                    Define how you'll measure the success of this experiment.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm font-medium">Metrics</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addMetric}
+                        className="text-xs"
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add Metric
+                      </Button>
+                    </div>
+
+                    {metrics.length === 0 ? (
+                      <div className="text-center py-8 border rounded-md bg-muted/20">
+                        <p className="text-sm text-muted-foreground">
+                          No metrics added yet. Add some metrics to track success.
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addMetric}
+                          className="mt-4"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Metric
+                        </Button>
+                      </div>
+                    ) : (
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Metric</TableHead>
+                            <TableHead>Target</TableHead>
+                            <TableHead>Priority</TableHead>
+                            <TableHead className="w-[50px]"></TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {metrics.map((metric, index) => (
+                            <TableRow key={index}>
+                              <TableCell>
+                                <Input
+                                  placeholder="Metric name"
+                                  value={metric.name}
+                                  onChange={(e) => {
+                                    const updated = [...metrics];
+                                    updated[index].name = e.target.value;
+                                    setValue("successMetrics.metrics", updated);
+                                  }}
+                                  className="w-full"
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  placeholder="Target"
+                                  value={metric.target}
+                                  onChange={(e) => {
+                                    const updated = [...metrics];
+                                    updated[index].target = parseFloat(e.target.value);
+                                    setValue("successMetrics.metrics", updated);
+                                  }}
+                                  className="w-full"
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Select
+                                  value={metric.priority}
+                                  onValueChange={(value) => {
+                                    const updated = [...metrics];
+                                    updated[index].priority = value as "high" | "medium" | "low";
+                                    setValue("successMetrics.metrics", updated);
+                                  }}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Priority" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="high">High</SelectItem>
+                                    <SelectItem value="medium">Medium</SelectItem>
+                                    <SelectItem value="low">Low</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => removeMetric(index)}
+                                  className="h-8 w-8 text-destructive"
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Metrics help you measure success and make data-driven decisions.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </form>
+        </Form>
+
+        <DialogFooter className="flex justify-between mt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleBack}
+            disabled={currentStep === 0}
+          >
+            Back
+          </Button>
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              className="mr-2"
+              onClick={() => onOpenChange(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleNext}
+              disabled={isSubmitting}
+            >
+              {currentStep < steps.length - 1
+                ? "Next"
+                : isSubmitting
+                ? "Creating..."
+                : "Create Lab"}
+            </Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default LabCreateWizard;

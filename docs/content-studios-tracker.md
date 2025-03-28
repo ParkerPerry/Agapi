@@ -1,6 +1,6 @@
 # Content Studios Implementation Tracker
 
-## Current PRD: Lab Creation and Management
+## Current PRD: Lab Creation and Management (02-studio-creation-management.md)
 
 ### Feature Requirements
 
