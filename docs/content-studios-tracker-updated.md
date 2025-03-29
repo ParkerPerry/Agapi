@@ -30,15 +30,27 @@
   - [x] Implemented Lab Detail Dialog with basic circle management
 
 ### PRD #3: Studio System Integration (03-studio-system-integration.md)
-🔄 **Status: In Progress (50% Complete)**
+🔄 **Status: In Progress (90% Complete)**
 - [x] Basic circle integration implemented
   - Database schema for lab-circles with roles
   - API endpoints for managing circles in labs
   - Basic UI for adding/removing circles and managing roles
-- [ ] Needs enhancement with additional features:
-  - Circle statistics in lab detail dialog
+- [x] PRD documentation updated
+  - Removed references to lab_collectives table
+  - Updated to reflect that collectives are assigned to circles directly
+- [x] Circle statistics in lab detail dialog implemented
+  - Added member count display
+  - Added follower count display
+  - Added creation date information
+  - Added visibility type indicators
+- [x] API enhancements 
+  - Added endpoint to get labs for a specific circle (/api/circles/:id/labs)
+- [x] Content targeting capabilities implemented
+  - Added LabPostTargetingSelector component
+  - Updated Post schema with lab role targeting fields
+  - Implemented post distribution based on circle roles
+- [ ] Needs completion of:
   - Circle access control for lab creators
-  - Content targeting capabilities by circle role
 
 ### PRD #4: AI Collective Management (04-ai-collective-management.md)
 ⏳ **Status: Not Started**
@@ -85,6 +97,7 @@
 - `getLabCircles`: Get all circles associated with a lab
 - `removeCircleFromLab`: Remove a circle from a lab
 - `updateLabCircleRole`: Change a circle's role in a lab
+- `getCircleLabs`: Get all labs where a particular circle is included
 
 ### Implemented API Endpoints
 - `GET /api/labs`: Get all labs for a user
@@ -97,6 +110,7 @@
 - `POST /api/labs/:id/circles`: Add a circle to a lab
 - `DELETE /api/labs/:id/circles/:circleId`: Remove a circle from a lab
 - `PATCH /api/labs/:id/circles/:circleId`: Update a circle's role in a lab
+- `GET /api/circles/:id/labs`: Get labs where a circle is included
 
 ### Implemented UI Components
 - `LabsPage`: Main page for lab management
@@ -104,22 +118,28 @@
 - `LabCreateWizard`: Multi-step wizard for creating labs
 - `LabDeleteDialog`: Confirmation dialog for lab deletion
 - `LabDetailDialog`: Dialog for viewing and managing lab details
+- `CircleStatCard`: Card displaying circle statistics in lab detail view
+- `LabCircleRoleSelector`: Dropdown for assigning experimental roles to circles
+- `LabPostTargetingSelector`: Component for targeting content to specific circle roles
 
 ## Next Steps
 
 ### Current Focus (PRD #3 Completion)
-1. Enhance Circle Statistics in Lab Detail Dialog
-   - Add circle member count display
-   - Show circle creation date
-   - Add visibility type indicators
+1. ✅ Enhance Circle Statistics in Lab Detail Dialog
+   - ✓ Added circle member count display
+   - ✓ Added follower count display
+   - ✓ Added creation date information
+   - ✓ Added visibility type indicators
 
 2. Implement Circle Access Control
    - Add functionality to grant lab creators access to circles
    - Implement permission checks for circle operations
 
-3. Develop Content Targeting Features
-   - Create interface for targeting content to specific circle roles
-   - Implement content distribution based on experimental roles
+3. ✅ Develop Content Targeting Features
+   - ✓ Created LabPostTargetingSelector component for targeting content to circle roles
+   - ✓ Integrated selector with post creation form
+   - ✓ Updated Post schema to include labId and role targeting fields
+   - ✓ Implemented post distribution logic based on experimental roles
 
 ### Future Work (PRD #4)
 1. Preparation for content testing functionality
