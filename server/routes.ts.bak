@@ -1886,19 +1886,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const labCircle = await storage.addCircleToLab(labId, circleId, role);
-      
-      // Grant appropriate access to the lab creator for this circle
-      // based on the role of the circle in the lab
-      const accessRole = role === "observation" ? "viewer" : "collaborator";
-      
-      try {
-        console.log(`[API] Granting ${accessRole} access to user ${req.user!.id} for circle ${circleId}`);
-        await storage.grantCircleAccessToUser(req.user!.id, circleId, accessRole);
-      } catch (accessError) {
-        console.error("[API] Error granting circle access:", accessError);
-        // Continue even if access granting fails, as the circle was already added to the lab
-      }
-      
       res.status(201).json(labCircle);
     } catch (error) {
       console.error("[API] Error adding circle to lab:", error);
@@ -1956,18 +1943,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const updatedLabCircle = await storage.updateLabCircleRole(labId, circleId, role);
-      
-      // Update access level based on the new role
-      const accessRole = role === "observation" ? "viewer" : "collaborator";
-      
-      try {
-        console.log(`[API] Updating access to ${accessRole} for user ${req.user!.id} for circle ${circleId}`);
-        await storage.grantCircleAccessToUser(req.user!.id, circleId, accessRole);
-      } catch (accessError) {
-        console.error("[API] Error updating circle access:", accessError);
-        // Continue even if access granting fails, as the circle role was already updated
-      }
-      
       res.json(updatedLabCircle);
     } catch (error) {
       console.error("[API] Error updating circle role in lab:", error);

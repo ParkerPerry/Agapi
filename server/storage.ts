@@ -121,6 +121,9 @@ export interface IStorage {
   getCircleLabs(circleId: number): Promise<(Lab & { role: "control" | "treatment" | "observation" })[]>;
   removeCircleFromLab(labId: number, circleId: number): Promise<void>;
   updateLabCircleRole(labId: number, circleId: number, role: "control" | "treatment" | "observation"): Promise<LabCircle>;
+  
+  // Circle Access Control methods
+  grantCircleAccessToUser(userId: number, circleId: number, role: "collaborator" | "viewer"): Promise<CircleMember>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1671,6 +1674,54 @@ export class DatabaseStorage implements IStorage {
       return updatedLabCircle;
     } catch (error) {
       console.error("[Storage] Error updating lab circle role:", error);
+      throw error;
+    }
+  }
+  
+  async grantCircleAccessToUser(userId: number, circleId: number, role: "collaborator" | "viewer"): Promise<CircleMember> {
+    try {
+      console.log("[Storage] Granting circle access to user:", {
+        userId,
+        circleId,
+        role
+      });
+      
+      // Check if user already has access to this circle
+      const members = await this.getCircleMembers(circleId);
+      const existingMember = members.find(m => m.userId === userId);
+      
+      if (existingMember) {
+        console.log("[Storage] User already has access to circle, updating role if needed");
+        
+        // If role needs to be updated and they're not already an owner
+        if (existingMember.role !== role && existingMember.role !== "owner") {
+          const [updatedMember] = (await db
+            .update(circleMembers)
+            .set({ role })
+            .where(and(
+              eq(circleMembers.circleId, circleId),
+              eq(circleMembers.userId, userId)
+            ))
+            .returning()) as CircleMember[];
+            
+          console.log("[Storage] Updated member role from", existingMember.role, "to", role);
+          return updatedMember;
+        }
+        
+        return existingMember;
+      }
+      
+      // Otherwise add the user as a new member
+      const newMember = await this.addCircleMember({
+        circleId,
+        userId,
+        role
+      });
+      
+      console.log("[Storage] Added new circle member with role:", role);
+      return newMember;
+    } catch (error) {
+      console.error("[Storage] Error granting circle access:", error);
       throw error;
     }
   }
