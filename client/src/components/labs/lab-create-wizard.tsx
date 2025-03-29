@@ -97,6 +97,15 @@ const labSchema = z.object({
       role: z.enum(["control", "treatment", "observation"]).default("treatment"),
     })
   ).min(1, "Please select at least one circle"),
+  // Content created during lab setup
+  labContent: z
+    .array(
+      z.object({
+        content: z.string().min(1, "Post content is required"),
+        targetRole: z.enum(["control", "treatment", "observation", "all"]).default("all"),
+      })
+    )
+    .default([]),
 });
 
 type LabFormValues = z.infer<typeof labSchema>;
@@ -114,6 +123,7 @@ const LabCreateWizard = ({
     { title: "Basic Information", description: "Enter lab name and type" },
     { title: "Goals & Description", description: "Define lab purpose and goals" },
     { title: "Success Metrics", description: "Set metrics to measure success" },
+    { title: "Content", description: "Create content for testing" },
   ];
 
   // Set up form with default values
@@ -150,11 +160,13 @@ const LabCreateWizard = ({
         metrics: [],
       },
       circles: [],
+      labContent: [],
     },
   });
 
   const { watch, setValue, getValues } = form;
   const metrics = watch("successMetrics.metrics") || [];
+  const labContent = watch("labContent") || [];
 
   const addMetric = () => {
     const currentMetrics = getValues("successMetrics.metrics") || [];
@@ -171,6 +183,22 @@ const LabCreateWizard = ({
       currentMetrics.filter((_, i) => i !== index)
     );
   };
+  
+  const addLabContent = () => {
+    const currentContent = getValues("labContent") || [];
+    setValue("labContent", [
+      ...currentContent,
+      { content: "", targetRole: "all" as const },
+    ]);
+  };
+
+  const removeLabContent = (index: number) => {
+    const currentContent = getValues("labContent") || [];
+    setValue(
+      "labContent",
+      currentContent.filter((_, i) => i !== index)
+    );
+  };
 
   const handleNext = async () => {
     const currentValues = getValues();
@@ -184,6 +212,9 @@ const LabCreateWizard = ({
       isValid = true;
     } else if (currentStep === 2) {
       // Metrics are optional
+      isValid = true;
+    } else if (currentStep === 3) {
+      // Content is optional
       isValid = true;
     }
 
@@ -210,7 +241,7 @@ const LabCreateWizard = ({
     setIsSubmitting(true);
     try {
       // Extract the circles data from the form
-      const { circles, ...labData } = data;
+      const { circles, labContent, ...labData } = data;
       
       let createdLab;
       
@@ -251,6 +282,21 @@ const LabCreateWizard = ({
       } else {
         // No circles selected, create lab without circle association
         createdLab = await apiRequest("/api/labs", "POST", labData);
+      }
+      
+      // If lab content was created, create posts for the lab
+      if (labContent && labContent.length > 0 && createdLab) {
+        // Create each piece of content as a post associated with the lab
+        const postPromises = labContent.map(content => 
+          apiRequest("/api/posts", "POST", {
+            content: content.content,
+            labId: createdLab.id,
+            labExperiment: true,
+            targetRole: content.targetRole
+          })
+        );
+        
+        await Promise.all(postPromises);
       }
       
       toast({
@@ -668,6 +714,123 @@ const LabCreateWizard = ({
                     )}
                     <p className="text-xs text-muted-foreground mt-2">
                       Metrics help you measure success and make data-driven decisions.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Step 4: Content Creation */}
+            {currentStep === 3 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Content Creation</CardTitle>
+                  <CardDescription>
+                    Create content for your experiment to test with different audience segments.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm font-medium">Test Content</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addLabContent}
+                        className="text-xs"
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add Content
+                      </Button>
+                    </div>
+
+                    {labContent.length === 0 ? (
+                      <div className="text-center py-8 border rounded-md bg-muted/20">
+                        <p className="text-sm text-muted-foreground">
+                          No content added yet. Add content to test with your audience.
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addLabContent}
+                          className="mt-4"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Content
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {labContent.map((content, index) => (
+                          <div key={index} className="border rounded-md p-4 space-y-3">
+                            <div className="flex justify-between items-start">
+                              <p className="text-sm font-medium">Content #{index + 1}</p>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeLabContent(index)}
+                                className="h-8 w-8 text-destructive"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            
+                            <div className="space-y-3">
+                              <div>
+                                <label className="text-sm font-medium mb-1 block">Content</label>
+                                <Textarea
+                                  placeholder="Enter your post content here..."
+                                  value={content.content}
+                                  onChange={(e) => {
+                                    const updated = [...labContent];
+                                    updated[index].content = e.target.value;
+                                    setValue("labContent", updated);
+                                  }}
+                                  className="min-h-[100px]"
+                                />
+                              </div>
+                              
+                              <div>
+                                <label className="text-sm font-medium mb-1 block">Target Audience</label>
+                                <Select
+                                  value={content.targetRole}
+                                  onValueChange={(value) => {
+                                    const updated = [...labContent];
+                                    updated[index].targetRole = value as any;
+                                    setValue("labContent", updated);
+                                  }}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select audience" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="all">All Circles</SelectItem>
+                                    <SelectItem value="control">Control Group</SelectItem>
+                                    <SelectItem value="treatment">Treatment Group</SelectItem>
+                                    <SelectItem value="observation">Observation Group</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {content.targetRole === "all" 
+                                    ? "Content will be shown to all circles in the experiment"
+                                    : content.targetRole === "control"
+                                    ? "Content will only be shown to control groups"
+                                    : content.targetRole === "treatment"
+                                    ? "Content will only be shown to treatment groups"
+                                    : "Content will only be shown to observation groups"}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Create different content variations to test with your audience segments.
+                      Content will be distributed based on the targeting rules you select.
                     </p>
                   </div>
                 </CardContent>
