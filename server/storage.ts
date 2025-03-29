@@ -112,6 +112,12 @@ export interface IStorage {
   // Lab-Circle methods
   addCircleToLab(labId: number, circleId: number, role?: "control" | "treatment" | "observation"): Promise<LabCircle>;
   getLabCircles(labId: number): Promise<(Circle & { role: "control" | "treatment" | "observation" })[]>;
+  getLabCirclesWithStats(labId: number): Promise<(Circle & { 
+    role: "control" | "treatment" | "observation",
+    memberCount: number,
+    followerCount: number,
+    addedAt: Date
+  })[]>;
   removeCircleFromLab(labId: number, circleId: number): Promise<void>;
   updateLabCircleRole(labId: number, circleId: number, role: "control" | "treatment" | "observation"): Promise<LabCircle>;
 }
@@ -1506,6 +1512,62 @@ export class DatabaseStorage implements IStorage {
       return labCirclesData;
     } catch (error) {
       console.error("[Storage] Error getting lab circles:", error);
+      throw error;
+    }
+  }
+  
+  async getLabCirclesWithStats(labId: number): Promise<(Circle & { 
+    role: "control" | "treatment" | "observation",
+    memberCount: number,
+    followerCount: number,
+    addedAt: Date
+  })[]> {
+    try {
+      console.log("[Storage] Getting circles with stats for lab:", labId);
+      
+      // First get the basic circle info with roles
+      const labCirclesData = await db
+        .select({
+          ...circles,
+          role: labCircles.role,
+          addedAt: labCircles.addedAt
+        })
+        .from(labCircles)
+        .innerJoin(circles, eq(labCircles.circleId, circles.id))
+        .where(eq(labCircles.labId, labId));
+      
+      // Enhance each circle with member and follower counts
+      const enhancedCircles = await Promise.all(
+        labCirclesData.map(async (circle) => {
+          // Get member count
+          const members = await this.getCircleMembers(circle.id);
+          const memberCount = members.length;
+          
+          // Get follower count
+          const followers = await this.getCircleFollowers(circle.id);
+          const followerCount = followers.length;
+          
+          return {
+            ...circle,
+            memberCount,
+            followerCount
+          };
+        })
+      );
+      
+      console.log("[Storage] Retrieved enhanced lab circles:", 
+        enhancedCircles.map(c => ({
+          id: c.id,
+          name: c.name,
+          role: c.role,
+          memberCount: c.memberCount,
+          followerCount: c.followerCount
+        }))
+      );
+      
+      return enhancedCircles;
+    } catch (error) {
+      console.error("[Storage] Error getting lab circles with stats:", error);
       throw error;
     }
   }

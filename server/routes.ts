@@ -1786,6 +1786,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get lab circles" });
     }
   });
+  
+  // Get circles with enhanced statistics for a lab
+  app.get("/api/labs/:id/circles/stats", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const labId = parseInt(req.params.id);
+      const lab = await storage.getLab(labId);
+
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+
+      // Verify ownership
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const circlesWithStats = await storage.getLabCirclesWithStats(labId);
+      res.json(circlesWithStats);
+    } catch (error) {
+      console.error("[API] Error getting lab circles with stats:", error);
+      res.status(500).json({ message: "Failed to get lab circles with statistics" });
+    }
+  });
 
   // Add a circle to a lab
   app.post("/api/labs/:id/circles", async (req, res) => {

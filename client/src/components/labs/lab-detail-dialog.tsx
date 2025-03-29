@@ -40,10 +40,14 @@ import {
   CheckCircle,
   CircleSlash,
   Clipboard,
+  Globe,
+  Lock,
   PlayCircle,
   Plus,
   Settings,
   Trash,
+  User,
+  Users,
 } from "lucide-react";
 import LabCircleAddDialog from "./lab-circle-add-dialog";
 import LabCircleRoleDialog from "./lab-circle-role-dialog";
@@ -58,6 +62,13 @@ interface LabDetailDialogProps {
 
 interface LabCircle extends Circle {
   role: "control" | "treatment" | "observation";
+}
+
+interface EnhancedLabCircle extends Circle {
+  role: "control" | "treatment" | "observation";
+  memberCount: number;
+  followerCount: number;
+  addedAt: Date;
 }
 
 const getExperimentTypeLabel = (type: string) => {
@@ -124,6 +135,17 @@ const LabDetailDialog = ({
     queryKey: [`/api/labs/${labId}/circles`],
     enabled: open && !!labId && activeTab === "circles",
   });
+  
+  // Fetch enhanced circle stats
+  const {
+    data: circlesWithStats,
+    isLoading: isStatsLoading,
+    error: statsError,
+    refetch: refetchStats,
+  } = useQuery<EnhancedLabCircle[]>({
+    queryKey: [`/api/labs/${labId}/circles/stats`],
+    enabled: open && !!labId && activeTab === "circles",
+  });
 
   const handleStatusChange = async (newStatus: "active" | "draft" | "completed" | "archived") => {
     if (isUpdatingStatus || !lab) return;
@@ -172,6 +194,7 @@ const LabDetailDialog = ({
 
   const handleCircleUpdate = () => {
     refetchCircles();
+    refetchStats();
     onUpdate();
   };
 
@@ -185,6 +208,7 @@ const LabDetailDialog = ({
       });
       
       refetchCircles();
+      refetchStats();
       onUpdate();
     } catch (error) {
       toast({
@@ -411,6 +435,81 @@ const LabDetailDialog = ({
                             <Plus className="h-4 w-4 mr-2" />
                             Add Circle
                           </Button>
+                        </div>
+                      ) : circlesWithStats && !isStatsLoading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                          {circlesWithStats.map((circle) => (
+                            <Card key={circle.id} className="overflow-hidden">
+                              <CardHeader className="pb-2">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <CardTitle className="text-base flex items-center">
+                                      {circle.name}
+                                    </CardTitle>
+                                    <CardDescription className="text-xs mt-1">
+                                      {circle.description?.substring(0, 60) || "No description"}
+                                      {circle.description && circle.description.length > 60 ? "..." : ""}
+                                    </CardDescription>
+                                  </div>
+                                  <Badge 
+                                    variant="outline" 
+                                    className={getRoleBadgeStyles(circle.role)}
+                                  >
+                                    {circle.role.charAt(0).toUpperCase() + circle.role.slice(1)}
+                                  </Badge>
+                                </div>
+                              </CardHeader>
+                              <CardContent className="pb-3">
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                  <div className="flex items-center">
+                                    <Users className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>{circle.memberCount} members</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                                    <span>{circle.followerCount} followers</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <span className="text-xs text-muted-foreground">Added {formatDate(circle.addedAt)}</span>
+                                  </div>
+                                  <div className="flex items-center justify-end">
+                                    {circle.visibility === "private" ? (
+                                      <span className="flex items-center text-xs text-muted-foreground">
+                                        <Lock className="h-3 w-3 mr-1" /> Private
+                                      </span>
+                                    ) : (
+                                      <span className="flex items-center text-xs text-muted-foreground">
+                                        <Globe className="h-3 w-3 mr-1" /> Shared
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </CardContent>
+                              <div className="bg-muted/50 px-6 py-2 flex justify-end gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedCircle(circle);
+                                    setIsRoleDialogOpen(true);
+                                  }}
+                                  className="h-8"
+                                >
+                                  <Settings className="h-3.5 w-3.5 mr-1" />
+                                  Change Role
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleRemoveCircle(circle.id)}
+                                  className="h-8 text-destructive hover:text-destructive"
+                                >
+                                  <CircleSlash className="h-3.5 w-3.5 mr-1" />
+                                  Remove
+                                </Button>
+                              </div>
+                            </Card>
+                          ))}
                         </div>
                       ) : (
                         <Table>

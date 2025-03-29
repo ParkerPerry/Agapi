@@ -8,7 +8,7 @@
 - Feature definitions understood and implemented
 
 ### PRD #2: Lab Creation and Management (02-studio-creation-management.md) 
-🔄 **Status: In Progress (90% Complete)**
+✅ **Status: Complete**
 - [x] Database schema implementation
   - Created `labs` table
   - Created `lab_circles` table (for associating circles with labs)
@@ -27,12 +27,18 @@
   - [x] Implemented Lab Card component
   - [x] Developed multi-step Lab Creation Wizard
   - [x] Created Lab Delete dialog
-  - [ ] Finalize Lab Detail Dialog (lab information tab completed, needs circle management tab)
+  - [x] Implemented Lab Detail Dialog with basic circle management
 
 ### PRD #3: Studio System Integration (03-studio-system-integration.md)
-⏳ **Status: Not Started**
-- This PRD focuses on deeper integration with the existing Circles system
-- Will begin implementation after completing PRD #2
+🔄 **Status: In Progress (50% Complete)**
+- [x] Basic circle integration implemented
+  - Database schema for lab-circles with roles
+  - API endpoints for managing circles in labs
+  - Basic UI for adding/removing circles and managing roles
+- [ ] Needs enhancement with additional features:
+  - Circle statistics in lab detail dialog
+  - Circle access control for lab creators
+  - Content targeting capabilities by circle role
 
 ### PRD #4: AI Collective Management (04-ai-collective-management.md)
 ⏳ **Status: Not Started**
@@ -101,15 +107,24 @@
 
 ## Next Steps
 
-### Immediate Tasks (PRD #2)
-1. Complete Lab Detail Dialog
-   - Finish circle management tab implementation
-   - Add metrics visualization
+### Current Focus (PRD #3 Completion)
+1. Enhance Circle Statistics in Lab Detail Dialog
+   - Add circle member count display
+   - Show circle creation date
+   - Add visibility type indicators
 
-### Upcoming Features (PRD #3)
-1. Implement deeper studio system integration
-   - Connect labs with specialized circles
-   - Implement circle configuration for different testing roles
+2. Implement Circle Access Control
+   - Add functionality to grant lab creators access to circles
+   - Implement permission checks for circle operations
+
+3. Develop Content Targeting Features
+   - Create interface for targeting content to specific circle roles
+   - Implement content distribution based on experimental roles
+
+### Future Work (PRD #4)
+1. Preparation for content testing functionality
+   - Define content variation mechanisms
+   - Design experiment execution workflow
 
 ## Open Issues
 - None identified yet

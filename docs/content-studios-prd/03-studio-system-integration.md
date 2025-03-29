@@ -77,30 +77,15 @@ The following API endpoints will support circle integration:
    - `DELETE /api/labs/:labId/circles/:circleId`
    - Removes a circle from a lab experiment
 
-## Integration with AI Follower Collectives
+## AI Followers in Lab Circles
 
-Circles in lab experiments will be populated with AI followers from the following sources:
+Circles in lab experiments will contain AI followers that are already assigned to those circles:
 
-1. **Collective Assignment**: Entire AI follower collectives assigned to specific circles
-2. **Role-Based Distribution**: Collectives distributed across circles based on experimental roles
-3. **Behavioral Configuration**: Followers' behaviors adjusted based on their circle's experimental role
+1. **Circle Selection**: When selecting circles for experiments, users should consider the AI followers already present in those circles
+2. **Role-Based Content**: Content can be targeted to circles based on their experimental roles
+3. **Behavioral Observation**: Experiments can observe how the same followers behave across different experimental conditions
 
-The integration leverages the `lab_collectives` table to connect labs, circles, and AI follower collectives:
-
-```sql
--- Query to get all followers assigned to a circle in a lab
-SELECT 
-  af.*,
-  lc.role as lab_role,
-  labs.name as lab_name
-FROM ai_followers af
-JOIN ai_follower_collectives afc ON af.collective_id = afc.id
-JOIN lab_collectives lc ON afc.id = lc.collective_id
-JOIN lab_circles lcirc ON lc.lab_id = lcirc.lab_id
-JOIN labs ON lc.lab_id = labs.id
-WHERE lcirc.circle_id = :circleId
-  AND lc.lab_id = :labId;
-```
+Note: The assignment of collectives to circles is managed through the circle system directly, not through the lab system.
 
 ## User Interface
 
@@ -145,10 +130,6 @@ A dashboard component that displays:
    - Support for targeting specific content to control vs. treatment circles
    - Cross-posting capabilities with controlled visibility
 
-2. **Content Lifecycle**
-   - Experiment-specific content can be automatically archived
-   - Support for exporting successful content to permanent circles
-
 ### Analytics Integration
 
 1. **Circle-Level Metrics**
@@ -158,29 +139,3 @@ A dashboard component that displays:
 2. **Heatmaps and Visualizations**
    - Visualize interaction patterns within circles
    - Highlight differences between experimental groups
-
-## Integration with Collective Management
-
-The Circle Integration component will work closely with the Collective Management component to provide a seamless experimental environment:
-
-1. **Circle-Collective Mapping**
-   - Map AI follower collectives to specific circles
-   - Configure different behaviors for the same collective in different circles
-
-2. **Behavioral Context**
-   - Adjust follower behavior based on circle context
-   - Apply circle-specific response parameters
-
-## Future Enhancements
-
-1. **Automated Circle Creation**
-   - Automatically generate circles with predefined settings for experiments
-   - Template-based circle configuration for common experiment types
-
-2. **Circle Cloning**
-   - Clone existing circles for A/B testing with identical initial conditions
-   - Differential circle analysis to identify behavior changes
-
-3. **Circle Merging**
-   - Merge successful experimental circles back into main content spaces
-   - Graduated introduction of experimental followers to wider audiences
