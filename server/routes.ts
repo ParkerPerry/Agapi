@@ -560,13 +560,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Insufficient permissions to post in this circle" });
       }
 
-      const post = await storage.createPostInCircle(req.user!.id, circleId, req.body.content);
+      // Check if this is a lab experiment post
+      const isLabExperiment = req.body.labExperiment === true;
+      const labId = isLabExperiment ? req.body.labId : undefined;
+      const targetRole = isLabExperiment ? req.body.targetRole : undefined;
+
+      // Create the post with lab fields if applicable
+      const post = await storage.createPostInCircle(
+        req.user!.id, 
+        circleId, 
+        req.body.content,
+        labId,
+        isLabExperiment,
+        targetRole
+      );
 
       // Get AI followers for the specific circle
       const followers = await storage.getCircleFollowers(circleId);
 
+      // For lab experiment posts with specific targeting, we should filter followers
+      // based on the circle roles they belong to
+      let filteredFollowers = followers;
+      
+      // TODO: Implement follower filtering based on lab circle roles
+      // This will be implemented when we add the lab circle role-based routing
+
       // Schedule potential responses for each follower in the circle
-      for (const follower of followers) {
+      for (const follower of filteredFollowers) {
         await scheduler.scheduleResponse(post.id, follower);
       }
 
@@ -622,6 +642,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error getting circle posts:", error);
       res.status(500).json({ message: "Failed to get circle posts" });
+    }
+  });
+  
+  // Get labs that the circle belongs to
+  app.get("/api/circles/:id/labs", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const circleId = parseInt(req.params.id);
+      
+      // Check if user has permission to access this circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      const circleLabs = await storage.getCircleLabs(circleId);
+      res.json(circleLabs);
+    } catch (error) {
+      console.error("Error getting circle labs:", error);
+      res.status(500).json({ message: "Failed to get circle labs" });
     }
   });
 

@@ -57,11 +57,16 @@ export const circleFollowers = pgTable("circle_followers", {
   muted: boolean("muted").default(false).notNull(),
 });
 
-// Update posts table to include circle_id
+// Update posts table to include circle_id and lab experiment fields
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
   circleId: integer("circle_id").references(() => circles.id),
+  labId: integer("lab_id").references(() => labs.id),
+  labExperiment: boolean("lab_experiment").default(false),
+  targetRole: text("target_role", { 
+    enum: ["control", "treatment", "observation", "all"]
+  }),
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -193,6 +198,10 @@ export const postsRelations = relations(posts, ({ one }) => ({
     fields: [posts.circleId],
     references: [circles.id],
   }),
+  lab: one(labs, {
+    fields: [posts.labId],
+    references: [labs.id],
+  }),
 }));
 
 export const circleMembersRelations = relations(circleMembers, ({ one }) => ({
@@ -230,6 +239,9 @@ export const insertPostSchema = createInsertSchema(posts)
   .pick({
     content: true,
     circleId: true,
+    labId: true,
+    labExperiment: true,
+    targetRole: true,
   });
 
 export const insertCircleSchema = createInsertSchema(circles)
@@ -478,6 +490,7 @@ export const labsRelations = relations(labs, ({ one, many }) => ({
     references: [users.id],
   }),
   circles: many(labCircles),
+  posts: many(posts),
 }));
 
 // Relationships for lab circles

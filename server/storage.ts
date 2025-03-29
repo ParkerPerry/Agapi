@@ -118,6 +118,7 @@ export interface IStorage {
     followerCount: number,
     addedAt: Date
   })[]>;
+  getCircleLabs(circleId: number): Promise<(Lab & { role: "control" | "treatment" | "observation" })[]>;
   removeCircleFromLab(labId: number, circleId: number): Promise<void>;
   updateLabCircleRole(labId: number, circleId: number, role: "control" | "treatment" | "observation"): Promise<LabCircle>;
 }
@@ -757,10 +758,32 @@ export class DatabaseStorage implements IStorage {
     }));
   }
 
-  async createPostInCircle(userId: number, circleId: number, content: string): Promise<Post> {
+  async createPostInCircle(
+    userId: number, 
+    circleId: number, 
+    content: string, 
+    labId?: number, 
+    labExperiment?: boolean, 
+    targetRole?: "control" | "treatment" | "observation" | "all"
+  ): Promise<Post> {
+    console.log(`[Storage] Creating post in circle ${circleId}${labExperiment ? ` as lab experiment (lab: ${labId}, target: ${targetRole})` : ''}`);
+    
+    const postData: any = { 
+      userId, 
+      circleId, 
+      content
+    };
+    
+    // Add lab experiment fields if provided
+    if (labExperiment && labId) {
+      postData.labId = labId;
+      postData.labExperiment = true;
+      postData.targetRole = targetRole || "all";
+    }
+    
     const [post] = (await db
       .insert(posts)
-      .values({ userId, circleId, content })
+      .values(postData)
       .returning()) as Post[];
     return post;
   }
@@ -1568,6 +1591,29 @@ export class DatabaseStorage implements IStorage {
       return enhancedCircles;
     } catch (error) {
       console.error("[Storage] Error getting lab circles with stats:", error);
+      throw error;
+    }
+  }
+  
+  async getCircleLabs(circleId: number): Promise<(Lab & { role: "control" | "treatment" | "observation" })[]> {
+    try {
+      console.log("[Storage] Getting labs for circle:", circleId);
+      
+      // Get labs where this circle is a member
+      const circleLabs = await db
+        .select({
+          ...labs,
+          role: labCircles.role
+        })
+        .from(labCircles)
+        .innerJoin(labs, eq(labCircles.labId, labs.id))
+        .where(eq(labCircles.circleId, circleId));
+      
+      console.log("[Storage] Retrieved labs count:", circleLabs.length);
+      
+      return circleLabs;
+    } catch (error) {
+      console.error("[Storage] Error getting circle labs:", error);
       throw error;
     }
   }
