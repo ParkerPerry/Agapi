@@ -124,6 +124,11 @@ export interface IStorage {
   
   // Circle Access Control methods
   grantCircleAccessToUser(userId: number, circleId: number, role: "collaborator" | "viewer"): Promise<CircleMember>;
+  
+  // Lab Content methods
+  getLabPosts(labId: number, targetRole?: "control" | "treatment" | "observation" | "all"): Promise<Post[]>;
+  getCircleRoleInLab(labId: number, circleId: number): Promise<"control" | "treatment" | "observation" | undefined>;
+  getLabCirclesByRole(labId: number, role: "control" | "treatment" | "observation"): Promise<Circle[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1722,6 +1727,95 @@ export class DatabaseStorage implements IStorage {
       return newMember;
     } catch (error) {
       console.error("[Storage] Error granting circle access:", error);
+      throw error;
+    }
+  }
+
+  // Lab Content methods
+  async getLabPosts(labId: number, targetRole?: "control" | "treatment" | "observation" | "all"): Promise<Post[]> {
+    console.log(`[Storage] Getting lab posts for lab ${labId}${targetRole ? ` with target role ${targetRole}` : ''}`);
+    
+    try {
+      // Base query to get all lab experiment posts for this lab
+      let query = db
+        .select()
+        .from(posts)
+        .where(
+          and(
+            eq(posts.labId, labId),
+            eq(posts.labExperiment, true)
+          )
+        );
+      
+      // If a specific target role is provided, filter by it
+      if (targetRole && targetRole !== "all") {
+        query = query.where(eq(posts.targetRole, targetRole));
+      }
+      
+      // Get the posts ordered by creation date (most recent first)
+      const labPosts = await query.orderBy(desc(posts.createdAt));
+      
+      console.log(`[Storage] Retrieved ${labPosts.length} lab posts`);
+      return labPosts;
+    } catch (error) {
+      console.error("[Storage] Error getting lab posts:", error);
+      throw error;
+    }
+  }
+  
+  async getCircleRoleInLab(labId: number, circleId: number): Promise<"control" | "treatment" | "observation" | undefined> {
+    console.log(`[Storage] Getting circle role for circle ${circleId} in lab ${labId}`);
+    
+    try {
+      const [labCircle] = await db
+        .select()
+        .from(labCircles)
+        .where(
+          and(
+            eq(labCircles.labId, labId),
+            eq(labCircles.circleId, circleId)
+          )
+        );
+      
+      if (labCircle) {
+        console.log(`[Storage] Circle has role: ${labCircle.role}`);
+        return labCircle.role as "control" | "treatment" | "observation";
+      }
+      
+      console.log(`[Storage] Circle is not part of this lab`);
+      return undefined;
+    } catch (error) {
+      console.error("[Storage] Error getting circle role in lab:", error);
+      throw error;
+    }
+  }
+  
+  async getLabCirclesByRole(labId: number, role: "control" | "treatment" | "observation"): Promise<Circle[]> {
+    console.log(`[Storage] Getting lab circles with role ${role} for lab ${labId}`);
+    
+    try {
+      const labCirclesWithRole = await db
+        .select({
+          circle: circles,
+        })
+        .from(labCircles)
+        .innerJoin(
+          circles,
+          eq(labCircles.circleId, circles.id)
+        )
+        .where(
+          and(
+            eq(labCircles.labId, labId),
+            eq(labCircles.role, role)
+          )
+        );
+      
+      const result = labCirclesWithRole.map(item => item.circle);
+      console.log(`[Storage] Found ${result.length} circles with role ${role}`);
+      
+      return result;
+    } catch (error) {
+      console.error(`[Storage] Error getting lab circles with role ${role}:`, error);
       throw error;
     }
   }

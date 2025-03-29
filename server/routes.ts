@@ -578,14 +578,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get AI followers for the specific circle
       const followers = await storage.getCircleFollowers(circleId);
 
-      // For lab experiment posts with specific targeting, we should filter followers
-      // based on the circle roles they belong to
+      // For lab experiment posts with specific targeting, filter followers based on circle roles
       let filteredFollowers = followers;
       
-      // TODO: Implement follower filtering based on lab circle roles
-      // This will be implemented when we add the lab circle role-based routing
+      if (isLabExperiment && labId && targetRole && targetRole !== "all") {
+        console.log(`[API] Filtering followers for lab ${labId} with target role ${targetRole}`);
+        
+        // Get circles with the specific role in this lab
+        const targetCircles = await storage.getLabCirclesByRole(labId, targetRole);
+        const targetCircleIds = targetCircles.map(circle => circle.id);
+        
+        if (targetCircleIds.length > 0) {
+          console.log(`[API] Found ${targetCircleIds.length} circles with role ${targetRole}`);
+          
+          // Check if the current circle is part of the target circles
+          if (targetCircleIds.includes(circleId)) {
+            console.log(`[API] Current circle is part of target role, using all followers`);
+            // Current circle is already filtered by role, use all its followers
+            filteredFollowers = followers;
+          } else {
+            console.log(`[API] Current circle is not part of target role, skipping response scheduling`);
+            // Current circle is not part of the target role, don't schedule any responses
+            filteredFollowers = [];
+          }
+        } else {
+          console.log(`[API] No circles found with role ${targetRole}, skipping response scheduling`);
+          // No circles with this role, don't schedule any responses
+          filteredFollowers = [];
+        }
+      }
+      
+      console.log(`[API] Scheduling responses for ${filteredFollowers.length} followers`);
 
-      // Schedule potential responses for each follower in the circle
+      // Schedule potential responses for each filtered follower in the circle
       for (const follower of filteredFollowers) {
         await scheduler.scheduleResponse(post.id, follower);
       }
@@ -1850,6 +1875,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[API] Error getting lab circles with stats:", error);
       res.status(500).json({ message: "Failed to get lab circles with statistics" });
+    }
+  });
+  
+  // Get lab posts with optional role filtering
+  app.get("/api/labs/:id/posts", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const labId = parseInt(req.params.id);
+      const targetRole = req.query.role as "control" | "treatment" | "observation" | "all" | undefined;
+      
+      // Verify the lab exists and user has permission
+      const lab = await storage.getLab(labId);
+      if (!lab) {
+        return res.status(404).json({ message: "Lab not found" });
+      }
+      
+      // Check if user has permission to access this lab
+      if (lab.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      console.log(`[API] Getting lab posts for lab ${labId}${targetRole ? ` with target role: ${targetRole}` : ''}`);
+      
+      // Get the posts for this lab with optional role filtering
+      const posts = await storage.getLabPosts(labId, targetRole);
+      
+      // Get threaded interactions for each post
+      const postsWithData = await Promise.all(
+        posts.map(async (post) => {
+          const threadedInteractions = await ThreadManager.getThreadedInteractions(post.id);
+          const pendingResponses = await storage.getPostPendingResponses(post.id);
+          
+          // Get AI follower info for each pending response
+          const pendingFollowers = await Promise.all(
+            pendingResponses.map(async (response) => {
+              const follower = await storage.getAiFollower(response.aiFollowerId);
+              return follower ? {
+                id: follower.id,
+                name: follower.name,
+                avatarUrl: follower.avatarUrl,
+                scheduledFor: response.scheduledFor
+              } : null;
+            })
+          );
+          
+          // Add the circle information to each post
+          const circle = post.circleId ? await storage.getCircle(post.circleId) : null;
+          const circleRole = post.circleId ? await storage.getCircleRoleInLab(labId, post.circleId) : null;
+          
+          return {
+            ...post,
+            interactions: threadedInteractions,
+            pendingResponses: pendingFollowers.filter(Boolean),
+            circle: circle ? {
+              id: circle.id,
+              name: circle.name,
+              role: circleRole
+            } : null
+          };
+        })
+      );
+      
+      res.json(postsWithData);
+    } catch (error) {
+      console.error("[API] Error getting lab posts:", error);
+      res.status(500).json({ message: "Failed to get lab posts" });
     }
   });
 
