@@ -614,6 +614,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const follower of filteredFollowers) {
         await scheduler.scheduleResponse(post.id, follower);
       }
+      
+      // For lab experiment posts, send notifications to members of targeted circles
+      if (isLabExperiment && labId) {
+        console.log(`[API] Creating lab experiment notifications for post ${post.id} in lab ${labId}`);
+        await storage.createLabExperimentNotification(labId, post.id, targetRole || "all");
+      }
 
       res.status(201).json(post);
     } catch (error) {

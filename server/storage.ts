@@ -90,6 +90,7 @@ export interface IStorage {
 
   // Add notification methods
   createNotification(notification: InsertNotification): Promise<Notification>;
+  createLabExperimentNotification(labId: number, postId: number, targetRole: string): Promise<void>;
   getUserNotifications(userId: number): Promise<Notification[]>;
   getUnreadNotificationCount(userId: number): Promise<number>;
   markNotificationRead(id: number): Promise<void>;
@@ -1014,6 +1015,69 @@ export class DatabaseStorage implements IStorage {
       .values(notification)
       .returning()) as Notification[];
     return newNotification;
+  }
+
+  async createLabExperimentNotification(labId: number, postId: number, targetRole: string): Promise<void> {
+    try {
+      console.log(`[Storage] Creating lab experiment notifications for lab ${labId}, post ${postId}, role ${targetRole}`);
+      
+      // Get the lab details
+      const lab = await this.getLab(labId);
+      if (!lab) {
+        console.error(`[Storage] Lab ${labId} not found, cannot create notifications`);
+        return;
+      }
+      
+      // Get circles with the target role (or all circles if targetRole is "all")
+      let targetCircles: Circle[] = [];
+      if (targetRole === "all") {
+        // Get all circles in this lab
+        targetCircles = await this.getLabCircles(labId);
+      } else {
+        // Get only circles with the specific role
+        targetCircles = await this.getLabCirclesByRole(labId, targetRole);
+      }
+      
+      if (targetCircles.length === 0) {
+        console.log(`[Storage] No target circles found for role ${targetRole}, skipping notifications`);
+        return;
+      }
+      
+      console.log(`[Storage] Found ${targetCircles.length} circles for notifications`);
+      
+      // For each circle, notify all members except the lab owner
+      for (const circle of targetCircles) {
+        const members = await this.getCircleMembers(circle.id);
+        
+        for (const member of members) {
+          // Don't notify the lab owner (they created the experiment)
+          if (member.userId === lab.userId) continue;
+          
+          // Create notification for this member
+          await this.createNotification({
+            userId: member.userId,
+            type: "lab_experiment",
+            content: `New content available in lab experiment "${lab.name}"`,
+            metadata: {
+              sourceId: postId,
+              sourceType: "post",
+              actionUrl: `/labs/${labId}/content`,
+              labId: labId,
+              labName: lab.name,
+              circleName: circle.name,
+              circleRole: targetRole,
+              experimentType: lab.experimentType
+            }
+          });
+          
+          console.log(`[Storage] Created lab experiment notification for user ${member.userId}`);
+        }
+      }
+      
+      console.log(`[Storage] Successfully created all lab experiment notifications`);
+    } catch (error) {
+      console.error(`[Storage] Error creating lab experiment notifications:`, error);
+    }
   }
 
   async getUserNotifications(userId: number): Promise<Notification[]> {

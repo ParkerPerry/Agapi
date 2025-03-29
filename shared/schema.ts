@@ -291,7 +291,7 @@ export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id).notNull(),
   type: text("type", {
-    enum: ["mention", "circle_invite", "follower_interaction", "circle_update"]
+    enum: ["mention", "circle_invite", "follower_interaction", "circle_update", "lab_experiment"]
   }).notNull(),
   content: text("content").notNull(),
   read: boolean("read").default(false).notNull(),
@@ -299,6 +299,11 @@ export const notifications = pgTable("notifications", {
     sourceId?: number;
     sourceType?: string;
     actionUrl?: string;
+    labId?: number;
+    labName?: string;
+    circleName?: string;
+    circleRole?: string;
+    experimentType?: string;
   }>(),
   createdAt: timestamp("created_at").defaultNow(),
 });
