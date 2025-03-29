@@ -1829,10 +1829,10 @@ export class DatabaseStorage implements IStorage {
       const enrichedPosts = await Promise.all(
         labPosts.map(async (post) => {
           // Get interactions for this post
-          const interactions = await this.getInteractionsForPost(post.id);
+          const interactions = await this.getPostInteractions(post.id);
           
           // Get pending responses
-          const pendingResponses = await this.getPendingResponsesForPost(post.id);
+          const pendingResponses = await this.getPostPendingResponses(post.id);
           
           // Get circle information if available
           let circle = null;
