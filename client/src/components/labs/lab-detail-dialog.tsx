@@ -40,6 +40,7 @@ import {
   CheckCircle,
   CircleSlash,
   Clipboard,
+  FileText,
   Globe,
   Lock,
   PlayCircle,
@@ -52,6 +53,7 @@ import {
 import LabCircleAddDialog from "./lab-circle-add-dialog";
 import LabCircleRoleDialog from "./lab-circle-role-dialog";
 import LabStatusChangeDialog from "./lab-status-change-dialog";
+import { LabContentView } from "./lab-content-view";
 
 interface LabDetailDialogProps {
   labId: number;
@@ -317,9 +319,10 @@ const LabDetailDialog = ({
           ) : lab ? (
             <div>
               <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="info">Information</TabsTrigger>
                   <TabsTrigger value="circles">Circles</TabsTrigger>
+                  <TabsTrigger value="content">Content</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="info" className="space-y-4 pt-4">
@@ -576,6 +579,10 @@ const LabDetailDialog = ({
                       </p>
                     </CardFooter>
                   </Card>
+                </TabsContent>
+                
+                <TabsContent value="content" className="space-y-4 pt-4">
+                  <LabContentView labId={labId} />
                 </TabsContent>
               </Tabs>
             </div>

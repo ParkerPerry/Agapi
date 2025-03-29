@@ -1732,7 +1732,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Lab Content methods
-  async getLabPosts(labId: number, targetRole?: "control" | "treatment" | "observation" | "all"): Promise<Post[]> {
+  async getLabPosts(labId: number, targetRole?: "control" | "treatment" | "observation" | "all"): Promise<any[]> {
     console.log(`[Storage] Getting lab posts for lab ${labId}${targetRole ? ` with target role ${targetRole}` : ''}`);
     
     try {
@@ -1749,14 +1749,60 @@ export class DatabaseStorage implements IStorage {
       
       // If a specific target role is provided, filter by it
       if (targetRole && targetRole !== "all") {
-        query = query.where(eq(posts.targetRole, targetRole));
+        // For non-all targets, we need posts specifically for that role OR for "all" roles
+        query = query.where(
+          or(
+            eq(posts.targetRole, targetRole),
+            eq(posts.targetRole, "all")
+          )
+        );
       }
       
       // Get the posts ordered by creation date (most recent first)
       const labPosts = await query.orderBy(desc(posts.createdAt));
       
-      console.log(`[Storage] Retrieved ${labPosts.length} lab posts`);
-      return labPosts;
+      // Enrich the posts with interactions, pending responses, and circle information
+      const enrichedPosts = await Promise.all(
+        labPosts.map(async (post) => {
+          // Get interactions for this post
+          const interactions = await this.getInteractionsForPost(post.id);
+          
+          // Get pending responses
+          const pendingResponses = await this.getPendingResponsesForPost(post.id);
+          
+          // Get circle information if available
+          let circle = null;
+          if (post.circleId) {
+            try {
+              const circleInfo = await this.getCircle(post.circleId);
+              
+              // Get the role of this circle in the lab
+              const circleRole = await this.getCircleRoleInLab(labId, post.circleId);
+              
+              if (circleInfo && circleRole) {
+                circle = {
+                  ...circleInfo,
+                  role: circleRole
+                };
+              } else if (circleInfo) {
+                circle = circleInfo;
+              }
+            } catch (error) {
+              console.error(`[Storage] Error getting circle info for post ${post.id}, circle ${post.circleId}:`, error);
+            }
+          }
+          
+          return {
+            ...post,
+            interactions,
+            pendingResponses,
+            circle
+          };
+        })
+      );
+      
+      console.log(`[Storage] Retrieved and enriched ${enrichedPosts.length} lab posts`);
+      return enrichedPosts;
     } catch (error) {
       console.error("[Storage] Error getting lab posts:", error);
       throw error;
