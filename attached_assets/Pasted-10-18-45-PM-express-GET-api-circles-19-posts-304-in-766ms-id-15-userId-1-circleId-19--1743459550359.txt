@@ -1,0 +1,57 @@
+10:18:45 PM [express] GET /api/circles/19/posts 304 in 766ms :: [{"id":15,"userId":1,"circleId":19,"l…
+[Permissions] Checking permissions: { circleId: 19, userId: 1, requiredRole: 'viewer' }
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting collectives for circle: 19
+[Storage] Error getting circle collectives: error: relation "circle_collectives" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getCircleCollectives (/home/runner/workspace/server/storage.ts:776:27)
+    at async Promise.all (index 2)
+    at async DatabaseStorage.getCircleWithDetails (/home/runner/workspace/server/storage.ts:1012:45)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1627:23) {
+  length: 118,
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '273',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1449',
+  routine: 'parserOpenTable'
+}
+Error getting circle details: error: relation "circle_collectives" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getCircleCollectives (/home/runner/workspace/server/storage.ts:776:27)
+    at async Promise.all (index 2)
+    at async DatabaseStorage.getCircleWithDetails (/home/runner/workspace/server/storage.ts:1012:45)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1627:23) {
+  length: 118,
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '273',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1449',
+  routine: 'parserOpenTable'
+}
+10:18:54 PM [express] GET /api/circles/19/details 500 in 294ms :: {"message":"Failed to get circle de…
