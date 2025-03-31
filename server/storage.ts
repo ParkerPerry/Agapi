@@ -1,6 +1,7 @@
 import { 
   InsertUser, User, Post, AiFollower, AiInteraction, PendingResponse,
   Circle, InsertCircle, CircleFollower, InsertCircleFollower,
+  CircleCollective, InsertCircleCollective,
   InsertCircleMember, CircleMember, InsertCircleInvitation, CircleInvitation,
   Notification, InsertNotification, DirectChat, InsertDirectChat,
   AiFollowerCollective, InsertAiFollowerCollective, 
@@ -10,7 +11,7 @@ import {
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
   notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers,
-  labs, labCircles
+  circleCollectives, labs, labCircles
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
