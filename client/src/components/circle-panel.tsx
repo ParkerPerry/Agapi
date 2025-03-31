@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Circle, CircleMember, AiFollower, User, CircleInvitation } from "@shared/schema";
+import { Circle, CircleMember, AiFollower, User, CircleInvitation, AiFollowerCollective } from "@shared/schema";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, Share2, ChevronRight, Pencil, UserPlus, UserMinus, Settings, PlusCircle, PowerOff, Mail, VolumeX, Volume2, Lock as LockIcon } from "lucide-react";
+import { Users, Share2, ChevronRight, Pencil, UserPlus, UserMinus, Settings, PlusCircle, PowerOff, Mail, VolumeX, Volume2, Lock as LockIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { CircleEditDialog } from "@/components/circles/circle-edit-dialog";
@@ -244,7 +244,8 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
               
               <Separator />
 
-              <div>
+              {/* AI Followers Section */}
+              <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="flex items-center gap-2 font-medium">
                     <Share2 className="h-4 w-4" />
@@ -257,7 +258,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                   )}
                 </div>
                 
-                <div className="space-y-4 max-h-[calc(100vh-20rem)] overflow-y-auto pr-2">
+                <div className="space-y-4 max-h-[calc(100vh-30rem)] overflow-y-auto pr-2">
                   {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
                     const ownerMember = members.find(m => m.userId === userId);
                     const ownerName = ownerMember?.username || "Unknown User";
@@ -313,8 +314,6 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                                   <Volume2 className="h-3 w-3 text-muted-foreground" />
                                 )}
                               </Button>
-                              
-                              {/* Removed deactivate button to avoid confusion with mute functionality */}
                             </div>
                           </div>
                         ))}
@@ -322,6 +321,23 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                     );
                   })}
                 </div>
+              </div>
+              
+              {/* AI Collectives Section */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="flex items-center gap-2 font-medium">
+                    <Users className="h-4 w-4" />
+                    Collectives
+                  </h3>
+                  
+                  {/* The same CircleFollowerManager is used for both followers and collectives */}
+                  {isOwner && (
+                    <CircleFollowerManager circle={circle} />
+                  )}
+                </div>
+                
+                <CollectivesSection circleId={circle.id} isOwner={isOwner} members={members} />
               </div>
             </div>
           </ScrollArea>
@@ -346,6 +362,93 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+interface CollectivesSectionProps {
+  circleId: number;
+  isOwner: boolean;
+  members: (CircleMember & { username: string })[];
+}
+
+function CollectivesSection({ circleId, isOwner, members }: CollectivesSectionProps) {
+  // Use a custom fetch hook for collectives data
+  const { data: circleCollectives, isLoading: isLoadingCollectives } = useQuery<AiFollowerCollective[]>({
+    queryKey: [`/api/circles/${circleId}/collectives`],
+  });
+  
+  if (isLoadingCollectives) {
+    return (
+      <div className="flex items-center justify-center py-4">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+  
+  if (!circleCollectives || circleCollectives.length === 0) {
+    return (
+      <div className="text-sm text-muted-foreground py-4 text-center">
+        No collectives added to this circle yet.
+        {isOwner && (
+          <div className="mt-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-xs"
+              onClick={() => {
+                // Find any CircleFollowerManager button and simulate a click
+                const managerButton = document.querySelector('[title="Manage AI Followers & Collectives"]');
+                if (managerButton) {
+                  (managerButton as HTMLButtonElement).click();
+                }
+              }}
+            >
+              Add collectives
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+  
+  // Group collectives by owner (similar to followers)
+  const collectivesByOwner = new Map<number, AiFollowerCollective[]>();
+  circleCollectives.forEach(collective => {
+    const ownerId = collective.userId;
+    if (!collectivesByOwner.has(ownerId)) {
+      collectivesByOwner.set(ownerId, []);
+    }
+    collectivesByOwner.get(ownerId)?.push(collective);
+  });
+  
+  return (
+    <div className="space-y-4 max-h-[calc(100vh-30rem)] overflow-y-auto pr-2">
+      {Array.from(collectivesByOwner.entries()).map(([userId, userCollectives]) => {
+        const ownerMember = members.find(m => m.userId === userId);
+        const ownerName = ownerMember?.username || "Unknown User";
+        
+        return (
+          <div key={`collective-${userId}`} className="space-y-2">
+            <h4 className="text-sm font-medium text-muted-foreground sticky top-0 bg-card py-1 z-10">
+              {ownerName}'s Collectives
+            </h4>
+            {userCollectives.map((collective) => (
+              <div
+                key={`collective-${collective.id}`}
+                className="flex items-center justify-between p-2 rounded-lg hover:bg-muted"
+              >
+                <div className="flex items-start flex-col">
+                  <p className="text-sm font-medium">{collective.name}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-1">
+                    {collective.description || collective.personality || 'No description'}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
