@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { testDbConnection } from "./db";
 
 const app = express();
 app.use(express.json());
@@ -49,6 +50,14 @@ process.on('unhandledRejection', (reason, promise) => {
 
 (async () => {
   try {
+    // Test database connection on startup
+    console.log("Testing database connection...");
+    const dbConnected = await testDbConnection();
+    if (!dbConnected) {
+      console.error("ERROR: Could not connect to the database. Please check your database credentials.");
+      console.log("Attempting to continue despite database connection issues...");
+    }
+    
     const server = await registerRoutes(app);
 
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -69,13 +78,16 @@ process.on('unhandledRejection', (reason, promise) => {
     // Handle server errors
     server.on('error', (error: any) => {
       if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${port} is already in use. Attempting to close existing connections...`);
-        server.close(() => {
-          server.listen({
-            port,
-            host: "0.0.0.0",
-            reusePort: true,
-          });
+        console.error(`Port ${port} is already in use. Using a different port...`);
+        
+        // Try with a different port
+        const newPort = 5001;
+        server.listen({
+          port: newPort,
+          host: "0.0.0.0",
+          reusePort: true,
+        }, () => {
+          log(`serving on port ${newPort} (fallback)`);
         });
       } else {
         console.error('Server error:', error);

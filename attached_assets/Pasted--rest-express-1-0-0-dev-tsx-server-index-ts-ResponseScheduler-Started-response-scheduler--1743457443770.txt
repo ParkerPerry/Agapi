@@ -1,0 +1,84 @@
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+[ResponseScheduler] Started response scheduler
+[API] NFT routes registered
+[API] Registering lab management routes
+9:41:33 PM [express] serving on port 5000
+9:41:41 PM [express] GET /api/user 401 in 2ms
+9:41:41 PM [express] GET /api/user 401 in 1ms
+Error handling request: error: Console request failed: endpoint is disabled
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getUserByUsername (/home/runner/workspace/server/storage.ts:142:20)
+    at async Strategy._verify (/home/runner/workspace/server/auth.ts:61:22) {
+  length: 65,
+  severity: 'ERROR',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined
+}
+9:41:50 PM [express] POST /api/login 500 in 357ms :: {"message":"Console request failed: endpoint is…
+[Storage] Error getting pending responses: error: Console request failed: endpoint is disabled
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getPendingResponses (/home/runner/workspace/server/storage.ts:345:14)
+    at async Timeout._onTimeout (/home/runner/workspace/server/response-scheduler.ts:285:34) {
+  length: 65,
+  severity: 'ERROR',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined
+}
+[ResponseScheduler] Error processing responses: error: Console request failed: endpoint is disabled
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getPendingResponses (/home/runner/workspace/server/storage.ts:345:14)
+    at async Timeout._onTimeout (/home/runner/workspace/server/response-scheduler.ts:285:34) {
+  length: 65,
+  severity: 'ERROR',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined
+}
+^A
