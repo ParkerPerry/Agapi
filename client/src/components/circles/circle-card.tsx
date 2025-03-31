@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { CircleShareDialog } from "./circle-share-dialog";
-import { CircleFollowerManager } from "./circle-follower-manager";
+import { CircleAIManager } from "./circle-ai-manager";
 import { CircleDeleteDialog } from "./circle-delete-dialog";
 import { CircleEditDialog } from "./circle-edit-dialog";
 
@@ -36,7 +36,7 @@ export function CircleCard({
         circle.isDefault && "bg-muted",
         status === "deactivated" && "opacity-75"
       )}
-      style={{ borderColor: circle.color }}
+      style={{ borderColor: circle.color || undefined }}
     >
       {/* Status badges */}
       <div className="absolute top-2 right-2 flex gap-2">
@@ -56,7 +56,7 @@ export function CircleCard({
       <div className="flex items-start space-x-4">
         <div
           className="flex items-center justify-center w-12 h-12 rounded-full text-2xl flex-shrink-0"
-          style={{ backgroundColor: circle.color + "20" }}
+          style={{ backgroundColor: circle.color ? (circle.color + "20") : "#e5e5e5" }}
         >
           {circle.icon}
         </div>
@@ -88,7 +88,7 @@ export function CircleCard({
         )}
 
         {/* Follower manager - available for all active circles */}
-        {status === "active" && <CircleFollowerManager circle={circle} />}
+        {status === "active" && <CircleAIManager circle={circle} />}
 
         {/* Edit button - available for all circles */}
         {status === "active" && (

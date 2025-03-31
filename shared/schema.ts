@@ -57,6 +57,14 @@ export const circleFollowers = pgTable("circle_followers", {
   muted: boolean("muted").default(false).notNull(),
 });
 
+// Join table for circles and AI follower collectives
+export const circleCollectives = pgTable("circle_collectives", {
+  id: serial("id").primaryKey(),
+  circleId: integer("circle_id").references(() => circles.id).notNull(),
+  collectiveId: integer("collective_id").references(() => aiFollowerCollectives.id).notNull(),
+  addedAt: timestamp("added_at").defaultNow(),
+});
+
 // Update posts table to include circle_id and lab experiment fields
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
@@ -173,6 +181,7 @@ export const circlesRelations = relations(circles, ({ one, many }) => ({
     references: [users.id],
   }),
   followers: many(circleFollowers),
+  collectives: many(circleCollectives),
   posts: many(posts),
   members: many(circleMembers),
   invitations: many(circleInvitations),
@@ -186,6 +195,18 @@ export const circleFollowersRelations = relations(circleFollowers, ({ one }) => 
   aiFollower: one(ai_followers, {
     fields: [circleFollowers.aiFollowerId],
     references: [ai_followers.id],
+  }),
+}));
+
+// Relations for circle collectives
+export const circleCollectivesRelations = relations(circleCollectives, ({ one }) => ({
+  circle: one(circles, {
+    fields: [circleCollectives.circleId],
+    references: [circles.id],
+  }),
+  collective: one(aiFollowerCollectives, {
+    fields: [circleCollectives.collectiveId],
+    references: [aiFollowerCollectives.id],
   }),
 }));
 
@@ -258,6 +279,12 @@ export const insertCircleFollowerSchema = createInsertSchema(circleFollowers)
     circleId: true,
     aiFollowerId: true,
     muted: true,
+  });
+
+export const insertCircleCollectiveSchema = createInsertSchema(circleCollectives)
+  .pick({
+    circleId: true,
+    collectiveId: true,
   });
 
 export const insertInteractionSchema = createInsertSchema(aiInteractions)
@@ -339,6 +366,8 @@ export type Circle = typeof circles.$inferSelect;
 export type InsertCircle = z.infer<typeof insertCircleSchema>;
 export type CircleFollower = typeof circleFollowers.$inferSelect;
 export type InsertCircleFollower = z.infer<typeof insertCircleFollowerSchema>;
+export type CircleCollective = typeof circleCollectives.$inferSelect;
+export type InsertCircleCollective = z.infer<typeof insertCircleCollectiveSchema>;
 export type InsertCircleMember = z.infer<typeof insertCircleMemberSchema>;
 export type CircleMember = typeof circleMembers.$inferSelect;
 export type InsertCircleInvitation = z.infer<typeof insertCircleInvitationSchema>;

@@ -547,6 +547,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Circle Collective Management Endpoints
+  
+  // Add a collective to a circle
+  app.post("/api/circles/:id/collectives", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    const { collectiveId } = req.body;
+
+    try {
+      // Allow both owners and collaborators to manage collectives
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage, "collaborator");
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      // Verify collective exists
+      const collective = await storage.getAiFollowerCollective(collectiveId);
+      if (!collective) {
+        return res.status(404).json({ message: "Collective not found" });
+      }
+
+      const circleCollective = await storage.addCollectiveToCircle(circleId, collectiveId);
+      res.status(201).json(circleCollective);
+    } catch (error) {
+      console.error("Error adding collective to circle:", error);
+      res.status(500).json({ message: "Failed to add collective to circle" });
+    }
+  });
+
+  // Remove a collective from a circle
+  app.delete("/api/circles/:id/collectives/:collectiveId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    const collectiveId = parseInt(req.params.collectiveId);
+
+    try {
+      // Check if user has permission to manage circle collectives
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage, "collaborator");
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      await storage.removeCollectiveFromCircle(circleId, collectiveId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error removing collective from circle:", error);
+      res.status(500).json({ message: "Failed to remove collective from circle" });
+    }
+  });
+
+  // Get all collectives in a circle
+  app.get("/api/circles/:id/collectives", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    const circleId = parseInt(req.params.id);
+    try {
+      // Check if user has access to this circle
+      const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+      if (!hasPermission) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const collectives = await storage.getCircleCollectives(circleId);
+      res.json(collectives);
+    } catch (error) {
+      console.error("Error getting circle collectives:", error);
+      res.status(500).json({ message: "Failed to get circle collectives" });
+    }
+  });
+
   // Update the existing post creation endpoint to support circles
   app.post("/api/posts", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);

@@ -66,6 +66,12 @@ export interface IStorage {
   removeFollowerFromCircle(circleId: number, aiFollowerId: number): Promise<void>;
   getCircleFollowers(circleId: number): Promise<(AiFollower & { muted?: boolean })[]>;
   toggleFollowerMuteInCircle(circleId: number, aiFollowerId: number, muted?: boolean): Promise<CircleFollower>;
+  
+  // Circle Collective methods
+  addCollectiveToCircle(circleId: number, collectiveId: number): Promise<CircleCollective>;
+  removeCollectiveFromCircle(circleId: number, collectiveId: number): Promise<void>;
+  getCircleCollectives(circleId: number): Promise<AiFollowerCollective[]>;
+  
   createPostInCircle(userId: number, circleId: number, content: string): Promise<Post>;
   getCirclePosts(circleId: number): Promise<Post[]>;
   movePostToCircle(postId: number, circleId: number): Promise<Post>;
@@ -83,6 +89,7 @@ export interface IStorage {
     owner: User;
     members: (CircleMember & { username: string })[];
     followers: (AiFollower & { muted?: boolean })[];
+    collectives: AiFollowerCollective[];
   } | undefined>;
   deactivateCircleMember(circleId: number, userId: number): Promise<void>;
   reactivateCircleMember(circleId: number, userId: number): Promise<void>;
@@ -709,6 +716,82 @@ export class DatabaseStorage implements IStorage {
       ));
   }
 
+  // Circle Collective methods implementation
+  async addCollectiveToCircle(circleId: number, collectiveId: number): Promise<CircleCollective> {
+    try {
+      console.log("[Storage] Adding collective to circle:", {
+        circleId,
+        collectiveId
+      });
+      
+      const [circleCollective] = (await db
+        .insert(circleCollectives)
+        .values({
+          circleId,
+          collectiveId
+        })
+        .returning()) as CircleCollective[];
+      
+      console.log("[Storage] Added collective to circle:", {
+        id: circleCollective.id,
+        circleId: circleCollective.circleId,
+        collectiveId: circleCollective.collectiveId
+      });
+      
+      return circleCollective;
+    } catch (error) {
+      console.error("[Storage] Error adding collective to circle:", error);
+      throw error;
+    }
+  }
+  
+  async removeCollectiveFromCircle(circleId: number, collectiveId: number): Promise<void> {
+    try {
+      console.log("[Storage] Removing collective from circle:", {
+        circleId,
+        collectiveId
+      });
+      
+      await db
+        .delete(circleCollectives)
+        .where(
+          and(
+            eq(circleCollectives.circleId, circleId),
+            eq(circleCollectives.collectiveId, collectiveId)
+          )
+        );
+      
+      console.log("[Storage] Removed collective from circle");
+    } catch (error) {
+      console.error("[Storage] Error removing collective from circle:", error);
+      throw error;
+    }
+  }
+  
+  async getCircleCollectives(circleId: number): Promise<AiFollowerCollective[]> {
+    try {
+      console.log("[Storage] Getting collectives for circle:", circleId);
+      
+      const collectives = await db
+        .select({
+          ...aiFollowerCollectives
+        })
+        .from(circleCollectives)
+        .innerJoin(
+          aiFollowerCollectives,
+          eq(circleCollectives.collectiveId, aiFollowerCollectives.id)
+        )
+        .where(eq(circleCollectives.circleId, circleId));
+      
+      console.log("[Storage] Retrieved circle collectives count:", collectives.length);
+      
+      return collectives as AiFollowerCollective[];
+    } catch (error) {
+      console.error("[Storage] Error getting circle collectives:", error);
+      throw error;
+    }
+  }
+
   async toggleFollowerMuteInCircle(circleId: number, aiFollowerId: number, muted?: boolean): Promise<CircleFollower> {
     console.log("[Storage] Toggling follower mute status in circle:", circleId, "for follower:", aiFollowerId);
     
@@ -920,13 +1003,15 @@ export class DatabaseStorage implements IStorage {
     owner: User;
     members: (CircleMember & { username: string })[];
     followers: (AiFollower & { muted?: boolean })[];
+    collectives: AiFollowerCollective[];
   } | undefined> {
     const circle = await this.getCircle(id);
     if (!circle) return undefined;
 
-    const [owner, followers] = await Promise.all([
+    const [owner, followers, collectives] = await Promise.all([
       this.getUser(circle.userId),
       this.getCircleFollowers(id),
+      this.getCircleCollectives(id),
     ]);
 
     if (!owner) return undefined;
@@ -964,6 +1049,7 @@ export class DatabaseStorage implements IStorage {
       owner,
       members,
       followers,
+      collectives,
     };
   }
 
