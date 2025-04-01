@@ -63,16 +63,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Compatibility route for AI collectives (old URL format)
+  // Compatibility routes for AI collectives
+  
+  // Legacy endpoint for AI collectives
   app.get('/api/ai-collectives', requireAuth, async (req, res) => {
     try {
-      // Redirect to the proper endpoint in followerRoutes.ts
-      console.log("[API] (Compatibility) Redirecting AI collectives request to /api/followers/collectives");
+      console.log("[API] (Compatibility) AI collectives request");
       const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
       res.json(collectives);
     } catch (error) {
       console.error("Error getting AI collectives:", error);
       res.status(500).json({ message: "Failed to get AI collectives" });
+    }
+  });
+  
+  // Compatibility with frontend components directly using /api/followers/collectives
+  app.get('/api/followers/collectives', requireAuth, async (req, res) => {
+    try {
+      console.log("[API] (Compatibility) Getting AI follower collectives for user:", req.user!.id);
+      const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
+      res.json(collectives);
+    } catch (error) {
+      console.error("Error getting AI follower collectives:", error);
+      res.status(500).json({ message: "Failed to get AI follower collectives" });
+    }
+  });
+  
+  // Compatibility with frontend components using /api/followers/collectives/:id
+  app.get('/api/followers/collectives/:id', requireAuth, async (req, res) => {
+    const collectiveId = parseInt(req.params.id);
+    
+    if (isNaN(collectiveId)) {
+      return res.status(400).json({ message: "Invalid collective ID format" });
+    }
+    
+    try {
+      console.log("[API] (Compatibility) Getting AI follower collective:", collectiveId);
+      const collective = await storage.getAiFollowerCollective(collectiveId);
+      if (!collective) {
+        return res.status(404).json({ message: "Collective not found" });
+      }
+      
+      res.json(collective);
+    } catch (error) {
+      console.error("Error getting collective:", error);
+      res.status(500).json({ message: "Failed to get collective" });
+    }
+  });
+  
+  // Compatibility with frontend components using /api/followers/collectives/:id/members
+  app.get('/api/followers/collectives/:id/members', requireAuth, async (req, res) => {
+    const collectiveId = parseInt(req.params.id);
+    
+    if (isNaN(collectiveId)) {
+      return res.status(400).json({ message: "Invalid collective ID format" });
+    }
+    
+    try {
+      console.log("[API] (Compatibility) Getting AI follower collective members:", collectiveId);
+      const collective = await storage.getAiFollowerCollective(collectiveId);
+      if (!collective) {
+        return res.status(404).json({ message: "Collective not found" });
+      }
+      
+      // Get follower members
+      const followers = await storage.getCollectiveMembers(collectiveId);
+      
+      // Check if the client is expecting just the members array
+      const wantsOnlyMembersArray = req.query.membersOnly === 'true';
+      
+      if (wantsOnlyMembersArray) {
+        // Return just the members array for the updated frontend component
+        res.json(followers);
+      } else {
+        // Return collective with members and creator info for backwards compatibility
+        const creatorInfo = await storage.getUser(collective.userId);
+        res.json({
+          ...collective,
+          followers,
+          creator: creatorInfo ? {
+            id: creatorInfo.id,
+            username: creatorInfo.username
+          } : undefined
+        });
+      }
+    } catch (error) {
+      console.error("Error getting collective members:", error);
+      res.status(500).json({ message: "Failed to get collective members" });
     }
   });
 
