@@ -5,8 +5,22 @@ import { requireAuth, hasCirclePermission } from './middleware';
 const router = Router();
 
 /**
- * POST /api/circles/:id/followers - Add follower to circle
+ * IMPORTANT: The circle follower management endpoints are directly registered in routes.ts
+ * to ensure they have priority over these router-based routes. This is necessary to fix
+ * route conflicts that were causing errors in the frontend.
+ * 
+ * See the direct implementations in routes.ts for the following endpoints:
+ * - GET /api/circles/:id/followers
+ * - POST /api/circles/:id/followers
+ * - DELETE /api/circles/:id/followers/:followerId
+ * - PATCH /api/circles/:id/followers/:followerId/toggle-mute
  */
+
+/*
+// These routes are commented out because they are now directly implemented in routes.ts
+// Keeping them here for reference and documentation purposes
+
+// POST /api/circles/:id/followers - Add follower to circle
 router.post('/:circleId/followers', requireAuth, async (req, res) => {
   const circleId = parseInt(req.params.circleId);
   const { aiFollowerId } = req.body;
@@ -45,9 +59,7 @@ router.post('/:circleId/followers', requireAuth, async (req, res) => {
   }
 });
 
-/**
- * DELETE /api/circles/:id/followers/:followerId - Remove follower from circle
- */
+// DELETE /api/circles/:id/followers/:followerId - Remove follower from circle
 router.delete('/:circleId/followers/:followerId', requireAuth, async (req, res) => {
   const circleId = parseInt(req.params.circleId);
   const followerId = parseInt(req.params.followerId);
@@ -74,9 +86,7 @@ router.delete('/:circleId/followers/:followerId', requireAuth, async (req, res) 
   }
 });
 
-/**
- * GET /api/circles/:id/followers - Get circle followers
- */
+// GET /api/circles/:id/followers - Get circle followers
 router.get('/:circleId/followers', requireAuth, async (req, res) => {
   const circleId = parseInt(req.params.circleId);
   
@@ -95,9 +105,7 @@ router.get('/:circleId/followers', requireAuth, async (req, res) => {
   }
 });
 
-/**
- * PATCH /api/circles/:id/followers/:followerId/toggle-mute - Toggle follower mute status
- */
+// PATCH /api/circles/:id/followers/:followerId/toggle-mute - Toggle follower mute status
 router.patch('/:circleId/followers/:followerId/toggle-mute', requireAuth, async (req, res) => {
   const circleId = parseInt(req.params.circleId);
   const followerId = parseInt(req.params.followerId);
@@ -130,5 +138,6 @@ router.patch('/:circleId/followers/:followerId/toggle-mute', requireAuth, async 
     res.status(500).json({ message: "Failed to toggle follower mute status" });
   }
 });
+*/
 
 export default router;
