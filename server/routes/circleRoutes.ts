@@ -284,23 +284,14 @@ router.get('/:id/details', requireAuth, async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    const circle = await storage.getCircle(circleId);
-    if (!circle) {
+    // Use the getCircleWithDetails method which already handles members with usernames
+    const details = await storage.getCircleWithDetails(circleId);
+    if (!details) {
       return res.status(404).json({ message: "Circle not found" });
     }
 
-    const owner = await storage.getUser(circle.userId);
-    const members = await storage.getCircleMembers(circleId);
-    const followers = await storage.getCircleFollowers(circleId);
-    const followerCount = followers.length;
-
-    res.json({
-      circle,
-      owner,
-      members,
-      followers,
-      followerCount
-    });
+    // The getCircleWithDetails already returns the correct structure
+    res.json(details);
   } catch (error) {
     console.error("Error getting circle details:", error);
     res.status(500).json({ message: "Failed to get circle details" });
