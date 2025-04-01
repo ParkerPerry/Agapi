@@ -11,6 +11,15 @@ router.post('/:circleId/collectives', requireAuth, async (req, res) => {
   const circleId = parseInt(req.params.circleId);
   const { collectiveId } = req.body;
 
+  // Check if parameters are valid
+  if (!circleId || isNaN(circleId)) {
+    return res.status(400).json({ message: "Invalid circle ID" });
+  }
+
+  if (!collectiveId || isNaN(collectiveId)) {
+    return res.status(400).json({ message: "Invalid collective ID" });
+  }
+
   try {
     // Allow both owners and collaborators to manage collectives
     const hasPermission = await hasCirclePermission(
@@ -27,6 +36,7 @@ router.post('/:circleId/collectives', requireAuth, async (req, res) => {
     // Verify collective exists
     const collective = await storage.getAiCollective(collectiveId);
     if (!collective) {
+      console.log("[API] Collective not found with ID:", collectiveId);
       return res.status(404).json({ message: "Collective not found" });
     }
 
@@ -38,7 +48,7 @@ router.post('/:circleId/collectives', requireAuth, async (req, res) => {
 
     // Add collective to circle
     await storage.addCircleCollective(circleId, collectiveId);
-    res.sendStatus(200);
+    res.status(200).json({ message: "Collective added to circle successfully" });
   } catch (error) {
     console.error("Error adding collective to circle:", error);
     res.status(500).json({ message: "Failed to add collective to circle" });

@@ -73,6 +73,10 @@ export interface IStorage {
   removeCollectiveFromCircle(circleId: number, collectiveId: number): Promise<void>;
   getCircleCollectives(circleId: number): Promise<AiFollowerCollective[]>;
   
+  // Aliases for backward compatibility
+  addCircleCollective(circleId: number, collectiveId: number): Promise<CircleCollective>;
+  removeCircleCollective(circleId: number, collectiveId: number): Promise<void>;
+  
   createPostInCircle(userId: number, circleId: number, content: string): Promise<Post>;
   getCirclePosts(circleId: number): Promise<Post[]>;
   movePostToCircle(postId: number, circleId: number): Promise<Post>;
@@ -792,6 +796,69 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
+  
+  /**
+   * Add a collective to a circle
+   */
+  async addCollectiveToCircle(circleId: number, collectiveId: number): Promise<CircleCollective> {
+    try {
+      console.log("[Storage] Adding collective to circle:", {
+        circleId,
+        collectiveId
+      });
+      
+      const [relationship] = (await db
+        .insert(circleCollectives)
+        .values({ circleId, collectiveId })
+        .returning()) as CircleCollective[];
+      
+      console.log("[Storage] Added collective to circle");
+      return relationship;
+    } catch (error) {
+      console.error("[Storage] Error adding collective to circle:", error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Remove a collective from a circle
+   */
+  async removeCollectiveFromCircle(circleId: number, collectiveId: number): Promise<void> {
+    try {
+      console.log("[Storage] Removing collective from circle:", {
+        circleId,
+        collectiveId
+      });
+      
+      await db
+        .delete(circleCollectives)
+        .where(
+          and(
+            eq(circleCollectives.circleId, circleId),
+            eq(circleCollectives.collectiveId, collectiveId)
+          )
+        );
+      
+      console.log("[Storage] Removed collective from circle");
+    } catch (error) {
+      console.error("[Storage] Error removing collective from circle:", error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Add a collective to a circle (alias for backward compatibility)
+   */
+  async addCircleCollective(circleId: number, collectiveId: number): Promise<CircleCollective> {
+    return this.addCollectiveToCircle(circleId, collectiveId);
+  }
+  
+  /**
+   * Remove a collective from a circle (alias for backward compatibility)
+   */
+  async removeCircleCollective(circleId: number, collectiveId: number): Promise<void> {
+    return this.removeCollectiveFromCircle(circleId, collectiveId);
+  }
 
   async toggleFollowerMuteInCircle(circleId: number, aiFollowerId: number, muted?: boolean): Promise<CircleFollower> {
     console.log("[Storage] Toggling follower mute status in circle:", circleId, "for follower:", aiFollowerId);
@@ -1361,6 +1428,13 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  /**
+   * Get AI collective by ID (alias for backward compatibility)
+   */
+  async getAiCollective(id: number): Promise<AiFollowerCollective | undefined> {
+    return this.getAiFollowerCollective(id);
+  }
+  
   async getUserAiFollowerCollectives(userId: number): Promise<AiFollowerCollective[]> {
     try {
       console.log("[Storage] Getting AI follower collectives for user:", userId);
@@ -1473,6 +1547,41 @@ export class DatabaseStorage implements IStorage {
       return collectives as AiFollowerCollective[];
     } catch (error) {
       console.error("[Storage] Error getting follower collectives:", error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Create AI collective (alias for backward compatibility)
+   */
+  async createAiCollective(data: { name: string; description?: string; followerIds?: number[]; createdBy: number }): Promise<AiFollowerCollective> {
+    try {
+      console.log("[Storage] Creating AI follower collective (alias):", {
+        name: data.name,
+        userId: data.createdBy
+      });
+      
+      // Create the collective
+      const collective = await this.createAiFollowerCollective(data.createdBy, {
+        name: data.name,
+        description: data.description || null,
+        personality: null,
+        userId: data.createdBy,
+        active: true
+      });
+      
+      // Add followers if provided
+      if (data.followerIds && data.followerIds.length > 0) {
+        console.log("[Storage] Adding followers to new collective:", data.followerIds);
+        for (const followerId of data.followerIds) {
+          await this.addFollowerToCollective(collective.id, followerId)
+            .catch(err => console.error(`[Storage] Error adding follower ${followerId} to collective:`, err));
+        }
+      }
+      
+      return collective;
+    } catch (error) {
+      console.error("[Storage] Error creating AI collective:", error);
       throw error;
     }
   }
