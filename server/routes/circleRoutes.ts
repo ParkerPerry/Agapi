@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { storage } from '../storage';
 import { requireAuth, hasCirclePermission } from './middleware';
+import { ThreadManager } from '../thread-manager';
 
 const router = Router();
 
@@ -344,6 +345,64 @@ router.post('/:id/members/:userId/reactivate', requireAuth, async (req, res) => 
   } catch (error) {
     console.error("Error reactivating circle member:", error);
     res.status(500).json({ message: "Failed to reactivate circle member" });
+  }
+});
+
+/**
+ * GET /api/circles/:id/posts - Get posts for a circle
+ * This is a compatibility route that forwards requests to the posts module
+ */
+router.get('/:id/posts', requireAuth, async (req, res) => {
+  const circleId = parseInt(req.params.id);
+  
+  try {
+    // Check if user has access to this circle
+    const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+    if (!hasPermission) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const posts = await storage.getCirclePosts(circleId);
+    
+    // Get interactions for each post
+    const postsWithInteractions = await Promise.all(
+      posts.map(async (post) => {
+        const interactions = await storage.getPostInteractions(post.id);
+        
+        // Get user info for each interaction
+        const interactionsWithUsers = await Promise.all(
+          interactions.map(async (interaction) => {
+            if (interaction.userType === "ai") {
+              const follower = await storage.getAiFollower(interaction.authorId);
+              return {
+                ...interaction,
+                author: follower
+              };
+            } else {
+              const user = await storage.getUser(interaction.authorId);
+              return {
+                ...interaction,
+                author: user
+              };
+            }
+          })
+        );
+        
+        // Get thread structure using static ThreadManager method
+        const threads = await ThreadManager.getThreadedInteractions(post.id);
+        
+        return {
+          ...post,
+          interactions: interactionsWithUsers,
+          threads: threads
+        };
+      })
+    );
+    
+    res.json(postsWithInteractions);
+  } catch (error) {
+    console.error("Error getting posts:", error);
+    res.status(500).json({ message: "Failed to get posts" });
   }
 });
 
