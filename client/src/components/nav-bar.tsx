@@ -44,9 +44,14 @@ function HomeLink() {
     
     if (defaultCircle && defaultCircle.id) {
       // Navigate to the default circle
-      navigate(`/?circle=${defaultCircle.id}`);
+      console.log("Navigating to default circle:", defaultCircle.id);
+      // Use history.pushState directly with event dispatch for immediate effect
+      const url = `/?circle=${defaultCircle.id}`;
+      window.history.pushState({}, '', url);
+      // The locationchange event will be fired automatically due to our modifications in home-page.tsx
     } else {
       // If no default circle, navigate to root
+      console.log("No default circle, navigating to root");
       navigate("/");
     }
   }, [defaultCircle, navigate]);
@@ -90,13 +95,17 @@ export function NavBar() {
             className="flex items-center space-x-2 px-0 hover:bg-transparent"
             onClick={e => {
               e.preventDefault();
-              // Use the same navigate functionality as HomeLink
+              // Use the same navigation approach as HomeLink component
               if (user) {
                 const defaultCircle = queryClient.getQueryData<CircleType>(["/api/default-circle"]);
                 if (defaultCircle && defaultCircle.id) {
-                  window.location.href = `/?circle=${defaultCircle.id}`;
+                  console.log("Logo click: navigating to default circle:", defaultCircle.id);
+                  // Use history.pushState which will trigger our locationchange event
+                  const url = `/?circle=${defaultCircle.id}`;
+                  window.history.pushState({}, '', url);
                 } else {
-                  window.location.href = "/";
+                  console.log("Logo click: no default circle found, navigating to root");
+                  window.history.pushState({}, '', "/");
                 }
               }
             }}

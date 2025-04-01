@@ -33,6 +33,7 @@ export default function HomePage() {
   useEffect(() => {
     // Create a function to handle URL changes
     const handleUrlChange = () => {
+      console.log("URL change detected, updating circle ID");
       const params = new URLSearchParams(window.location.search);
       const circleParam = params.get('circle');
       if (circleParam && !isNaN(parseInt(circleParam, 10))) {
@@ -48,8 +49,31 @@ export default function HomePage() {
     // Listen for popstate events (browser back/forward)
     window.addEventListener('popstate', handleUrlChange);
     
+    // Create a custom event we can dispatch when using programmatic navigation
+    window.addEventListener('locationchange', handleUrlChange);
+    
+    // Also track URL changes from history.pushState
+    const originalPushState = history.pushState;
+    history.pushState = function(...args) {
+      const result = originalPushState.apply(this, args);
+      window.dispatchEvent(new Event('locationchange'));
+      return result;
+    };
+    
+    // And from replaceState
+    const originalReplaceState = history.replaceState;
+    history.replaceState = function(...args) {
+      const result = originalReplaceState.apply(this, args);
+      window.dispatchEvent(new Event('locationchange'));
+      return result;
+    };
+    
     return () => {
       window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('locationchange', handleUrlChange);
+      // Restore original history methods
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
     };
   }, []);
 

@@ -63,22 +63,34 @@ export function CircleEditDialog({ circle, onEdit }: CircleEditDialogProps) {
   const setDefaultCircleMutation = useMutation({
     mutationFn: async () => {
       const res = await apiRequest(`/api/circles/${circle.id}/set-default`, "POST");
+      
+      // Check if the response was successful
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ message: "Unknown error occurred" }));
+        console.error("Failed to set default circle:", errorData);
+        throw new Error(errorData.message || "Failed to set default circle");
+      }
+      
       return res.json();
     },
     onSuccess: (updatedCircle) => {
+      console.log("Successfully set default circle:", updatedCircle);
+      
       // Invalidate multiple queries to ensure all components are updated
       queryClient.invalidateQueries({ queryKey: ["/api/circles"] });
       queryClient.invalidateQueries({ queryKey: ["/api/default-circle"] });
       queryClient.invalidateQueries({ queryKey: ["/api/circles/default"] });
       // Also invalidate the specific circle query
       queryClient.invalidateQueries({ queryKey: [`/api/circles/${circle.id}`] });
+      
       onEdit?.(updatedCircle);
       toast({
         title: "Default circle set",
         description: `${circle.name} is now your default circle.`,
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error setting default circle:", error);
       toast({
         title: "Error",
         description: "Failed to set default circle. Please try again.",
