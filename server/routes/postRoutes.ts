@@ -48,11 +48,32 @@ router.get('/', requireAuth, async (req, res) => {
  * POST /api/posts - Create a new post
  */
 router.post('/', requireAuth, async (req, res) => {
-  const { content, circleId } = req.body;
-
   try {
+    console.log("[Post Route] Received request body:", JSON.stringify(req.body));
+    // Check if the request body is a stringified JSON
+    let content, circleId, labId, labExperiment, targetRole;
+    
+    if (typeof req.body === 'string') {
+      try {
+        // Try to parse it as JSON
+        const parsedBody = JSON.parse(req.body);
+        content = parsedBody.content;
+        circleId = parsedBody.circleId;
+        labId = parsedBody.labId;
+        labExperiment = parsedBody.labExperiment;
+        targetRole = parsedBody.targetRole;
+      } catch (e) {
+        console.error("[Post Route] Failed to parse request body as JSON:", e);
+        return res.status(400).json({ message: "Invalid request format" });
+      }
+    } else {
+      // Normal object extraction
+      ({ content, circleId, labId, labExperiment, targetRole } = req.body);
+    }
+
     // Validate input
     if (!content || !circleId) {
+      console.error("[Post Route] Missing required fields:", { content, circleId });
       return res.status(400).json({ message: "Content and circle ID are required" });
     }
 
@@ -68,13 +89,15 @@ router.post('/', requireAuth, async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    // Create the post
-    const post = await storage.createPost({
-      userId: req.user!.id,
+    // Create the post using the createPostInCircle method
+    const post = await storage.createPostInCircle(
+      req.user!.id,
       circleId,
       content,
-      type: "text"
-    });
+      labId,
+      labExperiment,
+      targetRole
+    );
 
     // Return early with the post while AI response processing happens in background
     res.status(201).json(post);
