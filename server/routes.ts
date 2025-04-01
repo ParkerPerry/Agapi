@@ -27,60 +27,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const scheduler = ResponseScheduler.getInstance();
   scheduler.start();
   
-  // Mount API routes
-  app.use('/api/user', userRoutes);
-  app.use('/api/notifications', notificationRoutes);
-  app.use('/api/circles', circleRoutes);
-  app.use('/api/circles', circleFollowerRoutes);
-  app.use('/api/circles', circleCollectiveRoutes);
-  app.use('/api/followers', followerRoutes);
-  app.use('/api/posts', postRoutes);
-  app.use('/api/direct-chat', directChatRoutes);
-  app.use('/api/tools', toolRoutes);
-  app.use('/api/labs', labRoutes);
-  app.use('/api/nft', nftRoutes);
-  app.use('/api/health', healthRoutes);
+  // ===========================================================================
+  // DIRECT API ROUTES - Register these first to ensure they take precedence
+  // ===========================================================================
   
-  // Compatibility routes for default circle
-  app.get('/api/default-circle', requireAuth, async (req, res) => {
-    try {
-      const defaultCircle = await storage.getDefaultCircle(req.user!.id);
-      res.json(defaultCircle);
-    } catch (error) {
-      console.error("Error getting default circle:", error);
-      res.status(500).json({ message: "Failed to get default circle" });
-    }
-  });
-  
-  // Alternative endpoint path for default circle
-  app.get('/api/circles/default', requireAuth, async (req, res) => {
-    try {
-      const defaultCircle = await storage.getDefaultCircle(req.user!.id);
-      res.json(defaultCircle);
-    } catch (error) {
-      console.error("Error getting default circle:", error);
-      res.status(500).json({ message: "Failed to get default circle" });
-    }
-  });
-  
-  // Compatibility routes for AI collectives
-  
-  // Legacy endpoint for AI collectives
-  app.get('/api/ai-collectives', requireAuth, async (req, res) => {
-    try {
-      console.log("[API] (Compatibility) AI collectives request");
-      const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
-      res.json(collectives);
-    } catch (error) {
-      console.error("Error getting AI collectives:", error);
-      res.status(500).json({ message: "Failed to get AI collectives" });
-    }
-  });
-  
-  // Compatibility with frontend components directly using /api/followers/collectives
+  // Direct endpoint to fix the AI collectives issue
   app.get('/api/followers/collectives', requireAuth, async (req, res) => {
     try {
-      console.log("[API] (Compatibility) Getting AI follower collectives for user:", req.user!.id);
+      console.log("[API] Getting AI follower collectives for user:", req.user!.id);
       const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
       res.json(collectives);
     } catch (error) {
@@ -89,7 +43,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Compatibility with frontend components using /api/followers/collectives/:id
+  // Direct endpoint for getting a single collective by ID
   app.get('/api/followers/collectives/:id', requireAuth, async (req, res) => {
     const collectiveId = parseInt(req.params.id);
     
@@ -98,7 +52,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      console.log("[API] (Compatibility) Getting AI follower collective:", collectiveId);
+      console.log("[API] Getting AI follower collective:", collectiveId);
       const collective = await storage.getAiFollowerCollective(collectiveId);
       if (!collective) {
         return res.status(404).json({ message: "Collective not found" });
@@ -111,7 +65,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Compatibility with frontend components using /api/followers/collectives/:id/members
+  // Direct endpoint for getting collective members
   app.get('/api/followers/collectives/:id/members', requireAuth, async (req, res) => {
     const collectiveId = parseInt(req.params.id);
     
@@ -120,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      console.log("[API] (Compatibility) Getting AI follower collective members:", collectiveId);
+      console.log("[API] Getting AI follower collective members:", collectiveId);
       const collective = await storage.getAiFollowerCollective(collectiveId);
       if (!collective) {
         return res.status(404).json({ message: "Collective not found" });
@@ -152,6 +106,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get collective members" });
     }
   });
+  
+  // Legacy endpoint for AI collectives compatibility
+  app.get('/api/ai-collectives', requireAuth, async (req, res) => {
+    try {
+      console.log("[API] (Legacy) Getting AI collectives request");
+      const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
+      res.json(collectives);
+    } catch (error) {
+      console.error("Error getting AI collectives:", error);
+      res.status(500).json({ message: "Failed to get AI collectives" });
+    }
+  });
+  
+  // Default circle compatibility endpoints
+  app.get('/api/default-circle', requireAuth, async (req, res) => {
+    try {
+      const defaultCircle = await storage.getDefaultCircle(req.user!.id);
+      res.json(defaultCircle);
+    } catch (error) {
+      console.error("Error getting default circle:", error);
+      res.status(500).json({ message: "Failed to get default circle" });
+    }
+  });
+  
+  app.get('/api/circles/default', requireAuth, async (req, res) => {
+    try {
+      const defaultCircle = await storage.getDefaultCircle(req.user!.id);
+      res.json(defaultCircle);
+    } catch (error) {
+      console.error("Error getting default circle:", error);
+      res.status(500).json({ message: "Failed to get default circle" });
+    }
+  });
+  
+  // ===========================================================================
+  // MODULAR ROUTES - Register these after direct API routes
+  // ===========================================================================
+  
+  // Register general API routes
+  app.use('/api/user', userRoutes);
+  app.use('/api/notifications', notificationRoutes);
+  app.use('/api/posts', postRoutes);
+  app.use('/api/direct-chat', directChatRoutes);
+  app.use('/api/tools', toolRoutes);
+  app.use('/api/labs', labRoutes);
+  app.use('/api/nft', nftRoutes);
+  app.use('/api/health', healthRoutes);
+  
+  // Register circle-related routes
+  app.use('/api/circles', circleRoutes);
+  app.use('/api/circles', circleFollowerRoutes);
+  app.use('/api/circles', circleCollectiveRoutes);
+  
+  // Register follower routes last so our direct routes above take precedence
+  app.use('/api/followers', followerRoutes);
 
   return httpServer;
 }

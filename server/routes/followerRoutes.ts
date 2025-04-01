@@ -141,8 +141,20 @@ router.post('/clone', requireAuth, async (req, res) => {
 });
 
 /**
- * GET /api/followers/collectives - Get all collectives
+ * IMPORTANT: The AI followers collective endpoints are directly registered in routes.ts
+ * to ensure they have priority over these router-based routes. This is necessary to fix
+ * route conflicts that were causing 400 errors in the frontend.
+ * 
+ * See the direct implementations in routes.ts for the following endpoints:
+ * - GET /api/followers/collectives
+ * - GET /api/followers/collectives/:id
+ * - GET /api/followers/collectives/:id/members
  */
+
+/*
+// These routes are commented out because they are now directly implemented in routes.ts
+// Keeping them here for reference and documentation purposes
+
 router.get('/collectives', requireAuth, async (req, res) => {
   try {
     const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
@@ -153,13 +165,9 @@ router.get('/collectives', requireAuth, async (req, res) => {
   }
 });
 
-/**
- * GET /api/followers/collectives/:id - Get collective by ID
- */
 router.get('/collectives/:id', requireAuth, async (req, res) => {
   const collectiveId = parseInt(req.params.id);
   
-  // Check if collectiveId is a valid number
   if (isNaN(collectiveId)) {
     return res.status(400).json({ message: "Invalid collective ID format" });
   }
@@ -177,13 +185,9 @@ router.get('/collectives/:id', requireAuth, async (req, res) => {
   }
 });
 
-/**
- * GET /api/followers/collectives/:id/members - Get collective members
- */
 router.get('/collectives/:id/members', requireAuth, async (req, res) => {
   const collectiveId = parseInt(req.params.id);
   
-  // Check if collectiveId is a valid number
   if (isNaN(collectiveId)) {
     return res.status(400).json({ message: "Invalid collective ID format" });
   }
@@ -194,20 +198,14 @@ router.get('/collectives/:id/members', requireAuth, async (req, res) => {
       return res.status(404).json({ message: "Collective not found" });
     }
     
-    // Get follower members
     const followers = await storage.getCollectiveMembers(collectiveId);
-    
-    // Get creator info
     const creatorInfo = await storage.getUser(collective.userId);
     
-    // Check if the client is expecting just the members array
     const wantsOnlyMembersArray = req.query.membersOnly === 'true';
     
     if (wantsOnlyMembersArray) {
-      // Return just the members array for the updated frontend component
       res.json(followers);
     } else {
-      // Return collective with members and creator info for backwards compatibility
       res.json({
         ...collective,
         followers,
@@ -222,6 +220,7 @@ router.get('/collectives/:id/members', requireAuth, async (req, res) => {
     res.status(500).json({ message: "Failed to get collective members" });
   }
 });
+*/
 
 /**
  * POST /api/followers/collective - Create a new AI collective
