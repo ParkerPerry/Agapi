@@ -42,10 +42,17 @@ async function runTests() {
   console.log('=== Testing Routes ===');
   console.log('Note: Some routes may fail due to authentication requirements or missing data');
   
-  // Test a few endpoints to verify the routes are working
+  // Test public health endpoints
+  console.log('\n--- Testing Health Endpoints ---');
+  await testRoute('/api/health');
+  await testRoute('/api/health/details');
+  
+  // Test authenticated endpoints (will return 401 without auth)
+  console.log('\n--- Testing Data Endpoints (Auth Required) ---');
   await testRoute('/api/circles');
   await testRoute('/api/followers');
-  await testRoute('/api/health');
+  await testRoute('/api/labs');
+  await testRoute('/api/posts');
   
   console.log('\nTests completed!');
 }

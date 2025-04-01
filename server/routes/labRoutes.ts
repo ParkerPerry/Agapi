@@ -10,7 +10,9 @@ const router = Router();
  */
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const labs = await storage.getLabs();
+    // Use the authenticated user's ID to get their labs
+    const userId = req.user!.id;
+    const labs = await storage.getUserLabs(userId);
     res.json(labs);
   } catch (error) {
     console.error("Error getting labs:", error);

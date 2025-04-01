@@ -1,0 +1,38 @@
+10:54:52 AM [express] GET /api/circles/10/followers 200 in 369ms :: [{"id":3,"userId":1,"name":"Ledge…
+10:54:52 AM [express] GET /api/circles/11/followers 200 in 367ms :: [{"id":3,"userId":1,"name":"Ledge…
+Error getting AI follower: error: invalid input syntax for type integer: "NaN"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getAiFollower (/home/runner/workspace/server/storage.ts:226:24)
+    at async <anonymous> (/home/runner/workspace/server/routes/followerRoutes.ts:24:22) {
+  length: 146,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $1 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+10:54:56 AM [express] GET /api/followers/collectives 500 in 148ms :: {"message":"Failed to get AI fol…
+[Permissions] Checking permissions: { circleId: 19, userId: 1, requiredRole: 'viewer' }
+10:54:58 AM [express] GET /api/circles/19/posts 200 in 76ms
+[Permissions] Checking permissions: { circleId: 19, userId: 1, requiredRole: 'viewer' }
+10:54:58 AM [express] GET /api/circles/19/invitations 200 in 79ms
+[Permissions] User is circle owner, granting all permissions
+[Permissions] User is circle owner, granting all permissions
+10:54:58 AM [express] GET /api/circles/19 200 in 227ms :: {"id":19,"name":"Philosophical thoughts ","…
+Error getting circle details: TypeError: storage.getCircleFollowerCount is not a function
+    at <anonymous> (/home/runner/workspace/server/routes/circleRoutes.ts:294:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+10:54:58 AM [express] GET /api/circles/19/details 500 in 371ms :: {"message":"Failed to get circle de…

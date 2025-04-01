@@ -20,6 +20,11 @@ router.get('/', requireAuth, async (req, res) => {
 router.get('/:id', requireAuth, async (req, res) => {
   const followerId = parseInt(req.params.id);
   
+  // Check if followerId is a valid number
+  if (isNaN(followerId)) {
+    return res.status(400).json({ message: "Invalid follower ID format" });
+  }
+  
   try {
     const follower = await storage.getAiFollower(followerId);
     if (!follower) {
@@ -27,7 +32,7 @@ router.get('/:id', requireAuth, async (req, res) => {
     }
     
     // Get follower metadata
-    const creatorUser = await storage.getUser(follower.createdBy);
+    const creatorUser = await storage.getUser(follower.userId || 0);
 
     // Return follower with additional data
     res.json({
@@ -74,10 +79,15 @@ router.post('/', requireAuth, async (req, res) => {
 router.patch('/:id', requireAuth, async (req, res) => {
   const followerId = parseInt(req.params.id);
   
+  // Check if followerId is a valid number
+  if (isNaN(followerId)) {
+    return res.status(400).json({ message: "Invalid follower ID format" });
+  }
+  
   try {
     // Verify follower ownership
     const follower = await storage.getAiFollower(followerId);
-    if (!follower || follower.createdBy !== req.user!.id) {
+    if (!follower || follower.userId !== req.user!.id) {
       return res.status(404).json({ message: "AI Follower not found or you don't have permission" });
     }
     
@@ -96,10 +106,15 @@ router.patch('/:id', requireAuth, async (req, res) => {
 router.delete('/:id', requireAuth, async (req, res) => {
   const followerId = parseInt(req.params.id);
   
+  // Check if followerId is a valid number
+  if (isNaN(followerId)) {
+    return res.status(400).json({ message: "Invalid follower ID format" });
+  }
+  
   try {
     // Verify follower ownership
     const follower = await storage.getAiFollower(followerId);
-    if (!follower || follower.createdBy !== req.user!.id) {
+    if (!follower || follower.userId !== req.user!.id) {
       return res.status(404).json({ message: "AI Follower not found or you don't have permission" });
     }
     
@@ -129,8 +144,13 @@ router.post('/clone', requireAuth, async (req, res) => {
  * GET /api/followers/collectives - Get all collectives
  */
 router.get('/collectives', requireAuth, async (req, res) => {
-  const collectives = await storage.getAiCollectives();
-  res.json(collectives);
+  try {
+    const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
+    res.json(collectives);
+  } catch (error) {
+    console.error("Error getting AI follower collectives:", error);
+    res.status(500).json({ message: "Failed to get AI follower collectives" });
+  }
 });
 
 /**
@@ -139,8 +159,13 @@ router.get('/collectives', requireAuth, async (req, res) => {
 router.get('/collectives/:id', requireAuth, async (req, res) => {
   const collectiveId = parseInt(req.params.id);
   
+  // Check if collectiveId is a valid number
+  if (isNaN(collectiveId)) {
+    return res.status(400).json({ message: "Invalid collective ID format" });
+  }
+  
   try {
-    const collective = await storage.getAiCollective(collectiveId);
+    const collective = await storage.getAiFollowerCollective(collectiveId);
     if (!collective) {
       return res.status(404).json({ message: "Collective not found" });
     }
@@ -158,8 +183,13 @@ router.get('/collectives/:id', requireAuth, async (req, res) => {
 router.get('/collectives/:id/members', requireAuth, async (req, res) => {
   const collectiveId = parseInt(req.params.id);
   
+  // Check if collectiveId is a valid number
+  if (isNaN(collectiveId)) {
+    return res.status(400).json({ message: "Invalid collective ID format" });
+  }
+  
   try {
-    const collective = await storage.getAiCollective(collectiveId);
+    const collective = await storage.getAiFollowerCollective(collectiveId);
     if (!collective) {
       return res.status(404).json({ message: "Collective not found" });
     }
@@ -168,7 +198,7 @@ router.get('/collectives/:id/members', requireAuth, async (req, res) => {
     const followers = await storage.getCollectiveMembers(collectiveId);
     
     // Get creator info
-    const creatorInfo = await storage.getUser(collective.createdBy);
+    const creatorInfo = await storage.getUser(collective.userId);
     
     // Return collective with members and creator info
     res.json({
@@ -176,8 +206,7 @@ router.get('/collectives/:id/members', requireAuth, async (req, res) => {
       followers,
       creator: creatorInfo ? {
         id: creatorInfo.id,
-        username: creatorInfo.username,
-        displayName: creatorInfo.displayName
+        username: creatorInfo.username
       } : undefined
     });
   } catch (error) {
@@ -194,6 +223,16 @@ router.post('/collective', requireAuth, async (req, res) => {
   
   if (!Array.isArray(followerIds) || followerIds.length === 0) {
     return res.status(400).json({ message: "At least one follower must be selected" });
+  }
+  
+  // Validate followerIds to ensure they're all valid numbers
+  if (followerIds.some(id => typeof id !== 'number' || isNaN(id))) {
+    return res.status(400).json({ message: "All follower IDs must be valid numbers" });
+  }
+  
+  // Validate circleId if provided
+  if (circleId !== undefined && (typeof circleId !== 'number' || isNaN(circleId))) {
+    return res.status(400).json({ message: "Invalid circle ID format" });
   }
   
   try {

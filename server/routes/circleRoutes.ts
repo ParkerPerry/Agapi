@@ -291,12 +291,14 @@ router.get('/:id/details', requireAuth, async (req, res) => {
 
     const owner = await storage.getUser(circle.userId);
     const members = await storage.getCircleMembers(circleId);
-    const followerCount = await storage.getCircleFollowerCount(circleId);
+    const followers = await storage.getCircleFollowers(circleId);
+    const followerCount = followers.length;
 
     res.json({
       ...circle,
       owner,
       members,
+      followers,
       followerCount
     });
   } catch (error) {

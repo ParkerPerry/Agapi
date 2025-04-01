@@ -9,6 +9,42 @@ const router = Router();
 const contextManager = ThreadContextManager.getInstance(); 
 
 /**
+ * GET /api/posts - Get posts from circles the user has access to
+ */
+router.get('/', requireAuth, async (req, res) => {
+  try {
+    // Get user's circles and circles the user is a member of
+    const userCircles = await storage.getUserCircles(req.user!.id);
+    const circleIds = [
+      ...userCircles.owned.map(c => c.id),
+      ...userCircles.shared.map(c => c.id)
+    ];
+    
+    // Get posts from these circles
+    const allPosts = [];
+    
+    for (const circleId of circleIds) {
+      const circlePosts = await storage.getCirclePosts(circleId);
+      // Add circle info to each post
+      const circle = await storage.getCircle(circleId);
+      const postsWithCircle = circlePosts.map(post => ({
+        ...post,
+        circle
+      }));
+      allPosts.push(...postsWithCircle);
+    }
+    
+    // Sort by created date, most recent first
+    allPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
+    res.json(allPosts);
+  } catch (error) {
+    console.error("Error getting all posts:", error);
+    res.status(500).json({ message: "Failed to get posts" });
+  }
+});
+
+/**
  * POST /api/posts - Create a new post
  */
 router.post('/', requireAuth, async (req, res) => {
