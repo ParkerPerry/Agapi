@@ -403,10 +403,37 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
         // Get thread structure using static ThreadManager method
         const threads = await ThreadManager.getThreadedInteractions(post.id);
         
+        // Get top-level pending responses for the post
+        const pendingResponses = await storage.getPostPendingResponses(post.id);
+        
+        // Format pending responses for frontend display
+        const formattedPendingResponses = await Promise.all(
+          pendingResponses.map(async (pr) => {
+            let followerName = "AI";
+            let followerAvatarUrl = "";
+            
+            if (pr.aiFollowerId) {
+              const follower = await storage.getAiFollower(pr.aiFollowerId);
+              if (follower) {
+                followerName = follower.name;
+                followerAvatarUrl = follower.avatarUrl;
+              }
+            }
+            
+            return {
+              id: pr.id,
+              name: followerName,
+              avatarUrl: followerAvatarUrl,
+              scheduledFor: pr.scheduledFor
+            };
+          })
+        );
+        
         return {
           ...post,
           interactions: interactionsWithUsers,
-          threads: threads
+          threads: threads,
+          pendingResponses: formattedPendingResponses.length > 0 ? formattedPendingResponses : []
         };
       })
     );
