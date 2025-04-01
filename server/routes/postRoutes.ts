@@ -103,21 +103,31 @@ router.post('/', requireAuth, async (req, res) => {
     res.status(201).json(post);
 
     // Get circle followers and schedule responses
-    const circle = await storage.getCircle(circleId);
-    if (!circle) return;
+    try {
+      const circle = await storage.getCircle(circleId);
+      if (!circle) return;
 
-    const followers = await storage.getCircleFollowers(circleId);
-    const followRelationships = await storage.getCircleFollowerRelationships(circleId);
+      // getCircleFollowers already includes mute status in the returned objects
+      console.log("[Post Route] Getting circle followers for response scheduling");
+      const followers = await storage.getCircleFollowers(circleId);
+      
+      // Schedule follower responses
+      for (const follower of followers) {
+        // Skip muted followers
+        if (follower.muted) {
+          console.log(`[Post Route] Skipping muted follower ${follower.id} (${follower.name})`);
+          continue;
+        }
 
-    // Schedule follower responses
-    for (const follower of followers) {
-      // Skip muted followers
-      const relationship = followRelationships.find(r => r.aiFollowerId === follower.id);
-      if (relationship?.muted) continue;
-
-      // Schedule response
-      const scheduler = ResponseScheduler.getInstance();
-      await scheduler.scheduleResponse(post.id, follower);
+        // Schedule response
+        console.log(`[Post Route] Scheduling response from follower ${follower.id} (${follower.name})`);
+        const scheduler = ResponseScheduler.getInstance();
+        await scheduler.scheduleResponse(post.id, follower);
+      }
+    } catch (backgroundError) {
+      // This is after we've sent the response, so just log the error
+      console.error("[Post Route] Error in background response scheduling:", backgroundError);
+      // Don't throw or call res.status() here as we've already sent a response
     }
   } catch (error) {
     console.error("Error creating post:", error);
@@ -405,20 +415,28 @@ router.post('/:postId/reply', requireAuth, async (req, res) => {
         }
       }
     } else {
-      // This is a top-level comment, notify all AI followers in the circle
-      const followers = await storage.getCircleFollowers(post.circleId);
-      const followRelationships = await storage.getCircleFollowerRelationships(post.circleId);
-      
-      // Schedule follower responses
-      const scheduler = ResponseScheduler.getInstance();
-      
-      for (const follower of followers) {
-        // Skip muted followers
-        const relationship = followRelationships.find(r => r.aiFollowerId === follower.id);
-        if (relationship?.muted) continue;
+      try {
+        // This is a top-level comment, notify all AI followers in the circle
+        console.log("[Post Route] Getting circle followers for top-level comment response scheduling");
+        const followers = await storage.getCircleFollowers(post.circleId);
         
-        // Schedule response
-        await scheduler.scheduleResponse(postId, follower);
+        // Schedule follower responses
+        const scheduler = ResponseScheduler.getInstance();
+        
+        for (const follower of followers) {
+          // Skip muted followers
+          if (follower.muted) {
+            console.log(`[Post Route] Skipping muted follower ${follower.id} (${follower.name})`);
+            continue;
+          }
+          
+          // Schedule response
+          console.log(`[Post Route] Scheduling response from follower ${follower.id} (${follower.name})`);
+          await scheduler.scheduleResponse(postId, follower);
+        }
+      } catch (backgroundError) {
+        // This is after we've sent the response, so just log the error
+        console.error("[Post Route] Error in background response scheduling:", backgroundError);
       }
     }
   } catch (error) {
