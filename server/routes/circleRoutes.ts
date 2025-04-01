@@ -295,7 +295,7 @@ router.get('/:id/details', requireAuth, async (req, res) => {
     const followerCount = followers.length;
 
     res.json({
-      ...circle,
+      circle,
       owner,
       members,
       followers,
