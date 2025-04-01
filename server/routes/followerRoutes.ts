@@ -8,11 +8,19 @@ const router = Router();
 
 /**
  * GET /api/followers - Get all AI followers
+ * 
+ * NOTE: This route is commented out because a direct implementation 
+ * is provided in routes.ts. Do not uncomment unless the direct implementation
+ * is removed as it would create duplicate routes.
  */
+/* 
 router.get('/', requireAuth, async (req, res) => {
-  const followers = await storage.getAiFollowers();
+  // Direct implementation in routes.ts takes precedence
+  // The implementation in routes.ts passes the req.user!.id parameter
+  const followers = await storage.getAiFollowers(req.user!.id);
   res.json(followers);
 });
+*/
 
 /**
  * GET /api/followers/:id - Get AI follower by ID

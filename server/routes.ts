@@ -31,6 +31,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // DIRECT API ROUTES - Register these first to ensure they take precedence
   // ===========================================================================
   
+  // ------------------- AI Followers Routes -------------------
+  // Direct endpoint for getting all AI followers
+  app.get('/api/followers', requireAuth, async (req, res) => {
+    try {
+      console.log("[API] Getting AI followers for user:", req.user!.id);
+      const followers = await storage.getAiFollowers(req.user!.id);
+      res.json(followers);
+    } catch (error) {
+      console.error("Error getting AI followers:", error);
+      res.status(500).json({ message: "Failed to get AI followers" });
+    }
+  });
+  
   // ------------------- AI Follower Collectives Routes -------------------
   // Direct endpoint to fix the AI collectives issue
   app.get('/api/followers/collectives', requireAuth, async (req, res) => {
