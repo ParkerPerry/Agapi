@@ -58,20 +58,6 @@ router.patch('/read-all', requireAuth, async (req, res) => {
 });
 
 /**
- * DELETE /api/notifications/:id - Delete notification
- */
-router.delete('/:id', requireAuth, async (req, res) => {
-  const notificationId = parseInt(req.params.id);
-  try {
-    await storage.deleteNotification(notificationId);
-    res.sendStatus(200);
-  } catch (error) {
-    console.error("Error deleting notification:", error);
-    res.status(500).json({ message: "Failed to delete notification" });
-  }
-});
-
-/**
  * DELETE /api/notifications/delete-all - Delete all notifications
  */
 router.delete('/delete-all', requireAuth, async (req, res) => {
@@ -89,6 +75,27 @@ router.delete('/delete-all', requireAuth, async (req, res) => {
   } catch (error) {
     console.error("Error deleting all notifications:", error);
     res.status(500).json({ message: "Failed to delete all notifications" });
+  }
+});
+
+/**
+ * DELETE /api/notifications/:id - Delete notification
+ */
+router.delete('/:id', requireAuth, async (req, res) => {
+  const notificationId = parseInt(req.params.id);
+  
+  if (isNaN(notificationId)) {
+    console.error(`Invalid notification ID: ${req.params.id}`);
+    return res.status(400).json({ message: "Invalid notification ID" });
+  }
+  
+  try {
+    await storage.deleteNotification(notificationId);
+    console.log(`Successfully deleted notification ID: ${notificationId}`);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    res.status(500).json({ message: "Failed to delete notification" });
   }
 });
 
