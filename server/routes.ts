@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { ResponseScheduler } from "./response-scheduler";
+import { requireAuth } from "./routes/middleware";
 import nftRoutes from "./blockchain/routes";
 
 // Import modularized routes
@@ -39,6 +40,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/labs', labRoutes);
   app.use('/api/nft', nftRoutes);
   app.use('/api/health', healthRoutes);
+  
+  // Compatibility routes for default circle
+  app.get('/api/default-circle', requireAuth, async (req, res) => {
+    try {
+      const defaultCircle = await storage.getDefaultCircle(req.user!.id);
+      res.json(defaultCircle);
+    } catch (error) {
+      console.error("Error getting default circle:", error);
+      res.status(500).json({ message: "Failed to get default circle" });
+    }
+  });
+  
+  // Alternative endpoint path for default circle
+  app.get('/api/circles/default', requireAuth, async (req, res) => {
+    try {
+      const defaultCircle = await storage.getDefaultCircle(req.user!.id);
+      res.json(defaultCircle);
+    } catch (error) {
+      console.error("Error getting default circle:", error);
+      res.status(500).json({ message: "Failed to get default circle" });
+    }
+  });
 
   return httpServer;
 }
