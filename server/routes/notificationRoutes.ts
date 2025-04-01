@@ -76,7 +76,15 @@ router.delete('/:id', requireAuth, async (req, res) => {
  */
 router.delete('/delete-all', requireAuth, async (req, res) => {
   try {
-    await storage.deleteAllNotifications(req.user!.id);
+    const userId = req.user!.id;
+    
+    if (!userId || isNaN(userId)) {
+      console.error("Invalid user ID for delete all notifications:", userId);
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    await storage.deleteAllNotifications(userId);
+    console.log(`Successfully deleted all notifications for user ${userId}`);
     res.sendStatus(200);
   } catch (error) {
     console.error("Error deleting all notifications:", error);

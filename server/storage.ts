@@ -108,6 +108,7 @@ export interface IStorage {
   markNotificationRead(id: number): Promise<void>;
   markAllNotificationsRead(userId: number): Promise<void>;
   deleteNotification(id: number): Promise<void>;
+  deleteAllNotifications(userId: number): Promise<void>;
   
   // Direct chat methods
   createDirectChatMessage(message: Omit<InsertDirectChat, "createdAt">): Promise<DirectChat>;
@@ -1322,9 +1323,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteNotification(id: number): Promise<void> {
+    console.log("[Storage] Deleting notification:", id);
+    
+    if (!id || isNaN(id)) {
+      console.error(`[Storage] Invalid notification ID: ${id}`);
+      throw new Error(`Invalid notification ID: ${id}`);
+    }
+    
     await db
       .delete(notifications)
       .where(eq(notifications.id, id));
+  }
+
+  async deleteAllNotifications(userId: number): Promise<void> {
+    console.log("[Storage] Deleting all notifications for user:", userId);
+    
+    if (!userId || isNaN(userId)) {
+      console.error(`[Storage] Invalid user ID provided for deleteAllNotifications: ${userId}`);
+      throw new Error(`Invalid user ID: ${userId}`);
+    }
+    
+    await db
+      .delete(notifications)
+      .where(eq(notifications.userId, userId));
   }
 
   // Direct chat methods
