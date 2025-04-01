@@ -63,26 +63,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Compatibility routes for AI collectives
+  // Compatibility route for AI collectives (old URL format)
   app.get('/api/ai-collectives', requireAuth, async (req, res) => {
     try {
+      // Redirect to the proper endpoint in followerRoutes.ts
+      console.log("[API] (Compatibility) Redirecting AI collectives request to /api/followers/collectives");
       const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
       res.json(collectives);
     } catch (error) {
       console.error("Error getting AI collectives:", error);
       res.status(500).json({ message: "Failed to get AI collectives" });
-    }
-  });
-  
-  // Additional compatibility endpoint for followers/collectives
-  app.get('/api/followers/collectives', requireAuth, async (req, res) => {
-    try {
-      console.log("[API] Getting all collectives for user:", req.user!.id);
-      const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
-      res.json(collectives);
-    } catch (error) {
-      console.error("Error getting AI follower collectives:", error);
-      res.status(500).json({ message: "Failed to get AI follower collectives" });
     }
   });
 
