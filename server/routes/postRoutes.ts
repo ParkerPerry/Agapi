@@ -336,10 +336,10 @@ router.post('/:postId/reply', requireAuth, async (req, res) => {
     }
     
     // Create the interaction
-    const interaction = await storage.createInteraction({
+    const interaction = await storage.createAiInteraction({
       postId,
-      authorId: req.user!.id,
-      userType: "human",
+      userId: req.user!.id,
+      aiFollowerId: null,
       content,
       type: "comment",
       parentId: parentInteractionId || null
@@ -360,9 +360,9 @@ router.post('/:postId/reply', requireAuth, async (req, res) => {
     if (parentInteractionId) {
       const parentInteraction = await storage.getInteraction(parentInteractionId);
       
-      if (parentInteraction && parentInteraction.userType === "ai") {
+      if (parentInteraction && parentInteraction.aiFollowerId) {
         // Get the AI follower
-        const follower = await storage.getAiFollower(parentInteraction.authorId);
+        const follower = await storage.getAiFollower(parentInteraction.aiFollowerId);
         
         if (follower) {
           // Check if follower is muted in this circle
@@ -389,8 +389,8 @@ router.post('/:postId/reply', requireAuth, async (req, res) => {
           // Also notify other participants in the thread
           if (parentInteraction.parentId) {
             const threadRoot = await storage.getInteraction(parentInteraction.parentId);
-            if (threadRoot && threadRoot.userType === "ai" && threadRoot.authorId !== follower.id) {
-              const threadRootFollower = await storage.getAiFollower(threadRoot.authorId);
+            if (threadRoot && threadRoot.aiFollowerId && threadRoot.aiFollowerId !== follower.id) {
+              const threadRootFollower = await storage.getAiFollower(threadRoot.aiFollowerId);
               
               if (threadRootFollower) {
                 // Check if follower is muted

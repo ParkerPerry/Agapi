@@ -372,17 +372,29 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
         // Get user info for each interaction
         const interactionsWithUsers = await Promise.all(
           interactions.map(async (interaction) => {
-            if (interaction.userType === "ai") {
-              const follower = await storage.getAiFollower(interaction.authorId);
+            if (interaction.aiFollowerId) {
+              const follower = await storage.getAiFollower(interaction.aiFollowerId);
               return {
                 ...interaction,
-                author: follower
+                author: follower,
+                userType: "ai", // Add this for frontend compatibility
+                authorId: interaction.aiFollowerId // Add this for frontend compatibility
+              };
+            } else if (interaction.userId) {
+              const user = await storage.getUser(interaction.userId);
+              return {
+                ...interaction,
+                author: user,
+                userType: "human", // Add this for frontend compatibility
+                authorId: interaction.userId // Add this for frontend compatibility
               };
             } else {
-              const user = await storage.getUser(interaction.authorId);
+              // Fallback case
               return {
                 ...interaction,
-                author: user
+                author: null,
+                userType: "unknown",
+                authorId: null
               };
             }
           })

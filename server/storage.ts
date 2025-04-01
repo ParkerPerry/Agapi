@@ -832,6 +832,60 @@ export class DatabaseStorage implements IStorage {
     return updatedFollower;
   }
 
+  /**
+   * Get the specific relationship between a circle and an AI follower
+   */
+  async getCircleFollowerRelationship(circleId: number, aiFollowerId: number): Promise<CircleFollower | undefined> {
+    console.log("[Storage] Getting circle follower relationship:", circleId, aiFollowerId);
+    
+    const [relationship] = await db
+      .select()
+      .from(circleFollowers)
+      .where(and(
+        eq(circleFollowers.circleId, circleId),
+        eq(circleFollowers.aiFollowerId, aiFollowerId)
+      ));
+    
+    console.log("[Storage] Circle follower relationship found:", !!relationship);
+    return relationship;
+  }
+
+  /**
+   * Update an existing follower relationship in a circle
+   */
+  async updateCircleFollowerRelationship(circleId: number, aiFollowerId: number, updates: Partial<CircleFollower>): Promise<CircleFollower> {
+    console.log("[Storage] Updating circle follower relationship:", circleId, aiFollowerId, updates);
+    
+    // Update the relationship
+    const [updatedRelationship] = await db
+      .update(circleFollowers)
+      .set(updates)
+      .where(and(
+        eq(circleFollowers.circleId, circleId),
+        eq(circleFollowers.aiFollowerId, aiFollowerId)
+      ))
+      .returning();
+    
+    console.log("[Storage] Successfully updated circle follower relationship");
+    return updatedRelationship;
+  }
+
+  /**
+   * Add a follower to a circle (alias for backward compatibility)
+   */
+  async addCircleFollower(circleId: number, aiFollowerId: number): Promise<CircleFollower> {
+    console.log("[Storage] Adding circle follower:", circleId, aiFollowerId);
+    return this.addFollowerToCircle(circleId, aiFollowerId);
+  }
+
+  /**
+   * Remove a follower from a circle (alias for backward compatibility)
+   */
+  async removeCircleFollower(circleId: number, aiFollowerId: number): Promise<void> {
+    console.log("[Storage] Removing circle follower:", circleId, aiFollowerId);
+    return this.removeFollowerFromCircle(circleId, aiFollowerId);
+  }
+
   async getCircleFollowers(circleId: number): Promise<(AiFollower & { muted?: boolean })[]> {
     const followers = await db
       .select({
