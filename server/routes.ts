@@ -62,6 +62,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get default circle" });
     }
   });
+  
+  // Compatibility routes for AI collectives
+  app.get('/api/ai-collectives', requireAuth, async (req, res) => {
+    try {
+      const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
+      res.json(collectives);
+    } catch (error) {
+      console.error("Error getting AI collectives:", error);
+      res.status(500).json({ message: "Failed to get AI collectives" });
+    }
+  });
+  
+  // Additional compatibility endpoint for followers/collectives
+  app.get('/api/followers/collectives', requireAuth, async (req, res) => {
+    try {
+      console.log("[API] Getting all collectives for user:", req.user!.id);
+      const collectives = await storage.getUserAiFollowerCollectives(req.user!.id);
+      res.json(collectives);
+    } catch (error) {
+      console.error("Error getting AI follower collectives:", error);
+      res.status(500).json({ message: "Failed to get AI follower collectives" });
+    }
+  });
 
   return httpServer;
 }

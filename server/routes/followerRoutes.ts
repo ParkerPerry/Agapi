@@ -200,15 +200,23 @@ router.get('/collectives/:id/members', requireAuth, async (req, res) => {
     // Get creator info
     const creatorInfo = await storage.getUser(collective.userId);
     
-    // Return collective with members and creator info
-    res.json({
-      ...collective,
-      followers,
-      creator: creatorInfo ? {
-        id: creatorInfo.id,
-        username: creatorInfo.username
-      } : undefined
-    });
+    // Check if the client is expecting just the members array
+    const wantsOnlyMembersArray = req.query.membersOnly === 'true';
+    
+    if (wantsOnlyMembersArray) {
+      // Return just the members array for the updated frontend component
+      res.json(followers);
+    } else {
+      // Return collective with members and creator info for backwards compatibility
+      res.json({
+        ...collective,
+        followers,
+        creator: creatorInfo ? {
+          id: creatorInfo.id,
+          username: creatorInfo.username
+        } : undefined
+      });
+    }
   } catch (error) {
     console.error("Error getting collective members:", error);
     res.status(500).json({ message: "Failed to get collective members" });

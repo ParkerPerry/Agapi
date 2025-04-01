@@ -33,7 +33,7 @@ export function CollectivesList() {
     isError: isCollectivesError,
     refetch: refetchCollectives
   } = useQuery({
-    queryKey: ['ai-follower-collectives'],
+    queryKey: ['/api/followers/collectives'],
     queryFn: async () => {
       const response = await apiRequest('/api/followers/collectives');
       
@@ -43,7 +43,7 @@ export function CollectivesList() {
           try {
             // Make a separate API call to get the member count for each collective
             const membersResponse = await apiRequest(
-              `/api/followers/collectives/${collective.id}/members`
+              `/api/followers/collectives/${collective.id}/members?membersOnly=true`
             );
             
             return {
@@ -75,7 +75,7 @@ export function CollectivesList() {
       if (!expandedCollectiveId) return [];
       try {
         const response = await apiRequest(
-          `/api/followers/collectives/${expandedCollectiveId}/members`
+          `/api/followers/collectives/${expandedCollectiveId}/members?membersOnly=true`
         );
         return Array.isArray(response) ? response : [];
       } catch (error) {
