@@ -255,6 +255,20 @@ router.get('/:id/circles/stats', requireAuth, async (req, res) => {
     // Get stats for each circle
     const stats = await Promise.all(
       labCircles.map(async (lc) => {
+        // Make sure we have a valid circleId
+        if (!lc.circleId) {
+          console.error("Invalid circleId found in lab circle:", lc);
+          return {
+            labCircle: lc,
+            circle: null,
+            stats: {
+              postCount: 0,
+              followerCount: 0,
+              memberCount: 0
+            }
+          };
+        }
+        
         const circle = await storage.getCircle(lc.circleId);
         const postCount = await storage.getCirclePostCount(lc.circleId);
         const followerCount = await storage.getCircleFollowerCount(lc.circleId);

@@ -456,11 +456,11 @@ const LabDetailDialog = ({
                                 <div className="flex justify-between items-start">
                                   <div>
                                     <CardTitle className="text-base flex items-center">
-                                      {circle.circle.name}
+                                      {circle.circle?.name || "Unknown Circle"}
                                     </CardTitle>
                                     <CardDescription className="text-xs mt-1">
-                                      {circle.circle.description?.substring(0, 60) || "No description"}
-                                      {circle.circle.description && circle.circle.description.length > 60 ? "..." : ""}
+                                      {circle.circle?.description?.substring(0, 60) || "No description"}
+                                      {circle.circle?.description && circle.circle.description.length > 60 ? "..." : ""}
                                     </CardDescription>
                                   </div>
                                   <Badge 
@@ -485,7 +485,7 @@ const LabDetailDialog = ({
                                     <span className="text-xs text-muted-foreground">Added {formatDate(circle.labCircle.addedAt)}</span>
                                   </div>
                                   <div className="flex items-center justify-end">
-                                    {circle.circle.visibility === "private" ? (
+                                    {circle.circle?.visibility === "private" ? (
                                       <span className="flex items-center text-xs text-muted-foreground">
                                         <Lock className="h-3 w-3 mr-1" /> Private
                                       </span>
@@ -504,9 +504,9 @@ const LabDetailDialog = ({
                                   onClick={() => {
                                     // Properly map the circle stat data to the expected format
                                     const labCircle = {
-                                      id: circle.circle.id,
-                                      name: circle.circle.name,
-                                      role: circle.labCircle.role
+                                      id: circle.circle?.id || circle.labCircle.circleId,
+                                      name: circle.circle?.name || "Unknown Circle",
+                                      role: circle.labCircle.role || "observation"
                                     };
                                     setSelectedCircle(labCircle as LabCircle);
                                     setIsRoleDialogOpen(true);
@@ -519,7 +519,7 @@ const LabDetailDialog = ({
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleRemoveCircle(circle.circle.id)}
+                                  onClick={() => handleRemoveCircle(circle.circle?.id || circle.labCircle.circleId)}
                                   className="h-8 text-destructive hover:text-destructive"
                                 >
                                   <CircleSlash className="h-3.5 w-3.5 mr-1" />
@@ -576,7 +576,7 @@ const LabDetailDialog = ({
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      onClick={() => handleRemoveCircle(circle.id)}
+                                      onClick={() => handleRemoveCircle(circle.id || circle.circleId)}
                                       className="text-destructive"
                                       title="Remove from lab"
                                     >
@@ -623,7 +623,7 @@ const LabDetailDialog = ({
           {selectedCircle && (
             <LabCircleRoleDialog
               labId={labId}
-              circleId={selectedCircle.id}
+              circleId={selectedCircle.id || selectedCircle.circleId}
               currentRole={selectedCircle.role}
               circleName={selectedCircle.name}
               open={isRoleDialogOpen}
