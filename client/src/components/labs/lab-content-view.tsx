@@ -186,7 +186,7 @@ export function LabContentView({ labId }: LabContentViewProps) {
                         className={`${roleInfo[post.targetRole as keyof typeof roleInfo]?.bgClass || roleInfo.all.bgClass} flex items-center gap-1`}
                       >
                         {roleInfo[post.targetRole as keyof typeof roleInfo]?.icon || roleInfo.all.icon}
-                        <span>{post.targetRole ? post.targetRole.charAt(0).toUpperCase() + post.targetRole.slice(1) : "All"}</span>
+                        <span>{post.targetRole ? `${post.targetRole.charAt(0).toUpperCase()}${post.targetRole.slice(1)}` : "All"}</span>
                       </Badge>
                     </div>
                     

@@ -456,9 +456,9 @@ const LabDetailDialog = ({
                                   </div>
                                   <Badge 
                                     variant="outline" 
-                                    className={getRoleBadgeStyles(circle.role)}
+                                    className={getRoleBadgeStyles(circle.role || "unknown")}
                                   >
-                                    {circle.role.charAt(0).toUpperCase() + circle.role.slice(1)}
+                                    {circle.role ? circle.role.charAt(0) : "U".toUpperCase() + circle.role ? circle.role.slice(1) : "nknown"}
                                   </Badge>
                                 </div>
                               </CardHeader>
@@ -536,9 +536,9 @@ const LabDetailDialog = ({
                                 <TableCell>
                                   <Badge 
                                     variant="outline" 
-                                    className={getRoleBadgeStyles(circle.role)}
+                                    className={getRoleBadgeStyles(circle.role || "unknown")}
                                   >
-                                    {circle.role.charAt(0).toUpperCase() + circle.role.slice(1)}
+                                    {circle.role ? circle.role.charAt(0) : "U".toUpperCase() + circle.role ? circle.role.slice(1) : "nknown"}
                                   </Badge>
                                 </TableCell>
                                 <TableCell>

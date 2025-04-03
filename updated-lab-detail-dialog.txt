@@ -1,0 +1,6 @@
+                                  <Badge 
+                                    variant="outline" 
+                                    className={getRoleBadgeStyles(circle.role || 'unknown')}
+                                  >
+                                    {circle.role ? `${circle.role.charAt(0).toUpperCase()}${circle.role.slice(1)}` : 'Unknown'}
+                                  </Badge>
