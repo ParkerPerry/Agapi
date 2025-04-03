@@ -55,9 +55,8 @@ router.post('/', requireAuth, async (req, res) => {
     }
     
     // Create lab
-    const lab = await storage.createLab({
+    const lab = await storage.createLab(req.user!.id, {
       ...parsedData.data,
-      createdBy: req.user!.id,
       status: "draft"
     });
     
@@ -87,9 +86,8 @@ router.post('/circles', requireAuth, async (req, res) => {
     }
     
     // Create lab
-    const lab = await storage.createLab({
+    const lab = await storage.createLab(req.user!.id, {
       ...parsedLabData.data,
-      createdBy: req.user!.id,
       status: "draft"
     });
     
