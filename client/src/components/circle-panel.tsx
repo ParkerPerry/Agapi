@@ -323,8 +323,10 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                 </div>
               </div>
               
+              <Separator className="my-4" />
+              
               {/* AI Collectives Section */}
-              <div>
+              <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="flex items-center gap-2 font-medium">
                     <Users className="h-4 w-4" />
