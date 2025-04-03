@@ -258,7 +258,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                   )}
                 </div>
                 
-                <div className="space-y-4 max-h-[calc(100vh-30rem)] overflow-y-auto pr-2">
+                <div className="space-y-4 pr-2">
                   {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
                     const ownerMember = members.find(m => m.userId === userId);
                     const ownerName = ownerMember?.username || "Unknown User";
@@ -428,7 +428,7 @@ function CollectivesSection({ circleId, isOwner, members }: CollectivesSectionPr
   });
   
   return (
-    <div className="space-y-4 max-h-[calc(100vh-30rem)] overflow-y-auto pr-2">
+    <div className="space-y-4 pr-2">
       {Array.from(collectivesByOwner.entries()).map(([userId, userCollectives]) => {
         const ownerMember = members.find(m => m.userId === userId);
         const ownerName = ownerMember?.username || "Unknown User";
