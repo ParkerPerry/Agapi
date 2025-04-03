@@ -66,11 +66,20 @@ interface LabCircle extends Circle {
   role: "control" | "treatment" | "observation";
 }
 
-interface EnhancedLabCircle extends Circle {
-  role: "control" | "treatment" | "observation";
-  memberCount: number;
-  followerCount: number;
-  addedAt: Date;
+interface CircleStats {
+  labCircle: {
+    id: number;
+    labId: number;
+    circleId: number;
+    role: "control" | "treatment" | "observation";
+    addedAt?: Date;
+  };
+  circle: Circle;
+  stats: {
+    postCount: number;
+    followerCount: number;
+    memberCount: number;
+  };
 }
 
 const getExperimentTypeLabel = (type: string) => {
@@ -144,7 +153,7 @@ const LabDetailDialog = ({
     isLoading: isStatsLoading,
     error: statsError,
     refetch: refetchStats,
-  } = useQuery<EnhancedLabCircle[]>({
+  } = useQuery<CircleStats[]>({
     queryKey: [`/api/labs/${labId}/circles/stats`],
     enabled: open && !!labId && activeTab === "circles",
   });
@@ -442,23 +451,23 @@ const LabDetailDialog = ({
                       ) : circlesWithStats && !isStatsLoading ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                           {circlesWithStats.map((circle) => (
-                            <Card key={circle.id} className="overflow-hidden">
+                            <Card key={circle.circle.id} className="overflow-hidden">
                               <CardHeader className="pb-2">
                                 <div className="flex justify-between items-start">
                                   <div>
                                     <CardTitle className="text-base flex items-center">
-                                      {circle.name}
+                                      {circle.circle.name}
                                     </CardTitle>
                                     <CardDescription className="text-xs mt-1">
-                                      {circle.description?.substring(0, 60) || "No description"}
-                                      {circle.description && circle.description.length > 60 ? "..." : ""}
+                                      {circle.circle.description?.substring(0, 60) || "No description"}
+                                      {circle.circle.description && circle.circle.description.length > 60 ? "..." : ""}
                                     </CardDescription>
                                   </div>
                                   <Badge 
                                     variant="outline" 
-                                    className={getRoleBadgeStyles(circle.role || "unknown")}
+                                    className={getRoleBadgeStyles(circle.labCircle.role || "unknown")}
                                   >
-                                    {(circle.role ? `${circle.role.charAt(0).toUpperCase()}${circle.role.slice(1)}` : "Unknown")}
+                                    {(circle.labCircle.role ? `${circle.labCircle.role.charAt(0).toUpperCase()}${circle.labCircle.role.slice(1)}` : "Unknown")}
                                   </Badge>
                                 </div>
                               </CardHeader>
@@ -466,17 +475,17 @@ const LabDetailDialog = ({
                                 <div className="grid grid-cols-2 gap-2 text-sm">
                                   <div className="flex items-center">
                                     <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                                    <span>{circle.memberCount} members</span>
+                                    <span>{circle.stats.memberCount} members</span>
                                   </div>
                                   <div className="flex items-center">
                                     <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                                    <span>{circle.followerCount} followers</span>
+                                    <span>{circle.stats.followerCount} followers</span>
                                   </div>
                                   <div className="flex items-center">
-                                    <span className="text-xs text-muted-foreground">Added {formatDate(circle.addedAt)}</span>
+                                    <span className="text-xs text-muted-foreground">Added {formatDate(circle.labCircle.addedAt)}</span>
                                   </div>
                                   <div className="flex items-center justify-end">
-                                    {circle.visibility === "private" ? (
+                                    {circle.circle.visibility === "private" ? (
                                       <span className="flex items-center text-xs text-muted-foreground">
                                         <Lock className="h-3 w-3 mr-1" /> Private
                                       </span>
@@ -493,7 +502,13 @@ const LabDetailDialog = ({
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => {
-                                    setSelectedCircle(circle);
+                                    // Properly map the circle stat data to the expected format
+                                    const labCircle = {
+                                      id: circle.circle.id,
+                                      name: circle.circle.name,
+                                      role: circle.labCircle.role
+                                    };
+                                    setSelectedCircle(labCircle as LabCircle);
                                     setIsRoleDialogOpen(true);
                                   }}
                                   className="h-8"
@@ -504,7 +519,7 @@ const LabDetailDialog = ({
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleRemoveCircle(circle.id)}
+                                  onClick={() => handleRemoveCircle(circle.circle.id)}
                                   className="h-8 text-destructive hover:text-destructive"
                                 >
                                   <CircleSlash className="h-3.5 w-3.5 mr-1" />
@@ -547,7 +562,11 @@ const LabDetailDialog = ({
                                       variant="ghost"
                                       size="icon"
                                       onClick={() => {
-                                        setSelectedCircle(circle);
+                                        // Make sure we have all the required properties
+                                        setSelectedCircle({
+                                          ...circle,
+                                          role: circle.role || "observation" // Provide a default role if missing
+                                        } as LabCircle);
                                         setIsRoleDialogOpen(true);
                                       }}
                                       title="Change role"
@@ -598,7 +617,7 @@ const LabDetailDialog = ({
             open={isAddCircleOpen}
             onOpenChange={setIsAddCircleOpen}
             onSuccess={handleCircleUpdate}
-            existingCircleIds={circles?.map(c => c.id) || []}
+            existingCircleIds={(circlesWithStats?.map(c => c.circle.id) || circles?.map(c => c.id) || [])}
           />
           
           {selectedCircle && (
