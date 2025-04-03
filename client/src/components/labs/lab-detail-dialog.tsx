@@ -502,61 +502,72 @@ const LabDetailDialog = ({
                         </div>
                       ) : circlesWithStats && !isStatsLoading ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                          {circlesWithStats.map((circle) => (
-                            <Card key={circle.circle.id} className="overflow-hidden">
-                              <CardHeader className="pb-2">
-                                <div className="flex justify-between items-start">
-                                  <div>
-                                    <CardTitle className="text-base flex items-center">
-                                      {circle.circle?.name || "Unknown Circle"}
-                                    </CardTitle>
-                                    <CardDescription className="text-xs mt-1">
-                                      {circle.circle?.description?.substring(0, 60) || "No description"}
-                                      {circle.circle?.description && circle.circle.description.length > 60 ? "..." : ""}
-                                    </CardDescription>
+                          {circlesWithStats.map((circle) => {
+                            // Generate a unique, stable key that doesn't depend on circle.circle
+                            const circleKey = circle.labCircle?.id || 
+                                            circle.labCircle?.circleId || 
+                                            `lab-circle-${Math.random().toString(36).substr(2, 9)}`;
+                            
+                            // Skip rendering if we don't have minimal required data
+                            if (!circle.labCircle) {
+                              return null;
+                            }
+                            
+                            return (
+                              <Card key={circleKey} className="overflow-hidden">
+                                <CardHeader className="pb-2">
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <CardTitle className="text-base flex items-center">
+                                        {circle.circle?.name || "Unknown Circle"}
+                                      </CardTitle>
+                                      <CardDescription className="text-xs mt-1">
+                                        {circle.circle?.description?.substring(0, 60) || "No description"}
+                                        {circle.circle?.description && circle.circle.description.length > 60 ? "..." : ""}
+                                      </CardDescription>
+                                    </div>
+                                    <Badge 
+                                      variant="outline" 
+                                      className={getRoleBadgeStyles(circle.labCircle.role || "unknown")}
+                                    >
+                                      {(circle.labCircle.role ? `${circle.labCircle.role.charAt(0).toUpperCase()}${circle.labCircle.role.slice(1)}` : "Unknown")}
+                                    </Badge>
                                   </div>
-                                  <Badge 
-                                    variant="outline" 
-                                    className={getRoleBadgeStyles(circle.labCircle.role || "unknown")}
-                                  >
-                                    {(circle.labCircle.role ? `${circle.labCircle.role.charAt(0).toUpperCase()}${circle.labCircle.role.slice(1)}` : "Unknown")}
-                                  </Badge>
-                                </div>
-                              </CardHeader>
-                              <CardContent className="pb-3">
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                  <div className="flex items-center">
-                                    <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                                    <span>{circle.stats.memberCount} members</span>
+                                </CardHeader>
+                                <CardContent className="pb-3">
+                                  <div className="grid grid-cols-2 gap-2 text-sm">
+                                    <div className="flex items-center">
+                                      <Users className="h-4 w-4 mr-2 text-muted-foreground" />
+                                      <span>{circle.stats?.memberCount || 0} members</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                                      <span>{circle.stats?.followerCount || 0} followers</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <span className="text-xs text-muted-foreground">Added {formatDate(circle.labCircle.addedAt)}</span>
+                                    </div>
+                                    <div className="flex items-center justify-end">
+                                      {circle.circle?.visibility === "private" ? (
+                                        <span className="flex items-center text-xs text-muted-foreground">
+                                          <Lock className="h-3 w-3 mr-1" /> Private
+                                        </span>
+                                      ) : (
+                                        <span className="flex items-center text-xs text-muted-foreground">
+                                          <Globe className="h-3 w-3 mr-1" /> Shared
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
-                                  <div className="flex items-center">
-                                    <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                                    <span>{circle.stats.followerCount} followers</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <span className="text-xs text-muted-foreground">Added {formatDate(circle.labCircle.addedAt)}</span>
-                                  </div>
-                                  <div className="flex items-center justify-end">
-                                    {circle.circle?.visibility === "private" ? (
-                                      <span className="flex items-center text-xs text-muted-foreground">
-                                        <Lock className="h-3 w-3 mr-1" /> Private
-                                      </span>
-                                    ) : (
-                                      <span className="flex items-center text-xs text-muted-foreground">
-                                        <Globe className="h-3 w-3 mr-1" /> Shared
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </CardContent>
-                              <div className="bg-muted/50 px-6 py-2 flex justify-end gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => {
-                                    // Properly map the circle stat data to the expected format with null checks
-                                    if (circle.circle?.id || (circle.labCircle && circle.labCircle.circleId)) {
-                                      const circleId = circle.circle?.id || (circle.labCircle ? circle.labCircle.circleId : 0);
+                                </CardContent>
+                                <div className="bg-muted/50 px-6 py-2 flex justify-end gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                      // Get a valid circle ID from either source with proper null checks
+                                      const circleId = circle.circle?.id || circle.labCircle?.circleId;
+                                      
                                       if (circleId) {
                                         const labCircle = {
                                           id: circleId,
@@ -572,35 +583,37 @@ const LabDetailDialog = ({
                                           variant: "destructive",
                                         });
                                       }
-                                    } else {
-                                      toast({
-                                        title: "Invalid circle",
-                                        description: "Cannot change role due to invalid circle reference.",
-                                        variant: "destructive",
-                                      });
-                                    }
-                                  }}
-                                  className="h-8"
-                                >
-                                  <Settings className="h-3.5 w-3.5 mr-1" />
-                                  Change Role
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => {
-                                    if (circle.circle?.id) {
-                                      handleRemoveCircle(circle.circle.id);
-                                    }
-                                  }}
-                                  className="h-8 text-destructive hover:text-destructive"
-                                >
-                                  <CircleSlash className="h-3.5 w-3.5 mr-1" />
-                                  Remove
-                                </Button>
-                              </div>
-                            </Card>
-                          ))}
+                                    }}
+                                    className="h-8"
+                                  >
+                                    <Settings className="h-3.5 w-3.5 mr-1" />
+                                    Change Role
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                      // Try to get a valid circle ID with fallbacks
+                                      const circleId = circle.circle?.id || circle.labCircle?.circleId;
+                                      if (circleId) {
+                                        handleRemoveCircle(circleId);
+                                      } else {
+                                        toast({
+                                          title: "Invalid circle",
+                                          description: "Cannot remove circle due to missing identifier.",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }}
+                                    className="h-8 text-destructive hover:text-destructive"
+                                  >
+                                    <CircleSlash className="h-3.5 w-3.5 mr-1" />
+                                    Remove
+                                  </Button>
+                                </div>
+                              </Card>
+                            );
+                          })}
                         </div>
                       ) : (
                         <Table>
@@ -697,7 +710,13 @@ const LabDetailDialog = ({
             open={isAddCircleOpen}
             onOpenChange={setIsAddCircleOpen}
             onSuccess={handleCircleUpdate}
-            existingCircleIds={(circlesWithStats?.map(c => c.circle?.id || 0).filter(id => id !== 0) || circles?.map(c => c.id).filter(id => id !== undefined) || [])}
+            existingCircleIds={(circlesWithStats?.map(c => {
+              // Try to get a valid circle ID from either circle object or labCircle.circleId
+              const circleId = c.circle?.id || c.labCircle?.circleId || 0;
+              return circleId;
+            }).filter(id => id !== 0) || 
+            circles?.map(c => c.id).filter(id => id !== undefined) || 
+            [])}
           />
           
           {selectedCircle && selectedCircle.id && (
