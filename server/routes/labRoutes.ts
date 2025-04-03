@@ -338,9 +338,18 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
  */
 router.post('/:id/circles', requireAuth, async (req, res) => {
   const labId = parseInt(req.params.id);
-  const { circleId, isControl } = req.body;
+  const { circleId, role } = req.body;
   
   try {
+    // Verify parameters
+    if (isNaN(labId) || isNaN(circleId)) {
+      return res.status(400).json({ message: "Invalid lab ID or circle ID" });
+    }
+    
+    if (!role || !["control", "treatment", "observation"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role. Must be 'control', 'treatment', or 'observation'" });
+    }
+    
     // Verify lab ownership
     const lab = await storage.getLab(labId);
     if (!lab || lab.userId !== req.user!.id) {
@@ -365,11 +374,7 @@ router.post('/:id/circles', requireAuth, async (req, res) => {
       return res.status(400).json({ message: "Circle is already in this lab" });
     }
     
-    // No need to parse lab circle data with schema, we're calling addCircleToLab directly
-    
-    // Add circle to lab
-    const role = isControl ? "control" : "treatment";
-    // In the future, we should update our API to accept 'role' directly instead of deriving it from 'isControl'
+    // Add circle to lab with the specified role
     const labCircle = await storage.addCircleToLab(labId, circleId, role);
     
     // Get circle data
@@ -414,9 +419,18 @@ router.delete('/:labId/circles/:circleId', requireAuth, async (req, res) => {
 router.patch('/:labId/circles/:circleId', requireAuth, async (req, res) => {
   const labId = parseInt(req.params.labId);
   const circleId = parseInt(req.params.circleId);
-  const { isControl } = req.body;
+  const { role } = req.body;
   
   try {
+    // Verify parameters
+    if (isNaN(labId) || isNaN(circleId)) {
+      return res.status(400).json({ message: "Invalid lab ID or circle ID" });
+    }
+    
+    if (!role || !["control", "treatment", "observation"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role. Must be 'control', 'treatment', or 'observation'" });
+    }
+    
     // Verify lab ownership
     const lab = await storage.getLab(labId);
     if (!lab || lab.userId !== req.user!.id) {
@@ -424,8 +438,6 @@ router.patch('/:labId/circles/:circleId', requireAuth, async (req, res) => {
     }
     
     // Update lab circle
-    const role = isControl ? "control" : "treatment";
-    // In the future, we should update our API to accept 'role' directly instead of deriving it from 'isControl'
     const updatedLabCircle = await storage.updateLabCircleRole(labId, circleId, role);
     
     // Get circle data

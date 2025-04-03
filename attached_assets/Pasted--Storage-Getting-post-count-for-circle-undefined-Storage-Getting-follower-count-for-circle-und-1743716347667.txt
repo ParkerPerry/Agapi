@@ -1,0 +1,57 @@
+[Storage] Getting post count for circle: undefined
+[Storage] Getting follower count for circle: undefined
+[Storage] Getting member count for circle: undefined
+9:38:20 PM [express] GET /api/labs/20/circles/stats 200 in 531ms :: [{"labCircle":{"id":59,"name":"P…
+[ResponseScheduler] Processing 0 pending responses
+[Storage] Getting lab by ID: 20
+[Storage] Retrieved lab: { id: 20, name: 'Polygon Chain Lunch', status: 'draft' }
+[Storage] Updating lab circle role: { labId: 20, circleId: NaN, role: 'treatment' }
+[Storage] Error updating lab circle role: error: invalid input syntax for type integer: "NaN"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.updateLabCircleRole (/home/runner/workspace/server/storage.ts:2077:35)
+    at async <anonymous> (/home/runner/workspace/server/routes/labRoutes.ts:429:30) {
+  length: 146,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $3 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+Error updating lab circle: error: invalid input syntax for type integer: "NaN"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.updateLabCircleRole (/home/runner/workspace/server/storage.ts:2077:35)
+    at async <anonymous> (/home/runner/workspace/server/routes/labRoutes.ts:429:30) {
+  length: 146,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $3 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+9:38:39 PM [express] PATCH /api/labs/20/circles/undefined 500 in 236ms :: {"message":"Failed to upda…
