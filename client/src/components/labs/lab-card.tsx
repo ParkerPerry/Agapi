@@ -192,21 +192,25 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
         </CardFooter>
       </Card>
 
-      <LabDeleteDialog
-        lab={lab}
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        onDelete={handleDelete}
-      />
+      {lab && (
+        <LabDeleteDialog
+          lab={lab}
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          onDelete={handleDelete}
+        />
+      )}
       
-      <LabDetailDialog
-        labId={lab.id}
-        open={isDetailDialogOpen}
-        onOpenChange={setIsDetailDialogOpen}
-        onUpdate={onUpdate}
-      />
+      {lab && lab.id && (
+        <LabDetailDialog
+          labId={lab.id}
+          open={isDetailDialogOpen}
+          onOpenChange={setIsDetailDialogOpen}
+          onUpdate={onUpdate}
+        />
+      )}
       
-      {targetStatus && (
+      {lab && lab.id && targetStatus && (
         <LabStatusChangeDialog
           labId={lab.id}
           currentStatus={lab.status}

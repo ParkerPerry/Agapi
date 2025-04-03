@@ -35,6 +35,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Archive,
   Beaker,
   CheckCircle,
@@ -183,8 +193,23 @@ const LabDetailDialog = ({
     }
   };
 
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  
+  const handleDeleteClick = () => {
+    setIsDeleteConfirmOpen(true);
+  };
+  
   const handleDeleteLab = async () => {
     try {
+      if (!labId) {
+        toast({
+          title: "Invalid lab",
+          description: "Cannot delete the lab due to an invalid lab ID.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       await apiRequest(`/api/labs/${labId}`, "DELETE");
       
       toast({
@@ -209,7 +234,17 @@ const LabDetailDialog = ({
     onUpdate();
   };
 
-  const handleRemoveCircle = async (circleId: number) => {
+  const handleRemoveCircle = async (circleId?: number) => {
+    // Don't proceed if the circle ID is undefined, null, or invalid
+    if (!circleId) {
+      toast({
+        title: "Invalid circle",
+        description: "Cannot remove circle due to invalid reference.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
       await apiRequest(`/api/labs/${labId}/circles/${circleId}`, "DELETE");
       
@@ -231,7 +266,7 @@ const LabDetailDialog = ({
   };
 
   const getStatusActions = () => {
-    if (!lab) return null;
+    if (!lab || !lab.status) return null;
     
     const actions = [];
     
@@ -281,7 +316,7 @@ const LabDetailDialog = ({
       <Button 
         key="delete"
         variant="destructive" 
-        onClick={handleDeleteLab}
+        onClick={handleDeleteClick}
         className="flex items-center gap-2"
       >
         <Trash className="h-4 w-4" />
@@ -298,6 +333,23 @@ const LabDetailDialog = ({
 
   return (
     <>
+      <AlertDialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the lab and all of its data. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteLab} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[800px] max-h-[85vh] overflow-auto">
           <DialogHeader>
@@ -306,7 +358,7 @@ const LabDetailDialog = ({
               {isLabLoading ? "Loading..." : lab?.name}
             </DialogTitle>
             <DialogDescription>
-              {lab && <Badge variant="outline">{lab.status.charAt(0).toUpperCase() + lab.status.slice(1)}</Badge>}
+              {lab && lab.status && <Badge variant="outline">{lab.status.charAt(0).toUpperCase() + lab.status.slice(1)}</Badge>}
             </DialogDescription>
           </DialogHeader>
 
@@ -355,7 +407,7 @@ const LabDetailDialog = ({
                         </div>
                         <div>
                           <h4 className="text-sm font-semibold">Status</h4>
-                          <p className="capitalize">{lab.status}</p>
+                          <p className="capitalize">{lab.status || "Unknown"}</p>
                         </div>
                       </div>
                       
@@ -502,14 +554,31 @@ const LabDetailDialog = ({
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => {
-                                    // Properly map the circle stat data to the expected format
-                                    const labCircle = {
-                                      id: circle.circle?.id || circle.labCircle.circleId,
-                                      name: circle.circle?.name || "Unknown Circle",
-                                      role: circle.labCircle.role || "observation"
-                                    };
-                                    setSelectedCircle(labCircle as LabCircle);
-                                    setIsRoleDialogOpen(true);
+                                    // Properly map the circle stat data to the expected format with null checks
+                                    if (circle.circle?.id || (circle.labCircle && circle.labCircle.circleId)) {
+                                      const circleId = circle.circle?.id || (circle.labCircle ? circle.labCircle.circleId : 0);
+                                      if (circleId) {
+                                        const labCircle = {
+                                          id: circleId,
+                                          name: circle.circle?.name || "Unknown Circle",
+                                          role: (circle.labCircle && circle.labCircle.role) || "observation"
+                                        };
+                                        setSelectedCircle(labCircle as LabCircle);
+                                        setIsRoleDialogOpen(true);
+                                      } else {
+                                        toast({
+                                          title: "Invalid circle",
+                                          description: "Cannot change role due to invalid circle reference.",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    } else {
+                                      toast({
+                                        title: "Invalid circle",
+                                        description: "Cannot change role due to invalid circle reference.",
+                                        variant: "destructive",
+                                      });
+                                    }
                                   }}
                                   className="h-8"
                                 >
@@ -519,7 +588,11 @@ const LabDetailDialog = ({
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleRemoveCircle(circle.circle?.id || circle.labCircle.circleId)}
+                                  onClick={() => {
+                                    if (circle.circle?.id) {
+                                      handleRemoveCircle(circle.circle.id);
+                                    }
+                                  }}
                                   className="h-8 text-destructive hover:text-destructive"
                                 >
                                   <CircleSlash className="h-3.5 w-3.5 mr-1" />
@@ -562,12 +635,15 @@ const LabDetailDialog = ({
                                       variant="ghost"
                                       size="icon"
                                       onClick={() => {
-                                        // Make sure we have all the required properties
-                                        setSelectedCircle({
-                                          ...circle,
-                                          role: circle.role || "observation" // Provide a default role if missing
-                                        } as LabCircle);
-                                        setIsRoleDialogOpen(true);
+                                        if (circle && circle.id) {
+                                          // Create a clean object with only the properties we need
+                                          setSelectedCircle({
+                                            id: circle.id,
+                                            name: circle.name || "Unknown Circle",
+                                            role: circle.role || "observation"
+                                          } as LabCircle);
+                                          setIsRoleDialogOpen(true);
+                                        }
                                       }}
                                       title="Change role"
                                     >
@@ -576,7 +652,11 @@ const LabDetailDialog = ({
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      onClick={() => handleRemoveCircle(circle.id || circle.circleId)}
+                                      onClick={() => {
+                                        if (circle && circle.id) {
+                                          handleRemoveCircle(circle.id);
+                                        }
+                                      }}
                                       className="text-destructive"
                                       title="Remove from lab"
                                     >
@@ -617,25 +697,25 @@ const LabDetailDialog = ({
             open={isAddCircleOpen}
             onOpenChange={setIsAddCircleOpen}
             onSuccess={handleCircleUpdate}
-            existingCircleIds={(circlesWithStats?.map(c => c.circle.id) || circles?.map(c => c.id) || [])}
+            existingCircleIds={(circlesWithStats?.map(c => c.circle?.id || 0).filter(id => id !== 0) || circles?.map(c => c.id).filter(id => id !== undefined) || [])}
           />
           
-          {selectedCircle && (
+          {selectedCircle && selectedCircle.id && (
             <LabCircleRoleDialog
               labId={labId}
-              circleId={selectedCircle.id || selectedCircle.circleId}
-              currentRole={selectedCircle.role}
-              circleName={selectedCircle.name}
+              circleId={selectedCircle.id}
+              currentRole={selectedCircle.role || "observation"}
+              circleName={selectedCircle.name || "Unknown Circle"}
               open={isRoleDialogOpen}
               onOpenChange={setIsRoleDialogOpen}
               onSuccess={handleCircleUpdate}
             />
           )}
           
-          {targetStatus && (
+          {targetStatus && lab && (
             <LabStatusChangeDialog
               labId={labId}
-              currentStatus={lab.status}
+              currentStatus={lab.status || "draft"}
               newStatus={targetStatus}
               open={!!targetStatus}
               onOpenChange={(open) => {

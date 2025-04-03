@@ -568,6 +568,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCircle(id: number): Promise<Circle | undefined> {
+    if (!id || isNaN(id)) {
+      console.log(`[Storage] Invalid circle ID provided: ${id}`);
+      return undefined;
+    }
+    console.log(`[Storage] Getting circle by ID: ${id}`);
     const [circle] = await db.select().from(circles).where(eq(circles.id, id));
     return circle;
   }
@@ -1085,6 +1090,11 @@ export class DatabaseStorage implements IStorage {
   async getCirclePostCount(circleId: number): Promise<number> {
     console.log("[Storage] Getting post count for circle:", circleId);
     
+    if (!circleId || isNaN(circleId)) {
+      console.log(`[Storage] Invalid circle ID provided for post count: ${circleId}`);
+      return 0;
+    }
+    
     try {
       const result = await db
         .select({ count: sql<number>`count(*)` })
@@ -1101,6 +1111,11 @@ export class DatabaseStorage implements IStorage {
   async getCircleFollowerCount(circleId: number): Promise<number> {
     console.log("[Storage] Getting follower count for circle:", circleId);
     
+    if (!circleId || isNaN(circleId)) {
+      console.log(`[Storage] Invalid circle ID provided for follower count: ${circleId}`);
+      return 0;
+    }
+    
     try {
       const result = await db
         .select({ count: sql<number>`count(*)` })
@@ -1116,6 +1131,11 @@ export class DatabaseStorage implements IStorage {
   
   async getCircleMemberCount(circleId: number): Promise<number> {
     console.log("[Storage] Getting member count for circle:", circleId);
+    
+    if (!circleId || isNaN(circleId)) {
+      console.log(`[Storage] Invalid circle ID provided for member count: ${circleId}`);
+      return 0;
+    }
     
     try {
       const result = await db
