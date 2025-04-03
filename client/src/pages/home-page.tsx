@@ -130,7 +130,7 @@ export default function HomePage() {
           />
         )}
         
-        <main className={`flex-1 overflow-y-auto py-6 px-4 ${circleId ? 'ml-0' : ''}`}>
+        <main className="flex-1 overflow-auto py-6 px-4">
           <div className="max-w-2xl mx-auto space-y-6">
             <PostForm defaultCircleId={circleId || undefined} />
             

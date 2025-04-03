@@ -79,7 +79,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
 
   return (
     <div className={cn(
-      "h-[calc(100vh-4rem)] flex flex-col relative transition-all duration-300 border-r shadow-sm bg-card",
+      "h-[calc(100vh-4rem)] flex-none flex flex-col relative transition-all duration-300 border-r shadow-sm bg-card",
       isCollapsed ? "w-14" : "w-72"
     )}>
       {/* The toggle button should always be visible, regardless of panel state */}
@@ -160,9 +160,9 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
         </div>
 
         <div className="p-4 flex-1 overflow-hidden">
-          <ScrollArea className="h-full pr-4">
-            <div className="space-y-6">
-              <div>
+          <ScrollArea className="h-full w-full max-w-[17rem]">
+            <div className="space-y-6 w-full pr-3 overflow-hidden">
+              <div className="w-full overflow-hidden">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="flex items-center gap-2 font-medium">
                     <Users className="h-4 w-4" />
@@ -258,32 +258,32 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                   )}
                 </div>
                 
-                <div className="space-y-4 pr-2">
+                <div className="space-y-4 w-full overflow-hidden">
                   {Array.from(followersByOwner.entries()).map(([userId, userFollowers]) => {
                     const ownerMember = members.find(m => m.userId === userId);
                     const ownerName = ownerMember?.username || "Unknown User";
                     const isCurrentUser = userId === user?.id;
 
                     return (
-                      <div key={`follower-owner-${userId}`} className="space-y-2">
-                        <h4 className="text-sm font-medium text-muted-foreground sticky top-0 bg-card py-1 z-10">
+                      <div key={`follower-section-${userId}`} className="space-y-2 w-full overflow-hidden">
+                        <h4 className="text-sm font-medium text-muted-foreground sticky top-0 bg-card py-1 z-10 w-full">
                           {ownerName}'s AI Followers
                         </h4>
                         {userFollowers.map((follower) => (
                           <div
                             key={follower.id}
-                            className="flex items-center justify-between p-2 rounded-lg hover:bg-muted"
+                            className="flex items-center justify-between p-2 rounded-lg hover:bg-muted overflow-hidden w-full"
                           >
-                            <div className="flex items-center space-x-2">
-                              <Avatar>
+                            <div className="flex items-center space-x-2 min-w-0 flex-1">
+                              <Avatar className="flex-shrink-0">
                                 <img src={follower.avatarUrl} alt={follower.name} />
                                 <AvatarFallback>
                                   {follower.name.charAt(0).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <p className="text-sm font-medium">{follower.name}</p>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <p className="text-sm font-medium truncate">{follower.name}</p>
                                   {!follower.active && (
                                     <Badge variant="secondary" className="text-xs">Inactive</Badge>
                                   )}
@@ -291,7 +291,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                                     <Badge variant="outline" className="text-xs border-amber-500 text-amber-500">Muted</Badge>
                                   )}
                                 </div>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-muted-foreground truncate w-full">
                                   {follower.personality}
                                 </p>
                               </div>
@@ -339,10 +339,8 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                   )}
                 </div>
                 
-                {/* Render CollectivesSection in the same pattern as AI Followers section */}
-                <div className="mb-2">
-                  <CollectivesSection circleId={circle.id} isOwner={isOwner} members={members} />
-                </div>
+                {/* Render CollectivesSection directly */}
+                <CollectivesSection circleId={circle.id} isOwner={isOwner} members={members} />
               </div>
             </div>
           </ScrollArea>
@@ -428,24 +426,24 @@ function CollectivesSection({ circleId, isOwner, members }: CollectivesSectionPr
   });
   
   return (
-    <div className="space-y-4 pr-2">
+    <div className="space-y-4 w-full overflow-hidden">
       {Array.from(collectivesByOwner.entries()).map(([userId, userCollectives]) => {
         const ownerMember = members.find(m => m.userId === userId);
         const ownerName = ownerMember?.username || "Unknown User";
         
         return (
-          <div key={`collective-${userId}`} className="space-y-2">
-            <h4 className="text-sm font-medium text-muted-foreground sticky top-0 bg-card py-1 z-10">
+          <div key={`collective-section-${userId}`} className="space-y-2 w-full overflow-hidden">
+            <h4 className="text-sm font-medium text-muted-foreground sticky top-0 bg-card py-1 z-10 w-full truncate">
               {ownerName}'s Collectives
             </h4>
             {userCollectives.map((collective) => (
               <div
-                key={`collective-${collective.id}`}
-                className="flex items-center justify-between p-2 rounded-lg hover:bg-muted"
+                key={`collective-item-${collective.id}`}
+                className="flex items-center justify-between p-2 rounded-lg hover:bg-muted overflow-hidden w-full"
               >
-                <div className="flex items-start flex-col">
-                  <p className="text-sm font-medium">{collective.name}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-1">
+                <div className="flex items-start flex-col min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate w-full">{collective.name}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-1 w-full">
                     {collective.description || collective.personality || 'No description'}
                   </p>
                 </div>
