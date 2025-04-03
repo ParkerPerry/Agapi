@@ -79,12 +79,12 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
 
   return (
     <div className={cn(
-      "h-[calc(100vh-4rem)] flex-none flex flex-col relative transition-all duration-300 border-r shadow-sm bg-card",
+      "h-[calc(100vh-4rem)] flex-none flex flex-col relative transition-all duration-300 border-r shadow-sm bg-card overflow-hidden",
       isCollapsed ? "w-14" : "w-72"
     )}>
       {/* The toggle button should always be visible, regardless of panel state */}
       <div className={cn(
-        "absolute top-0 right-0 h-10 flex items-center",
+        "absolute top-0 right-0 h-10 flex items-center z-10",
         isCollapsed ? "w-full justify-end pr-1" : "pr-1" 
       )}>
         <Button
@@ -102,10 +102,10 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
 
       {/* Expanded content - hidden when collapsed */}
       <div className={cn(
-        "transition-opacity duration-300",
+        "transition-opacity duration-300 h-full flex flex-col overflow-hidden",
         isCollapsed && "opacity-0 invisible h-0 overflow-hidden"
       )}>
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="relative">
@@ -159,9 +159,10 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
           )}
         </div>
 
-        <div className="p-4 flex-1 overflow-hidden">
-          <ScrollArea className="h-full w-full max-w-[17rem]">
-            <div className="space-y-6 w-full pr-3 overflow-hidden">
+        {/* Main scrollable content container */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full w-full">
+            <div className="p-4 space-y-6 w-full pr-3 overflow-hidden">
               <div className="w-full overflow-hidden">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="flex items-center gap-2 font-medium">
