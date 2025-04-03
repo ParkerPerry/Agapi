@@ -143,6 +143,11 @@ export interface IStorage {
   getLabPosts(labId: number, targetRole?: "control" | "treatment" | "observation" | "all"): Promise<Post[]>;
   getCircleRoleInLab(labId: number, circleId: number): Promise<"control" | "treatment" | "observation" | undefined>;
   getLabCirclesByRole(labId: number, role: "control" | "treatment" | "observation"): Promise<Circle[]>;
+  
+  // Circle Stats methods
+  getCirclePostCount(circleId: number): Promise<number>;
+  getCircleFollowerCount(circleId: number): Promise<number>;
+  getCircleMemberCount(circleId: number): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1054,6 +1059,59 @@ export class DatabaseStorage implements IStorage {
     }
 
     return await query.orderBy(asc(circleMembers.joinedAt));
+  }
+  
+  async getCirclePostCount(circleId: number): Promise<number> {
+    console.log("[Storage] Getting post count for circle:", circleId);
+    
+    try {
+      const result = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(posts)
+        .where(eq(posts.circleId, circleId));
+      
+      return result[0]?.count || 0;
+    } catch (error) {
+      console.error("[Storage] Error getting circle post count:", error);
+      return 0;
+    }
+  }
+  
+  async getCircleFollowerCount(circleId: number): Promise<number> {
+    console.log("[Storage] Getting follower count for circle:", circleId);
+    
+    try {
+      const result = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(circleFollowers)
+        .where(eq(circleFollowers.circleId, circleId));
+      
+      return result[0]?.count || 0;
+    } catch (error) {
+      console.error("[Storage] Error getting circle follower count:", error);
+      return 0;
+    }
+  }
+  
+  async getCircleMemberCount(circleId: number): Promise<number> {
+    console.log("[Storage] Getting member count for circle:", circleId);
+    
+    try {
+      const result = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(circleMembers)
+        .where(
+          and(
+            eq(circleMembers.circleId, circleId),
+            eq(circleMembers.status, "active")
+          )
+        );
+      
+      return result[0]?.count || 0;
+    } catch (error) {
+      console.error("[Storage] Error getting circle member count:", error);
+      return 0;
+    }
   }
 
   async createCircleInvitation(

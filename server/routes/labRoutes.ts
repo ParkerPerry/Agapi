@@ -95,11 +95,7 @@ router.post('/circles', requireAuth, async (req, res) => {
     const circle = await storage.createCircle(req.user!.id, circleData);
     
     // Associate circle with lab
-    await storage.addLabCircle({
-      labId: lab.id,
-      circleId: circle.id,
-      isControl: true
-    });
+    await storage.addCircleToLab(lab.id, circle.id, "control");
     
     res.status(201).json({
       lab,
@@ -120,7 +116,7 @@ router.patch('/:id', requireAuth, async (req, res) => {
   try {
     // Verify lab ownership
     const lab = await storage.getLab(labId);
-    if (!lab || lab.createdBy !== req.user!.id) {
+    if (!lab || lab.userId !== req.user!.id) {
       return res.status(404).json({ message: "Lab not found or you don't have permission" });
     }
     
@@ -142,7 +138,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
   try {
     // Verify lab ownership
     const lab = await storage.getLab(labId);
-    if (!lab || lab.createdBy !== req.user!.id) {
+    if (!lab || lab.userId !== req.user!.id) {
       return res.status(404).json({ message: "Lab not found or you don't have permission" });
     }
     
@@ -187,7 +183,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
   try {
     // Verify lab ownership
     const lab = await storage.getLab(labId);
-    if (!lab || lab.createdBy !== req.user!.id) {
+    if (!lab || lab.userId !== req.user!.id) {
       return res.status(404).json({ message: "Lab not found or you don't have permission" });
     }
     
@@ -314,14 +310,19 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
       const postsWithCircle = circlePosts.map(post => ({
         ...post,
         circle,
-        isControl: lc.isControl
+        isControl: lc.role === "control" // Convert role to boolean isControl
       }));
       
       allPosts.push(...postsWithCircle);
     }
     
     // Sort by created date, most recent first
-    allPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    allPosts.sort((a, b) => {
+      // Handle potential null dates gracefully
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    });
     
     res.json(allPosts);
   } catch (error) {
@@ -340,7 +341,7 @@ router.post('/:id/circles', requireAuth, async (req, res) => {
   try {
     // Verify lab ownership
     const lab = await storage.getLab(labId);
-    if (!lab || lab.createdBy !== req.user!.id) {
+    if (!lab || lab.userId !== req.user!.id) {
       return res.status(404).json({ message: "Lab not found or you don't have permission" });
     }
     
@@ -362,22 +363,11 @@ router.post('/:id/circles', requireAuth, async (req, res) => {
       return res.status(400).json({ message: "Circle is already in this lab" });
     }
     
-    // Parse and validate lab circle data
-    const parsedData = insertLabCircleSchema.safeParse({
-      labId,
-      circleId,
-      isControl: isControl || false
-    });
-    
-    if (!parsedData.success) {
-      return res.status(400).json({ 
-        message: "Invalid lab circle data", 
-        errors: parsedData.error.errors 
-      });
-    }
+    // No need to parse lab circle data with schema, we're calling addCircleToLab directly
     
     // Add circle to lab
-    const labCircle = await storage.addLabCircle(parsedData.data);
+    const role = isControl ? "control" : "treatment";
+    const labCircle = await storage.addCircleToLab(labId, circleId, role);
     
     // Get circle data
     const circle = await storage.getCircle(circleId);
@@ -402,12 +392,12 @@ router.delete('/:labId/circles/:circleId', requireAuth, async (req, res) => {
   try {
     // Verify lab ownership
     const lab = await storage.getLab(labId);
-    if (!lab || lab.createdBy !== req.user!.id) {
+    if (!lab || lab.userId !== req.user!.id) {
       return res.status(404).json({ message: "Lab not found or you don't have permission" });
     }
     
     // Remove circle from lab
-    await storage.removeLabCircle(labId, circleId);
+    await storage.removeCircleFromLab(labId, circleId);
     res.sendStatus(200);
   } catch (error) {
     console.error("Error removing circle from lab:", error);
@@ -426,12 +416,13 @@ router.patch('/:labId/circles/:circleId', requireAuth, async (req, res) => {
   try {
     // Verify lab ownership
     const lab = await storage.getLab(labId);
-    if (!lab || lab.createdBy !== req.user!.id) {
+    if (!lab || lab.userId !== req.user!.id) {
       return res.status(404).json({ message: "Lab not found or you don't have permission" });
     }
     
     // Update lab circle
-    const updatedLabCircle = await storage.updateLabCircle(labId, circleId, { isControl });
+    const role = isControl ? "control" : "treatment";
+    const updatedLabCircle = await storage.updateLabCircleRole(labId, circleId, role);
     
     // Get circle data
     const circle = await storage.getCircle(circleId);
