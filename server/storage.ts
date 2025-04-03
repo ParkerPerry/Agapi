@@ -77,9 +77,17 @@ export interface IStorage {
   addCircleCollective(circleId: number, collectiveId: number): Promise<CircleCollective>;
   removeCircleCollective(circleId: number, collectiveId: number): Promise<void>;
   
-  createPostInCircle(userId: number, circleId: number, content: string): Promise<Post>;
+  createPostInCircle(
+    userId: number, 
+    circleId: number, 
+    content: string, 
+    labId?: number, 
+    labExperiment?: boolean, 
+    targetRole?: "control" | "treatment" | "observation" | "all"
+  ): Promise<Post>;
   getCirclePosts(circleId: number): Promise<Post[]>;
   movePostToCircle(postId: number, circleId: number): Promise<Post>;
+  updatePost(postId: number, updates: Partial<Post>): Promise<Post>;
 
   addCircleMember(member: InsertCircleMember): Promise<CircleMember>;
   removeCircleMember(circleId: number, userId: number): Promise<void>;
@@ -102,7 +110,7 @@ export interface IStorage {
 
   // Add notification methods
   createNotification(notification: InsertNotification): Promise<Notification>;
-  createLabExperimentNotification(labId: number, postId: number, targetRole: string): Promise<void>;
+  createLabExperimentNotification(labId: number, postId: number, targetRole: "control" | "treatment" | "observation" | "all"): Promise<void>;
   getUserNotifications(userId: number): Promise<Notification[]>;
   getUnreadNotificationCount(userId: number): Promise<number>;
   markNotificationRead(id: number): Promise<void>;
@@ -1024,6 +1032,19 @@ export class DatabaseStorage implements IStorage {
       .returning()) as Post[];
     return updatedPost;
   }
+  
+  async updatePost(postId: number, updates: Partial<Post>): Promise<Post> {
+    console.log(`[Storage] Updating post ${postId} with:`, updates);
+    
+    const [updatedPost] = (await db
+      .update(posts)
+      .set(updates)
+      .where(eq(posts.id, postId))
+      .returning()) as Post[];
+      
+    console.log(`[Storage] Updated post successfully`);
+    return updatedPost;
+  }
 
   async addCircleMember(member: InsertCircleMember): Promise<CircleMember> {
     const [circleMember] = (await db
@@ -1284,7 +1305,7 @@ export class DatabaseStorage implements IStorage {
     return newNotification;
   }
 
-  async createLabExperimentNotification(labId: number, postId: number, targetRole: string): Promise<void> {
+  async createLabExperimentNotification(labId: number, postId: number, targetRole: "control" | "treatment" | "observation" | "all"): Promise<void> {
     try {
       console.log(`[Storage] Creating lab experiment notifications for lab ${labId}, post ${postId}, role ${targetRole}`);
       
@@ -1302,7 +1323,7 @@ export class DatabaseStorage implements IStorage {
         targetCircles = await this.getLabCircles(labId);
       } else {
         // Get only circles with the specific role
-        targetCircles = await this.getLabCirclesByRole(labId, targetRole);
+        targetCircles = await this.getLabCirclesByRole(labId, targetRole as "control" | "treatment" | "observation");
       }
       
       if (targetCircles.length === 0) {

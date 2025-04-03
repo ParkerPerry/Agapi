@@ -116,9 +116,45 @@ router.post('/', requireAuth, async (req, res) => {
     }
 
     // Validate input
-    if (!content || !circleId) {
-      console.error("[Post Route] Missing required fields:", { content, circleId });
-      return res.status(400).json({ message: "Content and circle ID are required" });
+    if (!content) {
+      console.error("[Post Route] Missing required content field");
+      return res.status(400).json({ message: "Content is required" });
+    }
+    
+    // Validate targetRole if present
+    if (targetRole && !["control", "treatment", "observation", "all"].includes(targetRole)) {
+      console.error(`[Post Route] Invalid targetRole value: ${targetRole}`);
+      return res.status(400).json({ message: "Invalid targetRole value. Must be 'control', 'treatment', 'observation', or 'all'" });
+    }
+    
+    // Check if this is a lab experiment post
+    if (labExperiment && labId) {
+      // If it's a lab experiment, we need to determine the circle based on the lab and targetRole
+      // For now, we'll require a circleId to be provided as well, but in the future we could
+      // automatically distribute to all lab circles with the specified role
+      if (!circleId) {
+        console.error("[Post Route] Missing required circle ID for lab experiment");
+        return res.status(400).json({ message: "Circle ID is required even for lab experiments" });
+      }
+      
+      // For lab experiments, targetRole is required
+      if (!targetRole) {
+        console.error("[Post Route] Missing required targetRole for lab experiment");
+        return res.status(400).json({ message: "Target role is required for lab experiments" });
+      }
+      
+      // Verify the lab exists and user has access
+      const lab = await storage.getLab(labId);
+      if (!lab || lab.userId !== req.user!.id) {
+        return res.status(404).json({ message: "Lab not found or you don't have permission" });
+      }
+      
+      // In the future, we could automatically distribute to multiple circles based on targetRole
+      // But for now, we'll just use the provided circleId
+    } else if (!circleId) {
+      // If not a lab experiment, circleId is definitely required
+      console.error("[Post Route] Missing required circle ID");
+      return res.status(400).json({ message: "Circle ID is required" });
     }
 
     // Check if user has access to this circle
@@ -142,6 +178,17 @@ router.post('/', requireAuth, async (req, res) => {
       labExperiment,
       targetRole
     );
+    
+    // If this is a lab experiment post, create notifications for appropriate circles
+    if (labExperiment && labId && targetRole) {
+      try {
+        console.log(`[Post Route] Creating lab experiment notifications for post ${post.id}`);
+        await storage.createLabExperimentNotification(labId, post.id, targetRole as "control" | "treatment" | "observation" | "all");
+      } catch (notificationError) {
+        // Just log the error, don't stop execution
+        console.error("[Post Route] Error creating lab experiment notifications:", notificationError);
+      }
+    }
 
     // Return early with the post while AI response processing happens in background
     res.status(201).json(post);
@@ -405,7 +452,7 @@ router.patch('/:id/move', requireAuth, async (req, res) => {
     }
     
     // Move post
-    const updatedPost = await storage.updatePost(postId, { circleId: targetCircleId });
+    const updatedPost = await storage.movePostToCircle(postId, targetCircleId);
     res.json(updatedPost);
   } catch (error) {
     console.error("Error moving post:", error);

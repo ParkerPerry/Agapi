@@ -309,8 +309,10 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
       const circle = await storage.getCircle(lc.circleId);
       const postsWithCircle = circlePosts.map(post => ({
         ...post,
-        circle,
-        isControl: lc.role === "control" // Convert role to boolean isControl
+        circle: {
+          ...circle,
+          role: lc.role // Include the role in the circle object
+        }
       }));
       
       allPosts.push(...postsWithCircle);
@@ -367,6 +369,7 @@ router.post('/:id/circles', requireAuth, async (req, res) => {
     
     // Add circle to lab
     const role = isControl ? "control" : "treatment";
+    // In the future, we should update our API to accept 'role' directly instead of deriving it from 'isControl'
     const labCircle = await storage.addCircleToLab(labId, circleId, role);
     
     // Get circle data
@@ -422,6 +425,7 @@ router.patch('/:labId/circles/:circleId', requireAuth, async (req, res) => {
     
     // Update lab circle
     const role = isControl ? "control" : "treatment";
+    // In the future, we should update our API to accept 'role' directly instead of deriving it from 'isControl'
     const updatedLabCircle = await storage.updateLabCircleRole(labId, circleId, role);
     
     // Get circle data
