@@ -265,7 +265,7 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                     const isCurrentUser = userId === user?.id;
 
                     return (
-                      <div key={userId} className="space-y-2">
+                      <div key={`follower-owner-${userId}`} className="space-y-2">
                         <h4 className="text-sm font-medium text-muted-foreground sticky top-0 bg-card py-1 z-10">
                           {ownerName}'s AI Followers
                         </h4>
@@ -339,7 +339,10 @@ export function CirclePanel({ circleId, isCollapsed, onCollapse }: CirclePanelPr
                   )}
                 </div>
                 
-                <CollectivesSection circleId={circle.id} isOwner={isOwner} members={members} />
+                {/* Render CollectivesSection in the same pattern as AI Followers section */}
+                <div className="mb-2">
+                  <CollectivesSection circleId={circle.id} isOwner={isOwner} members={members} />
+                </div>
               </div>
             </div>
           </ScrollArea>
