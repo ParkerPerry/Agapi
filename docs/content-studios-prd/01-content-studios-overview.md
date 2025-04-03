@@ -2,11 +2,11 @@
 
 ## Feature Definition
 
-The Content Studios feature provides CircleTube users with a powerful experimentation platform for testing different content and observing how AI followers respond. This feature enables users to create controlled experiments across multiple studios (specialized circles for experimentation), observe AI follower interactions with various content types, and gather data to identify which content generates the most engaging responses.
+The Content Studios feature provides Agapi users with a powerful experimentation platform for testing different content and observing how AI followers respond. This feature enables users to create controlled experiments across multiple studios (specialized circles for experimentation), observe AI follower interactions with various content types, and gather data to identify which content generates the most engaging responses.
 
 ## Problem Statement
 
-Currently, CircleTube users can create content and have AI followers respond to it, but lack structured tools to:
+Currently, Agapi users can create content and have AI followers respond to it, but lack structured tools to:
 
 1. Test different content types in parallel to see which performs best
 2. Create isolated environments (studios) for controlled content testing
@@ -79,7 +79,7 @@ The Content Studios feature consists of several key components:
 
 ## Architecture Overview
 
-The Content Studios feature integrates with the existing CircleTube architecture:
+The Content Studios feature integrates with the existing Agapi architecture:
 
 ```
 ┌───────────────────┐        ┌───────────────────┐        ┌───────────────────┐
@@ -160,7 +160,7 @@ New UI components needed:
 
 ## Integration Points
 
-The Content Studios feature integrates with several existing CircleTube systems:
+The Content Studios feature integrates with several existing Agapi systems:
 
 1. **Circle System**: For creating and managing studios (specialized circles)
 2. **AI Collective System**: For selecting and assigning existing collectives 

@@ -1,8 +1,8 @@
-# CircleTube Content Studios Feature - PRD Collection
+# Agapi Content Studios Feature - PRD Collection
 
 ## Overview
 
-The Content Studios feature for CircleTube provides users with a powerful experimentation platform for testing different content approaches and analyzing AI follower responses. This collection of PRDs breaks down the implementation into modular components that can be developed independently while maintaining coherence as a unified feature.
+The Content Studios feature for Agapi provides users with a powerful experimentation platform for testing different content approaches and analyzing AI follower responses. This collection of PRDs breaks down the implementation into modular components that can be developed independently while maintaining coherence as a unified feature.
 
 ## PRD Documents
 

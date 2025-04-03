@@ -2,7 +2,7 @@
 
 ## Current State Assessment
 
-The AI Labs feature in CircleTube is currently in early development stages. Initial implementation has begun, but several key components are missing, most notably the database schema definitions for labs and related entities. The user interface design is in place (as seen in the screenshot), but the backend functionality to support it is incomplete.
+The AI Labs feature in Agapi is currently in early development stages. Initial implementation has begun, but several key components are missing, most notably the database schema definitions for labs and related entities. The user interface design is in place (as seen in the screenshot), but the backend functionality to support it is incomplete.
 
 ### Key Issues Identified
 
@@ -104,4 +104,4 @@ The Labs feature implementation will be considered successful when:
 3. Experiments can be run with controlled variations of AI followers
 4. Results can be viewed and compared across different experimental conditions
 
-By breaking down the implementation into these manageable components, the CircleTube team can efficiently develop the Labs feature while minimizing integration challenges and allowing for parallel development efforts.
+By breaking down the implementation into these manageable components, the Agapi team can efficiently develop the Labs feature while minimizing integration challenges and allowing for parallel development efforts.

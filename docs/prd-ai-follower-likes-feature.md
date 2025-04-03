@@ -2,7 +2,7 @@
 
 ## Overview
 
-The AI Follower "Like" feature will enhance CircleTube's engagement system by allowing AI followers to express appreciation for content through "likes" rather than just comments. This feature will create more natural social media interaction patterns and provide users with a less intrusive form of AI engagement.
+The AI Follower "Like" feature will enhance Agapi's engagement system by allowing AI followers to express appreciation for content through "likes" rather than just comments. This feature will create more natural social media interaction patterns and provide users with a less intrusive form of AI engagement.
 
 ## Current State
 

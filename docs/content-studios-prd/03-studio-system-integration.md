@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Circle Integration component enables Labs to work with CircleTube's content circles for experimentation. This document outlines how labs will integrate with circles, allowing controlled content environments for running AI follower experiments.
+The Circle Integration component enables Labs to work with Agapi's content circles for experimentation. This document outlines how labs will integrate with circles, allowing controlled content environments for running AI follower experiments.
 
 ## Circle Roles in Labs
 

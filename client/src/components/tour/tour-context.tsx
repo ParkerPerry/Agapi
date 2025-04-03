@@ -30,7 +30,7 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
     // Define tour steps
     newTour.addStep({
       id: 'welcome',
-      text: 'Welcome to CircleTube! Let\'s take a quick tour of the key features.',
+      text: 'Welcome to Agapi! Let\'s take a quick tour of the key features.',
       attachTo: {
         element: '.main-content',
         on: 'bottom'

@@ -1,6 +1,6 @@
 # AI Follower Response Logic
 
-This document provides a detailed explanation of how AI followers in CircleTube decide when and how to respond to user posts and interactions. It outlines the entire decision-making flow from post creation to AI response generation.
+This document provides a detailed explanation of how AI followers in Agapi decide when and how to respond to user posts and interactions. It outlines the entire decision-making flow from post creation to AI response generation.
 
 ## Overview
 

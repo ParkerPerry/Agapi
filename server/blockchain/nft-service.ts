@@ -58,7 +58,7 @@ export function generateMetadata(follower: AiFollower) {
     name: `${follower.name}`,
     description: `${follower.name} is an AI Follower with ${follower.personality} personality.`,
     image: follower.avatarUrl || "https://i.imgur.com/Qwh8daR.png", // Use follower avatar or default
-    external_url: `${process.env.BASE_URL || 'https://circletube.app'}/follower/${follower.id}`,
+    external_url: `${process.env.BASE_URL || 'https://agapi.app'}/follower/${follower.id}`,
     attributes
   };
 
