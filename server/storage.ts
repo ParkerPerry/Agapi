@@ -498,6 +498,27 @@ export class DatabaseStorage implements IStorage {
         .where(eq(pendingResponses.aiFollowerId, id));
 
       console.log("[Storage] Deleted pending responses");
+      
+      // Delete any direct chat messages
+      await db
+        .delete(directChats)
+        .where(eq(directChats.aiFollowerId, id));
+      
+      console.log("[Storage] Deleted direct chat messages");
+      
+      // Remove follower from any circles
+      await db
+        .delete(circleFollowers)
+        .where(eq(circleFollowers.aiFollowerId, id));
+      
+      console.log("[Storage] Removed follower from circles");
+      
+      // Remove follower from any AI follower collectives
+      await db
+        .delete(aiFollowerCollectiveMembers)
+        .where(eq(aiFollowerCollectiveMembers.aiFollowerId, id));
+      
+      console.log("[Storage] Removed follower from collectives");
 
       // Finally delete the follower
       await db
