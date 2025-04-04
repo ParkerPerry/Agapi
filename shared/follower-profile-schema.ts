@@ -1,71 +1,43 @@
-
 import { z } from "zod";
 
 /**
- * Schema for AI Follower import/export
- * Based on the database schema but optimized for external transfer
+ * Schema for AI Follower profiles when importing from JSON
  */
 export const AIFollowerProfileSchema = z.object({
-  // Schema version for forward compatibility
-  schemaVersion: z.string().default("1.0"),
+  name: z.string().min(1, "Name is required"),
+  personality: z.string().min(1, "Personality is required"),
+  avatarUrl: z.string().url("Avatar URL must be a valid URL"),
+  responsiveness: z.enum(["instant", "active", "casual", "zen"]),
+  active: z.boolean().default(true),
   
-  // Basic information
-  name: z.string(),
-  personality: z.string(),
-  avatarUrl: z.string(),
-  
-  // Detailed profile information (optional fields)
+  // Optional fields
   background: z.string().optional(),
-  interests: z.array(z.string()).optional().default([]),
+  interests: z.array(z.string()).optional(),
   communicationStyle: z.string().optional(),
-  
-  // Interaction preferences
   interactionPreferences: z.object({
     likes: z.array(z.string()).optional().default([]),
-    dislikes: z.array(z.string()).optional().default([]),
-  }).optional().default({ likes: [], dislikes: [] }),
-  
-  // Behavior settings
-  active: z.boolean().default(true),
-  responsiveness: z.enum(["instant", "active", "casual", "zen"]).default("active"),
-  responseDelay: z.object({
-    min: z.number(),
-    max: z.number(),
-  }).default({ min: 1, max: 60 }),
-  responseChance: z.number().int().min(0).max(100).default(80),
-  
-  // Tools configuration
-  tools: z.object({
-    equipped: z.array(z.object({
-      id: z.string(),
-      name: z.string(),
-      description: z.string(),
-      enabled: z.boolean().default(false),
-    })).default([]),
-    customInstructions: z.string().optional().default(""),
-  }).optional().default({ equipped: [], customInstructions: "" }),
-  
-  // Metadata (not used for import, but useful for export)
-  metadata: z.object({
-    exportedAt: z.string().datetime().optional(),
-    exportedBy: z.string().optional(),
-    source: z.string().optional(),
+    dislikes: z.array(z.string()).optional().default([])
   }).optional(),
+  responseDelay: z.object({
+    min: z.number().min(0),
+    max: z.number().min(0)
+  }).optional(),
+  responseChance: z.number().min(0).max(100).optional(), // Allow percentages (0-100)
+  tools: z.object({
+    equipped: z.array(z.string()).default([]),
+    customInstructions: z.string().default("")
+  }).optional(),
+
+  // Metadata field for import/export data
+  metadata: z.object({
+    exportedAt: z.string().optional(),
+    exportedBy: z.string().optional(),
+    model: z.string().optional(),
+    originalName: z.string().optional(),
+    originalUrl: z.string().optional(),
+    source: z.string().optional()
+  }).optional(),
+  schemaVersion: z.string().optional()
 });
 
-// Type definition from the schema
 export type AIFollowerProfile = z.infer<typeof AIFollowerProfileSchema>;
-
-/**
- * Example usage:
- * 
- * // Validate profile data
- * const result = AIFollowerProfileSchema.safeParse(jsonData);
- * if (result.success) {
- *   // Use validated data
- *   const profile = result.data;
- * } else {
- *   // Handle validation errors
- *   console.error(result.error);
- * }
- */

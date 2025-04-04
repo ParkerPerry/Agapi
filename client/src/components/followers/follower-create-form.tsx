@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Upload } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCreateFollower } from "@/lib/mutations/follower-mutations";
+import { FollowerImportForm } from "./follower-import-form";
 
 function generateUniqueAvatarUrl() {
   // Generate a random seed for the avatar
@@ -21,7 +23,7 @@ export const responsivenessOptions = [
   { value: "zen", label: "Zen (8-24 hrs)", description: "Mindful and deliberate responses" },
 ] as const;
 
-export function FollowerCreateForm() {
+function ManualCreateForm() {
   const createFollowerMutation = useCreateFollower();
   
   const form = useForm({
@@ -121,5 +123,30 @@ export function FollowerCreateForm() {
         </Button>
       </form>
     </Form>
+  );
+}
+
+export function FollowerCreateForm() {
+  return (
+    <Tabs defaultValue="create" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsTrigger value="create">
+          <Plus className="h-4 w-4 mr-2" />
+          Create Manually
+        </TabsTrigger>
+        <TabsTrigger value="import">
+          <Upload className="h-4 w-4 mr-2" />
+          Import JSON
+        </TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="create">
+        <ManualCreateForm />
+      </TabsContent>
+      
+      <TabsContent value="import">
+        <FollowerImportForm />
+      </TabsContent>
+    </Tabs>
   );
 }

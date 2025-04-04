@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { AiFollower, AiFollowerCollective } from "@shared/schema";
+import type { AIFollowerProfile } from "@shared/follower-profile-schema";
 
 export function useCreateFollower() {
   const { toast } = useToast();
@@ -21,6 +22,29 @@ export function useCreateFollower() {
         description: "Your new AI follower has been created successfully.",
       });
     },
+  });
+}
+
+export function useImportFollower() {
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: async (data: AIFollowerProfile) => {
+      return await apiRequest("/api/followers/import", "POST", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/followers"] });
+      toast({
+        title: "Follower imported",
+        description: "Your AI follower has been imported successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error importing follower",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+    }
   });
 }
 

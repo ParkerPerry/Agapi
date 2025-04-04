@@ -3,6 +3,7 @@ import { storage } from '../storage';
 import { requireAuth, hasCirclePermission } from './middleware';
 import { generateAIBackground } from '../openai';
 import { cloneFollowers } from '../clone-service';
+import { AIFollowerProfileSchema } from '../../shared/follower-profile-schema';
 
 const router = Router();
 
@@ -159,6 +160,60 @@ router.post('/clone', requireAuth, async (req, res) => {
   } catch (error) {
     console.error("Error cloning AI followers:", error);
     res.status(500).json({ message: "Failed to clone followers" });
+  }
+});
+
+/**
+ * POST /api/followers/import - Import an AI follower from JSON
+ */
+router.post('/import', requireAuth, async (req, res) => {
+  try {
+    // Validate the follower data against the schema
+    const result = AIFollowerProfileSchema.safeParse(req.body);
+    
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid follower data format",
+        errors: result.error.format()
+      });
+    }
+    
+    const followerData = result.data;
+    
+    // Add metadata about the import
+    const importMetadata = {
+      importedAt: new Date().toISOString(),
+      importedBy: req.user!.id,
+      originalMetadata: followerData.metadata || null,
+      schemaVersion: followerData.schemaVersion || "1.0"
+    };
+    
+    // Create the follower using the storage interface
+    const newFollower = await storage.createAiFollower(
+      req.user!.id, 
+      {
+        name: followerData.name,
+        personality: followerData.personality,
+        avatarUrl: followerData.avatarUrl,
+        background: followerData.background || null,
+        interests: followerData.interests || [],
+        communicationStyle: followerData.communicationStyle || null,
+        interactionPreferences: followerData.interactionPreferences || { likes: [], dislikes: [] },
+        active: followerData.active,
+        responsiveness: followerData.responsiveness,
+        responseDelay: followerData.responseDelay,
+        responseChance: followerData.responseChance,
+        tools: followerData.tools || { equipped: [], customInstructions: "" },
+        parentId: null, // Required field
+        metadata: JSON.stringify(importMetadata) // Store metadata as JSON string
+      }
+    );
+    
+    // Return the newly created follower
+    res.status(201).json(newFollower);
+  } catch (error) {
+    console.error("Error importing AI follower:", error);
+    res.status(500).json({ message: "Failed to import AI follower" });
   }
 });
 
