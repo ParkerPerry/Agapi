@@ -1495,6 +1495,17 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
+  
+  // Added getDirectChatMessages as an alias for getDirectChatHistory to fix the API
+  async getDirectChatMessages(userId: number, aiFollowerId: number, limit: number = 50): Promise<DirectChat[]> {
+    try {
+      console.log("[Storage] Getting direct chat messages for user:", userId, "with AI follower:", aiFollowerId);
+      return this.getDirectChatHistory(userId, aiFollowerId, limit);
+    } catch (error) {
+      console.error("[Storage] Error getting direct chat messages:", error);
+      throw error;
+    }
+  }
 
   // AI Follower Collective methods
   async createAiFollowerCollective(userId: number, collective: InsertAiFollowerCollective): Promise<AiFollowerCollective> {

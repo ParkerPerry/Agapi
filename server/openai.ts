@@ -27,6 +27,19 @@ export async function generateAIBackground(
   customInstructions?: string
 ): Promise<AIBackground> {
   try {
+    // Validate parameters to avoid the 'name.includes is not a function' error
+    if (typeof name !== 'string') {
+      console.error("[OpenAI] Invalid name parameter:", name);
+      // Provide a fallback name if needed
+      name = String(name || "AI Assistant");
+    }
+    
+    if (typeof personality !== 'string') {
+      console.error("[OpenAI] Invalid personality parameter:", personality);
+      // Provide a fallback personality if needed
+      personality = String(personality || "Friendly and helpful");
+    }
+    
     // Check if this is a variation that needs a dynamic name
     const isDynamicNaming = name.includes("Variation") || customInstructions?.includes("generate a unique character name");
     
@@ -62,29 +75,64 @@ export async function generateAIBackground(
         The JSON response should be consistent with the personality description.`;
     }
     
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: `Please generate a JSON background for an AI follower named "${name}" with this personality: "${personality}"${
-            customInstructions ? ` Additional instructions: ${customInstructions}` : ''
-          }`,
-        },
-      ],
-      response_format: { type: "json_object" },
-    });
+    try {
+      // Check if OpenAI API key is available
+      if (!process.env.OPENAI_API_KEY) {
+        console.warn("[OpenAI] Missing API key, using fallback background generation");
+        throw new Error("OpenAI API key not configured");
+      }
+      
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          {
+            role: "user",
+            content: `Please generate a JSON background for an AI follower named "${name}" with this personality: "${personality}"${
+              customInstructions ? ` Additional instructions: ${customInstructions}` : ''
+            }`,
+          },
+        ],
+        response_format: { type: "json_object" },
+      });
 
-    if (!response.choices[0].message.content) {
-      throw new Error("No content in response");
+      if (!response.choices[0].message.content) {
+        throw new Error("No content in response");
+      }
+
+      return JSON.parse(response.choices[0].message.content);
+    } catch (apiError: any) {
+      console.warn("[OpenAI] API error:", apiError.message);
+      console.log("[OpenAI] Using fallback background generation");
+      
+      // Generate a fallback background based on name and personality
+      const interests = personality.toLowerCase().includes("tech") 
+        ? ["Technology", "Programming", "AI"]
+        : personality.toLowerCase().includes("creative") 
+          ? ["Art", "Design", "Writing"] 
+          : ["Social media", "Community building", "Content creation"];
+          
+      const likes = ["Thoughtful discussions", "Original content", "Positive interactions"];
+      const dislikes = ["Spam", "Negativity"];
+      
+      // Create a fallback background
+      const fallbackBackground: AIBackground = {
+        background: `${name} is an AI assistant who loves to engage with people online.`,
+        interests,
+        communication_style: `${name} communicates in a ${personality.toLowerCase()} manner.`,
+        interaction_preferences: {
+          likes,
+          dislikes
+        }
+      };
+      
+      return fallbackBackground;
     }
-
-    return JSON.parse(response.choices[0].message.content);
   } catch (error: any) {
+    console.error("[OpenAI] Error in generateAIBackground:", error);
     throw new Error("Failed to generate AI background: " + error.message);
   }
 }
