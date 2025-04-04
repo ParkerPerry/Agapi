@@ -1,0 +1,33 @@
+Error creating AI follower: Error: Failed to generate AI background: name.includes is not a function
+    at generateAIBackground (/home/runner/workspace/server/openai.ts:88:11)
+    at <anonymous> (/home/runner/workspace/server/routes/followerRoutes.ts:67:34)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/runner/workspace/node_modules/express/lib/router/route.js:149:13)
+    at requireAuth (/home/runner/workspace/server/routes/middleware.ts:11:3)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/runner/workspace/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/home/runner/workspace/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/home/runner/workspace/node_modules/express/lib/router/index.js:175:3)
+    at router (/home/runner/workspace/node_modules/express/lib/router/index.js:47:12)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/home/runner/workspace/node_modules/express/lib/router/index.js:328:13)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at strategy.pass (/home/runner/workspace/node_modules/passport/lib/middleware/authenticate.js:355:9)
+    at /home/runner/workspace/node_modules/passport/lib/strategies/session.js:120:12
+    at pass (/home/runner/workspace/node_modules/passport/lib/authenticator.js:352:31)
+    at deserialized (/home/runner/workspace/node_modules/passport/lib/authenticator.js:364:7)
+    at <anonymous> (/home/runner/workspace/server/auth.ts:76:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+12:56:00 AM [express] POST /api/followers 500 in 82ms :: {"message":"Failed to create AI follower"}
+12:56:19 AM [express] GET /api/user 304 in 75ms :: {"id":1,"username":"shai1","password":"a22d10492a2…
+[Storage] Getting default circle for user: 1
+12:56:20 AM [express] GET /api/posts/1 200 in 76ms
+12:56:20 AM [express] GET /api/default-circle 304 in 149ms :: {"id":19,"name":"Philosophical thoughts…
+12:56:20 AM [express] GET /api/notifications 304 in 148ms :: []
+12:56:20 AM [express] GET /api/notifications/unread/count 304 in 151ms :: {"count":0}

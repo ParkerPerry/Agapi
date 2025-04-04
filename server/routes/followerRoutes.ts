@@ -63,8 +63,22 @@ router.get('/:id', requireAuth, async (req, res) => {
  */
 router.post('/', requireAuth, async (req, res) => {
   try {
-    // Generate AI background
-    const backgroundData = await generateAIBackground(req.body);
+    // Extract required fields for AI background generation
+    const { name, personality, customInstructions } = req.body;
+    
+    // Validate that name and personality are strings
+    if (typeof name !== 'string' || typeof personality !== 'string') {
+      return res.status(400).json({ 
+        message: "Invalid input: name and personality must be provided as strings" 
+      });
+    }
+    
+    // Generate AI background with proper parameters
+    const backgroundData = await generateAIBackground(
+      name, 
+      personality, 
+      customInstructions
+    );
     
     // Create new AI follower with the generated background
     const newFollower = await storage.createAiFollower({
