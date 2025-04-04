@@ -320,9 +320,22 @@ export default function AiFollowersPage() {
                                 });
                               }}
                               onToggleActive={(followerId) => {
+                                // This is for muting a follower (toggle active status)
+                                // Note: This was previously misnamed and actually called toggleFollowerActive
+                                updateFollowerMutation.mutate({
+                                  id: follower.id,
+                                  name: follower.name,
+                                  personality: follower.personality,
+                                  responsiveness: follower.responsiveness,
+                                  active: !follower.active
+                                });
+                              }}
+                              onDelete={(followerId) => {
+                                // This is for permanent deletion
                                 deleteFollowerMutation.mutate(followerId);
                               }}
-                              isUpdating={deleteFollowerMutation.isPending}
+                              isUpdating={updateFollowerMutation.isPending || deleteFollowerMutation.isPending}
+                              showDeleteButton={true}
                             />
                           ))}
                         </div>

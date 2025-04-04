@@ -2,11 +2,12 @@ import { AiFollower } from "@shared/schema";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil, PowerOff, Settings } from "lucide-react";
+import { Pencil, PowerOff, Settings, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { responsivenessOptions } from "./follower-create-form";
 import { FollowerEditDialog } from "./follower-edit-dialog";
 import { FollowerDeactivateDialog } from "./follower-deactivate-dialog";
+import { FollowerDeleteDialog } from "./follower-delete-dialog";
 // Temporarily hidden NFT feature
 // import { FollowerNftMint } from "./follower-nft-mint";
 import { useLocation } from "wouter";
@@ -15,10 +16,19 @@ interface FollowerCardProps {
   follower: AiFollower & { parentName?: string };
   onEdit: (follower: AiFollower) => void;
   onToggleActive: (followerId: number) => void;
+  onDelete?: (followerId: number) => void;
   isUpdating: boolean;
+  showDeleteButton?: boolean;
 }
 
-export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: FollowerCardProps) {
+export function FollowerCard({ 
+  follower, 
+  onEdit, 
+  onToggleActive, 
+  onDelete, 
+  isUpdating, 
+  showDeleteButton = false 
+}: FollowerCardProps) {
   const [_, navigate] = useLocation();
 
   const handleNavigateToConfig = () => {
@@ -92,25 +102,47 @@ export function FollowerCard({ follower, onEdit, onToggleActive, isUpdating }: F
               )}
             </div>
             
-            {/* Deactivate button on the same line as the name */}
-            <FollowerDeactivateDialog
-              trigger={
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  title={follower.active ? "Deactivate Follower" : "Activate Follower"}
-                  className={cn(
-                    "h-7 w-7 rounded-full hover:bg-muted",
-                    follower.active && "hover:bg-destructive/10"
-                  )}
-                >
-                  <PowerOff className="h-3.5 w-3.5 text-destructive" />
-                </Button>
-              }
-              follower={follower}
-              onToggleActive={onToggleActive}
-              isUpdating={isUpdating}
-            />
+            {/* Action buttons on the same line as the name */}
+            <div className="flex items-center gap-1">
+              {/* Deactivate/activate button */}
+              <FollowerDeactivateDialog
+                trigger={
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    title={follower.active ? "Deactivate Follower" : "Activate Follower"}
+                    className={cn(
+                      "h-7 w-7 rounded-full hover:bg-muted",
+                      follower.active && "hover:bg-destructive/10"
+                    )}
+                  >
+                    <PowerOff className="h-3.5 w-3.5 text-destructive" />
+                  </Button>
+                }
+                follower={follower}
+                onToggleActive={onToggleActive}
+                isUpdating={isUpdating}
+              />
+              
+              {/* Delete button - only shown when showDeleteButton is true */}
+              {showDeleteButton && onDelete && (
+                <FollowerDeleteDialog
+                  trigger={
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      title="Delete Follower"
+                      className="h-7 w-7 rounded-full hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    </Button>
+                  }
+                  follower={follower}
+                  onDelete={onDelete}
+                  isDeleting={isUpdating}
+                />
+              )}
+            </div>
           </div>
           <p className="text-sm text-muted-foreground">
             {follower.personality}
