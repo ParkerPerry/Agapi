@@ -7,7 +7,8 @@ import { Comment } from "./comment";
 import { PostCardProps } from "./post-types";
 
 export function PostCard({ post }: PostCardProps) {
-  const rootComments = post.interactions.filter(
+  // Add null/undefined check for interactions
+  const rootComments = (post.interactions || []).filter(
     (i) => (i.type === "comment" || i.type === "reply") && !i.parentId
   );
   const pendingResponses = post.pendingResponses || [];

@@ -6,8 +6,11 @@ interface PostStatsProps {
 }
 
 export function PostStats({ post }: PostStatsProps) {
-  const likes = post.interactions.filter((i) => i.type === "like").length;
-  const rootComments = post.interactions.filter(
+  // Add null/undefined check for interactions 
+  const interactions = post.interactions || [];
+  
+  const likes = interactions.filter((i) => i.type === "like").length;
+  const rootComments = interactions.filter(
     (i) => (i.type === "comment" || i.type === "reply") && !i.parentId
   ).length;
 

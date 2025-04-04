@@ -366,16 +366,27 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getPendingResponses(): Promise<PendingResponse[]> {
+  async getPendingResponses(postId?: number): Promise<PendingResponse[]> {
     try {
-      return await db
+      const query = db
         .select()
-        .from(pendingResponses)
-        .where(eq(pendingResponses.processed, false))
-        .orderBy(pendingResponses.scheduledFor);
+        .from(pendingResponses);
+      
+      // If a postId is provided, filter by it
+      if (postId !== undefined) {
+        query.where(and(
+          eq(pendingResponses.postId, postId),
+          eq(pendingResponses.processed, false)
+        ));
+      } else {
+        // Otherwise just get all unprocessed responses
+        query.where(eq(pendingResponses.processed, false));
+      }
+        
+      return await query.orderBy(pendingResponses.scheduledFor);
     } catch (error) {
       console.error("[Storage] Error getting pending responses:", error);
-      throw error;
+      return []; // Return empty array on error to avoid breaking the UI
     }
   }
 

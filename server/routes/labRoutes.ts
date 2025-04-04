@@ -309,6 +309,7 @@ router.get('/:id/circles/stats', requireAuth, async (req, res) => {
  */
 router.get('/:id/posts', requireAuth, async (req, res) => {
   const labId = parseInt(req.params.id);
+  const targetRole = req.query.role as string | undefined;
   
   try {
     // Verify lab exists
@@ -318,7 +319,12 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
     }
     
     // Get lab circles
-    const labCircles = await storage.getLabCircles(labId);
+    let labCircles = await storage.getLabCircles(labId);
+    
+    // Filter by role if specified
+    if (targetRole && ["control", "treatment", "observation"].includes(targetRole)) {
+      labCircles = labCircles.filter(lc => lc.role === targetRole);
+    }
     
     // Get posts from all circles
     const allPosts = [];
@@ -332,15 +338,28 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
       
       // Add circle info to each post
       const circle = await storage.getCircle(lc.circleId);
-      const postsWithCircle = circlePosts.map(post => ({
-        ...post,
-        circle: {
-          ...circle,
-          role: lc.role // Include the role in the circle object
-        }
-      }));
       
-      allPosts.push(...postsWithCircle);
+      // Process each post to include necessary data
+      for (const post of circlePosts) {
+        // Get post interactions
+        const interactions = await storage.getPostInteractions(post.id);
+        
+        // Get pending AI responses if any
+        const pendingResponses = await storage.getPendingResponses(post.id);
+        
+        // Create enhanced post object
+        const enhancedPost = {
+          ...post,
+          circle: {
+            ...circle,
+            role: lc.role // Include the role in the circle object
+          },
+          interactions: interactions || [],
+          pendingResponses: pendingResponses || []
+        };
+        
+        allPosts.push(enhancedPost);
+      }
     }
     
     // Sort by created date, most recent first
@@ -351,7 +370,14 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
       return dateB - dateA;
     });
     
-    res.json(allPosts);
+    // Apply filter by targetRole if present in the post data
+    let filteredPosts = allPosts;
+    if (targetRole && targetRole !== "all") {
+      filteredPosts = allPosts.filter(post => 
+        post.targetRole === targetRole || !post.targetRole);
+    }
+    
+    res.json(filteredPosts);
   } catch (error) {
     console.error("Error getting lab posts:", error);
     res.status(500).json({ message: "Failed to get lab posts" });
