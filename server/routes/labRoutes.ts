@@ -259,7 +259,12 @@ router.get('/:id/circles/stats', requireAuth, async (req, res) => {
         if (!lc.circleId) {
           console.error("Invalid circleId found in lab circle:", lc);
           return {
-            labCircle: lc,
+            labCircle: {
+              id: lc.id || 0,
+              role: lc.role || "observation",
+              circleId: 0,
+              addedAt: lc.addedAt || new Date()
+            },
             circle: null,
             stats: {
               postCount: 0,
@@ -269,14 +274,20 @@ router.get('/:id/circles/stats', requireAuth, async (req, res) => {
           };
         }
         
+        // Keep the circle data separate in the response to maintain the expected structure
         const circle = await storage.getCircle(lc.circleId);
         const postCount = await storage.getCirclePostCount(lc.circleId);
         const followerCount = await storage.getCircleFollowerCount(lc.circleId);
         const memberCount = await storage.getCircleMemberCount(lc.circleId);
         
         return {
-          labCircle: lc,
-          circle,
+          labCircle: {
+            id: lc.id,
+            role: lc.role,
+            circleId: lc.circleId,
+            addedAt: lc.addedAt || new Date()
+          },
+          circle, // This keeps the circle object separate from the labCircle
           stats: {
             postCount,
             followerCount,

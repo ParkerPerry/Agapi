@@ -1970,14 +1970,15 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
-  async getLabCircles(labId: number): Promise<(Circle & { role: "control" | "treatment" | "observation" })[]> {
+  async getLabCircles(labId: number): Promise<(Circle & { role: "control" | "treatment" | "observation"; circleId: number })[]> {
     try {
       console.log("[Storage] Getting circles for lab:", labId);
       
       const labCirclesData = await db
         .select({
           ...circles,
-          role: labCircles.role
+          role: labCircles.role,
+          circleId: labCircles.circleId  // Explicitly include circleId to ensure it's available
         })
         .from(labCircles)
         .innerJoin(circles, eq(labCircles.circleId, circles.id))
@@ -1996,7 +1997,8 @@ export class DatabaseStorage implements IStorage {
     role: "control" | "treatment" | "observation",
     memberCount: number,
     followerCount: number,
-    addedAt: Date
+    addedAt: Date,
+    circleId: number
   })[]> {
     try {
       console.log("[Storage] Getting circles with stats for lab:", labId);
@@ -2006,7 +2008,8 @@ export class DatabaseStorage implements IStorage {
         .select({
           ...circles,
           role: labCircles.role,
-          addedAt: labCircles.addedAt
+          addedAt: labCircles.addedAt,
+          circleId: labCircles.circleId  // Explicitly include circleId
         })
         .from(labCircles)
         .innerJoin(circles, eq(labCircles.circleId, circles.id))
@@ -2036,6 +2039,7 @@ export class DatabaseStorage implements IStorage {
           id: c.id,
           name: c.name,
           role: c.role,
+          circleId: c.circleId,
           memberCount: c.memberCount,
           followerCount: c.followerCount
         }))
