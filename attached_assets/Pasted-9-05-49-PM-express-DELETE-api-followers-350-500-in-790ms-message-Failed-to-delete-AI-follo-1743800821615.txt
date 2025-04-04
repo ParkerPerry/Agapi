@@ -1,0 +1,53 @@
+9:05:49 PM [express] DELETE /api/followers/350 500 in 790ms :: {"message":"Failed to delete AI follo…
+[Storage] Starting deletion of AI follower and related interactions: 350
+[Storage] Found interactions to delete: 0
+[Storage] Deleted child interactions
+[Storage] Deleted follower's interactions
+[Storage] Deleted pending responses
+[Storage] Error deleting AI follower: error: update or delete on table "ai_followers" violates foreign key constraint "ai_follower_collective_members_ai_follower_id_fkey" on table "ai_follower_collective_members"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DatabaseStorage.deleteAiFollower (/home/runner/workspace/server/storage.ts:503:7)
+    at async <anonymous> (/home/runner/workspace/server/routes/followerRoutes.ts:145:5) {
+  length: 409,
+  severity: 'ERROR',
+  code: '23503',
+  detail: 'Key (id)=(350) is still referenced from table "ai_follower_collective_members".',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'ai_follower_collective_members',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'ai_follower_collective_members_ai_follower_id_fkey',
+  file: 'ri_triggers.c',
+  line: '2621',
+  routine: 'ri_ReportViolation'
+}
+Error deleting AI follower: error: update or delete on table "ai_followers" violates foreign key constraint "ai_follower_collective_members_ai_follower_id_fkey" on table "ai_follower_collective_members"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DatabaseStorage.deleteAiFollower (/home/runner/workspace/server/storage.ts:503:7)
+    at async <anonymous> (/home/runner/workspace/server/routes/followerRoutes.ts:145:5) {
+  length: 409,
+  severity: 'ERROR',
+  code: '23503',
+  detail: 'Key (id)=(350) is still referenced from table "ai_follower_collective_members".',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'ai_follower_collective_members',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'ai_follower_collective_members_ai_follower_id_fkey',
+  file: 'ri_triggers.c',
+  line: '2621',
+  routine: 'ri_ReportViolation'
+}
+9:06:04 PM [express] DELETE /api/followers/350 500 in 761ms :: {"message":"Failed to delete AI follo…
