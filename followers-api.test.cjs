@@ -12,32 +12,15 @@ beforeAll(async () => {
     baseUrl = await authHelper.initializeBaseUrl();
     console.log(`Followers API tests using base URL: ${baseUrl}`);
     
-    // Register a test user
-    const username = `testuser_${Math.random().toString(16).substring(2, 10)}`;
-    console.log(`Registering test user: ${username}`);
+    // Get authenticated agent
+    console.log('Creating authenticated test user...');
+    const auth = await authHelper.getAuthenticatedAgent();
     
-    const testUser = await authHelper.registerTestUser(baseUrl, {
-      username,
-      email: `${username}@example.com`,
-      password: 'TestPassword123!'
-    });
+    // Extract agent and user details
+    authenticatedAgent = auth.agent;
+    testUserId = auth.user.id;
     
-    // Login and create an authenticated agent
-    console.log(`Logging in as ${username}`);
-    authenticatedAgent = await authHelper.loginUser(baseUrl, username, 'TestPassword123!');
-    
-    // Verify authentication
-    console.log('Verifying authentication...');
-    const verifyResponse = await authenticatedAgent.get(`${baseUrl}/api/user`);
-    
-    if (verifyResponse.status === 200) {
-      console.log('Authentication successfully verified!');
-      testUserId = verifyResponse.body.id;
-      console.log(`Test user has ID: ${testUserId}`);
-    } else {
-      console.error('Failed to verify authentication', verifyResponse.status, verifyResponse.body);
-      throw new Error('Authentication verification failed');
-    }
+    console.log(`Test user has ID: ${testUserId}`);
   } catch (error) {
     console.error('Setup failed:', error);
     throw error;
