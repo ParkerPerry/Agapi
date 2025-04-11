@@ -39,7 +39,7 @@ describe('Posts API', () => {
   const getRequest = () => supertest(BASE_URL);
   
   test('GET /api/posts requires authentication', async () => {
-    const response = await request.get('/api/posts');
+    const response = await getRequest().get('/api/posts');
     
     // Since we're not authenticated, we expect a 401 status
     expect(response.status).toBe(401);
@@ -47,7 +47,7 @@ describe('Posts API', () => {
   
   test('GET /api/posts/:id is publicly accessible', async () => {
     // Try with a post ID that may or may not exist
-    const response = await request.get('/api/posts/1');
+    const response = await getRequest().get('/api/posts/1');
     
     // This endpoint is public and doesn't require authentication
     expect(response.status).toBe(200);
@@ -71,7 +71,7 @@ describe('Posts API', () => {
       content: 'Test post content'
     };
     
-    const response = await request.post('/api/posts').send(postData);
+    const response = await getRequest().post('/api/posts').send(postData);
     
     // Since we're not authenticated, we expect a 401 status
     expect(response.status).toBe(401);

@@ -7,10 +7,17 @@
  */
 
 const supertest = require('supertest');
-const { getAuthenticatedAgent, registerTestUser, loginTestUser, cleanupTestData } = require('./auth-helper.test.cjs');
+const { 
+  getAuthenticatedAgent, 
+  registerTestUser, 
+  loginTestUser, 
+  cleanupTestData, 
+  initializeBaseUrl, 
+  BASE_URLS 
+} = require('./auth-helper.test.cjs');
 
-// Base URL for API requests
-const BASE_URL = 'http://localhost:80'; // Port 80 is mapped to the app in Replit
+// Base URL will be determined dynamically
+let BASE_URL = BASE_URLS[0]; // Start with first option
 
 // Test timeout (increased for data manipulation tests)
 jest.setTimeout(10000);
@@ -21,6 +28,10 @@ describe('Data Creation Tests', () => {
   let authenticationSuccessful = false;
   
   beforeAll(async () => {
+    // Initialize the base URL
+    BASE_URL = await initializeBaseUrl();
+    console.log(`Data Creation tests using base URL: ${BASE_URL}`);
+    
     // Set up an authenticated agent before running the tests
     try {
       // Create a unique test user

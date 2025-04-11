@@ -3,6 +3,10 @@
  */
 const supertest = require('supertest');
 const { z } = require('zod');
+const { initializeBaseUrl, BASE_URLS } = require('./auth-helper.test.cjs');
+
+// Base URL will be determined dynamically
+let BASE_URL = BASE_URLS[0]; // Start with first option
 
 // Define validation schema for circle
 const circleSchema = z.object({
@@ -33,10 +37,17 @@ const circleMemberSchema = z.object({
 const circleMembersListSchema = z.array(circleMemberSchema);
 
 describe('Circles API', () => {
-  const request = supertest('http://localhost:80'); // Using port 80 which is mapped to the app in Replit
+  // Initialize before running tests
+  beforeAll(async () => {
+    BASE_URL = await initializeBaseUrl();
+    console.log(`Circles API tests using base URL: ${BASE_URL}`);
+  });
+  
+  // Get a new request object with the correct base URL
+  const getRequest = () => supertest(BASE_URL);
   
   test('GET /api/circles requires authentication', async () => {
-    const response = await request.get('/api/circles');
+    const response = await getRequest().get('/api/circles');
     
     // Since we're not authenticated, we expect a 401 status
     expect(response.status).toBe(401);
@@ -44,7 +55,7 @@ describe('Circles API', () => {
   
   test('GET /api/circles/:id requires authentication', async () => {
     // Try with a circle ID that may or may not exist
-    const response = await request.get('/api/circles/1');
+    const response = await getRequest().get('/api/circles/1');
     
     // Since we're not authenticated, we expect a 401 status
     expect(response.status).toBe(401);
@@ -57,14 +68,14 @@ describe('Circles API', () => {
       visibility: 'private'
     };
     
-    const response = await request.post('/api/circles').send(circleData);
+    const response = await getRequest().post('/api/circles').send(circleData);
     
     // Since we're not authenticated, we expect a 401 status
     expect(response.status).toBe(401);
   });
   
   test('GET /api/circles/:id/members is publicly accessible', async () => {
-    const response = await request.get('/api/circles/1/members');
+    const response = await getRequest().get('/api/circles/1/members');
     
     // This endpoint is public and doesn't require authentication
     expect(response.status).toBe(200);
@@ -76,7 +87,7 @@ describe('Circles API', () => {
       role: 'viewer'
     };
     
-    const response = await request.post('/api/circles/1/members').send(memberData);
+    const response = await getRequest().post('/api/circles/1/members').send(memberData);
     
     // This endpoint is public and doesn't require authentication
     expect(response.status).toBe(200);
