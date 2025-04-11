@@ -1,45 +1,46 @@
 /**
- * Test for basic schema validation using CommonJS format
+ * Basic schema validation tests to verify that Zod validation is working
  */
-
 const { z } = require('zod');
 
-// Define a simple schema for testing
+// Define a basic schema for testing
 const userSchema = z.object({
-  id: z.number(),
-  username: z.string(),
-  email: z.string().email().optional(),
-  age: z.number().min(13).optional()
+  username: z.string().min(3).max(50),
+  email: z.string().email(),
+  age: z.number().int().positive().optional(),
+  roles: z.array(z.string()).optional()
 });
 
 describe('Zod Schema Validation', () => {
   test('validates valid user data', () => {
     const validUser = {
-      id: 1,
       username: 'testuser',
       email: 'test@example.com',
-      age: 25
+      age: 25,
+      roles: ['user', 'admin']
     };
     
     const result = userSchema.safeParse(validUser);
     expect(result.success).toBe(true);
+    expect(result.data).toEqual(validUser);
   });
   
   test('rejects invalid user data', () => {
     const invalidUser = {
-      id: 'not-a-number',
-      username: 123, // should be a string
-      email: 'not-an-email'
+      username: 'a', // too short
+      email: 'not-an-email',
+      age: -5 // negative number
     };
     
     const result = userSchema.safeParse(invalidUser);
     expect(result.success).toBe(false);
+    expect(result.error).toBeDefined();
   });
   
   test('schema validates with optional fields missing', () => {
     const minimalUser = {
-      id: 1,
-      username: 'minimaluser'
+      username: 'testuser',
+      email: 'test@example.com'
     };
     
     const result = userSchema.safeParse(minimalUser);
