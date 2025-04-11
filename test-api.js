@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 const API_BASE = 'http://localhost:5001'; // Using fallback port
 const VERBOSE = process.argv.includes('--verbose');
 const BASIC_AUTH = process.argv.includes('--with-auth');
+const SAVE_RESPONSES = process.argv.includes('--save');
 
 // Basic authentication credentials (for testing)
 const AUTH_CREDENTIALS = {
@@ -13,6 +14,21 @@ const AUTH_CREDENTIALS = {
 
 // Store cookies for session-based tests
 let cookies = [];
+
+/**
+ * Format a response for detailed output
+ * @param {Object} responseData - Response data
+ * @returns {string} - Formatted response
+ */
+function formatResponse(responseData) {
+  if (!responseData) return '';
+  
+  const json = JSON.stringify(responseData, null, 2);
+  if (json.length > 500) {
+    return json.substring(0, 497) + '...';
+  }
+  return json;
+}
 
 /**
  * Test a specific API route
@@ -40,10 +56,15 @@ async function testRoute(route, method = 'GET', body = null, requiresAuth = fals
   
   if (body) {
     options.body = JSON.stringify(body);
+    if (VERBOSE) {
+      console.log(`  Request body: ${formatResponse(body)}`);
+    }
   }
   
   try {
+    const startTime = Date.now();
     const response = await fetch(endpoint, options);
+    const responseTime = Date.now() - startTime;
     const status = response.status;
     
     // Save cookies for subsequent requests
@@ -52,17 +73,17 @@ async function testRoute(route, method = 'GET', body = null, requiresAuth = fals
       cookies = setCookieHeader.split(', ');
     }
     
-    console.log(`  Status: ${status}`);
+    console.log(`  Status: ${status} (${responseTime}ms)`);
     
     let responseData = null;
     
-    if (status === 200 || status === 201) {
+    if (response.status !== 204) { // No content
       try {
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
           responseData = await response.json();
-          if (VERBOSE) {
-            console.log(`  Response data: ${JSON.stringify(responseData).substring(0, 150)}${JSON.stringify(responseData).length > 150 ? '...' : ''}`);
+          if (VERBOSE || SAVE_RESPONSES) {
+            console.log(`  Response data: ${formatResponse(responseData)}`);
           }
         } else {
           const text = await response.text();
@@ -75,13 +96,18 @@ async function testRoute(route, method = 'GET', body = null, requiresAuth = fals
       }
     }
     
+    if (status >= 400) {
+      console.log(`  Error: ${responseData?.message || 'Unknown error'}`);
+    }
+    
     return {
       endpoint,
       method,
       status,
       success: status >= 200 && status < 300,
       requiresAuth,
-      responseData
+      responseData,
+      responseTime
     };
   } catch (error) {
     console.error(`  Error: ${error.message}`);
@@ -157,8 +183,7 @@ async function runTests() {
   // Define test groups
   const testGroups = {
     health: [
-      { name: 'Health Check', route: '/api/health', method: 'GET', requiresAuth: false },
-      { name: 'Health Details', route: '/api/health/details', method: 'GET', requiresAuth: false }
+      { name: 'Health Check', route: '/api/health', method: 'GET', requiresAuth: false }
     ],
     auth: [
       { name: 'Login', route: '/api/login', method: 'POST', body: AUTH_CREDENTIALS, requiresAuth: false },
@@ -167,15 +192,27 @@ async function runTests() {
     ],
     followers: [
       { name: 'Get Followers', route: '/api/followers', method: 'GET', requiresAuth: true },
-      { name: 'Create Follower', route: '/api/followers', method: 'POST', body: { name: 'TestBot', personality: 'helpful' }, requiresAuth: true }
+      { name: 'Create Follower', route: '/api/followers', method: 'POST', body: { name: 'TestBot', personality: 'helpful' }, requiresAuth: true },
+      { name: 'Get Follower', route: '/api/followers/1', method: 'GET', requiresAuth: true },
+      { name: 'Update Follower', route: '/api/followers/1', method: 'PATCH', body: { name: 'UpdatedBot' }, requiresAuth: true }
     ],
     posts: [
       { name: 'Get Posts', route: '/api/posts', method: 'GET', requiresAuth: true },
-      { name: 'Create Post', route: '/api/posts', method: 'POST', body: { content: 'Test post from API test suite' }, requiresAuth: true }
+      { name: 'Create Post', route: '/api/posts', method: 'POST', body: { content: 'Test post from API test suite' }, requiresAuth: true },
+      { name: 'Get Post', route: '/api/posts/1', method: 'GET', requiresAuth: true },
+      { name: 'Reply to Post', route: '/api/posts/1/reply', method: 'POST', body: { content: 'Test reply', parentId: 1 }, requiresAuth: true }
     ],
     circles: [
       { name: 'Get Circles', route: '/api/circles', method: 'GET', requiresAuth: true },
-      { name: 'Create Circle', route: '/api/circles', method: 'POST', body: { name: 'Test Circle', description: 'Created by test suite' }, requiresAuth: true }
+      { name: 'Create Circle', route: '/api/circles', method: 'POST', body: { name: 'Test Circle', description: 'Created by test suite' }, requiresAuth: true },
+      { name: 'Get Circle', route: '/api/circles/1', method: 'GET', requiresAuth: true },
+      { name: 'Update Circle', route: '/api/circles/1', method: 'PATCH', body: { name: 'Updated Circle' }, requiresAuth: true },
+      { name: 'Get Circle Members', route: '/api/circles/1/members', method: 'GET', requiresAuth: true }
+    ],
+    labs: [
+      { name: 'Get Labs', route: '/api/labs', method: 'GET', requiresAuth: true },
+      { name: 'Create Lab', route: '/api/labs', method: 'POST', body: { name: 'Test Lab', experimentType: 'a/b test' }, requiresAuth: true },
+      { name: 'Get Lab', route: '/api/labs/1', method: 'GET', requiresAuth: true }
     ]
   };
   
@@ -204,15 +241,28 @@ async function runTests() {
   console.log('\n=== Test Results ===');
   const successful = results.filter(r => r.success).length;
   const failed = results.filter(r => !r.success).length;
+  const skipped = results.filter(r => r.status === 'SKIPPED').length;
   
-  console.log(`Total: ${results.length} | Passed: ${successful} | Failed: ${failed}`);
+  console.log(`Total: ${results.length} | Passed: ${successful} | Failed: ${failed} | Skipped: ${skipped}`);
   
   // Print failures
   if (failed > 0) {
     console.log('\nFailed Tests:');
-    results.filter(r => !r.success).forEach(test => {
+    results.filter(r => !r.success && r.status !== 'SKIPPED').forEach(test => {
       console.log(`- ${test.method} ${test.route}: ${test.status || 'ERROR'}`);
     });
+  }
+  
+  // Print response time stats
+  const responseTimes = results
+    .filter(r => r.responseTime)
+    .map(r => ({ name: r.name, time: r.responseTime }));
+    
+  if (responseTimes.length > 0) {
+    console.log('\nResponse Time Stats:');
+    console.log('Average: ' + Math.round(responseTimes.reduce((acc, curr) => acc + curr.time, 0) / responseTimes.length) + 'ms');
+    console.log('Max: ' + Math.max(...responseTimes.map(r => r.time)) + 'ms');
+    console.log('Min: ' + Math.min(...responseTimes.map(r => r.time)) + 'ms');
   }
 }
 

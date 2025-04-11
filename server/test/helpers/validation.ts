@@ -1,5 +1,6 @@
 import { Response } from 'supertest';
 import { z } from 'zod';
+import { expect } from '@jest/globals';
 
 /**
  * Validates response status code and returns friendly error messages

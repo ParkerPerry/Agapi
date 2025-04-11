@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { Express } from 'express';
 import { storage } from '../../storage';
+import { jest } from '@jest/globals';
 
 /**
  * User interface for testing
@@ -17,21 +18,16 @@ export interface TestUser {
  * Create a supertest agent with authenticated session
  * @param {Express} app - Express application
  * @param {TestUser} user - Test user for authentication
- * @returns {Promise<request.SuperTest<request.Test>>} Authenticated agent
+ * @returns {Promise<request.SuperAgentTest>} Authenticated agent
  */
-export async function getAuthenticatedAgent(app: Express, user: TestUser): Promise<request.SuperTest<request.Test>> {
+export async function getAuthenticatedAgent(app: Express, user: TestUser): Promise<request.SuperAgentTest> {
   const agent = request.agent(app);
   
   // Mock storage to provide user for login
-  storage.getUserByUsername = jest.fn().mockResolvedValue({
+  jest.spyOn(storage, 'getUserByUsername').mockResolvedValue({
     ...user,
     password: user.password || 'hashedpassword'
   });
-  
-  // Mock password comparison to always succeed in tests
-  jest.mock('../../auth', () => ({
-    comparePasswords: jest.fn().mockResolvedValue(true)
-  }));
   
   // Login to get a session
   await agent
@@ -82,7 +78,7 @@ export async function createTestUser(userData: Partial<TestUser> = {}): Promise<
     ...userToCreate
   };
   
-  storage.createUser = jest.fn().mockResolvedValue(createdUser);
+  jest.spyOn(storage, 'createUser').mockResolvedValue(createdUser);
   
   return createdUser;
 }
