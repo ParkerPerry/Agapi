@@ -2,10 +2,24 @@
  * Tests for authentication endpoints
  */
 const supertest = require('supertest');
-const { TEST_USER, userSchema, registerTestUser, loginTestUser, isAuthenticated } = require('./auth-helper.test.cjs');
+const { 
+  TEST_USER, 
+  userSchema, 
+  registerTestUser, 
+  loginTestUser, 
+  isAuthenticated,
+  initializeBaseUrl,
+  BASE_URLS
+} = require('./auth-helper.test.cjs');
 
-// Base URL for API requests
-const BASE_URL = 'http://localhost:80'; // Port 80 is mapped to the app in Replit
+// Base URL will be determined dynamically
+let BASE_URL = BASE_URLS[0]; // Start with first option
+
+// Initialize before running tests
+beforeAll(async () => {
+  BASE_URL = await initializeBaseUrl();
+  console.log(`Auth endpoints tests using base URL: ${BASE_URL}`);
+});
 
 describe('Authentication Endpoints', () => {
   test('Registration endpoint exists and accepts requests', async () => {

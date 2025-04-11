@@ -16,7 +16,7 @@ run_test() {
   local test_name=$2
   
   echo -e "${BLUE}Running ${test_name}...${NC}"
-  echo -e "${YELLOW}Note: Tests are using port 80 in the Replit environment${NC}"
+  echo -e "${YELLOW}Note: Tests will automatically detect the available server port (tries ports 80, 5000, 5001)${NC}"
   
   # Run the test with added debugging
   $JEST_CMD $test_file --verbose

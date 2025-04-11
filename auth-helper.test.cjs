@@ -17,8 +17,18 @@ const BASE_URLS = [
 async function findWorkingBaseUrl() {
   for (const url of BASE_URLS) {
     try {
-      const response = await fetch(`${url}/api`);
-      console.log(`Successfully connected to ${url}`);
+      // Use supertest for consistent behavior with the rest of the tests
+      const request = supertest(url);
+      const response = await request.get('/api/user');
+      
+      // We expect a 401 for unauthenticated requests - that means the server is up
+      if (response.status === 401) {
+        console.log(`Successfully connected to ${url} (got 401 as expected for unauthenticated request)`);
+        return url;
+      }
+      
+      // If we got any response at all, the server is running
+      console.log(`Connected to ${url} with status ${response.status}`);
       return url;
     } catch (error) {
       console.log(`Failed to connect to ${url}: ${error.message}`);
@@ -28,8 +38,15 @@ async function findWorkingBaseUrl() {
   return BASE_URLS[0];
 }
 
-// Initialize with the first option, but this will be updated later
+// Initialize with the first option by default
 let BASE_URL = BASE_URLS[0];
+
+// This will be called before tests run to set the correct URL
+async function initializeBaseUrl() {
+  BASE_URL = await findWorkingBaseUrl();
+  console.log(`Using base URL: ${BASE_URL}`);
+  return BASE_URL;
+}
 
 // Default test user credentials
 const TEST_USER = {
@@ -67,6 +84,11 @@ function createUniqueTestUser() {
  * @returns {Promise<Object>} The registered user data
  */
 async function registerTestUser(agent = null, userData = null) {
+  // Ensure we have the right base URL
+  if (!BASE_URL.includes('localhost')) {
+    BASE_URL = await initializeBaseUrl();
+  }
+  
   const request = agent || supertest(BASE_URL);
   const testUser = userData || createUniqueTestUser();
   
@@ -115,6 +137,11 @@ async function registerTestUser(agent = null, userData = null) {
  * @returns {Promise<Object>} Object containing the agent and login response
  */
 async function loginTestUser(agent = null, username = TEST_USER.username, password = TEST_USER.password) {
+  // Ensure we have the right base URL
+  if (!BASE_URL.includes('localhost')) {
+    BASE_URL = await initializeBaseUrl();
+  }
+  
   const request = agent || supertest.agent(BASE_URL);
   
   try {
@@ -161,6 +188,11 @@ async function isAuthenticated(agent) {
  */
 async function getAuthenticatedAgent() {
   try {
+    // Make sure we have the right base URL before creating the agent
+    if (!BASE_URL.includes('localhost')) {
+      BASE_URL = await initializeBaseUrl();
+    }
+    
     // Create an agent to maintain cookies/session
     const agent = supertest.agent(BASE_URL);
     
@@ -223,5 +255,8 @@ module.exports = {
   isAuthenticated,
   getAuthenticatedAgent,
   cleanupTestData,
-  createUniqueTestUser
+  createUniqueTestUser,
+  initializeBaseUrl,
+  findWorkingBaseUrl,
+  BASE_URLS
 };
