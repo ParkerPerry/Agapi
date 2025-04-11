@@ -55,7 +55,7 @@ describe('Authentication Endpoints', () => {
       // Use direct supertest to check just the endpoint
       const request = supertest(BASE_URL);
       const loginResponse = await request
-        .post('/api/auth/login')
+        .post('/api/login')
         .send({
           username: testUser.username,
           password: testUser.password

@@ -51,7 +51,7 @@ describe('CircleTube Workflow Tests', () => {
       // Login directly with the agent
       console.log(`Logging in as ${registeredUser.username}`);
       const loginResponse = await agent
-        .post('/api/auth/login')
+        .post('/api/login')
         .send({ 
           username: registeredUser.username, 
           password: testUser.password 
