@@ -25,15 +25,63 @@ describe('CircleTube Workflow Tests', () => {
   let testUser;
   
   beforeAll(async () => {
+    // Initialize the base URL
+    BASE_URL = await initializeBaseUrl();
+    console.log(`Workflow tests using base URL: ${BASE_URL}`);
+    
     // Set up an authenticated agent before running the tests
     try {
-      const auth = await getAuthenticatedAgent();
-      authenticatedAgent = auth.agent;
-      testUser = auth.user;
-      console.log(`Test user created with ID: ${testUser.id || 'unknown'}`);
+      // Create a unique test user with a deterministic ID for easier debugging
+      const uniqueId = Math.floor(Date.now() / 1000).toString(16); // Unix timestamp in hex
+      
+      // Register the user directly
+      testUser = {
+        username: `workflow_${uniqueId}`,
+        password: 'testpassword',
+        email: `workflow_${uniqueId}@example.com`
+      };
+      
+      // Create a fresh agent
+      const agent = supertest.agent(BASE_URL);
+      
+      // Register the user
+      console.log(`Registering workflow test user: ${testUser.username}`);
+      const registeredUser = await registerTestUser(agent, testUser);
+      
+      // Login directly with the agent
+      console.log(`Logging in as ${registeredUser.username}`);
+      const loginResponse = await agent
+        .post('/api/auth/login')
+        .send({ 
+          username: registeredUser.username, 
+          password: testUser.password 
+        });
+      
+      if (loginResponse.status !== 200) {
+        throw new Error(`Login failed with status ${loginResponse.status}`);
+      }
+      
+      console.log('Login successful, verifying session...');
+      
+      // Verify the session is working
+      const verifyResponse = await agent.get('/api/user');
+      
+      if (verifyResponse.status === 200) {
+        console.log('Authentication successfully verified!');
+        authenticatedAgent = agent;
+        
+        // Add user ID if available
+        if (verifyResponse.body && verifyResponse.body.id) {
+          testUser.id = verifyResponse.body.id;
+          console.log(`Workflow test user has ID: ${testUser.id}`);
+        }
+      } else {
+        console.error(`Authentication verification failed - status: ${verifyResponse.status}`);
+        throw new Error('Failed to verify authentication');
+      }
     } catch (error) {
-      console.error('Error setting up authenticated agent:', error);
-      throw error;
+      console.error('Error setting up workflow test environment:', error);
+      throw new Error(`Authentication setup failed: ${error.message}`);
     }
   });
   

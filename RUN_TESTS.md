@@ -6,8 +6,9 @@ This document outlines the testing approach for the CircleTube API. The testing 
 
 1. The test suite is designed to work even when the server is not running by focusing on validating test structure rather than live data.
 2. Basic tests (simple.test.cjs, schema.test.cjs) run independently of the server and should always pass.
-3. API tests may fail with "ECONNREFUSED" errors if the server isn't running or if there are port conflicts. This is expected and won't fail the test suite overall.
-4. In the Replit environment, the server runs on port 5000 or 5001, but the tests connect via port 80 which is mapped to the app. This is how Replit's HTTP proxying works.
+3. API tests now include dynamic port detection that automatically tries ports 80, 5000, and 5001 to find a working server connection.
+4. If all port attempts fail, the tests will report connection errors but still complete without crashing the test suite.
+5. In different environments, the server may run on different ports (80, 5000, or 5001), but the dynamic port detection handles this automatically.
 
 ## Running the Tests
 
@@ -173,7 +174,14 @@ The tests use Zod for schema validation. Model schemas are defined in the test f
  */
 const supertest = require('supertest');
 const { z } = require('zod');
-const { getAuthenticatedAgent } = require('./auth-helper.test.cjs');
+const { 
+  getAuthenticatedAgent, 
+  initializeBaseUrl, 
+  BASE_URLS 
+} = require('./auth-helper.test.cjs');
+
+// Base URL will be determined dynamically
+let BASE_URL = BASE_URLS[0]; // Start with first option
 
 // Define validation schema if needed
 const mySchema = z.object({
@@ -182,20 +190,28 @@ const mySchema = z.object({
 
 describe('[Feature] API', () => {
   // For unauthenticated tests
-  const request = supertest('http://localhost:80'); // Use port 80 in Replit environment
+  // Initialize before running tests
+  beforeAll(async () => {
+    BASE_URL = await initializeBaseUrl();
+    console.log(`Feature API tests using base URL: ${BASE_URL}`);
+  });
+  
+  // Get a new request object with the correct base URL
+  const getRequest = () => supertest(BASE_URL);
   
   // For authenticated tests
   let authenticatedAgent;
   let testUser;
   
   beforeAll(async () => {
+    // Initialize base URL is already handled above
     const auth = await getAuthenticatedAgent();
     authenticatedAgent = auth.agent;
     testUser = auth.user;
   });
   
   test('Unauthenticated endpoint test', async () => {
-    const response = await request.get('/api/public-endpoint');
+    const response = await getRequest().get('/api/public-endpoint');
     expect(response.status).toBe(200);
   });
   
@@ -221,12 +237,14 @@ describe('[Feature] API', () => {
 
 ### Connection Issues
 
-If API tests are failing with "ECONNREFUSED" errors:
+If API tests are failing with "ECONNREFUSED" errors despite the dynamic port detection:
 
 1. Verify the server is running with `npm run dev`
 2. Check which port the server is using in the logs (look for `serving on port X`)
-3. All test files have been updated to use port 80 in the Replit environment
-4. If issues persist in Replit, API connection issues are expected; focus on structure tests
+3. The tests automatically try connecting to ports 80, 5000, and 5001
+4. If the server is running on a different port, you can modify the BASE_URLS array in auth-helper.test.cjs
+5. Port detection logs are output during test execution to help diagnose connection issues
+6. If all ports fail, the tests will still run but will report connection errors
 
 ### Authentication Issues
 
@@ -244,4 +262,8 @@ If authentication tests are failing:
 - Add performance and load testing
 - Implement test coverage reporting
 - Add continuous integration setup for automated test runs
-- Add network diagnostics to detect actual server port availability
+- ✓ Added dynamic port detection for improved connectivity across environments
+- ✓ Enhanced session management in authentication tests
+- ✓ Implemented test suite organization with basic, authentication, and workflow tests
+- Consider adding environment-specific configuration options
+- Extend test coverage to newer API endpoints as they're developed

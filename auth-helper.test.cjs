@@ -152,6 +152,19 @@ async function loginTestUser(agent = null, username = TEST_USER.username, passwo
     // Check if login was successful
     if (loginResponse.status === 200) {
       console.log('Test user login successful');
+      
+      // Debug: Check if we received session cookies
+      const cookies = loginResponse.headers['set-cookie'];
+      if (cookies && cookies.length > 0) {
+        console.log(`Received ${cookies.length} cookies from login response`);
+      } else {
+        console.warn('No cookies received from login response!');
+      }
+      
+      // Make a test request to verify the session is working
+      const testResponse = await request.get('/api/user');
+      console.log(`Authentication verification: GET /api/user returned status ${testResponse.status}`);
+      
       // Return both the agent (for session cookies) and the response body
       return { 
         agent: request, 
@@ -202,26 +215,49 @@ async function getAuthenticatedAgent() {
     // Register the new user
     const user = await registerTestUser(agent, testUser);
     
-    // Log in with the new user
-    const loginResult = await loginTestUser(agent, user.username, user.password);
+    // Direct implementation without relying on other helper functions
+    console.log(`Direct auth attempt for user: ${user.username}`);
     
-    // Make sure we're using the agent with the session cookies
-    const authenticatedAgent = loginResult.agent;
+    // Login directly with the agent
+    const loginResponse = await agent
+      .post('/api/auth/login')
+      .send({ 
+        username: user.username, 
+        password: user.password 
+      });
     
-    // Add debugging to understand what's happening
-    console.log(`Testing authentication for user: ${user.username}`);
-    
-    // Verify authentication succeeded
-    const authenticated = await isAuthenticated(authenticatedAgent);
-    if (!authenticated) {
-      console.error('Authentication check failed - user is not authenticated');
-      throw new Error('Failed to authenticate test user');
+    if (loginResponse.status !== 200) {
+      console.error(`Login failed with status ${loginResponse.status}`);
+      throw new Error(`Login failed with status ${loginResponse.status}`);
     }
     
-    console.log('Authentication successful!');
+    console.log('Login successful, verifying session...');
+    
+    // Debug: Check if we received session cookies
+    const cookies = loginResponse.headers['set-cookie'];
+    if (cookies && cookies.length > 0) {
+      console.log(`Received ${cookies.length} cookies from login response`);
+    } else {
+      console.warn('No cookies received from login response!');
+    }
+    
+    // Verify the session is working with a direct request to a protected endpoint
+    const verifyResponse = await agent.get('/api/user');
+    
+    if (verifyResponse.status !== 200) {
+      console.error(`Authentication verification failed - status: ${verifyResponse.status}`);
+      throw new Error('Failed to verify authentication');
+    }
+    
+    console.log('Authentication successfully verified!');
+    
+    // Add the user's id from the verification response if available
+    if (verifyResponse.body && verifyResponse.body.id) {
+      user.id = verifyResponse.body.id;
+    }
     
     // Return both the authenticated agent and user data
-    return { agent: authenticatedAgent, user };
+    return { agent, user };
   } catch (error) {
     console.error('Error getting authenticated agent:', error);
     throw error;

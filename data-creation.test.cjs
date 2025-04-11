@@ -34,49 +34,59 @@ describe('Data Creation Tests', () => {
     
     // Set up an authenticated agent before running the tests
     try {
-      // Create a unique test user
-      const uniqueUsername = `testuser_${Date.now()}`;
+      // Create a unique test user with a deterministic ID for easier debugging
+      const uniqueId = Math.floor(Date.now() / 1000).toString(16); // Unix timestamp in hex
       
       // Register the user directly
       testUser = {
-        username: uniqueUsername,
+        username: `testuser_${uniqueId}`,
         password: 'testpassword',
-        email: `${uniqueUsername}@example.com`
+        email: `testuser_${uniqueId}@example.com`
       };
       
-      // Try the enhanced getAuthenticatedAgent helper first
-      try {
-        const auth = await getAuthenticatedAgent();
-        authenticatedAgent = auth.agent;
-        testUser = auth.user;
+      // Create a fresh agent
+      const agent = supertest.agent(BASE_URL);
+      
+      // Register the user
+      console.log(`Registering test user: ${testUser.username}`);
+      const registeredUser = await registerTestUser(agent, testUser);
+      
+      // Login directly with the agent
+      console.log(`Logging in as ${registeredUser.username}`);
+      const loginResponse = await agent
+        .post('/api/auth/login')
+        .send({ 
+          username: registeredUser.username, 
+          password: testUser.password 
+        });
+      
+      if (loginResponse.status !== 200) {
+        throw new Error(`Login failed with status ${loginResponse.status}`);
+      }
+      
+      console.log('Login successful, verifying session...');
+      
+      // Verify the session is working
+      const verifyResponse = await agent.get('/api/user');
+      
+      if (verifyResponse.status === 200) {
+        console.log('Authentication successfully verified!');
+        authenticatedAgent = agent;
         authenticationSuccessful = true;
-        console.log(`Successfully authenticated with user ID: ${testUser.id || 'unknown'}`);
-      } catch (authError) {
-        console.warn('Enhanced authentication failed, falling back to manual approach');
         
-        // Fall back to creating the user manually
-        const agent = supertest.agent(BASE_URL);
-        
-        // Register a test user
-        const registeredUser = await registerTestUser(agent, testUser);
-        console.log(`Registered test user: ${registeredUser.username}`);
-        
-        // Log in with registered user
-        try {
-          const loginResult = await loginTestUser(agent, registeredUser.username, testUser.password);
-          authenticatedAgent = loginResult.agent;
-          authenticationSuccessful = true;
-          console.log('Manual authentication successful');
-        } catch (loginError) {
-          console.error('Login failed, tests may not function correctly:', loginError);
-          // Use the agent anyway, even if authentication may not have succeeded
-          authenticatedAgent = agent;
+        // Add user ID if available
+        if (verifyResponse.body && verifyResponse.body.id) {
+          testUser.id = verifyResponse.body.id;
+          console.log(`Test user has ID: ${testUser.id}`);
         }
+      } else {
+        console.error(`Authentication verification failed - status: ${verifyResponse.status}`);
+        throw new Error('Failed to verify authentication');
       }
     } catch (error) {
       console.error('Error setting up test environment:', error);
-      // Create a backup agent for tests to run with
-      authenticatedAgent = supertest.agent(BASE_URL);
+      // Instead of continuing with a non-authenticated agent, fail the test
+      throw new Error(`Authentication setup failed: ${error.message}`);
     }
   });
   
