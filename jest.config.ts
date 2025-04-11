@@ -14,7 +14,15 @@ const config: Config = {
     '^.+\\.tsx?$': ['ts-jest', {
       tsconfig: 'tsconfig.test.json'
     }]
-  }
+  },
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'clover'],
+  collectCoverageFrom: [
+    'server/**/*.ts',
+    '!server/test/**',
+    '!server/**/*.d.ts',
+  ]
 };
 
 export default config;
