@@ -4,7 +4,7 @@
 const supertest = require('supertest');
 
 describe('Server API', () => {
-  const request = supertest('http://localhost:5000');
+  const request = supertest('http://localhost:80'); // Using port 80 which is mapped to the app in Replit
   
   test('GET /api/user returns 401 when not authenticated', async () => {
     const response = await request.get('/api/user');

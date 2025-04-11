@@ -1,0 +1,739 @@
+~/workspace$ chmod +x run-simple-tests.sh
+ Environment updated. Reloading shell...
+~/workspace$ ./run-simple-tests.sh
+Running simple math tests...
+ PASS  ./simple.test.cjs
+  Basic Math
+    ✓ 1 + 1 equals 2 (4 ms)
+    ✓ 2 * 3 equals 6 (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        0.225 s
+Ran all test suites matching /simple.test.cjs/i.
+Running schema validation tests...
+ PASS  ./schema.test.cjs
+  Zod Schema Validation
+    ✓ validates valid user data (4 ms)
+    ✓ rejects invalid user data (4 ms)
+    ✓ schema validates with optional fields missing (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.196 s
+Ran all test suites matching /schema.test.cjs/i.
+Running API tests against server...
+ PASS  ./server-api.test.cjs
+  Server API
+    ✓ GET /api/user returns 401 when not authenticated (44 ms)
+    ✓ GET /api endpoint exists (15 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        0.313 s
+Ran all test suites matching /server-api.test.cjs/i.
+Running followers API tests...
+ PASS  ./followers-api.test.cjs
+  Followers API
+    ✓ GET /api/followers requires authentication (50 ms)
+    ✓ GET /api/followers/:id requires authentication (7 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        0.309 s
+Ran all test suites matching /followers-api.test.cjs/i.
+Running posts API tests...
+  console.log
+    Schema validation error: ZodError: [
+      {
+        "code": "invalid_type",
+        "expected": "number",
+        "received": "undefined",
+        "path": [
+          "id"
+        ],
+        "message": "Required"
+      },
+      {
+        "code": "invalid_type",
+        "expected": "number",
+        "received": "undefined",
+        "path": [
+          "userId"
+        ],
+        "message": "Required"
+      },
+      {
+        "code": "invalid_type",
+        "expected": "number",
+        "received": "undefined",
+        "path": [
+          "circleId"
+        ],
+        "message": "Required"
+      },
+      {
+        "code": "invalid_type",
+        "expected": "string",
+        "received": "undefined",
+        "path": [
+          "content"
+        ],
+        "message": "Required"
+      },
+      {
+        "code": "invalid_union",
+        "unionErrors": [
+          {
+            "issues": [
+              {
+                "code": "invalid_type",
+                "expected": "string",
+                "received": "undefined",
+                "path": [
+                  "createdAt"
+                ],
+                "message": "Required"
+              }
+            ],
+            "name": "ZodError"
+          },
+          {
+            "issues": [
+              {
+                "code": "invalid_type",
+                "expected": "date",
+                "received": "undefined",
+                "path": [
+                  "createdAt"
+                ],
+                "message": "Required"
+              }
+            ],
+            "name": "ZodError"
+          }
+        ],
+        "path": [
+          "createdAt"
+        ],
+        "message": "Invalid input"
+      },
+      {
+        "code": "invalid_type",
+        "expected": "number",
+        "received": "undefined",
+        "path": [
+          "labId"
+        ],
+        "message": "Required"
+      },
+      {
+        "code": "invalid_type",
+        "expected": "boolean",
+        "received": "undefined",
+        "path": [
+          "labExperiment"
+        ],
+        "message": "Required"
+      },
+      {
+        "expected": "'control' | 'treatment' | 'observation' | 'all'",
+        "received": "undefined",
+        "code": "invalid_type",
+        "path": [
+          "targetRole"
+        ],
+        "message": "Required"
+      }
+    ]
+        at Object.get error [as error] (/home/runner/workspace/node_modules/zod/lib/types.js:55:31)
+        at Object.<anonymous> (/home/runner/workspace/posts-api.test.cjs:44:66)
+        at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+      issues: [
+        {
+          code: 'invalid_type',
+          expected: 'number',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'number',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'number',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'string',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_union',
+          unionErrors: [Array],
+          path: [Array],
+          message: 'Invalid input'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'number',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'boolean',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          expected: "'control' | 'treatment' | 'observation' | 'all'",
+          received: 'undefined',
+          code: 'invalid_type',
+          path: [Array],
+          message: 'Required'
+        }
+      ],
+      addIssue: [Function (anonymous)],
+      addIssues: [Function (anonymous)],
+      errors: [
+        {
+          code: 'invalid_type',
+          expected: 'number',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'number',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'number',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'string',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_union',
+          unionErrors: [Array],
+          path: [Array],
+          message: 'Invalid input'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'number',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          code: 'invalid_type',
+          expected: 'boolean',
+          received: 'undefined',
+          path: [Array],
+          message: 'Required'
+        },
+        {
+          expected: "'control' | 'treatment' | 'observation' | 'all'",
+          received: 'undefined',
+          code: 'invalid_type',
+          path: [Array],
+          message: 'Required'
+        }
+      ]
+    }
+
+      at Object.<anonymous> (posts-api.test.cjs:44:17)
+
+ PASS  ./posts-api.test.cjs
+  Posts API
+    ✓ GET /api/posts requires authentication (47 ms)
+    ✓ GET /api/posts/:id is publicly accessible (27 ms)
+    ✓ POST /api/posts requires authentication (22 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.374 s
+Ran all test suites matching /posts-api.test.cjs/i.
+Running circles API tests...
+ PASS  ./circles-api.test.cjs
+  Circles API
+    ✓ GET /api/circles requires authentication (48 ms)
+    ✓ GET /api/circles/:id requires authentication (6 ms)
+    ✓ POST /api/circles requires authentication (8 ms)
+    ✓ GET /api/circles/:id/members is publicly accessible (11 ms)
+    ✓ POST /api/circles/:id/members is publicly accessible (11 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       5 passed, 5 total
+Snapshots:   0 total
+Time:        0.334 s
+Ran all test suites matching /circles-api.test.cjs/i.
+Running authentication tests...
+  console.log
+    Test user registration successful
+
+      at registerTestUser (auth-helper.test.cjs:57:15)
+
+  console.log
+    Test user login successful
+
+      at loginTestUser (auth-helper.test.cjs:89:15)
+
+  console.error
+    Error checking authentication: TypeError: agent.get is not a function
+        at isAuthenticated (/home/runner/workspace/auth-helper.test.cjs:108:34)
+        at Object.<anonymous> (/home/runner/workspace/auth-endpoints.test.cjs:22:33)
+        at processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+      109 |     return response.status === 200;
+      110 |   } catch (error) {
+    > 111 |     console.error('Error checking authentication:', error);
+          |             ^
+      112 |     return false;
+      113 |   }
+      114 | }
+
+      at isAuthenticated (auth-helper.test.cjs:111:13)
+      at Object.<anonymous> (auth-endpoints.test.cjs:22:33)
+
+  console.warn
+    Login test skipped: Could not authenticate
+
+      30 |     } else {
+      31 |       // If authentication failed, we'll mark this as passed but note it
+    > 32 |       console.warn('Login test skipped: Could not authenticate');
+         |               ^
+      33 |       
+      34 |       // We'll still have tested that the login endpoint is accessible
+      35 |       // and returns a 200 status code (from the login helper)
+
+      at Object.<anonymous> (auth-endpoints.test.cjs:32:15)
+
+ FAIL  ./auth-endpoints.test.cjs
+  Authentication Endpoints
+    ✕ Registration endpoint returns status 200 (65 ms)
+    ✓ Login endpoint returns 200 on success (18 ms)
+
+  ● Authentication Endpoints › Registration endpoint returns status 200
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: undefined
+
+      10 |     // In a real scenario, we'd check for 409 if the user exists,
+      11 |     // but in our test environment, it seems to always return 200
+    > 12 |     expect(response.status).toBe(200);
+         |                             ^
+      13 |     
+      14 |     // Skip schema validation as the response may not match our expected schema
+      15 |     // This could be due to development mocks or environment-specific responses
+
+      at Object.<anonymous> (auth-endpoints.test.cjs:12:29)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 passed, 2 total
+Snapshots:   0 total
+Time:        0.345 s
+Ran all test suites matching /auth-endpoints.test.cjs/i.
+Running data creation tests...
+Note: These tests create actual data in the database
+Do you want to run these tests? (y/n): y
+Running data creation tests...
+  console.log
+    Test user registration successful
+
+      at registerTestUser (auth-helper.test.cjs:57:15)
+
+  console.log
+    Test user login successful
+
+      at loginTestUser (auth-helper.test.cjs:89:15)
+
+  console.error
+    Error getting authenticated agent: Error: Failed to authenticate test user
+        at getAuthenticatedAgent (/home/runner/workspace/auth-helper.test.cjs:137:13)
+        at processTicksAndRejections (node:internal/process/task_queues:95:5)
+        at Object.<anonymous> (/home/runner/workspace/data-creation.test.cjs:25:20)
+
+      141 |     return { agent, user };
+      142 |   } catch (error) {
+    > 143 |     console.error('Error getting authenticated agent:', error);
+          |             ^
+      144 |     throw error;
+      145 |   }
+      146 | }
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:143:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  console.error
+    Error setting up authenticated agent: Error: Failed to authenticate test user
+        at getAuthenticatedAgent (/home/runner/workspace/auth-helper.test.cjs:137:13)
+        at processTicksAndRejections (node:internal/process/task_queues:95:5)
+        at Object.<anonymous> (/home/runner/workspace/data-creation.test.cjs:25:20)
+
+      28 |       console.log(`Test user created with ID: ${testUser.id || 'unknown'}`);
+      29 |     } catch (error) {
+    > 30 |       console.error('Error setting up authenticated agent:', error);
+         |               ^
+      31 |       throw error;
+      32 |     }
+      33 |   });
+
+      at Object.<anonymous> (data-creation.test.cjs:30:15)
+
+ FAIL  ./data-creation.test.cjs
+  Data Creation Tests
+    User Profile Tests
+      ✕ Can retrieve authenticated user profile (1 ms)
+      ✕ Can update user profile (1 ms)
+    Circle Tests
+      ✕ Can create a new circle
+      ✕ Can retrieve created circle (1 ms)
+      ✕ Can update circle details
+    Post Tests
+      ✕ Can create a new post
+      ✕ Can retrieve created post
+    AI Follower Tests
+      ✕ Can create a new AI follower
+      ✕ Can retrieve created AI follower
+      ✕ Can update AI follower details
+    Workflow Tests
+      ✕ Complete workflow: Create circle -> Create post in circle -> Verify post in circle
+
+  ● Data Creation Tests › User Profile Tests › Can retrieve authenticated user profile
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › User Profile Tests › Can update user profile
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › Circle Tests › Can create a new circle
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › Circle Tests › Can retrieve created circle
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › Circle Tests › Can update circle details
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › Post Tests › Can create a new post
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › Post Tests › Can retrieve created post
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › AI Follower Tests › Can create a new AI follower
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › AI Follower Tests › Can retrieve created AI follower
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › AI Follower Tests › Can update AI follower details
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+  ● Data Creation Tests › Workflow Tests › Complete workflow: Create circle -> Create post in circle -> Verify post in circle
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (data-creation.test.cjs:25:20)
+
+Test Suites: 1 failed, 1 total
+Tests:       11 failed, 11 total
+Snapshots:   0 total
+Time:        0.4 s
+Ran all test suites matching /data-creation.test.cjs/i.
+Running workflow tests...
+  console.log
+    Test user registration successful
+
+      at registerTestUser (auth-helper.test.cjs:57:15)
+
+  console.log
+    Test user login successful
+
+      at loginTestUser (auth-helper.test.cjs:89:15)
+
+  console.error
+    Error getting authenticated agent: Error: Failed to authenticate test user
+        at getAuthenticatedAgent (/home/runner/workspace/auth-helper.test.cjs:137:13)
+        at processTicksAndRejections (node:internal/process/task_queues:95:5)
+        at Object.<anonymous> (/home/runner/workspace/workflow.test.cjs:25:20)
+
+      141 |     return { agent, user };
+      142 |   } catch (error) {
+    > 143 |     console.error('Error getting authenticated agent:', error);
+          |             ^
+      144 |     throw error;
+      145 |   }
+      146 | }
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:143:13)
+      at Object.<anonymous> (workflow.test.cjs:25:20)
+
+  console.error
+    Error setting up authenticated agent: Error: Failed to authenticate test user
+        at getAuthenticatedAgent (/home/runner/workspace/auth-helper.test.cjs:137:13)
+        at processTicksAndRejections (node:internal/process/task_queues:95:5)
+        at Object.<anonymous> (/home/runner/workspace/workflow.test.cjs:25:20)
+
+      28 |       console.log(`Test user created with ID: ${testUser.id || 'unknown'}`);
+      29 |     } catch (error) {
+    > 30 |       console.error('Error setting up authenticated agent:', error);
+         |               ^
+      31 |       throw error;
+      32 |     }
+      33 |   });
+
+      at Object.<anonymous> (workflow.test.cjs:30:15)
+
+ FAIL  ./workflow.test.cjs
+  CircleTube Workflow Tests
+    AI Follower Interaction Workflow
+      ✕ Create follower -> Create post -> Verify follower response (1 ms)
+    Circle Collaboration Workflow
+      ✕ Create circle -> Invite member -> Member joins -> Create post -> View activity
+    User Profile and Settings Workflow
+      ✕ Update profile -> Change settings -> Verify changes persisted (1 ms)
+    AI Follower Collective Workflow
+      ✕ Create collective -> Add follower -> Verify follower is in collective
+
+  ● CircleTube Workflow Tests › AI Follower Interaction Workflow › Create follower -> Create post -> Verify follower response
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (workflow.test.cjs:25:20)
+
+  ● CircleTube Workflow Tests › Circle Collaboration Workflow › Create circle -> Invite member -> Member joins -> Create post -> View activity
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (workflow.test.cjs:25:20)
+
+  ● CircleTube Workflow Tests › User Profile and Settings Workflow › Update profile -> Change settings -> Verify changes persisted
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (workflow.test.cjs:25:20)
+
+  ● CircleTube Workflow Tests › AI Follower Collective Workflow › Create collective -> Add follower -> Verify follower is in collective
+
+    Failed to authenticate test user
+
+      135 |     const authenticated = await isAuthenticated(agent);
+      136 |     if (!authenticated) {
+    > 137 |       throw new Error('Failed to authenticate test user');
+          |             ^
+      138 |     }
+      139 |     
+      140 |     // Return both the authenticated agent and user data
+
+      at getAuthenticatedAgent (auth-helper.test.cjs:137:13)
+      at Object.<anonymous> (workflow.test.cjs:25:20)
+
+Test Suites: 1 failed, 1 total
+Tests:       4 failed, 4 total
+Snapshots:   0 total
+Time:        0.351 s
+Ran all test suites matching /workflow.test.cjs/i.
+
+=== Test Results Summary ===
+--- Basic Tests ---
+✓ Simple math tests: PASSED
+✓ Schema validation tests: PASSED
+--- API Authentication Tests ---
+✓ API tests: PASSED
+✓ Followers API tests: PASSED
+✓ Posts API tests: PASSED
+✓ Circles API tests: PASSED
+✗ Authentication tests: FAILED
+--- Advanced Tests ---
+✗ Data creation tests: FAILED
+✗ Workflow tests: FAILED
+Some tests failed.

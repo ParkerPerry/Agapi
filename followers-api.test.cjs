@@ -19,7 +19,7 @@ const followerSchema = z.object({
 const followersResponseSchema = z.array(followerSchema);
 
 describe('Followers API', () => {
-  const request = supertest('http://localhost:5000');
+  const request = supertest('http://localhost:80'); // Using port 80 which is mapped to the app in Replit
   
   test('GET /api/followers requires authentication', async () => {
     const response = await request.get('/api/followers');

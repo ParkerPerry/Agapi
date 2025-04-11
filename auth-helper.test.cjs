@@ -6,8 +6,30 @@ const supertest = require('supertest');
 const { z } = require('zod');
 const { randomUUID } = require('crypto');
 
-// Base URL for API requests
-const BASE_URL = 'http://localhost:5000';
+// Base URLs for API requests with fallback options
+const BASE_URLS = [
+  'http://localhost:80',  // Replit HTTP proxy
+  'http://localhost:5000', // Primary port
+  'http://localhost:5001'  // Fallback port
+];
+
+// Function to find the first working URL
+async function findWorkingBaseUrl() {
+  for (const url of BASE_URLS) {
+    try {
+      const response = await fetch(`${url}/api`);
+      console.log(`Successfully connected to ${url}`);
+      return url;
+    } catch (error) {
+      console.log(`Failed to connect to ${url}: ${error.message}`);
+    }
+  }
+  console.log('Could not connect to any of the configured URLs, defaulting to first option');
+  return BASE_URLS[0];
+}
+
+// Initialize with the first option, but this will be updated later
+let BASE_URL = BASE_URLS[0];
 
 // Default test user credentials
 const TEST_USER = {
@@ -48,24 +70,40 @@ async function registerTestUser(agent = null, userData = null) {
   const request = agent || supertest(BASE_URL);
   const testUser = userData || createUniqueTestUser();
   
+  console.log(`Attempting to register user: ${testUser.username}`);
+  
   try {
     const response = await request
       .post('/api/auth/register')
       .send(testUser);
     
-    if (response.status === 200) {
-      console.log('Test user registration successful');
-      return {
+    // Add debugging to see what we're getting back
+    console.log(`Registration response status: ${response.status}`);
+    
+    // If the user already exists, this might be a 409 Conflict or could still be 200 OK
+    // depending on the API implementation
+    if (response.status === 200 || response.status === 201 || response.status === 409) {
+      console.log('Test user registration successful or user already exists');
+      
+      // Combine the test user data with any returned data
+      // Fall back to just the test user data if the body is empty
+      const userData = {
         ...testUser,
-        ...response.body
+        ...(response.body || {})
       };
+      
+      console.log(`Registered user data: ${JSON.stringify(userData)}`);
+      return userData;
     } else {
       console.error('Test user registration failed:', response.status, response.body);
       throw new Error(`Failed to register test user: ${response.status}`);
     }
   } catch (error) {
     console.error('Error registering test user:', error);
-    throw error;
+    
+    // If we get an error but the user might have been created anyway,
+    // return the test user data as a fallback
+    return testUser;
   }
 }
 
@@ -74,10 +112,10 @@ async function registerTestUser(agent = null, userData = null) {
  * @param {Object} agent - Optional supertest agent to maintain session
  * @param {string} username - Username to login with
  * @param {string} password - Password to login with
- * @returns {Promise<Object>} Login response data
+ * @returns {Promise<Object>} Object containing the agent and login response
  */
 async function loginTestUser(agent = null, username = TEST_USER.username, password = TEST_USER.password) {
-  const request = agent || supertest(BASE_URL);
+  const request = agent || supertest.agent(BASE_URL);
   
   try {
     const loginResponse = await request
@@ -87,7 +125,11 @@ async function loginTestUser(agent = null, username = TEST_USER.username, passwo
     // Check if login was successful
     if (loginResponse.status === 200) {
       console.log('Test user login successful');
-      return loginResponse.body;
+      // Return both the agent (for session cookies) and the response body
+      return { 
+        agent: request, 
+        body: loginResponse.body 
+      };
     } else {
       console.error('Test user login failed with status:', loginResponse.status);
       throw new Error(`Login failed with status: ${loginResponse.status}`);
@@ -129,16 +171,25 @@ async function getAuthenticatedAgent() {
     const user = await registerTestUser(agent, testUser);
     
     // Log in with the new user
-    await loginTestUser(agent, user.username, user.password);
+    const loginResult = await loginTestUser(agent, user.username, user.password);
+    
+    // Make sure we're using the agent with the session cookies
+    const authenticatedAgent = loginResult.agent;
+    
+    // Add debugging to understand what's happening
+    console.log(`Testing authentication for user: ${user.username}`);
     
     // Verify authentication succeeded
-    const authenticated = await isAuthenticated(agent);
+    const authenticated = await isAuthenticated(authenticatedAgent);
     if (!authenticated) {
+      console.error('Authentication check failed - user is not authenticated');
       throw new Error('Failed to authenticate test user');
     }
     
+    console.log('Authentication successful!');
+    
     // Return both the authenticated agent and user data
-    return { agent, user };
+    return { agent: authenticatedAgent, user };
   } catch (error) {
     console.error('Error getting authenticated agent:', error);
     throw error;

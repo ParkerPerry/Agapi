@@ -33,7 +33,7 @@ const circleMemberSchema = z.object({
 const circleMembersListSchema = z.array(circleMemberSchema);
 
 describe('Circles API', () => {
-  const request = supertest('http://localhost:5000');
+  const request = supertest('http://localhost:80'); // Using port 80 which is mapped to the app in Replit
   
   test('GET /api/circles requires authentication', async () => {
     const response = await request.get('/api/circles');

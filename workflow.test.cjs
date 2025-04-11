@@ -10,7 +10,7 @@ const supertest = require('supertest');
 const { getAuthenticatedAgent, cleanupTestData } = require('./auth-helper.test.cjs');
 
 // Base URL for API requests
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://localhost:80'; // Port 80 is mapped to the app in Replit
 
 // Test timeout (increased for workflow tests)
 jest.setTimeout(15000);
