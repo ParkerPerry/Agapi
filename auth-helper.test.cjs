@@ -96,7 +96,7 @@ async function registerTestUser(agent = null, userData = null) {
   
   try {
     const response = await request
-      .post('/api/auth/register')
+      .post('/api/register')
       .send(testUser);
     
     // Add debugging to see what we're getting back
@@ -146,7 +146,7 @@ async function loginTestUser(agent = null, username = TEST_USER.username, passwo
   
   try {
     const loginResponse = await request
-      .post('/api/auth/login')
+      .post('/api/login')
       .send({ username, password });
     
     // Check if login was successful
@@ -220,7 +220,7 @@ async function getAuthenticatedAgent() {
     
     // Login directly with the agent
     const loginResponse = await agent
-      .post('/api/auth/login')
+      .post('/api/login')
       .send({ 
         username: user.username, 
         password: user.password 
