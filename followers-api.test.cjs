@@ -3,6 +3,7 @@
  */
 const supertest = require('supertest');
 const { z } = require('zod');
+const { initializeBaseUrl, BASE_URLS } = require('./auth-helper.test.cjs');
 
 // Define validation schema for follower
 const followerSchema = z.object({
@@ -18,11 +19,21 @@ const followerSchema = z.object({
 // Define validation schema for followers response
 const followersResponseSchema = z.array(followerSchema);
 
+// Base URL will be determined dynamically
+let BASE_URL = BASE_URLS[0]; // Start with first option
+
 describe('Followers API', () => {
-  const request = supertest('http://localhost:80'); // Using port 80 which is mapped to the app in Replit
+  // Initialize before running tests
+  beforeAll(async () => {
+    BASE_URL = await initializeBaseUrl();
+    console.log(`Followers API tests using base URL: ${BASE_URL}`);
+  });
+  
+  // Get a new request object with the correct base URL
+  const getRequest = () => supertest(BASE_URL);
   
   test('GET /api/followers requires authentication', async () => {
-    const response = await request.get('/api/followers');
+    const response = await getRequest().get('/api/followers');
     
     // Since we're not authenticated, we expect a 401 status
     expect(response.status).toBe(401);
@@ -30,7 +41,7 @@ describe('Followers API', () => {
   
   test('GET /api/followers/:id requires authentication', async () => {
     // Try with ID 1
-    const response = await request.get('/api/followers/1');
+    const response = await getRequest().get('/api/followers/1');
     
     // Since we're not authenticated, we expect a 401 status
     expect(response.status).toBe(401);
@@ -47,7 +58,7 @@ describe('Followers API', () => {
     // Mock authentication would go here
     // const agent = await loginTestUser();
     
-    const response = await request.get('/api/followers');
+    const response = await getRequest().get('/api/followers');
     
     // Check if the endpoint returns a 200 status
     expect(response.status).toBe(200);

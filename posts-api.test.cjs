@@ -3,6 +3,10 @@
  */
 const supertest = require('supertest');
 const { z } = require('zod');
+const { initializeBaseUrl, BASE_URLS } = require('./auth-helper.test.cjs');
+
+// Base URL will be determined dynamically
+let BASE_URL = BASE_URLS[0]; // Start with first option
 
 // Define a more flexible validation schema for post
 // Using .optional() for fields that might not always be present
@@ -25,8 +29,14 @@ const postSchema = z.object({
 const postsListSchema = z.array(postSchema);
 
 describe('Posts API', () => {
-  // Use port 80 which is mapped to the app in Replit
-  const request = supertest('http://localhost:80');
+  // Initialize before running tests
+  beforeAll(async () => {
+    BASE_URL = await initializeBaseUrl();
+    console.log(`Posts API tests using base URL: ${BASE_URL}`);
+  });
+  
+  // Get a new request object with the correct base URL
+  const getRequest = () => supertest(BASE_URL);
   
   test('GET /api/posts requires authentication', async () => {
     const response = await request.get('/api/posts');
