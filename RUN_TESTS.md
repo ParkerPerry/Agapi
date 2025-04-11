@@ -10,7 +10,7 @@ To run all tests, use the provided bash script:
 ./run-simple-tests.sh
 ```
 
-This will execute all the test files and provide a summary of test results at the end.
+This will execute all the test files and provide a summary of test results at the end. The script gives you the option to run basic authentication tests only, or to include advanced tests that create actual data in the database.
 
 If the script is not executable, you may need to make it executable first:
 
@@ -20,26 +20,63 @@ chmod +x run-simple-tests.sh
 
 ## Test Structure
 
-The tests are organized by feature area:
+The tests are organized into three main categories:
 
+### Basic Tests
 - `simple.test.cjs` - Basic math tests to verify Jest is working correctly
 - `schema.test.cjs` - Tests for Zod schema validation
+
+### API Authentication Tests
 - `server-api.test.cjs` - Tests for basic server endpoints
 - `followers-api.test.cjs` - Tests for AI followers endpoints
 - `posts-api.test.cjs` - Tests for posts endpoints
 - `circles-api.test.cjs` - Tests for circles endpoints
 - `auth-endpoints.test.cjs` - Tests for authentication endpoints
 
+### Advanced Tests (Data Creation and Workflows)
+- `data-creation.test.cjs` - Tests for creating and manipulating actual data
+- `workflow.test.cjs` - Tests for complete user workflows and interactions
+
 ## Configuration
 
 Tests use a minimal Jest configuration defined in `jest.minimal.config.cjs`. This configuration is designed to work with CommonJS modules and avoid TypeScript complexities.
 
-## Authentication Testing
+## Authentication Testing and Helpers
 
-The authentication tests use a helper file (`auth-helper.test.cjs`) that provides utilities for testing authentication flows. Key functions include:
+The authentication helper module (`auth-helper.test.cjs`) provides utilities for testing authentication flows and maintaining session state across requests. Key functions include:
 
-- `registerTestUser()` - Registers a new user for testing
-- `loginTestUser()` - Logs in the test user and returns auth tokens/cookies
+- `registerTestUser(agent, userData)` - Registers a new user for testing
+- `loginTestUser(agent, username, password)` - Logs in the test user
+- `getAuthenticatedAgent()` - Creates a pre-authenticated supertest agent
+- `isAuthenticated(agent)` - Checks if an agent is authenticated
+- `cleanupTestData(userId)` - Cleans up test data after tests run
+
+Example of using the authenticated agent:
+
+```javascript
+const { getAuthenticatedAgent } = require('./auth-helper.test.cjs');
+
+describe('Authenticated API Tests', () => {
+  let authenticatedAgent;
+  let testUser;
+  
+  beforeAll(async () => {
+    // Get an authenticated agent for testing
+    const auth = await getAuthenticatedAgent();
+    authenticatedAgent = auth.agent;
+    testUser = auth.user;
+  });
+  
+  test('Create a post when authenticated', async () => {
+    const postData = { content: 'Test post' };
+    const response = await authenticatedAgent.post('/api/posts').send(postData);
+    
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id');
+    expect(response.body.content).toBe(postData.content);
+  });
+});
+```
 
 ## Understanding Public vs. Protected Endpoints
 
@@ -63,6 +100,52 @@ When writing tests, it's important to note which endpoints are public vs. protec
   - `GET /api/circles/:id` - Getting a specific circle
   - `POST /api/circles` - Creating a circle
 
+## Data Creation Testing
+
+Data creation tests verify the API's ability to create, read, update, and delete entities like users, posts, circles, and followers. These tests:
+
+1. Create an authenticated session
+2. Create test entities in the database
+3. Verify the entities were created correctly
+4. Update the entities
+5. Verify the updates were applied
+6. (Optionally) Clean up the created test data
+
+Example of a data creation test:
+
+```javascript
+test('Can create and update a circle', async () => {
+  // Create a circle
+  const circleData = {
+    name: 'Test Circle',
+    description: 'Circle created by automated tests',
+    visibility: 'private'
+  };
+  
+  const createResponse = await authenticatedAgent.post('/api/circles').send(circleData);
+  expect(createResponse.status).toBe(200);
+  const circleId = createResponse.body.id;
+  
+  // Update the circle
+  const updates = {
+    name: 'Updated Test Circle',
+    description: 'This circle was updated by automated tests'
+  };
+  
+  const updateResponse = await authenticatedAgent.patch(`/api/circles/${circleId}`).send(updates);
+  expect(updateResponse.status).toBe(200);
+  expect(updateResponse.body.name).toBe(updates.name);
+});
+```
+
+## Workflow Testing
+
+Workflow tests simulate complete user journeys through the application by combining multiple API calls in sequence. These tests ensure that different components of the API work together correctly. Examples include:
+
+1. Creating a circle, adding a member, and creating a post in the circle
+2. Creating an AI follower, creating a post, and verifying follower responses
+3. Updating user profile and verifying changes are persisted
+
 ## Schema Validation
 
 The tests use Zod for schema validation. Model schemas are defined in the test files and used to validate API responses.
@@ -83,6 +166,7 @@ The tests use Zod for schema validation. Model schemas are defined in the test f
  */
 const supertest = require('supertest');
 const { z } = require('zod');
+const { getAuthenticatedAgent } = require('./auth-helper.test.cjs');
 
 // Define validation schema if needed
 const mySchema = z.object({
@@ -90,27 +174,30 @@ const mySchema = z.object({
 });
 
 describe('[Feature] API', () => {
+  // For unauthenticated tests
   const request = supertest('http://localhost:5000');
   
-  test('Endpoint description', async () => {
-    const response = await request.get('/api/endpoint');
-    
-    // Add assertions
+  // For authenticated tests
+  let authenticatedAgent;
+  let testUser;
+  
+  beforeAll(async () => {
+    const auth = await getAuthenticatedAgent();
+    authenticatedAgent = auth.agent;
+    testUser = auth.user;
+  });
+  
+  test('Unauthenticated endpoint test', async () => {
+    const response = await request.get('/api/public-endpoint');
     expect(response.status).toBe(200);
-    
-    // If needed, validate response schema
-    const validationResult = mySchema.safeParse(response.body);
-    expect(validationResult.success).toBe(true);
+  });
+  
+  test('Authenticated endpoint test', async () => {
+    const response = await authenticatedAgent.get('/api/protected-endpoint');
+    expect(response.status).toBe(200);
   });
 });
 ```
-
-### Adding Authentication to Tests
-
-To test endpoints that require authentication, you'll need to extend the current tests to include authentication support. This can be done by:
-
-1. Updating the `auth-helper.test.cjs` file to support authenticated requests
-2. Modifying test files to use the authenticated request helper
 
 ## Best Practices
 
@@ -119,10 +206,15 @@ To test endpoints that require authentication, you'll need to extend the current
 3. Test both success and error cases
 4. Keep tests focused on a single unit of functionality
 5. Use descriptive test names
+6. Create isolated test data that doesn't interfere with existing data
+7. Clean up test data after tests run
+8. Test complete workflows to ensure components work together correctly
 
 ## Future Improvements
 
-- Add integration tests for complete workflows
-- Implement test fixtures for generating test data
-- Add mock services for external dependencies
-- Expand test coverage to include edge cases and error handling
+- Add test database setup for isolated testing
+- Implement more comprehensive test data generation
+- Add mock services for external dependencies (OpenAI, etc.)
+- Add performance and load testing
+- Implement test coverage reporting
+- Add continuous integration setup for automated test runs
