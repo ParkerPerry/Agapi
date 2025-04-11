@@ -16,7 +16,7 @@ run_test() {
   local test_name=$2
   
   echo -e "${BLUE}Running ${test_name}...${NC}"
-  echo -e "${YELLOW}Note: Tests will automatically detect the available server port (tries ports 80, 5000, 5001)${NC}"
+  echo -e "${YELLOW}Note: Tests will use port 5000 for all API requests${NC}"
   
   # Run the test with added debugging
   $JEST_CMD $test_file --verbose

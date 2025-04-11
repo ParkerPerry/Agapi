@@ -2,15 +2,12 @@
  * Simple API test against the running server
  */
 const supertest = require('supertest');
-const { initializeBaseUrl, BASE_URLS } = require('./auth-helper.test.cjs');
-
-// Base URL will be determined dynamically
-let BASE_URL = BASE_URLS[0]; // Start with first option
+const { initializeBaseUrl, BASE_URL } = require('./auth-helper.test.cjs');
 
 describe('Server API', () => {
   // Initialize before running tests
   beforeAll(async () => {
-    BASE_URL = await initializeBaseUrl();
+    await initializeBaseUrl(); // Just logs the base URL
     console.log(`Server API tests using base URL: ${BASE_URL}`);
   });
   

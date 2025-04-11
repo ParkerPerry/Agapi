@@ -6,45 +6,35 @@ const supertest = require('supertest');
 const { z } = require('zod');
 const { randomUUID } = require('crypto');
 
-// Base URLs for API requests with fallback options
-const BASE_URLS = [
-  'http://localhost:80',  // Replit HTTP proxy
-  'http://localhost:5000', // Primary port
-  'http://localhost:5001'  // Fallback port
-];
+// Fixed base URL for API requests, always using port 5000
+const BASE_URL = 'http://localhost:5000';  // Internal port for the server
 
-// Function to find the first working URL
+// Simple function to log the base URL being used
 async function findWorkingBaseUrl() {
-  for (const url of BASE_URLS) {
-    try {
-      // Use supertest for consistent behavior with the rest of the tests
-      const request = supertest(url);
-      const response = await request.get('/api/user');
-      
-      // We expect a 401 for unauthenticated requests - that means the server is up
-      if (response.status === 401) {
-        console.log(`Successfully connected to ${url} (got 401 as expected for unauthenticated request)`);
-        return url;
-      }
-      
+  try {
+    // Use supertest for consistent behavior with the rest of the tests
+    const request = supertest(BASE_URL);
+    const response = await request.get('/api/user');
+    
+    // We expect a 401 for unauthenticated requests - that means the server is up
+    if (response.status === 401) {
+      console.log(`Successfully connected to ${BASE_URL} (got 401 as expected for unauthenticated request)`);
+    } else {
       // If we got any response at all, the server is running
-      console.log(`Connected to ${url} with status ${response.status}`);
-      return url;
-    } catch (error) {
-      console.log(`Failed to connect to ${url}: ${error.message}`);
+      console.log(`Connected to ${BASE_URL} with status ${response.status}`);
     }
+  } catch (error) {
+    console.log(`Warning: Could not connect to ${BASE_URL}: ${error.message}`);
+    console.log('Continuing with tests anyway, but they may fail if the server is not running');
   }
-  console.log('Could not connect to any of the configured URLs, defaulting to first option');
-  return BASE_URLS[0];
+  
+  return BASE_URL;
 }
 
-// Initialize with the first option by default
-let BASE_URL = BASE_URLS[0];
-
-// This will be called before tests run to set the correct URL
+// This will be called before tests run to log the URL
 async function initializeBaseUrl() {
-  BASE_URL = await findWorkingBaseUrl();
-  console.log(`Using base URL: ${BASE_URL}`);
+  await findWorkingBaseUrl();
+  console.log(`Using fixed base URL: ${BASE_URL}`);
   return BASE_URL;
 }
 
@@ -336,5 +326,5 @@ module.exports = {
   createUniqueTestUser,
   initializeBaseUrl,
   findWorkingBaseUrl,
-  BASE_URLS
+  BASE_URL
 };
