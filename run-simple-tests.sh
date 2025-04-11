@@ -30,6 +30,10 @@ echo -e "${BLUE}Running posts API tests...${NC}"
 $JEST_CMD posts-api.test.cjs
 POSTS_RESULT=$?
 
+echo -e "${BLUE}Running circles API tests...${NC}"
+$JEST_CMD circles-api.test.cjs
+CIRCLES_RESULT=$?
+
 echo -e "${BLUE}Running authentication tests...${NC}"
 $JEST_CMD auth-endpoints.test.cjs
 AUTH_RESULT=$?
@@ -68,6 +72,12 @@ else
   echo -e "${RED}✗ Posts API tests: FAILED${NC}"
 fi
 
+if [ $CIRCLES_RESULT -eq 0 ]; then
+  echo -e "${GREEN}✓ Circles API tests: PASSED${NC}"
+else
+  echo -e "${RED}✗ Circles API tests: FAILED${NC}"
+fi
+
 if [ $AUTH_RESULT -eq 0 ]; then
   echo -e "${GREEN}✓ Authentication tests: PASSED${NC}"
 else
@@ -75,7 +85,7 @@ else
 fi
 
 # Overall result
-if [ $SIMPLE_RESULT -eq 0 ] && [ $SCHEMA_RESULT -eq 0 ] && [ $API_RESULT -eq 0 ] && [ $FOLLOWERS_RESULT -eq 0 ] && [ $POSTS_RESULT -eq 0 ] && [ $AUTH_RESULT -eq 0 ]; then
+if [ $SIMPLE_RESULT -eq 0 ] && [ $SCHEMA_RESULT -eq 0 ] && [ $API_RESULT -eq 0 ] && [ $FOLLOWERS_RESULT -eq 0 ] && [ $POSTS_RESULT -eq 0 ] && [ $CIRCLES_RESULT -eq 0 ] && [ $AUTH_RESULT -eq 0 ]; then
   echo -e "${GREEN}All tests passed!${NC}"
   exit 0
 else

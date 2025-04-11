@@ -1,117 +1,128 @@
-# CircleTube Test Runner Guide
+# CircleTube API Testing Guide
 
-We've created a simplified testing approach that you can run manually. Here's how to use it:
+This document outlines the testing approach for the CircleTube API. The testing framework is designed to be lightweight, easy to extend, and compatible with the CommonJS module system to avoid TypeScript configuration issues.
 
-## 1. Basic Tests
+## Running the Tests
 
-Run our simple math test (guaranteed to work):
-
-```bash
-npx jest --config=jest.minimal.config.cjs
-```
-
-This will run the `simple.test.cjs` file with minimal configuration.
-
-## 2. Schema Validation Tests
-
-To verify that our schema validation is working:
+To run all tests, use the provided bash script:
 
 ```bash
-npx jest --config=jest.minimal.config.cjs schema.test.cjs
+./run-simple-tests.sh
 ```
 
-## 3. Running with Verbose Output
+This will execute all the test files and provide a summary of test results at the end.
 
-For more detailed test output:
+If the script is not executable, you may need to make it executable first:
 
 ```bash
-npx jest --config=jest.minimal.config.cjs --verbose
+chmod +x run-simple-tests.sh
 ```
 
-## 4. Adding Your Own Tests
+## Test Structure
 
-If you want to add more tests:
+The tests are organized by feature area:
 
-1. Create new test files with `.test.cjs` extension
-2. Write tests using CommonJS syntax (require instead of import)
-3. Run them with the minimal config:
+- `simple.test.cjs` - Basic math tests to verify Jest is working correctly
+- `schema.test.cjs` - Tests for Zod schema validation
+- `server-api.test.cjs` - Tests for basic server endpoints
+- `followers-api.test.cjs` - Tests for AI followers endpoints
+- `posts-api.test.cjs` - Tests for posts endpoints
+- `circles-api.test.cjs` - Tests for circles endpoints
+- `auth-endpoints.test.cjs` - Tests for authentication endpoints
 
-```bash
-npx jest --config=jest.minimal.config.cjs your-new-test.test.cjs
-```
+## Configuration
 
-## 5. Testing Against the Running Server
+Tests use a minimal Jest configuration defined in `jest.minimal.config.cjs`. This configuration is designed to work with CommonJS modules and avoid TypeScript complexities.
 
-Since your server is running on port 5000, you can write integration tests that interact with it:
+## Authentication Testing
+
+The authentication tests use a helper file (`auth-helper.test.cjs`) that provides utilities for testing authentication flows. Key functions include:
+
+- `registerTestUser()` - Registers a new user for testing
+- `loginTestUser()` - Logs in the test user and returns auth tokens/cookies
+
+## Understanding Public vs. Protected Endpoints
+
+When writing tests, it's important to note which endpoints are public vs. protected:
+
+- Public endpoints (no authentication required):
+  - `GET /api` - Server health check
+  - `GET /api/posts/:id` - Viewing a single post
+  - `GET /api/circles/:id/members` - Viewing circle members
+  - `POST /api/circles/:id/members` - Adding a member to a circle
+  - `POST /api/auth/register` - User registration
+  - `POST /api/auth/login` - User login
+
+- Protected endpoints (authentication required):
+  - `GET /api/user` - Getting current user
+  - `GET /api/posts` - Getting all posts
+  - `POST /api/posts` - Creating a post
+  - `GET /api/followers` - Getting all followers
+  - `GET /api/followers/:id` - Getting a specific follower
+  - `GET /api/circles` - Getting all circles
+  - `GET /api/circles/:id` - Getting a specific circle
+  - `POST /api/circles` - Creating a circle
+
+## Schema Validation
+
+The tests use Zod for schema validation. Model schemas are defined in the test files and used to validate API responses.
+
+## Extending the Tests
+
+### Adding a New Test File
+
+1. Create a new CommonJS file with the `.cjs` extension
+2. Add your tests using the Jest `describe` and `test` functions
+3. Add the test file to the `run-simple-tests.sh` script
+
+### Example Test Structure
 
 ```javascript
-// server-api.test.cjs
+/**
+ * Test file for [Feature] API endpoints
+ */
 const supertest = require('supertest');
+const { z } = require('zod');
 
-describe('Server API', () => {
+// Define validation schema if needed
+const mySchema = z.object({
+  // Define schema properties
+});
+
+describe('[Feature] API', () => {
   const request = supertest('http://localhost:5000');
   
-  test('GET /api/user returns 401 when not authenticated', async () => {
-    const response = await request.get('/api/user');
-    expect(response.status).toBe(401);
+  test('Endpoint description', async () => {
+    const response = await request.get('/api/endpoint');
+    
+    // Add assertions
+    expect(response.status).toBe(200);
+    
+    // If needed, validate response schema
+    const validationResult = mySchema.safeParse(response.body);
+    expect(validationResult.success).toBe(true);
   });
 });
 ```
 
-## 6. Adding a Test Script to package.json
+### Adding Authentication to Tests
 
-If you want to add a test script to package.json, you can run:
+To test endpoints that require authentication, you'll need to extend the current tests to include authentication support. This can be done by:
 
-```bash
-npm pkg set "scripts.test"="jest --config=jest.minimal.config.cjs"
-```
+1. Updating the `auth-helper.test.cjs` file to support authenticated requests
+2. Modifying test files to use the authenticated request helper
 
-Then you can run tests with:
+## Best Practices
 
-```bash
-npm test
-```
+1. Always test authentication requirements for protected endpoints
+2. Validate response schemas when appropriate
+3. Test both success and error cases
+4. Keep tests focused on a single unit of functionality
+5. Use descriptive test names
 
-## 7. Debugging Test Issues
+## Future Improvements
 
-If tests aren't running as expected:
-
-```bash
-# Run with more debugging output
-npx jest --config=jest.minimal.config.cjs --detectOpenHandles --verbose
-```
-
-## 8. Writing More Complex Tests
-
-When you want to write more complex tests, remember to:
-
-1. Use CommonJS modules (require instead of import)
-2. Keep dependencies minimal
-3. Handle promises properly with async/await
-4. Clean up any resources or connections when tests complete
-
-## Sample Test Template
-
-```javascript
-// template.test.cjs
-const supertest = require('supertest');
-
-describe('Feature Test', () => {
-  // Setup before tests
-  beforeEach(() => {
-    // Test setup code
-  });
-  
-  // Cleanup after tests
-  afterEach(() => {
-    // Test cleanup code
-  });
-  
-  test('test description', async () => {
-    // Test implementation
-    expect(true).toBe(true);
-  });
-});
-```
-
-The simple approach we've provided should work reliably for testing basic functionality without running into the environment conflicts we encountered earlier.
+- Add integration tests for complete workflows
+- Implement test fixtures for generating test data
+- Add mock services for external dependencies
+- Expand test coverage to include edge cases and error handling
