@@ -1,72 +1,73 @@
 /**
- * Global Jest setup file for CircleTube API testing
- * This file is loaded by Jest before any tests are run
+ * Jest setup file
+ * Configures the test environment for all tests
  */
 
-// Configure global environment for tests
+import '@testing-library/jest-dom';
+import { ZodSchema } from 'zod';
 import { mockStorage } from './helpers/mock-storage';
-import { jest, expect, beforeEach } from '@jest/globals';
 
-// Mock the storage module to use our test implementation
-jest.mock('../storage', () => ({
-  storage: mockStorage,
-  // We mock the interface and the implementation class
-  IStorage: jest.fn(),
-  DatabaseStorage: jest.fn().mockImplementation(() => mockStorage)
-}));
-
-// Mock OpenAI API for testing
-jest.mock('openai', () => {
-  const mockCreateCompletion = jest.fn().mockResolvedValue({
-    choices: [{
-      message: {
-        content: JSON.stringify({
-          type: "comment",
-          content: "Test AI response",
-          confidence: 0.95
-        })
-      }
-    }]
-  });
-
-  const mockChat = {
-    completions: {
-      create: mockCreateCompletion
-    }
-  };
-
-  return {
-    default: jest.fn().mockImplementation(() => ({
-      chat: mockChat
-    }))
+// Set up global test environment
+beforeAll(() => {
+  // Create the global test environment
+  global.testEnv = {
+    mockStorage
   };
 });
 
-// Mock WebSocket for testing
-jest.mock('ws', () => ({
-  WebSocketServer: jest.fn().mockImplementation(() => ({
-    on: jest.fn(),
-    clients: new Set(),
-    close: jest.fn()
-  })),
-  WebSocket: jest.fn()
-}));
-
-// Extend Jest with custom matchers
+// Add custom matchers
 expect.extend({
-  toBeValidResponse(received: any, status = 200) {
-    const isValid = received?.status === status && received?.body !== undefined;
-    return {
-      message: () => `expected response to have status ${status} and valid body`,
-      pass: isValid
-    };
+  /**
+   * Custom matcher to validate response against a Zod schema
+   * @param {any} received - The value to test
+   * @param {ZodSchema} schema - Zod schema to validate against
+   */
+  toMatchAPISchema(received: any, schema: ZodSchema) {
+    const result = schema.safeParse(received);
+    
+    if (result.success) {
+      return {
+        message: () => 'Response matches the schema',
+        pass: true
+      };
+    } else {
+      return {
+        message: () => `Response does not match schema: ${result.error.message}`,
+        pass: false
+      };
+    }
+  },
+  
+  /**
+   * Custom matcher to check if an object is a valid schema
+   * @param {any} received - The value to test
+   */
+  toBeValidSchema(received: any) {
+    if (
+      typeof received === 'object' && 
+      received !== null && 
+      typeof received.safeParse === 'function'
+    ) {
+      return {
+        message: () => 'Object is a valid schema',
+        pass: true
+      };
+    } else {
+      return {
+        message: () => 'Object is not a valid schema',
+        pass: false
+      };
+    }
   }
 });
 
-// Clean up mocks automatically
-beforeEach(() => {
+// Mock console.error to suppress expected test errors
+jest.spyOn(console, 'error').mockImplementation(() => {});
+
+// Add timeout for async tests (10 seconds)
+jest.setTimeout(10000);
+
+// Clean up mocks after each test
+afterEach(() => {
   jest.clearAllMocks();
 });
-
-// Global test timeout
-jest.setTimeout(10000); // 10 seconds timeout for all tests

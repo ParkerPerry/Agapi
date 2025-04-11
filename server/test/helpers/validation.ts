@@ -1,74 +1,138 @@
+/**
+ * Validation helpers for tests
+ * Utility functions to validate API responses
+ */
+
 import { Response } from 'supertest';
-import { z } from 'zod';
-import { expect } from '@jest/globals';
+import { ZodSchema } from 'zod';
 
 /**
- * Validates response status code and returns friendly error messages
- * @param {Response} response - Supertest response object
- * @param {number} expectedStatus - Expected HTTP status code
- * @param {string} message - Optional message for assertion
+ * Validate response status code
+ * @param {Response} response - Supertest response
+ * @param {number} expectedStatus - Expected status code
+ * @throws {Error} If status code doesn't match expected
  */
-export function validateStatus(response: Response, expectedStatus: number, message?: string): void {
-  const failMessage = message || `Expected status ${expectedStatus} but got ${response.status}`;
-  expect(response.status).toBe(expectedStatus);
-}
-
-/**
- * Validates response content type
- * @param {Response} response - Supertest response object
- * @param {string} contentType - Expected content type
- */
-export function validateContentType(response: Response, contentType: string = 'application/json'): void {
-  const responseContentType = response.headers['content-type'];
-  expect(responseContentType).toMatch(contentType);
-}
-
-/**
- * Validates response body against a Zod schema
- * @param {any} data - Response data to validate
- * @param {z.ZodType} schema - Zod schema to validate against
- * @returns {boolean} Whether validation succeeded
- */
-export function validateResponseAgainstSchema(data: any, schema: z.ZodType): boolean {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    console.error('Schema validation failed:', result.error);
+export function validateStatus(response: Response, expectedStatus: number): void {
+  if (response.status !== expectedStatus) {
+    throw new Error(
+      `Expected status ${expectedStatus} but got ${response.status}: ${
+        typeof response.body === 'object' 
+          ? JSON.stringify(response.body) 
+          : response.text
+      }`
+    );
   }
-  expect(result.success).toBe(true);
-  return result.success;
 }
 
 /**
- * Validates pagination in a response
- * @param {any} response - Response to validate
- * @param {number} page - Expected page number
- * @param {number} limit - Expected page size
- * @param {number} total - Expected total count
+ * Validate response body against a Zod schema
+ * @param {any} responseBody - Response body to validate
+ * @param {ZodSchema} schema - Zod schema to validate against
+ * @returns {any} Validated response (typed according to schema)
+ * @throws {Error} If validation fails
  */
-export function validatePagination(response: any, page: number, limit: number, total: number): void {
-  expect(response.pagination).toBeDefined();
-  expect(response.pagination.page).toBe(page);
-  expect(response.pagination.limit).toBe(limit);
-  expect(response.pagination.total).toBe(total);
+export function validateResponseAgainstSchema<T>(
+  responseBody: any, 
+  schema: ZodSchema<T>
+): T {
+  const result = schema.safeParse(responseBody);
+  
+  if (!result.success) {
+    throw new Error(
+      `Response validation failed: ${result.error.message}\nResponse body: ${
+        JSON.stringify(responseBody, null, 2)
+      }`
+    );
+  }
+  
+  return result.data;
 }
 
 /**
- * Validates error response format
- * @param {Response} response - Supertest response object
- * @param {number} status - Expected HTTP status code
+ * Validate response contains expected properties
+ * @param {any} responseBody - Response body to validate
+ * @param {string[]} expectedProps - Expected property names
+ * @throws {Error} If validation fails
  */
-export function validateErrorResponse(response: Response, status: number): void {
-  validateStatus(response, status);
-  expect(response.body).toHaveProperty('message');
-  expect(typeof response.body.message).toBe('string');
+export function validateResponseProperties(
+  responseBody: any,
+  expectedProps: string[]
+): void {
+  for (const prop of expectedProps) {
+    if (!(prop in responseBody)) {
+      throw new Error(
+        `Response is missing expected property: ${prop}\nResponse body: ${
+          JSON.stringify(responseBody, null, 2)
+        }`
+      );
+    }
+  }
 }
 
 /**
- * Validates that response contains a valid JWT token
- * @param {Response} response - Supertest response object
+ * Validate response contains expected error message
+ * @param {any} responseBody - Response body to validate
+ * @param {string} errorText - Text that should be in the error message
+ * @throws {Error} If validation fails
  */
-export function validateAuthToken(response: Response): void {
-  expect(response.body).toHaveProperty('token');
-  expect(typeof response.body.token).toBe('string');
-  expect(response.body.token.split('.')).toHaveLength(3); // JWT has 3 parts
+export function validateErrorMessage(
+  responseBody: any,
+  errorText: string
+): void {
+  if (!responseBody.message) {
+    throw new Error(
+      `Response is missing error message field\nResponse body: ${
+        JSON.stringify(responseBody, null, 2)
+      }`
+    );
+  }
+  
+  if (!responseBody.message.includes(errorText)) {
+    throw new Error(
+      `Error message does not contain expected text: "${errorText}"\nActual message: "${responseBody.message}"`
+    );
+  }
+}
+
+/**
+ * Validate API pagination response
+ * @param {any} responseBody - Response body to validate
+ * @param {number} pageSize - Expected page size
+ * @throws {Error} If validation fails
+ */
+export function validatePaginationResponse(
+  responseBody: any,
+  pageSize: number
+): void {
+  if (!Array.isArray(responseBody.data)) {
+    throw new Error(
+      `Expected response.data to be an array\nResponse body: ${
+        JSON.stringify(responseBody, null, 2)
+      }`
+    );
+  }
+  
+  if (responseBody.data.length > pageSize) {
+    throw new Error(
+      `Expected data array length to be <= ${pageSize}, but got ${
+        responseBody.data.length
+      }`
+    );
+  }
+  
+  if (!('totalCount' in responseBody)) {
+    throw new Error(
+      `Response is missing totalCount property\nResponse body: ${
+        JSON.stringify(responseBody, null, 2)
+      }`
+    );
+  }
+  
+  if (!('currentPage' in responseBody)) {
+    throw new Error(
+      `Response is missing currentPage property\nResponse body: ${
+        JSON.stringify(responseBody, null, 2)
+      }`
+    );
+  }
 }

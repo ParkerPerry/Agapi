@@ -1,84 +1,62 @@
-import request from 'supertest';
-import { Express } from 'express';
-import { storage } from '../../storage';
-import { jest } from '@jest/globals';
+/**
+ * Authentication helpers for tests
+ */
+
+import { SuperAgentTest } from 'supertest';
 
 /**
- * User interface for testing
+ * Authenticate a request
+ * @param {SuperAgentTest} agent - SuperTest agent to authenticate
+ * @param {string} username - Username to authenticate with
+ * @param {string} password - Password to authenticate with
+ * @returns {Promise<SuperAgentTest>} - Authenticated supertest agent
  */
-export interface TestUser {
-  id: number;
-  username: string;
-  password?: string;
-  avatarUrl?: string | null;
-  createdAt?: string;
-}
-
-/**
- * Create a supertest agent with authenticated session
- * @param {Express} app - Express application
- * @param {TestUser} user - Test user for authentication
- * @returns {Promise<request.SuperAgentTest>} Authenticated agent
- */
-export async function getAuthenticatedAgent(app: Express, user: TestUser): Promise<request.SuperAgentTest> {
-  const agent = request.agent(app);
-  
-  // Mock storage to provide user for login
-  jest.spyOn(storage, 'getUserByUsername').mockResolvedValue({
-    ...user,
-    password: user.password || 'hashedpassword'
-  });
-  
-  // Login to get a session
+export async function authenticateRequest(
+  agent: SuperAgentTest,
+  username: string, 
+  password: string
+): Promise<SuperAgentTest> {
   await agent
-    .post('/api/login')
-    .send({
-      username: user.username,
-      password: user.password || 'password'
-    });
+    .post('/api/auth/login')
+    .send({ username, password });
   
   return agent;
 }
 
 /**
- * Mock authentication middleware for testing
- * This adds user object to request without the need for actual authentication
- * @param {Express} app - Express application
- * @param {TestUser} user - Test user to inject
+ * Create a mock session for testing
+ * @param {number} userId - User ID to create session for
+ * @returns {object} - Mock session object
  */
-export function mockAuthentication(app: Express, user: TestUser = { id: 1, username: 'testuser' }): void {
-  app.use((req: any, _res: any, next: any) => {
-    req.isAuthenticated = () => true;
-    req.user = user;
-    next();
-  });
+export function createMockSession(userId: number): any {
+  return {
+    passport: {
+      user: userId
+    }
+  };
 }
 
 /**
- * Create a test user in the database
- * @param {Partial<TestUser>} userData - User data
- * @returns {Promise<TestUser>} Created test user
+ * Create mock authenticated request object
+ * @param {number} userId - User ID to authenticate as
+ * @returns {object} - Mock request object
  */
-export async function createTestUser(userData: Partial<TestUser> = {}): Promise<TestUser> {
-  const defaultUser = {
-    username: `test_${Math.random().toString(36).substring(2, 10)}`,
-    password: 'password',
-    avatarUrl: null,
-    createdAt: new Date().toISOString()
+export function createAuthenticatedRequest(userId: number): any {
+  return {
+    isAuthenticated: () => true,
+    user: { id: userId },
+    session: createMockSession(userId)
   };
-  
-  const userToCreate = {
-    ...defaultUser,
-    ...userData
+}
+
+/**
+ * Create mock unauthenticated request object
+ * @returns {object} - Mock request object
+ */
+export function createUnauthenticatedRequest(): any {
+  return {
+    isAuthenticated: () => false,
+    user: null,
+    session: {}
   };
-  
-  // Mock user creation
-  const createdUser = {
-    id: 1,
-    ...userToCreate
-  };
-  
-  jest.spyOn(storage, 'createUser').mockResolvedValue(createdUser);
-  
-  return createdUser;
 }
