@@ -10,7 +10,7 @@ const {
   isAuthenticated,
   initializeBaseUrl,
   BASE_URL
-} = require('./auth-helper.test.cjs');
+} = require(process.cwd().includes('/tests') ? './auth-helper.test.cjs' : './tests/api/auth-helper.test.cjs');
 
 // Base URL will be determined dynamically
 let baseUrl = BASE_URL;

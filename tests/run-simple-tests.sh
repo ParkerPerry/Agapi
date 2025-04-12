@@ -8,8 +8,16 @@ echo "Note: Tests will use port 5000 for API connections"
 echo ""
 
 # Set the directory for test files and configuration
-TEST_DIR="api"
-CONFIG_DIR="config"
+# Check if running from root or tests directory
+if [ -d "tests/api" ]; then
+  # Running from root directory
+  TEST_DIR="tests/api"
+  CONFIG_DIR="tests/config"
+else
+  # Running from tests directory
+  TEST_DIR="api"
+  CONFIG_DIR="config"
+fi
 
 # Run essential test files using the minimal configuration
 # This avoids complex setup but ensures critical functionality is validated
