@@ -38,27 +38,27 @@ echo ""
 
 # Run all test files not covered by the simple tests
 echo "🔄 Running posts API tests..."
-npx jest tests/api/posts-api.test.cjs
+npx jest tests/api/posts-api.test.cjs --config jest.config.cjs
 
 echo ""
 echo "🔄 Running schema validation tests..."
-npx jest tests/api/schema.test.cjs
+npx jest tests/api/schema.test.cjs --config jest.config.cjs
 
 echo ""
 echo "🔄 Running server API tests..."
-npx jest tests/api/server-api.test.cjs
+npx jest tests/api/server-api.test.cjs --config jest.config.cjs
 
 echo ""
 echo "🔄 Running simple verification tests..."
-npx jest tests/api/simple.test.cjs
+npx jest tests/api/simple.test.cjs --config jest.config.cjs
 
 echo ""
 echo "🔄 Running full workflow tests (may take a few minutes)..."
-npx jest tests/api/workflow.test.cjs
+npx jest tests/api/workflow.test.cjs --config jest.config.cjs
 
 echo ""
 echo "🔄 Running auth helper tests..."
-npx jest tests/api/auth-helper.test.cjs
+npx jest tests/api/auth-helper.test.cjs --config jest.config.cjs
 
 # Add a summary section
 echo ""
@@ -69,4 +69,4 @@ echo ""
 echo "If all tests passed, the CircleTube API is fully functional."
 echo ""
 echo "For more targeted testing, run individual test files directly:"
-echo "npx jest tests/api/workflow.test.cjs"
+echo "npx jest tests/api/workflow.test.cjs --config jest.config.cjs"
