@@ -12,7 +12,7 @@ module.exports = {
   ],
   
   // Allow explicit file paths
-  rootDir: '../../',
+  rootDir: '../',
   
   // Short timeout
   testTimeout: 5000,

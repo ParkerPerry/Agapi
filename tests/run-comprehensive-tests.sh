@@ -8,13 +8,13 @@ echo "Note: This will run ALL tests, starting with essential tests"
 echo ""
 
 # Set the directory for test files and configuration
-TEST_DIR="tests/api"
-CONFIG_DIR="tests/config"
+TEST_DIR="api"
+CONFIG_DIR="config"
 CONFIG_FILE="${CONFIG_DIR}/jest.minimal.config.cjs"
 
 # First run the simple essential tests to ensure core functionality works
 echo "🔄 Running essential tests first..."
-./tests/run-simple-tests.sh
+./run-simple-tests.sh
 
 # Capture the exit code from simple tests
 SIMPLE_TESTS_EXIT_CODE=$?
