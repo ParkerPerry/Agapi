@@ -1,16 +1,20 @@
-# CircleTube API Testing Guide
+# CircleTube TypeScript Testing Framework (Historical)
 
-This document provides a comprehensive overview of the testing infrastructure for CircleTube's API layer.
+> **IMPORTANT NOTE:**  
+> This TypeScript testing framework is being maintained for historical reference and is no longer the active testing approach for CircleTube.
+>
+> **For active testing:**  
+> Please use the CommonJS (.cjs) tests in the root directory and refer to the `RUN_TESTS.md` and `TEST_STRUCTURE.md` files for current testing guidance.
 
-## Testing Architecture
+## Historical Testing Architecture
 
-Our testing approach follows a multi-tier strategy:
+This directory contains a comprehensive TypeScript-based testing framework that was originally used for CircleTube. It follows a multi-tier testing strategy:
 
 1. **Unit Tests**: Test individual functions and components in isolation
 2. **Integration Tests**: Test API endpoints with mocked dependencies
 3. **End-to-End Tests**: Test complete user flows through the API
 
-## Test Directory Structure
+## Directory Structure
 
 ```
 /server/test
@@ -30,73 +34,7 @@ Our testing approach follows a multi-tier strategy:
     /circles           - Circle management endpoints
 ```
 
-## Running Tests
-
-### Using Jest
-
-You can use Jest to run tests directly:
-
-```bash
-# Run all tests
-npx jest
-
-# Run specific test file
-npx jest server/test/integration/example.test.ts
-
-# Run tests matching a pattern
-npx jest --testNamePattern="Authentication"
-
-# Run tests with coverage
-npx jest --coverage
-```
-
-### Using Helper Script
-
-For convenience, you can use the provided `run-tests.sh` script:
-
-```bash
-# Make sure script is executable
-chmod +x run-tests.sh
-
-# Run all tests
-./run-tests.sh all
-
-# Run specific test categories
-./run-tests.sh unit           # Run unit tests only
-./run-tests.sh integration    # Run integration tests only
-./run-tests.sh auth           # Run authentication tests only
-./run-tests.sh followers      # Run follower tests only
-./run-tests.sh posts          # Run post tests only
-./run-tests.sh circles        # Run circle tests only
-
-# Run tests with coverage
-./run-tests.sh coverage
-```
-
-### Quick API Testing
-
-For fast API testing without running the full test suite, use the `test-api.js` script:
-
-```bash
-# Test all endpoints
-node test-api.js  
-
-# Test specific endpoint groups
-node test-api.js health      # Test health endpoints 
-node test-api.js auth        # Test auth endpoints
-node test-api.js followers   # Test AI follower endpoints
-node test-api.js posts       # Test post endpoints
-node test-api.js circles     # Test circle endpoints
-
-# Command options
-node test-api.js --verbose   # Show detailed responses
-node test-api.js --with-auth # Attempt real authentication
-node test-api.js --save      # Save all responses
-```
-
-## Creating Tests
-
-### Basic Test Structure
+## Test Structure Example
 
 A typical test file follows this structure:
 
@@ -145,85 +83,48 @@ describe('Feature Name', () => {
 });
 ```
 
-### Authentication in Tests
+## Key Testing Features
 
-There are three ways to handle authentication in tests:
+This framework includes advanced features such as:
 
-1. **Mock Authentication Middleware**:
-   ```typescript
-   // Mock authentication for all routes
-   mockAuthentication(app, { id: 1, username: 'testuser' });
-   
-   const response = await request(app).get('/api/protected-route');
-   ```
+1. **Authentication Helpers**:
+   - Mock authentication middleware
+   - Authenticated test agents
+   - Real authentication flow testing
 
-2. **Authenticate a Test Agent**:
-   ```typescript
-   // Create an authenticated agent that maintains session
-   const agent = await getAuthenticatedAgent(app, { id: 1, username: 'testuser' });
-   
-   const response = await agent.get('/api/protected-route');
-   ```
+2. **Response Validation**:
+   - Status code checks
+   - Content type validation
+   - Schema-based validation with Zod
 
-3. **Test Real Authentication Flow**:
-   ```typescript
-   // Get an unauthenticated agent
-   const agent = request.agent(app);
-   
-   // Login
-   await agent.post('/api/login').send({
-     username: 'testuser',
-     password: 'password'
-   });
-   
-   // Make authenticated request
-   const response = await agent.get('/api/protected-route');
-   ```
+3. **Storage Mocking**:
+   - Controlled database behavior
+   - Error simulation
 
-### Validating Responses
+## Why We Transitioned to CommonJS Tests
 
-Use validation helpers to check responses:
+The project moved from this TypeScript framework to the simpler CommonJS tests in the root directory for several reasons:
 
-```typescript
-// Check status code
-validateStatus(response, 200);
+1. **Reduced Complexity**: Simpler setup and fewer dependencies
+2. **Faster Execution**: No TypeScript compilation step needed
+3. **Direct API Focus**: Tests API behavior rather than implementation details
+4. **Easier Maintenance**: More straightforward for ongoing development
 
-// Validate content type
-validateContentType(response, 'application/json');
+## Learning From This Framework
 
-// Validate against schema
-validateResponseAgainstSchema(response.body, userResponseSchema);
+While not actively used, this framework contains valuable patterns that can inform future testing:
 
-// Use Jest assertions
-expect(response.body).toHaveProperty('id');
-expect(response.body.items).toHaveLength(3);
-```
+1. **Structured Organization**: Well-organized test directory structure
+2. **Advanced Mocking**: Sophisticated mocking techniques for databases and services
+3. **Type Safety**: TypeScript integration with testing
+4. **Validation Utilities**: Reusable validation logic
 
-### Mocking Storage
+## Interested in Using These Tests?
 
-Use the mock storage helpers to control database behavior:
+If you need to run these TypeScript tests, you'll need to:
 
-```typescript
-// Mock a specific method
-jest.spyOn(storage, 'getUser').mockResolvedValue({
-  id: 1,
-  username: 'testuser',
-  password: 'hashedpassword',
-  avatarUrl: null,
-  bio: null,
-  createdAt: new Date()
-});
+1. Ensure TypeScript is properly configured
+2. Use a Jest configuration that supports TypeScript
+3. Understand that these tests may not reflect the current API structure
 
-// Mock method to throw error
-jest.spyOn(storage, 'createPost').mockRejectedValue(new Error('Database error'));
-```
-
-## Best Practices
-
-1. **Isolate Tests**: Each test should be independent and not rely on state from other tests
-2. **Clear Assertions**: Use specific assertions with clear failure messages
-3. **Validate Responses**: Always validate both status codes and response structure
-4. **Mock Consistently**: Use a consistent mocking approach across tests
-5. **Test Error Cases**: Include tests for error conditions and edge cases
-6. **Keep Tests Fast**: Minimize dependencies between tests to keep the test suite fast
-7. **Use TypeScript**: Take advantage of TypeScript types for better IDE support and fewer bugs
+However, we recommend using the current CommonJS tests in the root directory for active development.

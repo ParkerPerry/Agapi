@@ -2,9 +2,25 @@
 
 This document outlines CircleTube's comprehensive API testing framework designed to validate the functionality and reliability of the platform's core features.
 
+## Testing Approaches in the Project
+
+CircleTube maintains two different testing approaches:
+
+1. **Active Testing Framework** - CommonJS (.cjs) tests in the root directory
+   - Simpler, more direct API-focused tests
+   - Used for active development and validation
+   - Recently updated and maintained
+
+2. **Legacy TypeScript Testing Framework** - TypeScript tests in `/server/test/` directory
+   - More structured, TypeScript-based tests 
+   - Contains unit, integration, and end-to-end tests
+   - Serves as a reference but not actively maintained
+
+> **Note:** The current development and testing focus is on the CommonJS-based tests in the root directory, which provide more straightforward API validation with fewer dependencies.
+
 ## Current Status (As of April 2025)
 
-✅ **All Test Files Working Properly**:
+✅ **All Active Test Files Working Properly**:
 - Authentication endpoints (auth-endpoints.test.cjs)
 - Data creation tests (data-creation.test.cjs)  
 - AI follower functionality (followers-api.test.cjs)
@@ -14,9 +30,9 @@ This document outlines CircleTube's comprehensive API testing framework designed
 - Server API connectivity (server-api.test.cjs)
 - Individual workflow scenarios (workflow.test.cjs)
 
-## Testing Architecture
+## Active Testing Architecture
 
-The CircleTube testing framework follows a layered architecture with three distinct testing levels:
+The active CircleTube testing framework follows a layered architecture with three distinct testing levels:
 
 ### 1. Unit & Schema Tests
 Tests that verify basic functionality and data structures:
