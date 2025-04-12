@@ -100,7 +100,9 @@ describe('CircleTube Workflow Tests', () => {
         name: 'Workflow Test Follower',
         personality: 'Helpful and responsive AI assistant for testing workflows',
         background: 'Created by automated workflow tests',
-        avatarUrl: 'https://example.com/workflow-test-avatar.png'
+        avatarUrl: 'https://api.dicebear.com/6.x/bottts/svg?seed=workflow-test',
+        responsiveness: 'active',
+        type: 'default'
       };
       
       let followerId;
@@ -257,7 +259,9 @@ describe('CircleTube Workflow Tests', () => {
       const followerData = {
         name: 'Collective Test Follower',
         personality: 'Follower to be added to a collective',
-        avatarUrl: 'https://example.com/collective-follower-avatar.png'
+        avatarUrl: 'https://api.dicebear.com/6.x/bottts/svg?seed=collective-test',
+        responsiveness: 'active',
+        type: 'default'
       };
       
       let followerId;

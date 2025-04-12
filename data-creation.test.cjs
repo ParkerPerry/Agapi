@@ -239,10 +239,12 @@ describe('Data Creation Tests', () => {
     let testFollowerId;
     
     test('Can create a new AI follower', async () => {
-      // Simplified follower data based on server errors
+      // Complete follower data with required fields
       const followerData = {
         name: 'Test AI Follower',
         personality: 'Friendly and helpful AI assistant',
+        avatarUrl: 'https://api.dicebear.com/6.x/bottts/svg?seed=test-bot',
+        responsiveness: 'active',
         type: 'default'
       };
       
