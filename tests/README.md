@@ -31,15 +31,31 @@ This directory contains the comprehensive testing framework for CircleTube, an a
 
 ## Running Tests
 
-The simplest way to run all essential tests is using our test runner script:
+We offer two levels of test coverage, providing flexibility based on your needs:
+
+### Essential Tests
+
+For basic validation of critical functionality:
 
 ```bash
-# Run the full essential test suite
+# Run essential test suite (faster)
 chmod +x tests/run-simple-tests.sh
 ./tests/run-simple-tests.sh
 ```
 
-For individual tests:
+### Comprehensive Tests
+
+For complete validation of all API functionality:
+
+```bash
+# Run ALL tests (runs essential tests first, then additional tests)
+chmod +x tests/run-comprehensive-tests.sh
+./tests/run-comprehensive-tests.sh
+```
+
+### Individual Tests
+
+For targeted testing of specific components:
 
 ```bash
 # Run specific test file

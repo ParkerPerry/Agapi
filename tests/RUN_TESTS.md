@@ -53,17 +53,30 @@ Tests that simulate complete user journeys across multiple endpoints:
 
 ## Testing Tools & Scripts
 
+CircleTube offers two complementary testing scripts that provide different levels of coverage:
+
 ### tests/run-simple-tests.sh
 A shell script that provides a simplified way to run essential tests:
 - Executes critical test files using a minimal configuration
 - Focuses on key functionality to ensure system stability
 - Uses port 5000 by default for API connections
 - Perfect for quick validation during development
-- Currently runs tests/api/auth-endpoints.test.cjs and tests/api/data-creation.test.cjs
+- Runs auth-endpoints, data-creation, circles-api, and followers-api tests
+
+### tests/run-comprehensive-tests.sh
+A more thorough script that tests the entire API surface:
+- First runs the simple tests to ensure critical functionality works
+- Continues with additional tests for complete coverage
+- Includes schema validation, server API, posts API, and full workflow tests
+- Provides a complete verification of the entire system
+- Recommended before releases or after major changes
 
 ```bash
-# Run the simplified test suite
+# Run the essential test suite (faster)
 ./tests/run-simple-tests.sh
+
+# Run the comprehensive test suite (complete coverage)
+./tests/run-comprehensive-tests.sh
 ```
 
 ### Jest Configurations
@@ -151,7 +164,10 @@ If tests fail with 401 Unauthorized:
 3. Create unique test data with timestamps or random identifiers
 4. Implement defensive error handling for robustness
 5. Document any new requirements in this file
-6. Consider adding the test to run-simple-tests.sh if it's critical
+6. Add the test to the appropriate script:
+   - For critical functionality tests: Add to `run-simple-tests.sh`
+   - For detailed or specialized tests: Only include in `run-comprehensive-tests.sh`
+7. Place new test files in the `tests/api` directory with the `.test.cjs` extension
 
 ## Future Testing Improvements
 
