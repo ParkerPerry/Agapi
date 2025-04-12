@@ -97,11 +97,16 @@ async function registerTestUser(agent = null, userData = null) {
     if (response.status === 200 || response.status === 201 || response.status === 409) {
       console.log('Test user registration successful or user already exists');
       
+      // Store the original plaintext password
+      const originalPassword = testUser.password;
+      
       // Combine the test user data with any returned data
       // Fall back to just the test user data if the body is empty
       const userData = {
         ...testUser,
-        ...(response.body || {})
+        ...(response.body || {}),
+        // Keep the original plaintext password in a separate property
+        originalPassword
       };
       
       console.log(`Registered user data: ${JSON.stringify(userData)}`);
@@ -211,9 +216,10 @@ async function getAuthenticatedAgent() {
     // Login directly with the agent
     console.log(`Attempting login with username: ${user.username}`);
     
+    // Use the original plaintext password for login, not the hashed password returned by the server
     const loginData = { 
       username: user.username, 
-      password: user.password 
+      password: user.originalPassword || user.password // Fall back to user.password if originalPassword doesn't exist
     };
     console.log(`Login data being sent: ${JSON.stringify(loginData)}`);
     
