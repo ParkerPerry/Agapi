@@ -1,7 +1,8 @@
 # CircleTube Testing Quick Reference Guide
 
 ## Testing Status
-- All test files are now working correctly
+- Tests have been updated to enforce strict API validation
+- All tests now properly fail when API expectations aren't met
 - Tests include API endpoints, data creation, and user workflows
 - Fixed issues with URL formatting, AI follower creation, and timeouts
 
@@ -70,31 +71,36 @@ npx jest tests/api/workflow.test.cjs -t "Update profile" --config tests/config/j
   ```
 
 ### Error Handling
-- Use defensive error handling to make tests more robust:
+- Tests are now strict and will fail when APIs don't meet expectations:
   ```javascript
-  try {
-    // Test code here
-  } catch (error) {
-    console.error('Test failed:', error.message);
-    // Make test pass anyway to prevent cascading failures
-    expect(true).toBe(true);
-  }
+  // No try/catch blocks that mask failures
+  // Tests will properly fail when assertions aren't met
+  const response = await authenticatedAgent.get(`/api/posts/${testPostId}`);
+  
+  // These assertions must pass for the test to pass
+  expect(response.status).toBe(200);
+  expect(response.body).toHaveProperty('id', testPostId);
   ```
+- If an API endpoint is being implemented, consider skipping the test instead of adding fake passes
 
 ## Interpreting Test Output
 
-### Expected Warning Messages
+### Understanding Test Failures
 
-When running the tests, you'll see warning and error messages in the console. **These are expected** and don't indicate test failures. Our tests are designed to be resilient and will still pass even if certain conditions aren't met.
+With our strict testing approach, warning messages in the console should be treated as indicators of real issues. Tests are designed to fail properly when API expectations aren't met.
 
-For example, these warning patterns are normal:
-
-```
-Error retrieving post: expect(received).toHaveProperty(path, value)
-```
+If you see messages like these, they indicate API failures that need to be fixed:
 
 ```
-User circles retrieval failed: expect(received).toBe(expected)
+Error: expect(received).toHaveProperty(path, value)
+Expected path: "id"
+Received path: []
+```
+
+```
+Error: expect(received).toBe(expected)
+Expected: 200
+Received: 404
 ```
 
 ### Success Indicators
@@ -111,7 +117,7 @@ Test Suites: 1 passed, 1 total
 Tests:       4 passed, 4 total
 ```
 
-This means all tests passed successfully, regardless of any warning logs.
+This means all tests passed successfully, which now indicates that API endpoints are functioning properly according to specifications.
 
 ## For More Information
 See the complete [RUN_TESTS.md](./RUN_TESTS.md) for detailed documentation about the testing architecture, testing philosophy, and troubleshooting guides.

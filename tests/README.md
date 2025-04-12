@@ -2,6 +2,15 @@
 
 This directory contains the comprehensive testing framework for CircleTube, an advanced AI-powered social networking platform. Our tests ensure API reliability, functionality, and correct implementation of social features.
 
+## Testing Philosophy
+
+Our testing approach follows these key principles:
+
+1. **Strict API Validation**: Tests properly fail when API responses don't meet expectations
+2. **Clear Failure Reporting**: Test failures point precisely to which API is not functioning correctly
+3. **Two-Tier Testing**: Essential tests run quickly, comprehensive tests provide full coverage
+4. **Progressive Testing**: Tests that depend on earlier functionality will skip if prerequisites fail
+
 ## Directory Structure
 
 ```
@@ -67,35 +76,41 @@ npx jest tests/api/workflow.test.cjs -t "Update profile" --config tests/config/j
 
 ## Understanding Test Output
 
-When running tests, you may see warnings and error logs even when tests are passing. This is normal and expected. Our tests use defensive error handling to continue even when certain assertions fail.
+Tests now properly fail when API endpoints don't meet expectations. This strict testing approach ensures clear visibility into which features need attention.
 
-### Common Warning Patterns
+### Error Messages
 
-```
-console.warn
-  Error retrieving post: expect(received).toHaveProperty(path, value)
-```
+If you see error messages like these, they indicate real API failures that need fixing:
 
 ```
-console.error
-  User circles retrieval failed: expect(received).toBe(expected) // Object.is equality
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 200
+Received: 404
 ```
 
-These warnings indicate that a specific assertion in the test failed, but the test was designed to continue anyway. This approach makes our tests more resilient to API changes and configuration differences.
+```
+Error: expect(received).toHaveProperty(path, value)
+
+Expected path: "id"
+Received path: []
+```
+
+The error messages point directly to the specific assertion that failed, making it easy to identify and fix the problematic API endpoint.
 
 ### Interpreting Results
 
-- ✓ Green checkmarks indicate passing tests
-- Error logs don't necessarily mean test failures
-- Look for the final test summary at the end of each test suite for the official result
+- ✓ Green checkmarks indicate passing tests (and properly functioning APIs)
+- ✗ Red X marks indicate failing tests (APIs not meeting expectations)
+- Look for the final test summary for a quick overview of test results
 
 For example:
 ```
-Test Suites: 1 passed, 1 total
-Tests:       4 passed, 4 total
+Test Suites: 1 failed, 1 total
+Tests:       3 passed, 1 failed, 4 total
 ```
 
-This summary tells you that all tests passed, regardless of any warning logs that appeared during execution.
+This summary tells you that one test has failed, pointing to a specific API that needs attention.
 
 ## Documentation
 
