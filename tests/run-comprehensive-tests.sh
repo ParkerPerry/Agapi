@@ -1,26 +1,23 @@
 #!/bin/bash
 
-# CircleTube Comprehensive Test Runner
 echo "=============================================="
 echo "🧪 Running CircleTube COMPREHENSIVE Test Suite"
 echo "=============================================="
 echo "Note: This will run ALL tests, starting with essential tests"
 echo ""
 
-# Set the directory for test files and configuration
-# Check if running from root or tests directory
+# Check if we're in the project root or tests directory
 if [ -d "tests/api" ]; then
-  # Running from root directory
-  TEST_DIR="tests/api"
-  CONFIG_DIR="tests/config"
+  # We're in the project root
+  NODE_SCRIPT="node tests/run-test.js"
   SIMPLE_TESTS="./tests/run-simple-tests.sh"
+  PREFIX="api/"
 else
-  # Running from tests directory
-  TEST_DIR="api"
-  CONFIG_DIR="config"
+  # We're in the tests directory
+  NODE_SCRIPT="node run-test.js"
   SIMPLE_TESTS="./run-simple-tests.sh"
+  PREFIX="api/"
 fi
-CONFIG_FILE="${CONFIG_DIR}/jest.minimal.config.cjs"
 
 # First run the simple essential tests to ensure core functionality works
 echo "🔄 Running essential tests first..."
@@ -44,27 +41,27 @@ echo ""
 # Find all remaining test files that weren't explicitly included in the simple tests
 # This approach ensures we don't miss any test files added in the future
 echo "🔄 Running posts API tests..."
-npx jest ${TEST_DIR}/posts-api.test.cjs --config ${CONFIG_FILE}
+$NODE_SCRIPT ${PREFIX}posts-api.test.cjs
 
 echo ""
 echo "🔄 Running schema validation tests..."
-npx jest ${TEST_DIR}/schema.test.cjs --config ${CONFIG_FILE}
+$NODE_SCRIPT ${PREFIX}schema.test.cjs
 
 echo ""
 echo "🔄 Running server API tests..."
-npx jest ${TEST_DIR}/server-api.test.cjs --config ${CONFIG_FILE}
+$NODE_SCRIPT ${PREFIX}server-api.test.cjs
 
 echo ""
 echo "🔄 Running simple verification tests..."
-npx jest ${TEST_DIR}/simple.test.cjs --config ${CONFIG_FILE}
+$NODE_SCRIPT ${PREFIX}simple.test.cjs
 
 echo ""
 echo "🔄 Running full workflow tests (may take a few minutes)..."
-npx jest ${TEST_DIR}/workflow.test.cjs --config ${CONFIG_FILE}
+$NODE_SCRIPT ${PREFIX}workflow.test.cjs
 
 echo ""
 echo "🔄 Running auth helper tests..."
-npx jest ${TEST_DIR}/auth-helper.test.cjs --config ${CONFIG_FILE}
+$NODE_SCRIPT ${PREFIX}auth-helper.test.cjs
 
 # Add a summary section
 echo ""
@@ -75,4 +72,4 @@ echo ""
 echo "If all tests passed, the CircleTube API is fully functional."
 echo ""
 echo "For more targeted testing, run individual test files directly:"
-echo "npx jest tests/api/workflow.test.cjs --config tests/config/jest.minimal.config.cjs"
+echo "node tests/run-test.js api/workflow.test.cjs"

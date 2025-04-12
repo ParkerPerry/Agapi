@@ -1,46 +1,43 @@
 #!/bin/bash
 
-# CircleTube Test Runner
 echo "====================================="
 echo "🧪 Running CircleTube Essential Tests"
 echo "====================================="
 echo "Note: Tests will use port 5000 for API connections"
 echo ""
 
-# Set the directory for test files and configuration
-# Check if running from root or tests directory
+# Check if we're in the project root or tests directory
 if [ -d "tests/api" ]; then
-  # Running from root directory
-  TEST_DIR="tests/api"
-  CONFIG_DIR="tests/config"
+  # We're in the project root
+  NODE_SCRIPT="node tests/run-test.cjs"
+  PREFIX="api/"
 else
-  # Running from tests directory
-  TEST_DIR="api"
-  CONFIG_DIR="config"
+  # We're in the tests directory
+  NODE_SCRIPT="node run-test.js"
+  PREFIX="api/"
 fi
 
-# Run essential test files using the minimal configuration
-# This avoids complex setup but ensures critical functionality is validated
+# Run essential test files using our utility script
 echo "🔄 Running authentication tests..."
-npx jest ${TEST_DIR}/auth-endpoints.test.cjs --config ${CONFIG_DIR}/jest.minimal.config.cjs
+$NODE_SCRIPT ${PREFIX}auth-endpoints.test.cjs
 
 echo ""
 echo "🔄 Running data creation tests..."
-npx jest ${TEST_DIR}/data-creation.test.cjs --config ${CONFIG_DIR}/jest.minimal.config.cjs
+$NODE_SCRIPT ${PREFIX}data-creation.test.cjs
 
 echo ""
 echo "🔄 Running circle operations tests..."
-npx jest ${TEST_DIR}/circles-api.test.cjs --config ${CONFIG_DIR}/jest.minimal.config.cjs
+$NODE_SCRIPT ${PREFIX}circles-api.test.cjs
 
 echo ""
 echo "🔄 Running AI follower tests..."
-npx jest ${TEST_DIR}/followers-api.test.cjs --config ${CONFIG_DIR}/jest.minimal.config.cjs
+$NODE_SCRIPT ${PREFIX}followers-api.test.cjs
 
 echo ""
 echo "🔄 Running essential workflow test..."
-npx jest ${TEST_DIR}/workflow.test.cjs -t "Update profile" --config ${CONFIG_DIR}/jest.minimal.config.cjs
+$NODE_SCRIPT ${PREFIX}workflow.test.cjs
 
 echo ""
 echo "✅ Essential tests completed."
 echo "For more comprehensive testing, run individual test files directly:"
-echo "npx jest tests/api/workflow.test.cjs --config tests/config/jest.minimal.config.cjs"
+echo "node tests/run-test.js api/workflow.test.cjs"
