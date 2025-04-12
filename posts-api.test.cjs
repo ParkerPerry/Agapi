@@ -31,7 +31,7 @@ beforeAll(async () => {
     };
     
     console.log('Creating test circle...');
-    const circleResponse = await authenticatedAgent.post(`${baseUrl}/api/circles`).send(circleData);
+    const circleResponse = await authenticatedAgent.post('/api/circles').send(circleData);
     
     if (circleResponse.status === 200 || circleResponse.status === 201) {
       testCircleId = circleResponse.body.id;
@@ -70,7 +70,7 @@ describe('Posts API Tests', () => {
     };
     
     try {
-      const response = await authenticatedAgent.post(`${baseUrl}/api/posts`).send(postData);
+      const response = await authenticatedAgent.post('/api/posts').send(postData);
       
       console.log('Post creation response:', response.status);
       
@@ -98,7 +98,7 @@ describe('Posts API Tests', () => {
     }
     
     try {
-      const response = await authenticatedAgent.get(`${baseUrl}/api/circles/${testCircleId}/posts`);
+      const response = await authenticatedAgent.get(`/api/circles/${testCircleId}/posts`);
       
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
@@ -123,7 +123,7 @@ describe('Posts API Tests', () => {
     }
     
     try {
-      const response = await authenticatedAgent.get(`${baseUrl}/api/posts/${testPostId}`);
+      const response = await authenticatedAgent.get(`/api/posts/${testPostId}`);
       
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('id', testPostId);

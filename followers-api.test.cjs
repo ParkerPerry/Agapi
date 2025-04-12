@@ -46,7 +46,7 @@ describe('AI Follower API Specific Tests', () => {
     };
     
     try {
-      const response = await authenticatedAgent.post(`${baseUrl}/api/followers`).send(followerData);
+      const response = await authenticatedAgent.post('/api/followers').send(followerData);
       
       console.log('AI Follower creation response:', response.status, response.body);
       
@@ -68,7 +68,7 @@ describe('AI Follower API Specific Tests', () => {
   
   test('Can query available AI follower types', async () => {
     try {
-      const response = await authenticatedAgent.get(`${baseUrl}/api/followers/types`);
+      const response = await authenticatedAgent.get('/api/followers/types');
       
       console.log('AI Follower types response:', response.status);
       
