@@ -47,7 +47,7 @@ describe('Circles API Tests', () => {
     };
     
     try {
-      const response = await authenticatedAgent.post(`${baseUrl}/api/circles`).send(circleData);
+      const response = await authenticatedAgent.post('/api/circles').send(circleData);
       
       console.log('Circle creation response:', response.status);
       
@@ -69,7 +69,7 @@ describe('Circles API Tests', () => {
   
   test('Can retrieve circles for user', async () => {
     try {
-      const response = await authenticatedAgent.get(`${baseUrl}/api/circles`);
+      const response = await authenticatedAgent.get('/api/circles');
       
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
@@ -96,7 +96,7 @@ describe('Circles API Tests', () => {
     }
     
     try {
-      const response = await authenticatedAgent.get(`${baseUrl}/api/circles/${testCircleId}`);
+      const response = await authenticatedAgent.get(`/api/circles/${testCircleId}`);
       
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('id', testCircleId);
@@ -122,7 +122,7 @@ describe('Circles API Tests', () => {
     };
     
     try {
-      const response = await authenticatedAgent.patch(`${baseUrl}/api/circles/${testCircleId}`).send(updates);
+      const response = await authenticatedAgent.patch(`/api/circles/${testCircleId}`).send(updates);
       
       // Accept different success status codes
       expect([200, 201, 204]).toContain(response.status);

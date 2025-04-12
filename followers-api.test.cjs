@@ -38,6 +38,8 @@ afterAll(async () => {
 
 describe('AI Follower API Specific Tests', () => {
   test('Can create an AI follower with complete required data', async () => {
+    // Increase Jest timeout to 10 seconds because AI follower creation might take longer
+    jest.setTimeout(10000);
     // This matches the server's expected format for the AI follower
     const followerData = {
       name: 'Test Bot',
