@@ -1,0 +1,60 @@
+~/workspace$ chmod +x tests/run-simple-tests.sh
+~/workspace$ ./tests/run-simple-tests.sh
+=====================================
+🧪 Running CircleTube Essential Tests
+=====================================
+Note: Tests will use port 5000 for API connections
+
+🔄 Running authentication tests...
+No tests found, exiting with code 1
+Run with `--passWithNoTests` to exit with code 0
+In /home/runner/workspace/tests/config
+  3 files checked.
+  testMatch: **/*.test.cjs - 0 matches
+  testPathIgnorePatterns: /node_modules/ - 3 matches
+  testRegex:  - 0 matches
+Pattern: tests/api/auth-endpoints.test.cjs - 0 matches
+
+🔄 Running data creation tests...
+No tests found, exiting with code 1
+Run with `--passWithNoTests` to exit with code 0
+In /home/runner/workspace/tests/config
+  3 files checked.
+  testMatch: **/*.test.cjs - 0 matches
+  testPathIgnorePatterns: /node_modules/ - 3 matches
+  testRegex:  - 0 matches
+Pattern: tests/api/data-creation.test.cjs - 0 matches
+
+🔄 Running circle operations tests...
+No tests found, exiting with code 1
+Run with `--passWithNoTests` to exit with code 0
+In /home/runner/workspace/tests/config
+  3 files checked.
+  testMatch: **/*.test.cjs - 0 matches
+  testPathIgnorePatterns: /node_modules/ - 3 matches
+  testRegex:  - 0 matches
+Pattern: tests/api/circles-api.test.cjs - 0 matches
+
+🔄 Running AI follower tests...
+No tests found, exiting with code 1
+Run with `--passWithNoTests` to exit with code 0
+In /home/runner/workspace/tests/config
+  3 files checked.
+  testMatch: **/*.test.cjs - 0 matches
+  testPathIgnorePatterns: /node_modules/ - 3 matches
+  testRegex:  - 0 matches
+Pattern: tests/api/followers-api.test.cjs - 0 matches
+
+🔄 Running essential workflow test...
+No tests found, exiting with code 1
+Run with `--passWithNoTests` to exit with code 0
+In /home/runner/workspace/tests/config
+  3 files checked.
+  testMatch: **/*.test.cjs - 0 matches
+  testPathIgnorePatterns: /node_modules/ - 3 matches
+  testRegex:  - 0 matches
+Pattern: tests/api/workflow.test.cjs - 0 matches
+
+✅ Essential tests completed.
+For more comprehensive testing, run individual test files directly:
+npx jest tests/api/workflow.test.cjs --config tests/config/jest.minimal.config.cjs

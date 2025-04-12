@@ -6,10 +6,13 @@ module.exports = {
   // Test environment
   testEnvironment: 'node',
   
-  // Only match .cjs files
+  // Only match .cjs files in the root directory (for direct file tests)
   testMatch: [
     '**/*.test.cjs'
   ],
+  
+  // Allow explicit file paths
+  rootDir: '../../',
   
   // Short timeout
   testTimeout: 5000,
