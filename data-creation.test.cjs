@@ -17,6 +17,7 @@ const {
 } = require('./auth-helper.test.cjs');
 
 // Base URL will be determined dynamically
+let baseUrl = BASE_URL;
 
 // Test timeout (increased for data manipulation tests)
 jest.setTimeout(10000);
@@ -28,8 +29,8 @@ describe('Data Creation Tests', () => {
   
   beforeAll(async () => {
     // Initialize the base URL
-    BASE_URL = await initializeBaseUrl();
-    console.log(`Data Creation tests using base URL: ${BASE_URL}`);
+    baseUrl = await initializeBaseUrl();
+    console.log(`Data Creation tests using base URL: ${baseUrl}`);
     
     // Set up an authenticated agent before running the tests
     try {
@@ -44,7 +45,7 @@ describe('Data Creation Tests', () => {
       };
       
       // Create a fresh agent
-      const agent = supertest.agent(BASE_URL);
+      const agent = supertest.agent(baseUrl);
       
       // Register the user
       console.log(`Registering test user: ${testUser.username}`);

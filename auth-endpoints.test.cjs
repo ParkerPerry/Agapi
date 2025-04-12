@@ -13,11 +13,12 @@ const {
 } = require('./auth-helper.test.cjs');
 
 // Base URL will be determined dynamically
+let baseUrl = BASE_URL;
 
 // Initialize before running tests
 beforeAll(async () => {
-  BASE_URL = await initializeBaseUrl();
-  console.log(`Auth endpoints tests using base URL: ${BASE_URL}`);
+  baseUrl = await initializeBaseUrl();
+  console.log(`Auth endpoints tests using base URL: ${baseUrl}`);
 });
 
 describe('Authentication Endpoints', () => {
@@ -52,7 +53,7 @@ describe('Authentication Endpoints', () => {
     // Now try to log in
     try {
       // Use direct supertest to check just the endpoint
-      const request = supertest(BASE_URL);
+      const request = supertest(baseUrl);
       const loginResponse = await request
         .post('/api/login')
         .send({
