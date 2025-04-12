@@ -68,23 +68,17 @@ describe('Circles API Tests', () => {
   });
   
   test('Can retrieve circles for user', async () => {
-    try {
-      const response = await authenticatedAgent.get('/api/circles');
-      
-      expect(response.status).toBe(200);
-      expect(Array.isArray(response.body)).toBe(true);
-      
-      // If we created a circle previously, verify it's in the response
-      if (testCircleId) {
-        const foundCircle = response.body.find(circle => circle.id === testCircleId);
-        if (foundCircle) {
-          expect(foundCircle).toBeDefined();
-        }
-      }
-    } catch (error) {
-      console.error('User circles retrieval failed:', error.message);
-      // Make the test pass even if the endpoint fails unexpectedly
-      expect(true).toBe(true);
+    // Test that circles retrieval works properly
+    const response = await authenticatedAgent.get('/api/circles');
+    
+    // These assertions should fail if the API doesn't respond correctly
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    
+    // If we created a circle previously, verify it's in the response
+    if (testCircleId) {
+      const foundCircle = response.body.find(circle => circle.id === testCircleId);
+      expect(foundCircle).toBeDefined();
     }
   });
   
@@ -95,18 +89,14 @@ describe('Circles API Tests', () => {
       return;
     }
     
-    try {
-      const response = await authenticatedAgent.get(`/api/circles/${testCircleId}`);
-      
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('id', testCircleId);
-      expect(response.body).toHaveProperty('name');
-      expect(response.body).toHaveProperty('description');
-    } catch (error) {
-      console.error('Circle retrieval failed:', error.message);
-      // Make the test pass even if the endpoint fails unexpectedly
-      expect(true).toBe(true);
-    }
+    // Test that specific circle retrieval works properly
+    const response = await authenticatedAgent.get(`/api/circles/${testCircleId}`);
+    
+    // These assertions should fail if the API doesn't respond correctly
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id', testCircleId);
+    expect(response.body).toHaveProperty('name');
+    expect(response.body).toHaveProperty('description');
   });
   
   test('Can update circle details', async () => {

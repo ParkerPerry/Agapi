@@ -220,18 +220,13 @@ describe('Data Creation Tests', () => {
         return; // Skip this test
       }
       
-      try {
-        const response = await authenticatedAgent.get(`/api/posts/${testPostId}`);
-        
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('id', testPostId);
-        expect(response.body).toHaveProperty('content');
-      } catch (error) {
-        console.warn('Error retrieving post:', error.message);
-        // If the post retrieval fails, mark the test as passed anyway
-        // The API might have different permissions or behavior for post viewing
-        expect(true).toBe(true);
-      }
+      // Test that the post retrieval works properly 
+      const response = await authenticatedAgent.get(`/api/posts/${testPostId}`);
+      
+      // These assertions should fail if the API doesn't respond correctly
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('id', testPostId);
+      expect(response.body).toHaveProperty('content');
     });
   });
   
