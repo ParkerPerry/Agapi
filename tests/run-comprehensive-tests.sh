@@ -7,16 +7,14 @@ echo "Note: This will run ALL tests, starting with essential tests"
 echo ""
 
 # Check if we're in the project root or tests directory
-if [ -d "tests/api" ]; then
-  # We're in the project root
-  NODE_SCRIPT="node tests/run-test.js"
-  SIMPLE_TESTS="./tests/run-simple-tests.sh"
-  PREFIX="api/"
-else
+if [ -d "api" ]; then
   # We're in the tests directory
-  NODE_SCRIPT="node run-test.js"
-  SIMPLE_TESTS="./run-simple-tests.sh"
-  PREFIX="api/"
+  cd ..
+  echo "Detected running from tests directory, changing to project root for consistency"
+  SIMPLE_TESTS="./tests/run-simple-tests.sh"
+else
+  # We're in the project root
+  SIMPLE_TESTS="./tests/run-simple-tests.sh"
 fi
 
 # First run the simple essential tests to ensure core functionality works
@@ -38,30 +36,29 @@ echo ""
 echo "✅ Essential tests passed. Continuing with additional tests..."
 echo ""
 
-# Find all remaining test files that weren't explicitly included in the simple tests
-# This approach ensures we don't miss any test files added in the future
+# Run all test files not covered by the simple tests
 echo "🔄 Running posts API tests..."
-$NODE_SCRIPT ${PREFIX}posts-api.test.cjs
+npx jest tests/api/posts-api.test.cjs
 
 echo ""
 echo "🔄 Running schema validation tests..."
-$NODE_SCRIPT ${PREFIX}schema.test.cjs
+npx jest tests/api/schema.test.cjs
 
 echo ""
 echo "🔄 Running server API tests..."
-$NODE_SCRIPT ${PREFIX}server-api.test.cjs
+npx jest tests/api/server-api.test.cjs
 
 echo ""
 echo "🔄 Running simple verification tests..."
-$NODE_SCRIPT ${PREFIX}simple.test.cjs
+npx jest tests/api/simple.test.cjs
 
 echo ""
 echo "🔄 Running full workflow tests (may take a few minutes)..."
-$NODE_SCRIPT ${PREFIX}workflow.test.cjs
+npx jest tests/api/workflow.test.cjs
 
 echo ""
 echo "🔄 Running auth helper tests..."
-$NODE_SCRIPT ${PREFIX}auth-helper.test.cjs
+npx jest tests/api/auth-helper.test.cjs
 
 # Add a summary section
 echo ""
@@ -72,4 +69,4 @@ echo ""
 echo "If all tests passed, the CircleTube API is fully functional."
 echo ""
 echo "For more targeted testing, run individual test files directly:"
-echo "node tests/run-test.js api/workflow.test.cjs"
+echo "npx jest tests/api/workflow.test.cjs"

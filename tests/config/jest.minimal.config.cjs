@@ -1,10 +1,16 @@
 /**
  * Minimal Jest configuration for CommonJS tests
+ * This configuration works when running from both the project root
+ * and the tests directory
  */
 
-// Determine the root directory based on file existence
-const fs = require('fs');
+// Get the current directory to determine where we're running from
 const path = require('path');
+const fs = require('fs');
+
+// Check if running from project root or tests directory
+const isRunFromRoot = fs.existsSync(path.resolve(process.cwd(), 'tests'));
+const rootDir = isRunFromRoot ? './' : '../';
 
 module.exports = {
   // Test environment
@@ -15,11 +21,11 @@ module.exports = {
     '**/*.test.cjs'
   ],
   
-  // Modify paths
-  moduleDirectories: ['node_modules'],
+  // Root directory for tests
+  rootDir: rootDir,
   
   // Short timeout
-  testTimeout: 5000,
+  testTimeout: 10000, // Increased timeout for slower operations
   
   // Verbose output for debugging
   verbose: true,
