@@ -2,6 +2,11 @@
  * Tests for authentication endpoints
  */
 const supertest = require('supertest');
+const path = require('path');
+
+// Get the absolute path to the auth helper module
+const authHelperPath = path.resolve(__dirname, './auth-helper.test.cjs');
+
 const { 
   TEST_USER, 
   userSchema, 
@@ -10,7 +15,7 @@ const {
   isAuthenticated,
   initializeBaseUrl,
   BASE_URL
-} = require(process.cwd().includes('/tests') ? './auth-helper.test.cjs' : './tests/api/auth-helper.test.cjs');
+} = require(authHelperPath);
 
 // Base URL will be determined dynamically
 let baseUrl = BASE_URL;
