@@ -1,0 +1,585 @@
+~/workspace$ ./tests/run-simple-tests.sh
+=====================================
+🧪 Running CircleTube Essential Tests
+=====================================
+Note: Tests will use port 5000 for API connections
+
+🔄 Running authentication tests...
+  console.log
+    Successfully connected to http://localhost:5000 (got 401 as expected for unauthenticated request)
+
+      at findWorkingBaseUrl (tests/api/auth-helper.test.cjs:21:15)
+
+  console.log
+    Using fixed base URL: http://localhost:5000
+
+      at initializeBaseUrl (tests/api/auth-helper.test.cjs:37:11)
+
+  console.log
+    Auth endpoints tests using base URL: http://localhost:5000
+
+      at Object.<anonymous> (tests/api/auth-endpoints.test.cjs:21:11)
+
+  console.log
+    Attempting to register user: testuser_1744454596080
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:85:11)
+
+  console.log
+    Registration response status: 201
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:93:13)
+
+  console.log
+    Test user registration successful or user already exists
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:98:15)
+
+  console.log
+    Registered user data: {"username":"testuser_1744454596080","password":"6e707123a77625facb94f2c950d8a7bd4660e7665123a280a79a716ddc3f6fe8541de934f687ad2d12fbcdd8cb4cd96d39501c5f45da539e8481559eaeb04788.f72b7c821457615a4ae64c05517b0627","email":"test_1744454596080@example.com","id":104,"avatarUrl":null,"bio":null,"createdAt":"2025-04-12T10:43:16.525Z","originalPassword":"testpassword"}
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:112:15)
+
+  console.log
+    Attempting to register user: testuser_1744454596573
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:85:11)
+
+  console.log
+    Registration response status: 201
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:93:13)
+
+  console.log
+    Test user registration successful or user already exists
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:98:15)
+
+  console.log
+    Registered user data: {"username":"testuser_1744454596573","password":"40dce55c3491b1e29360af7fee08e5230356f34aad4dc3b57dc1e357fd1fa92a1a091a616b2ac7155dff057e2d163a36054a93df4decf7b96b11aa4324193ee0.7e596fc1a6a7670aba185115d40723cf","email":"test_1744454596573@example.com","id":105,"avatarUrl":null,"bio":null,"createdAt":"2025-04-12T10:43:16.714Z","originalPassword":"testpassword"}
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:112:15)
+
+  console.log
+    Login endpoint returned status: 200
+
+      at Object.<anonymous> (tests/api/auth-endpoints.test.cjs:66:15)
+
+ PASS  tests/api/auth-endpoints.test.cjs
+  Authentication Endpoints
+    ✓ Registration endpoint exists and accepts requests (493 ms)
+    ✓ Login endpoint returns successful response (298 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        1.17 s
+Ran all test suites matching /tests\/api\/auth-endpoints.test.cjs/i.
+
+🔄 Running data creation tests...
+  console.log
+    Successfully connected to http://localhost:5000 (got 401 as expected for unauthenticated request)
+
+      at findWorkingBaseUrl (tests/api/auth-helper.test.cjs:21:15)
+
+  console.log
+    Using fixed base URL: http://localhost:5000
+
+      at initializeBaseUrl (tests/api/auth-helper.test.cjs:37:11)
+
+  console.log
+    Data Creation tests using base URL: http://localhost:5000
+
+      at Object.<anonymous> (tests/api/data-creation.test.cjs:33:13)
+
+  console.log
+    Registering test user: testuser_67fa43c6
+
+      at Object.<anonymous> (tests/api/data-creation.test.cjs:51:15)
+
+  console.log
+    Attempting to register user: testuser_67fa43c6
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:85:11)
+
+  console.log
+    Registration response status: 201
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:93:13)
+
+  console.log
+    Test user registration successful or user already exists
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:98:15)
+
+  console.log
+    Registered user data: {"username":"testuser_67fa43c6","password":"a9b8d2576eda68e1ff846bf7b83f9cd3457c163a2cbbdbb91e0675206aafde32e8c3b05be6810d3ef65133194eae43164bd155520ee2d88bd64aa9b99d867b02.aba00c00502b26f4a8d2f127aa2f52b7","email":"testuser_67fa43c6@example.com","id":106,"avatarUrl":null,"bio":null,"createdAt":"2025-04-12T10:43:18.272Z","originalPassword":"testpassword"}
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:112:15)
+
+  console.log
+    Logging in as testuser_67fa43c6
+
+      at Object.<anonymous> (tests/api/data-creation.test.cjs:55:15)
+
+  console.log
+    Login successful, verifying session...
+
+      at Object.<anonymous> (tests/api/data-creation.test.cjs:67:15)
+
+  console.log
+    Authentication successfully verified!
+
+      at Object.<anonymous> (tests/api/data-creation.test.cjs:73:17)
+
+  console.log
+    Test user has ID: 106
+
+      at Object.<anonymous> (tests/api/data-creation.test.cjs:80:19)
+
+  console.log
+    Update user profile success but empty response body
+
+      at Object.<anonymous> (tests/api/data-creation.test.cjs:130:17)
+
+  console.warn
+    Error retrieving post: expect(received).toHaveProperty(path, value)
+    
+    Expected path: "id"
+    Received path: []
+    
+    Expected value: 151
+    Received value: {}
+
+      228 |         expect(response.body).toHaveProperty('content');
+      229 |       } catch (error) {
+    > 230 |         console.warn('Error retrieving post:', error.message);
+          |                 ^
+      231 |         // If the post retrieval fails, mark the test as passed anyway
+      232 |         // The API might have different permissions or behavior for post viewing
+      233 |         expect(true).toBe(true);
+
+      at Object.<anonymous> (tests/api/data-creation.test.cjs:230:17)
+
+  console.log
+    [Test Cleanup] Would remove test data for user ID: 106
+
+      at cleanupTestData (tests/api/auth-helper.test.cjs:312:11)
+
+ PASS  tests/api/data-creation.test.cjs (6.533 s)
+  Data Creation Tests
+    User Profile Tests
+      ✓ Can retrieve authenticated user profile (83 ms)
+      ✓ Can update user profile (82 ms)
+    Circle Tests
+      ✓ Can create a new circle (158 ms)
+      ✓ Can retrieve created circle (221 ms)
+      ✓ Can update circle details (224 ms)
+    Post Tests
+      ✓ Can create a new post (383 ms)
+      ✓ Can retrieve created post (94 ms)
+    AI Follower Tests
+      ✓ Can create a new AI follower (3189 ms)
+      ✓ Can retrieve created AI follower (233 ms)
+      ✓ Can update AI follower details (234 ms)
+    Workflow Tests
+      ✓ Complete workflow: Create circle -> Create post in circle -> Verify post in circle (909 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       11 passed, 11 total
+Snapshots:   0 total
+Time:        6.568 s, estimated 9 s
+Ran all test suites matching /tests\/api\/data-creation.test.cjs/i.
+
+🔄 Running circle operations tests...
+  console.log
+    Successfully connected to http://localhost:5000 (got 401 as expected for unauthenticated request)
+
+      at findWorkingBaseUrl (tests/api/auth-helper.test.cjs:21:15)
+
+  console.log
+    Using fixed base URL: http://localhost:5000
+
+      at Object.initializeBaseUrl (tests/api/auth-helper.test.cjs:37:11)
+
+  console.log
+    Circles API tests using base URL: http://localhost:5000
+
+      at Object.<anonymous> (tests/api/circles-api.test.cjs:13:13)
+
+  console.log
+    Creating authenticated test user...
+
+      at Object.<anonymous> (tests/api/circles-api.test.cjs:16:13)
+
+  console.log
+    Attempting to register user: testuser_878c417a
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:85:11)
+
+  console.log
+    Registration response status: 201
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:93:13)
+
+  console.log
+    Test user registration successful or user already exists
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:98:15)
+
+  console.log
+    Registered user data: {"username":"testuser_878c417a","password":"4abc21a730a265431003c01559c5d1336097641607044afcfebb25c0332a1b360dd9ced54322ac021d160325f385d7dd18e9a1ed1a0f028e19315a863475b2c0.e4e2dea5d9775a50dd6c2d4f7336970d","email":"test_878c417a@example.com","id":107,"avatarUrl":null,"bio":null,"createdAt":"2025-04-12T10:43:25.909Z","originalPassword":"TestPassword123!"}
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:112:15)
+
+  console.log
+    Direct auth attempt for user: testuser_878c417a
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:214:13)
+
+  console.log
+    Attempting login with username: testuser_878c417a
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:217:13)
+
+  console.log
+    Login data being sent: {"username":"testuser_878c417a","password":"TestPassword123!"}
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:224:13)
+
+  console.log
+    Login response status: 200
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:230:13)
+
+  console.log
+    Login response body: {"id":107,"username":"testuser_878c417a","password":"4abc21a730a265431003c01559c5d1336097641607044afcfebb25c0332a1b360dd9ced54322ac021d160325f385d7dd18e9a1ed1a0f028e19315a863475b2c0.e4e2dea5d9775a50dd6c2d4f7336970d","avatarUrl":null,"bio":null,"createdAt":"2025-04-12T10:43:25.909Z"}
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:232:15)
+
+  console.log
+    Login successful, verifying session...
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:264:13)
+
+  console.log
+    Received 1 cookies from login response
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:269:15)
+
+  console.log
+    Verification response status: 200
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:276:13)
+
+  console.log
+    Authentication successfully verified!
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:288:15)
+
+  console.log
+    Got real user ID: 107
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:293:17)
+
+  console.log
+    Test user has ID: 107
+
+      at Object.<anonymous> (tests/api/circles-api.test.cjs:23:13)
+
+  console.log
+    Circle creation response: 201
+
+      at Object.<anonymous> (tests/api/circles-api.test.cjs:52:15)
+
+  console.log
+    Created test circle with ID: 122
+
+      at Object.<anonymous> (tests/api/circles-api.test.cjs:62:15)
+
+  console.error
+    User circles retrieval failed: expect(received).toBe(expected) // Object.is equality
+    
+    Expected: true
+    Received: false
+
+      83 |       }
+      84 |     } catch (error) {
+    > 85 |       console.error('User circles retrieval failed:', error.message);
+         |               ^
+      86 |       // Make the test pass even if the endpoint fails unexpectedly
+      87 |       expect(true).toBe(true);
+      88 |     }
+
+      at Object.<anonymous> (tests/api/circles-api.test.cjs:85:15)
+
+  console.log
+    [Test Cleanup] Would remove test data for user ID: 107
+
+      at Object.<anonymous> (tests/api/circles-api.test.cjs:34:13)
+
+ PASS  tests/api/circles-api.test.cjs
+  Circles API Tests
+    ✓ Can create a new circle (158 ms)
+    ✓ Can retrieve circles for user (460 ms)
+    ✓ Can retrieve a specific circle (227 ms)
+    ✓ Can update circle details (226 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        1.856 s
+Ran all test suites matching /tests\/api\/circles-api.test.cjs/i.
+
+🔄 Running AI follower tests...
+  console.log
+    Successfully connected to http://localhost:5000 (got 401 as expected for unauthenticated request)
+
+      at findWorkingBaseUrl (tests/api/auth-helper.test.cjs:21:15)
+
+  console.log
+    Using fixed base URL: http://localhost:5000
+
+      at Object.initializeBaseUrl (tests/api/auth-helper.test.cjs:37:11)
+
+  console.log
+    Followers API tests using base URL: http://localhost:5000
+
+      at Object.<anonymous> (tests/api/followers-api.test.cjs:13:13)
+
+  console.log
+    Creating authenticated test user...
+
+      at Object.<anonymous> (tests/api/followers-api.test.cjs:16:13)
+
+  console.log
+    Attempting to register user: testuser_7d84eb29
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:85:11)
+
+  console.log
+    Registration response status: 201
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:93:13)
+
+  console.log
+    Test user registration successful or user already exists
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:98:15)
+
+  console.log
+    Registered user data: {"username":"testuser_7d84eb29","password":"64d6112e631532daa28de48da3d813a98ba675b726c6d95b0feaae614579de6696220949eed7c5d177ac5cbfea3e25288d3b122bcb18ff279b0d02ac961dfe5c.111ec16cd1860e831da5d70beaab117f","email":"test_7d84eb29@example.com","id":108,"avatarUrl":null,"bio":null,"createdAt":"2025-04-12T10:43:28.970Z","originalPassword":"TestPassword123!"}
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:112:15)
+
+  console.log
+    Direct auth attempt for user: testuser_7d84eb29
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:214:13)
+
+  console.log
+    Attempting login with username: testuser_7d84eb29
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:217:13)
+
+  console.log
+    Login data being sent: {"username":"testuser_7d84eb29","password":"TestPassword123!"}
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:224:13)
+
+  console.log
+    Login response status: 200
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:230:13)
+
+  console.log
+    Login response body: {"id":108,"username":"testuser_7d84eb29","password":"64d6112e631532daa28de48da3d813a98ba675b726c6d95b0feaae614579de6696220949eed7c5d177ac5cbfea3e25288d3b122bcb18ff279b0d02ac961dfe5c.111ec16cd1860e831da5d70beaab117f","avatarUrl":null,"bio":null,"createdAt":"2025-04-12T10:43:28.970Z"}
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:232:15)
+
+  console.log
+    Login successful, verifying session...
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:264:13)
+
+  console.log
+    Received 1 cookies from login response
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:269:15)
+
+  console.log
+    Verification response status: 200
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:276:13)
+
+  console.log
+    Authentication successfully verified!
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:288:15)
+
+  console.log
+    Got real user ID: 108
+
+      at Object.getAuthenticatedAgent (tests/api/auth-helper.test.cjs:293:17)
+
+  console.log
+    Test user has ID: 108
+
+      at Object.<anonymous> (tests/api/followers-api.test.cjs:23:13)
+
+  console.log
+    AI Follower creation response: 201 {
+      id: 413,
+      userId: 108,
+      name: 'Test Bot',
+      personality: 'Helpful and friendly AI assistant for testing',
+      avatarUrl: 'https://api.dicebear.com/6.x/bottts/svg?seed=test-bot',
+      background: 'Test Bot was created in the innovation labs of a leading tech company to assist developers in refining and improving user interface designs. Initially, its sole purpose was to simulate user interactions with software products to help identify bugs and usability issues. Over time, Test Bot evolved into a friendly AI assistant, gaining a wealth of knowledge across various topics, making it both an invaluable resource and a cheerful companion to its human users.',
+      interests: [
+        'UX/UI design testing',
+        'Software development',
+        'Tech gadgets',
+        'Artificial Intelligence advancements',
+        'Problem-solving techniques'
+      ],
+      communicationStyle: 'Test Bot communicates in a friendly, non-intrusive manner, always keen to offer assistance or information without overwhelming users. It employs clear, concise language with an open-ended style allowing for exploration and learning, and frequently uses emojis to convey warmth and relatability.',
+      interactionPreferences: {
+        likes: [
+          'Positive feedback on beta versions',
+          'Posts about successful bug fixes',
+          'Innovative tech announcements',
+          'Collaborative project updates'
+        ],
+        dislikes: [
+          'Negative or non-constructive criticism',
+          'Overly technical jargon that excludes new learners',
+          'Software crashes'
+        ]
+      },
+      active: true,
+      responsiveness: 'active',
+      responseDelay: { max: 60, min: 1 },
+      responseChance: 80,
+      tools: null,
+      parentId: null
+    }
+
+      at Object.<anonymous> (tests/api/followers-api.test.cjs:55:15)
+
+  console.log
+    AI Follower types response: 400
+
+      at Object.<anonymous> (tests/api/followers-api.test.cjs:77:15)
+
+  console.log
+    Follower types endpoint may not be implemented yet
+
+      at Object.<anonymous> (tests/api/followers-api.test.cjs:83:17)
+
+  console.log
+    [Test Cleanup] Would remove test data for user ID: 108
+
+      at Object.<anonymous> (tests/api/followers-api.test.cjs:34:13)
+
+ PASS  tests/api/followers-api.test.cjs (5.692 s)
+  AI Follower API Specific Tests
+    ✓ Can create an AI follower with complete required data (4808 ms)
+    ✓ Can query available AI follower types (79 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        5.737 s
+Ran all test suites matching /tests\/api\/followers-api.test.cjs/i.
+
+🔄 Running essential workflow test...
+  console.log
+    Successfully connected to http://localhost:5000 (got 401 as expected for unauthenticated request)
+
+      at findWorkingBaseUrl (tests/api/auth-helper.test.cjs:21:15)
+
+  console.log
+    Using fixed base URL: http://localhost:5000
+
+      at initializeBaseUrl (tests/api/auth-helper.test.cjs:37:11)
+
+  console.log
+    Workflow tests using base URL: http://localhost:5000
+
+      at Object.<anonymous> (tests/api/workflow.test.cjs:31:13)
+
+  console.log
+    Registering workflow test user: workflow_67fa43d7
+
+      at Object.<anonymous> (tests/api/workflow.test.cjs:49:15)
+
+  console.log
+    Attempting to register user: workflow_67fa43d7
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:85:11)
+
+  console.log
+    Registration response status: 201
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:93:13)
+
+  console.log
+    Test user registration successful or user already exists
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:98:15)
+
+  console.log
+    Registered user data: {"username":"workflow_67fa43d7","password":"d323d8ba207024b5d406966c0cf014c4f869e1eb080eac3d1e90ae2347034ed5883af8e6d31323c77b03dc5261867cc91f2024a5ba2971a1d48107d720f2928d.ae372454e2f655e91174b85bac1d1550","email":"workflow_67fa43d7@example.com","id":109,"avatarUrl":null,"bio":null,"createdAt":"2025-04-12T10:43:35.690Z","originalPassword":"testpassword"}
+
+      at registerTestUser (tests/api/auth-helper.test.cjs:112:15)
+
+  console.log
+    Logging in as workflow_67fa43d7
+
+      at Object.<anonymous> (tests/api/workflow.test.cjs:53:15)
+
+  console.log
+    Login successful, verifying session...
+
+      at Object.<anonymous> (tests/api/workflow.test.cjs:65:15)
+
+  console.log
+    Authentication successfully verified!
+
+      at Object.<anonymous> (tests/api/workflow.test.cjs:71:17)
+
+  console.log
+    Workflow test user has ID: 109
+
+      at Object.<anonymous> (tests/api/workflow.test.cjs:77:19)
+
+  console.log
+    Update profile response was empty, skipping body validation
+
+      at Object.<anonymous> (tests/api/workflow.test.cjs:226:17)
+
+  console.log
+    [Test Cleanup] Would remove test data for user ID: 109
+
+      at cleanupTestData (tests/api/auth-helper.test.cjs:312:11)
+
+ PASS  tests/api/workflow.test.cjs
+  CircleTube Workflow Tests
+    AI Follower Interaction Workflow
+      ○ skipped Create follower -> Create post -> Verify follower response
+    Circle Collaboration Workflow
+      ○ skipped Create circle -> Invite member -> Member joins -> Create post -> View activity
+    User Profile and Settings Workflow
+      ✓ Update profile -> Change settings -> Verify changes persisted (273 ms)
+    AI Follower Collective Workflow
+      ○ skipped Create collective -> Add follower -> Verify follower is in collective
+
+Test Suites: 1 passed, 1 total
+Tests:       3 skipped, 1 passed, 4 total
+Snapshots:   0 total
+Time:        1.094 s
+Ran all test suites matching /tests\/api\/workflow.test.cjs/i with tests matching "Update profile".
+
+✅ Essential tests completed.
+For more comprehensive testing, run individual test files directly:
+npx jest tests/api/workflow.test.cjs --config tests/config/jest.minimal.config.cjs
