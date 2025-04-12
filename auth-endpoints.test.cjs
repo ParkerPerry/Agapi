@@ -9,11 +9,10 @@ const {
   loginTestUser, 
   isAuthenticated,
   initializeBaseUrl,
-  BASE_URLS
+  BASE_URL
 } = require('./auth-helper.test.cjs');
 
 // Base URL will be determined dynamically
-let BASE_URL = BASE_URLS[0]; // Start with first option
 
 // Initialize before running tests
 beforeAll(async () => {
