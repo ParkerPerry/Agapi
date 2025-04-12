@@ -69,7 +69,7 @@ describe('Circles API Tests', () => {
   
   test('Can retrieve circles for user', async () => {
     // Test that circles retrieval works properly
-    const response = await authenticatedAgent.get('/api/circles');
+    const response = await authenticatedAgent.get('/api/circles?format=array');
     
     // These assertions should fail if the API doesn't respond correctly
     expect(response.status).toBe(200);
