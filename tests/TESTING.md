@@ -9,34 +9,34 @@
 
 ### Quickest Way
 ```bash
-./run-simple-tests.sh
+./tests/run-simple-tests.sh
 ```
 This runs essential tests with minimal configuration.
 
 ### Individual Test Files
 ```bash
-npx jest auth-endpoints.test.cjs --config jest.minimal.config.cjs
-npx jest data-creation.test.cjs --config jest.minimal.config.cjs
-npx jest circles-api.test.cjs --config jest.minimal.config.cjs
-npx jest followers-api.test.cjs --config jest.minimal.config.cjs
-npx jest workflow.test.cjs --config jest.minimal.config.cjs
+npx jest tests/api/auth-endpoints.test.cjs --config tests/config/jest.minimal.config.cjs
+npx jest tests/api/data-creation.test.cjs --config tests/config/jest.minimal.config.cjs
+npx jest tests/api/circles-api.test.cjs --config tests/config/jest.minimal.config.cjs
+npx jest tests/api/followers-api.test.cjs --config tests/config/jest.minimal.config.cjs
+npx jest tests/api/workflow.test.cjs --config tests/config/jest.minimal.config.cjs
 ```
 
 ### Specific Test Case
 ```bash
-npx jest workflow.test.cjs -t "Update profile" --config jest.minimal.config.cjs
+npx jest tests/api/workflow.test.cjs -t "Update profile" --config tests/config/jest.minimal.config.cjs
 ```
 
 ## Key Test Files
 1. **Individual API Tests**
-   - auth-endpoints.test.cjs - Authentication
-   - circles-api.test.cjs - Circle operations
-   - followers-api.test.cjs - AI follower functionality
-   - posts-api.test.cjs - Posts operations
+   - tests/api/auth-endpoints.test.cjs - Authentication
+   - tests/api/circles-api.test.cjs - Circle operations
+   - tests/api/followers-api.test.cjs - AI follower functionality
+   - tests/api/posts-api.test.cjs - Posts operations
 
 2. **Data & Integration Tests**
-   - data-creation.test.cjs - Database record creation via APIs
-   - workflow.test.cjs - Complete user journeys across multiple features
+   - tests/api/data-creation.test.cjs - Database record creation via APIs
+   - tests/api/workflow.test.cjs - Complete user journeys across multiple features
 
 ## Common Issues & Fixes
 

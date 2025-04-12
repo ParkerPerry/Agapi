@@ -1,122 +1,128 @@
 # CircleTube Testing Structure
 
-## Testing Approaches
+This document explains the testing framework and file organization used in the CircleTube platform.
 
-CircleTube maintains two testing approaches that evolved as the project developed:
+## Testing Architecture Overview
 
-### 1. Active Testing (Root Directory CJS Tests)
+CircleTube employs two distinct testing approaches:
 
-**Location:** Root directory `.test.cjs` files
-**Status:** Active, maintained, used for current development
-**Language:** JavaScript (CommonJS modules)
-**Focus:** Direct API testing with minimal setup
+1. **Active Testing Framework** - CommonJS (.cjs) tests in the `tests/api` directory
+   - Current testing focus
+   - Simple setup with minimal dependencies
+   - Provides comprehensive API validation
 
-These tests are designed to be:
-- Easy to run
-- Simple to maintain
-- Focused on validating API behavior
-- Independent of framework internals
+2. **Historical/Reference Testing** - TypeScript tests in the `/server/test` directory
+   - Maintained for reference purposes
+   - May contain more complex configurations
+   - Demonstrates TypeScript-based testing approaches
 
-**Key Files:**
-- auth-endpoints.test.cjs - Authentication tests
-- circles-api.test.cjs - Circle functionality 
-- followers-api.test.cjs - AI followers
-- posts-api.test.cjs - Post operations
-- data-creation.test.cjs - Database record API tests
-- workflow.test.cjs - End-to-end user journeys
-
-### 2. Legacy TypeScript Testing Framework
-
-**Location:** `/server/test/` directory
-**Status:** Historical reference, not actively maintained
-**Language:** TypeScript
-**Focus:** Comprehensive unit, integration, and end-to-end testing
-
-This framework provides:
-- More structured testing architecture
-- Stronger typing with TypeScript
-- Advanced mocking capabilities
-- Helper utilities for authentication and validation
-
-**Structure:**
-- `/server/test/helpers/` - Testing utility functions
-- `/server/test/integration/` - API integration tests
-- `/server/test/schemas/` - Validation schemas
-- `/server/test/simplified/` - Simplified test examples
-- `/server/test/unit/` - Unit tests for business logic
-
-## Which Tests Should I Use?
-
-**For active development:**
-- Use the `.test.cjs` files in the root directory
-- Run tests with `./run-simple-tests.sh` or directly with Jest
-- Follow patterns in existing CJS test files when adding new tests
-
-**For reference/learning:**
-- The `/server/test/` TypeScript tests can be examined to understand:
-  - Advanced testing techniques
-  - Mocking strategies
-  - Test structure organization
-  - TypeScript integration with Jest
-
-## Test File Organization
+## Directory Structure
 
 ```
-CircleTube
-├── .test.cjs files       # Active testing framework
+/tests
+├── /api                    # API tests using CommonJS (.cjs)
 │   ├── auth-endpoints.test.cjs
 │   ├── auth-helper.test.cjs
 │   ├── circles-api.test.cjs
 │   ├── data-creation.test.cjs
 │   ├── followers-api.test.cjs
 │   ├── posts-api.test.cjs
-│   ├── schema.test.cjs 
+│   ├── schema.test.cjs
 │   ├── server-api.test.cjs
 │   ├── simple.test.cjs
 │   └── workflow.test.cjs
 │
-├── /server/test/         # Legacy TypeScript testing framework
-│   ├── /helpers/         # Testing utilities
-│   ├── /integration/     # API tests
-│   │   ├── /auth/
-│   │   ├── /circles/
-│   │   ├── /followers/
-│   │   └── /posts/
-│   ├── /schemas/         # Validation schemas
-│   ├── /simplified/      # Simple test examples
-│   └── /unit/            # Business logic tests
+├── /config                 # Jest configurations
+│   ├── jest.minimal.config.cjs
+│   ├── jest.simple.config.ts
+│   └── jest.ultra-simple.config.js
 │
-├── jest.*.config.*       # Jest configurations
-├── RUN_TESTS.md          # Comprehensive documentation
-├── run-simple-tests.sh   # Quick test runner script
-└── TESTING.md            # Quick reference guide
+├── run-simple-tests.sh     # Main test runner script
+├── README.md               # Testing framework overview
+├── RUN_TESTS.md            # Comprehensive testing guide
+├── TESTING.md              # Quick reference guide
+└── TEST_STRUCTURE.md       # This file - architecture documentation
 ```
 
-## Rationale for Multiple Testing Approaches
+## Test Categories and Purpose
 
-The project moved from TypeScript tests to CommonJS tests for several reasons:
+### 1. Basic Tests
+- **simple.test.cjs**: Verifies the test environment works correctly
+- **schema.test.cjs**: Validates database schemas and relationships
 
-1. **Simplicity**: The CJS tests have fewer dependencies and simpler setup
-2. **Direct API Testing**: Focus on testing API behavior rather than implementation details
-3. **Developer Experience**: Easier to run and maintain without TypeScript compilation
-4. **Practical Focus**: Emphasis on functional testing over structure
+### 2. Authentication Tests
+- **auth-endpoints.test.cjs**: Tests registration, login, and logout
+- **auth-helper.test.cjs**: Provides authentication utilities for other tests
 
-## Future Testing Direction
+### 3. API Feature Tests
+- **followers-api.test.cjs**: Tests AI follower creation/management
+- **circles-api.test.cjs**: Tests circle/group functionality
+- **posts-api.test.cjs**: Tests post creation and interaction
 
-The project will continue to use and maintain the root directory CJS tests while keeping the `/server/test/` directory as a historical reference. This approach provides the benefits of:
+### 4. Integration Tests
+- **data-creation.test.cjs**: Tests database record creation via API
+- **workflow.test.cjs**: Tests complete user journeys across features
 
-1. Simpler ongoing maintenance
-2. Faster test execution
-3. More accessible test code for new developers
-4. Preservation of more advanced testing concepts for reference
+## Test Configuration Files
 
-## Clean-up Considerations
+Multiple Jest configurations are available to support different testing needs:
 
-While we're maintaining both testing approaches for now, a potential future clean-up could:
+1. **tests/config/jest.minimal.config.cjs**
+   - Primary configuration for most tests
+   - Essential settings without unnecessary complexity
+   - Used by the run-simple-tests.sh script
 
-1. Archive the `/server/test/` directory in a separate branch
-2. Move any unique, valuable test cases from TypeScript tests to CJS format
-3. Standardize on a single Jest configuration approach
-4. Update package.json with dedicated test scripts
+2. **tests/config/jest.ultra-simple.config.js**
+   - Bare minimum configuration
+   - Used for the most basic tests
 
-However, the current priority is ensuring the active CJS tests remain functional and up-to-date with the latest features.
+3. **tests/config/jest.simple.config.ts**
+   - TypeScript-based configuration
+   - More comprehensive settings for complex tests
+
+## Test Execution
+
+The test framework prioritizes ease of use:
+
+1. **Simplified Script**
+   ```bash
+   ./tests/run-simple-tests.sh
+   ```
+   Executes critical test files through a simple interface
+
+2. **Individual Test Execution**
+   ```bash
+   npx jest tests/api/<test-file> --config tests/config/jest.minimal.config.cjs
+   ```
+
+3. **Specific Test Cases**
+   ```bash
+   npx jest tests/api/workflow.test.cjs -t "Update profile" --config tests/config/jest.minimal.config.cjs
+   ```
+
+## Design Philosophy
+
+1. **Resilience**: Tests use defensive error handling
+2. **Independence**: Each test creates its own test data
+3. **Realism**: Tests model actual user behavior
+4. **Adaptability**: Tests detect environment settings automatically
+5. **Simplicity**: Tests use direct methods without complex abstractions
+
+## Migration History
+
+The testing framework has evolved through several iterations:
+
+1. **Initial Implementation**
+   - TypeScript tests in `/server/test`
+   - Comprehensive TypeScript typing
+
+2. **CommonJS Migration**
+   - Simplified testing with CommonJS modules
+   - Reduced dependencies and complexity
+
+3. **Infrastructure Consolidation**
+   - Created the `tests` directory
+   - Organized tests by category
+   - Centralized configuration management
+
+Each migration has preserved test coverage while improving developer experience.

@@ -21,14 +21,14 @@ CircleTube maintains two different testing approaches:
 ## Current Status (As of April 2025)
 
 ✅ **All Active Test Files Working Properly**:
-- Authentication endpoints (auth-endpoints.test.cjs)
-- Data creation tests (data-creation.test.cjs)  
-- AI follower functionality (followers-api.test.cjs)
-- Circle operations (circles-api.test.cjs)
-- Post creation and retrieval (posts-api.test.cjs)
-- Schema validation (schema.test.cjs)
-- Server API connectivity (server-api.test.cjs)
-- Individual workflow scenarios (workflow.test.cjs)
+- Authentication endpoints (tests/api/auth-endpoints.test.cjs)
+- Data creation tests (tests/api/data-creation.test.cjs)  
+- AI follower functionality (tests/api/followers-api.test.cjs)
+- Circle operations (tests/api/circles-api.test.cjs)
+- Post creation and retrieval (tests/api/posts-api.test.cjs)
+- Schema validation (tests/api/schema.test.cjs)
+- Server API connectivity (tests/api/server-api.test.cjs)
+- Individual workflow scenarios (tests/api/workflow.test.cjs)
 
 ## Active Testing Architecture
 
@@ -63,38 +63,38 @@ A shell script that provides a simplified way to run essential tests:
 
 ```bash
 # Run the simplified test suite
-./run-simple-tests.sh
+./tests/run-simple-tests.sh
 ```
 
 ### Jest Configurations
 We maintain multiple Jest configurations to support different testing scenarios:
 
-- **jest.minimal.config.cjs**: Streamlined configuration with essential settings
-- **jest.ultra-simple.config.js**: Bare minimum configuration for basic tests
-- **jest.simple.config.ts**: TypeScript-based configuration for more complex tests
+- **tests/config/jest.minimal.config.cjs**: Streamlined configuration with essential settings
+- **tests/config/jest.ultra-simple.config.js**: Bare minimum configuration for basic tests
+- **tests/config/jest.simple.config.ts**: TypeScript-based configuration for more complex tests
 
 ### Individual Test Execution
 For targeted testing of specific components:
 
 ```bash
 # Test format
-npx jest <test-file> --config jest.minimal.config.cjs
+npx jest tests/api/<test-file> --config tests/config/jest.minimal.config.cjs
 
 # Examples
-npx jest auth-endpoints.test.cjs --config jest.minimal.config.cjs
-npx jest workflow.test.cjs -t "Update profile" --config jest.minimal.config.cjs
+npx jest tests/api/auth-endpoints.test.cjs --config tests/config/jest.minimal.config.cjs
+npx jest tests/api/workflow.test.cjs -t "Update profile" --config tests/config/jest.minimal.config.cjs
 ```
 
 ## Key Test Files
 
-### auth-helper.test.cjs
+### tests/api/auth-helper.test.cjs
 Provides authentication utilities for all other tests:
 - User registration and login functionality
 - Session management
 - Base URL determination
 - Test user cleanup
 
-### workflow.test.cjs
+### tests/api/workflow.test.cjs
 Contains complete user journey tests:
 - Multiple interactions across different features
 - Simulates realistic usage patterns
