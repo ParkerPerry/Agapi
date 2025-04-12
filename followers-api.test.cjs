@@ -42,6 +42,8 @@ describe('AI Follower API Specific Tests', () => {
     const followerData = {
       name: 'Test Bot',
       personality: 'Helpful and friendly AI assistant for testing',
+      avatarUrl: 'https://api.dicebear.com/6.x/bottts/svg?seed=test-bot', // Adding the required avatarUrl field
+      responsiveness: 'active', // Adding responsiveness which is also required
       type: 'default'
     };
     
