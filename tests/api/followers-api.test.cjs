@@ -49,46 +49,26 @@ describe('AI Follower API Specific Tests', () => {
       type: 'default'
     };
     
-    try {
-      const response = await authenticatedAgent.post('/api/followers').send(followerData);
-      
-      console.log('AI Follower creation response:', response.status, response.body);
-      
-      // Accept different success status codes
-      expect([200, 201]).toContain(response.status);
-      
-      // Only verify id if the creation was successful
-      if (response.status === 200 || response.status === 201) {
-        expect(response.body).toHaveProperty('id');
-        expect(response.body).toHaveProperty('name', followerData.name);
-      }
-    } catch (error) {
-      console.error('AI follower creation failed:', error.message);
-      // Make the test pass even if the endpoint is not fully implemented
-      // This avoids failing the entire test suite for a specific feature
-      expect(true).toBe(true);
-    }
+    // Test that AI follower creation works properly
+    const response = await authenticatedAgent.post('/api/followers').send(followerData);
+    
+    console.log('AI Follower creation response:', response.status, response.body);
+    
+    // These assertions should fail if the API doesn't respond correctly
+    // Accept different success status codes
+    expect([200, 201]).toContain(response.status);
+    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('name', followerData.name);
   });
   
   test('Can query available AI follower types', async () => {
-    try {
-      const response = await authenticatedAgent.get('/api/followers/types');
-      
-      console.log('AI Follower types response:', response.status);
-      
-      // The endpoint might not exist yet, so we'll be lenient
-      if (response.status === 200) {
-        expect(Array.isArray(response.body)).toBe(true);
-      } else {
-        console.log('Follower types endpoint may not be implemented yet');
-      }
-      
-      // Make the test pass even if the endpoint is not implemented
-      expect(true).toBe(true);
-    } catch (error) {
-      console.error('AI follower types query failed:', error.message);
-      // Make the test pass even if the endpoint fails
-      expect(true).toBe(true);
-    }
+    // Test that follower types endpoint works properly
+    const response = await authenticatedAgent.get('/api/followers/types');
+    
+    console.log('AI Follower types response:', response.status);
+    
+    // These assertions should fail if the API doesn't respond correctly
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
   });
 });

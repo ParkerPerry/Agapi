@@ -111,21 +111,17 @@ describe('Circles API Tests', () => {
       description: 'This circle was updated during API testing'
     };
     
-    try {
-      const response = await authenticatedAgent.patch(`/api/circles/${testCircleId}`).send(updates);
-      
-      // Accept different success status codes
-      expect([200, 201, 204]).toContain(response.status);
-      
-      // Only check body properties if there is a response body
-      if (Object.keys(response.body).length > 0) {
-        expect(response.body).toHaveProperty('name', updates.name);
-        expect(response.body).toHaveProperty('description', updates.description);
-      }
-    } catch (error) {
-      console.error('Circle update failed:', error.message);
-      // Make the test pass even if the endpoint fails unexpectedly
-      expect(true).toBe(true);
+    // Test that circle update works properly
+    const response = await authenticatedAgent.patch(`/api/circles/${testCircleId}`).send(updates);
+    
+    // These assertions should fail if the API doesn't respond correctly
+    // Accept different success status codes
+    expect([200, 201, 204]).toContain(response.status);
+    
+    // Only check body properties if there is a response body
+    if (Object.keys(response.body).length > 0) {
+      expect(response.body).toHaveProperty('name', updates.name);
+      expect(response.body).toHaveProperty('description', updates.description);
     }
   });
 });

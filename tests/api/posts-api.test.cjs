@@ -69,25 +69,20 @@ describe('Posts API Tests', () => {
       circleId: testCircleId
     };
     
-    try {
-      const response = await authenticatedAgent.post('/api/posts').send(postData);
-      
-      console.log('Post creation response:', response.status);
-      
-      // Accept different success status codes
-      expect([200, 201]).toContain(response.status);
-      expect(response.body).toHaveProperty('id');
-      expect(response.body).toHaveProperty('content', postData.content);
-      expect(response.body).toHaveProperty('circleId', testCircleId);
-      
-      // Save the post ID for later tests
-      testPostId = response.body.id;
-      console.log(`Created test post with ID: ${testPostId}`);
-    } catch (error) {
-      console.error('Post creation failed:', error.message);
-      // Make the test pass even if the endpoint fails unexpectedly
-      expect(true).toBe(true);
-    }
+    // Test that post creation works properly
+    const response = await authenticatedAgent.post('/api/posts').send(postData);
+    
+    console.log('Post creation response:', response.status);
+    
+    // These assertions should fail if the API doesn't respond correctly
+    expect([200, 201]).toContain(response.status);
+    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('content', postData.content);
+    expect(response.body).toHaveProperty('circleId', testCircleId);
+    
+    // Save the post ID for later tests
+    testPostId = response.body.id;
+    console.log(`Created test post with ID: ${testPostId}`);
   });
   
   test('Can retrieve posts from a circle', async () => {
@@ -97,21 +92,17 @@ describe('Posts API Tests', () => {
       return;
     }
     
-    try {
-      const response = await authenticatedAgent.get(`/api/circles/${testCircleId}/posts`);
-      
-      expect(response.status).toBe(200);
-      expect(Array.isArray(response.body)).toBe(true);
-      
-      // If we created a post previously, verify it's in the response
-      if (testPostId) {
-        const foundPost = response.body.find(post => post.id === testPostId);
-        expect(foundPost).toBeDefined();
-      }
-    } catch (error) {
-      console.error('Circle posts retrieval failed:', error.message);
-      // Make the test pass even if the endpoint fails unexpectedly
-      expect(true).toBe(true);
+    // Test that posts retrieval from a circle works properly
+    const response = await authenticatedAgent.get(`/api/circles/${testCircleId}/posts`);
+    
+    // These assertions should fail if the API doesn't respond correctly
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    
+    // If we created a post previously, verify it's in the response
+    if (testPostId) {
+      const foundPost = response.body.find(post => post.id === testPostId);
+      expect(foundPost).toBeDefined();
     }
   });
   
@@ -122,17 +113,13 @@ describe('Posts API Tests', () => {
       return;
     }
     
-    try {
-      const response = await authenticatedAgent.get(`/api/posts/${testPostId}`);
-      
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('id', testPostId);
-      expect(response.body).toHaveProperty('content');
-      expect(response.body).toHaveProperty('circleId', testCircleId);
-    } catch (error) {
-      console.error('Post retrieval failed:', error.message);
-      // Make the test pass even if the endpoint fails unexpectedly
-      expect(true).toBe(true);
-    }
+    // Test that post retrieval works properly
+    const response = await authenticatedAgent.get(`/api/posts/${testPostId}`);
+    
+    // These assertions should fail if the API doesn't respond correctly
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id', testPostId);
+    expect(response.body).toHaveProperty('content');
+    expect(response.body).toHaveProperty('circleId', testCircleId);
   });
 });
