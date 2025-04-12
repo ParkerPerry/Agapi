@@ -6,7 +6,7 @@ This document outlines CircleTube's comprehensive API testing framework designed
 
 CircleTube maintains two different testing approaches:
 
-1. **Active Testing Framework** - CommonJS (.cjs) tests in the root directory
+1. **Active Testing Framework** - CommonJS (.cjs) tests in the `tests/api` directory
    - Simpler, more direct API-focused tests
    - Used for active development and validation
    - Recently updated and maintained
@@ -16,7 +16,7 @@ CircleTube maintains two different testing approaches:
    - Contains unit, integration, and end-to-end tests
    - Serves as a reference but not actively maintained
 
-> **Note:** The current development and testing focus is on the CommonJS-based tests in the root directory, which provide more straightforward API validation with fewer dependencies.
+> **Note:** The current development and testing focus is on the CommonJS-based tests in the `tests/api` directory, which provide more straightforward API validation with fewer dependencies.
 
 ## Current Status (As of April 2025)
 
@@ -36,30 +36,30 @@ The active CircleTube testing framework follows a layered architecture with thre
 
 ### 1. Unit & Schema Tests
 Tests that verify basic functionality and data structures:
-- **simple.test.js/cjs**: Validates that the test environment itself is working correctly
-- **schema.test.cjs**: Ensures database schemas and relationships are properly defined
+- **tests/api/simple.test.js/cjs**: Validates that the test environment itself is working correctly
+- **tests/api/schema.test.cjs**: Ensures database schemas and relationships are properly defined
 
 ### 2. API Component Tests
 Tests for individual API endpoints and features:
-- **auth-endpoints.test.cjs**: Authentication (registration, login)
-- **followers-api.test.cjs**: AI followers management
-- **posts-api.test.cjs**: Post operations
-- **circles-api.test.cjs**: Circle/group functionality
-- **data-creation.test.cjs**: Database record creation through API
+- **tests/api/auth-endpoints.test.cjs**: Authentication (registration, login)
+- **tests/api/followers-api.test.cjs**: AI followers management
+- **tests/api/posts-api.test.cjs**: Post operations
+- **tests/api/circles-api.test.cjs**: Circle/group functionality
+- **tests/api/data-creation.test.cjs**: Database record creation through API
 
 ### 3. Integration & Workflow Tests
 Tests that simulate complete user journeys across multiple endpoints:
-- **workflow.test.cjs**: End-to-end scenarios that reflect real user behaviors
+- **tests/api/workflow.test.cjs**: End-to-end scenarios that reflect real user behaviors
 
 ## Testing Tools & Scripts
 
-### run-simple-tests.sh
+### tests/run-simple-tests.sh
 A shell script that provides a simplified way to run essential tests:
 - Executes critical test files using a minimal configuration
 - Focuses on key functionality to ensure system stability
 - Uses port 5000 by default for API connections
 - Perfect for quick validation during development
-- Currently runs auth-endpoints.test.cjs and data-creation.test.cjs
+- Currently runs tests/api/auth-endpoints.test.cjs and tests/api/data-creation.test.cjs
 
 ```bash
 # Run the simplified test suite
@@ -140,14 +140,14 @@ await request(app).post(`${baseUrl}/api/followers`).send(followerData);
 
 ### Authentication Issues
 If tests fail with 401 Unauthorized:
-1. Check that auth-helper.test.cjs is being properly imported
+1. Check that tests/api/auth-helper.test.cjs is being properly imported
 2. Verify that cookie handling is configured in your test agent
 3. Confirm the test user was successfully created before other tests run
 
 ## Adding New Tests
 
 1. Follow existing patterns in similar test files
-2. Include proper authentication using auth-helper.test.cjs
+2. Include proper authentication using tests/api/auth-helper.test.cjs
 3. Create unique test data with timestamps or random identifiers
 4. Implement defensive error handling for robustness
 5. Document any new requirements in this file
