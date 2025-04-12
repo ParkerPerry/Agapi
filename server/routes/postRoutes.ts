@@ -89,6 +89,96 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 /**
+ * GET /api/posts/:id - Get a specific post by ID
+ */
+router.get('/:id', requireAuth, async (req, res) => {
+  const postId = parseInt(req.params.id);
+  if (isNaN(postId)) {
+    return res.status(400).json({ message: "Invalid post ID" });
+  }
+  
+  try {
+    // Get the post
+    const post = await storage.getPost(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    
+    // Check if the user has access to the circle this post belongs to
+    const hasPermission = await hasCirclePermission(post.circleId, req.user!.id, storage);
+    if (!hasPermission) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+    
+    // Get interactions for this post
+    const interactions = await storage.getPostInteractions(postId);
+    
+    // Get user info for each interaction
+    const interactionsWithUsers = await Promise.all(
+      interactions.map(async (interaction) => {
+        if (interaction.userType === "ai") {
+          const follower = await storage.getAiFollower(interaction.authorId);
+          return {
+            ...interaction,
+            author: follower
+          };
+        } else {
+          const user = await storage.getUser(interaction.authorId);
+          return {
+            ...interaction,
+            author: user
+          };
+        }
+      })
+    );
+    
+    // Get thread structure
+    const threads = await ThreadManager.getThreadedInteractions(postId);
+    
+    // Get pending responses
+    const pendingResponses = await storage.getPostPendingResponses(postId);
+    
+    // Format pending responses
+    const formattedPendingResponses = await Promise.all(
+      pendingResponses.map(async (pr) => {
+        let followerName = "AI";
+        let followerAvatarUrl = "";
+        
+        if (pr.aiFollowerId) {
+          const follower = await storage.getAiFollower(pr.aiFollowerId);
+          if (follower) {
+            followerName = follower.name;
+            followerAvatarUrl = follower.avatarUrl;
+          }
+        }
+        
+        return {
+          id: pr.id,
+          name: followerName,
+          avatarUrl: followerAvatarUrl,
+          scheduledFor: pr.scheduledFor
+        };
+      })
+    );
+    
+    // Get the circle for additional context
+    const circle = await storage.getCircle(post.circleId);
+    
+    // Combine all data and send response
+    res.json({
+      ...post,
+      interactions: interactionsWithUsers,
+      threads: threads,
+      pendingResponses: formattedPendingResponses.length > 0 ? formattedPendingResponses : [],
+      circle: circle || undefined
+    });
+  } catch (error) {
+    console.error("Error getting post:", error);
+    res.status(500).json({ message: "Failed to get post" });
+  }
+});
+
+/**
  * POST /api/posts - Create a new post
  */
 router.post('/', requireAuth, async (req, res) => {

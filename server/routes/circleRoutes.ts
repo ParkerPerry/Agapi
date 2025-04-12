@@ -52,16 +52,28 @@ router.get('/', requireAuth, async (req, res) => {
     const circles = await storage.getUserCircles(req.user!.id);
     const deactivatedCircles = await storage.getDeactivatedCircles(req.user!.id);
 
-    // Reorganize circles into the new grouping structure
-    const categorizedCircles = {
-      private: circles.owned.filter(c => c.visibility !== "shared"),
-      shared: circles.owned.filter(c => c.visibility === "shared"),
-      sharedWithYou: circles.shared,
-      invited: circles.invited,
-      deactivated: deactivatedCircles
-    };
+    // Check the format requested by the client
+    const format = req.query.format || 'categorized';
 
-    res.json(categorizedCircles);
+    if (format === 'array') {
+      // For test compatibility, return a simple array of all circles
+      const allCircles = [
+        ...circles.owned,
+        ...circles.shared,
+        ...circles.invited
+      ];
+      res.json(allCircles);
+    } else {
+      // Default to categorized view for the frontend
+      const categorizedCircles = {
+        private: circles.owned.filter(c => c.visibility !== "shared"),
+        shared: circles.owned.filter(c => c.visibility === "shared"),
+        sharedWithYou: circles.shared,
+        invited: circles.invited,
+        deactivated: deactivatedCircles
+      };
+      res.json(categorizedCircles);
+    }
   } catch (error) {
     console.error("Error getting circles:", error);
     res.status(500).json({ message: "Failed to get circles" });
