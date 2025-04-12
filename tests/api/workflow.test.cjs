@@ -7,13 +7,14 @@
  */
 
 const supertest = require('supertest');
+const path = require('path');
 const { 
   getAuthenticatedAgent, 
   registerTestUser,
   cleanupTestData, 
   initializeBaseUrl, 
   BASE_URL 
-} = require('./auth-helper.test.cjs');
+} = require(path.resolve(__dirname, './auth-helper.test.cjs'));
 
 // Base URL will be determined dynamically
 let baseUrl = BASE_URL;

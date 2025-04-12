@@ -2,7 +2,8 @@
  * Simple API test against the running server
  */
 const supertest = require('supertest');
-const { initializeBaseUrl, BASE_URL } = require('./auth-helper.test.cjs');
+const path = require('path');
+const { initializeBaseUrl, BASE_URL } = require(path.resolve(__dirname, './auth-helper.test.cjs'));
 
 describe('Server API', () => {
   // Initialize before running tests
