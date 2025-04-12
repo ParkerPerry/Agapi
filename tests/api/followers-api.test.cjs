@@ -1,4 +1,5 @@
-const authHelper = require('./auth-helper.test.cjs');
+const path = require('path');
+const authHelper = require(path.resolve(__dirname, './auth-helper.test.cjs'));
 const request = require('supertest');
 
 let baseUrl;
