@@ -82,11 +82,19 @@ router.post('/', requireAuth, async (req, res) => {
     );
     
     // Create new AI follower with the generated background
+    // Map snake_case property names from OpenAI to camelCase for database
     const newFollower = await storage.createAiFollower(
       req.user!.id, // Pass userId as the first parameter
       {
         ...req.body,
-        ...backgroundData,
+        background: backgroundData.background,
+        interests: backgroundData.interests,
+        // Convert snake_case to camelCase
+        communicationStyle: backgroundData.communication_style,
+        interactionPreferences: {
+          likes: backgroundData.interaction_preferences.likes,
+          dislikes: backgroundData.interaction_preferences.dislikes,
+        },
         // Remove createdBy as it's not in the schema
       }
     );
