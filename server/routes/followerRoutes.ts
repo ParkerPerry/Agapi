@@ -82,11 +82,14 @@ router.post('/', requireAuth, async (req, res) => {
     );
     
     // Create new AI follower with the generated background
-    const newFollower = await storage.createAiFollower({
-      ...req.body,
-      ...backgroundData,
-      createdBy: req.user!.id,
-    });
+    const newFollower = await storage.createAiFollower(
+      req.user!.id, // Pass userId as the first parameter
+      {
+        ...req.body,
+        ...backgroundData,
+        // Remove createdBy as it's not in the schema
+      }
+    );
 
     // Return the newly created follower
     res.status(201).json(newFollower);
