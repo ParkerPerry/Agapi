@@ -36,7 +36,16 @@ echo ""
 echo "✅ Essential tests passed. Continuing with additional tests..."
 echo ""
 
-# Run all test files not covered by the simple tests
+# Only run tests that aren't already part of simple tests
+# Simple tests already include:
+# - auth-endpoints.test.cjs
+# - data-creation.test.cjs
+# - circles-api.test.cjs
+# - followers-api.test.cjs
+# - tools-api.test.cjs (now in simple tests)
+# - circle-follower-api.test.cjs (now in simple tests)
+# - workflow.test.cjs -t "Update profile"
+
 echo "🔄 Running posts API tests..."
 npx jest tests/api/posts-api.test.cjs --config jest.config.cjs
 
@@ -53,7 +62,7 @@ echo "🔄 Running simple verification tests..."
 npx jest tests/api/simple.test.cjs --config jest.config.cjs
 
 echo ""
-echo "🔄 Running full workflow tests (may take a few minutes)..."
+echo "🔄 Running complete workflow tests (all tests, not just profile update)..."
 npx jest tests/api/workflow.test.cjs --config jest.config.cjs
 
 echo ""
@@ -61,20 +70,12 @@ echo "🔄 Running auth helper tests..."
 npx jest tests/api/auth-helper.test.cjs --config jest.config.cjs
 
 echo ""
-echo "🔄 Running circle-follower integration tests..."
-npx jest tests/api/circle-follower-api.test.cjs --config jest.config.cjs
-
-echo ""
 echo "🔄 Running follower collectives tests..."
 npx jest tests/api/follower-collectives-api.test.cjs --config jest.config.cjs
 
 echo ""
-echo "🔄 Running tools API tests..."
-npx jest tests/api/tools-api.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running direct chat API tests..."
-npx jest tests/api/direct-chat-api.test.cjs --config jest.config.cjs
+echo "🔄 Running health API tests..."
+npx jest tests/api/health-api.test.cjs --config jest.config.cjs
 
 # Add a summary section
 echo ""

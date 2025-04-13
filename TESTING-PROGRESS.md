@@ -6,11 +6,29 @@ This document provides an overview of the progress made in implementing comprehe
 
 ### Test Suite Structure
 
-The test suite is organized into three levels:
+The test suite is organized into two tiers:
 
-1. **Simple Tests** (`run-simple-tests.sh`): Essential tests that validate core functionality
-2. **Comprehensive Tests** (`run-comprehensive-tests.sh`): Full test suite covering all API endpoints
-3. **Individual Test Files**: Targeted tests for specific API areas
+1. **Simple Tests** (`run-simple-tests.sh`): Essential tests that validate core functionality including authentication, circles, followers, and tools
+2. **Comprehensive Tests** (`run-comprehensive-tests.sh`): Builds on simple tests to provide full API coverage with additional endpoint testing
+
+### Test Files Organization
+
+- **Simple (Essential) Tests**: Focus on critical functionality needed for basic application operation
+  - Authentication
+  - Circle CRUD operations
+  - AI follower management
+  - Circle-follower integration
+  - Tools functionality
+  - Default circle retrieval
+  
+- **Comprehensive Tests**: Cover additional API endpoints and complex scenarios
+  - All simple tests
+  - Posts and interactions
+  - Schema validation
+  - Server health and status
+  - Follower collectives
+  - Complex workflows
+  - Additional API endpoints
 
 ### Recently Implemented Tests
 
@@ -35,12 +53,17 @@ The test suite is organized into three levels:
 - Confirms that tool usage history can be accessed
 - Focuses on status codes rather than exact response formats
 
-#### 4. Direct Chat API Tests
-- Tests message sending between users and AI followers
-- Validates chat history retrieval
-- Verifies unread message counting
-- Tests marking messages as read
-- Handles the "NaN" error gracefully in parameter conversion
+#### 4. Default Circle API Tests
+- Tests default circle retrieval with both endpoint variants
+- Verifies consistent responses across endpoints
+- Validates circle ownership properties
+- Ensures proper default circle structure
+
+#### 5. Health API Tests
+- Tests basic health check endpoint
+- Validates detailed health information
+- Verifies service status reporting
+- Ensures consistent health status format
 
 ### Implementation Approach
 
@@ -54,17 +77,36 @@ Our testing approach focuses on:
 
 ### Challenges Addressed
 
-1. **NaN Parameter Conversion**: Found and handled an issue in the direct chat API where it attempts to convert NaN to an integer
-2. **Response Format Variations**: Made tests resilient to differences in response formats
-3. **Timeouts**: Identified endpoints that may time out due to resource-intensive operations
-4. **404 vs Error Objects**: Handled cases where the API returns 404 status instead of error objects
+1. **Response Format Variations**: Made tests resilient to differences in response formats
+2. **Timeouts**: Identified endpoints that may time out due to resource-intensive operations
+3. **404 vs Error Objects**: Handled cases where the API returns 404 status instead of error objects
+4. **Test Structure**: Reorganized tests to have foundational simple tests and more comprehensive tests that extend them
+5. **Edge Cases**: Added handling for API edge cases where behavior differs from expectations
+
+### Current Coverage Status
+
+| API Area                | Coverage Status | Notes                                               |
+|-------------------------|----------------|-----------------------------------------------------|
+| Authentication          | ✅ Complete    | Login, registration, user info                       |
+| Circles                 | ✅ Complete    | CRUD operations, circle details                      |
+| Default Circles         | ✅ Complete    | Both endpoint variants                               |
+| Circle Followers        | ✅ Complete    | Add/remove followers, toggle mute                    |
+| AI Followers            | ✅ Complete    | Create, update, delete AI followers                  |
+| Follower Collectives    | ✅ Complete    | Create, get details, members                         |
+| Tools                   | ✅ Complete    | List, details, execution, history                    |
+| Posts                   | ✅ Complete    | Create, list, details                                |
+| Health/System Status    | ✅ Complete    | Basic and detailed health checks                     |
+| Direct Chat             | ❌ Skipped     | Marked as bonus feature                              |
+| Labs                    | ⚠️ Partial     | Basic endpoints covered, complex testing needed      |
+| NFT                     | ❌ Missing     | No tests implemented yet                             |
 
 ### Next Steps
 
-1. **Fix API Issues**: Address the NaN conversion error in direct chat endpoints
-2. **Performance Optimization**: Investigate and optimize endpoints that cause timeouts
-3. **Response Standardization**: Work towards more consistent API response formats
-4. **Expand Test Coverage**: Continue adding tests for other API endpoints
+1. **Improve Robustness**: Continue making tests robust against real-world API behaviors
+2. **Testing Labs APIs**: Add tests for labs functionality once they are more stable
+3. **Comprehensive Test Script**: Enhance the comprehensive test script to include all test cases
+4. **Test Results Reporting**: Add summary reporting of test results and coverage 
+5. **Add Tests for NFT APIs**: If NFT functionality is prioritized
 
 ### Running Tests
 

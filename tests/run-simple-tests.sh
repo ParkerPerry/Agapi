@@ -42,6 +42,10 @@ echo "🔄 Running circle-follower integration tests..."
 npx jest tests/api/circle-follower-api.test.cjs --config jest.config.cjs
 
 echo ""
+echo "🔄 Running default circles tests..."
+npx jest tests/api/default-circle-api.test.cjs --config jest.config.cjs
+
+echo ""
 echo "✅ Essential tests completed."
 echo "For more comprehensive testing, run individual test files directly:"
 echo "npx jest tests/api/posts-api.test.cjs --config jest.config.cjs"
