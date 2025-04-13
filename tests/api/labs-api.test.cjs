@@ -97,10 +97,10 @@ beforeAll(async () => {
         .get(`/api/labs/${testLabId}`)
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(200);
-      expect(response.body).to.have.property('id', testLabId);
-      expect(response.body).to.have.property('name');
-      expect(response.body).to.have.property('experimentType');
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('id', testLabId);
+      expect(response.body).toHaveProperty('name');
+      expect(response.body).toHaveProperty('experimentType');
     });
 
     it('Returns 404 for non-existent lab', async () => {
@@ -108,7 +108,7 @@ beforeAll(async () => {
         .get('/api/labs/99999') // Assuming this ID does not exist
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(404);
+      expect(response.status).toBe(404);
     });
   });
 
@@ -130,11 +130,11 @@ beforeAll(async () => {
         .set('Cookie', authCookie)
         .send(updateData);
 
-      expect(response.status).to.equal(200);
-      expect(response.body).to.have.property('id', testLabId);
-      expect(response.body.name).to.equal(updateData.name);
-      expect(response.body.description).to.equal(updateData.description);
-      expect(response.body.goals).to.equal(updateData.goals);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('id', testLabId);
+      expect(response.body.name).toBe(updateData.name);
+      expect(response.body.description).toBe(updateData.description);
+      expect(response.body.goals).toBe(updateData.goals);
     });
 
     it('Can update lab status', async () => {
@@ -151,10 +151,10 @@ beforeAll(async () => {
         .set('Cookie', authCookie)
         .send(statusUpdate);
 
-      expect(response.status).to.equal(200);
-      expect(response.body).to.have.property('id', testLabId);
-      expect(response.body.status).to.equal(statusUpdate.status);
-      expect(response.body).to.have.property('launchedAt'); // Should set the launch date
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('id', testLabId);
+      expect(response.body.status).toBe(statusUpdate.status);
+      expect(response.body).toHaveProperty('launchedAt'); // Should set the launch date
     });
 
     it('Validates lab status updates', async () => {
@@ -171,8 +171,8 @@ beforeAll(async () => {
         .set('Cookie', authCookie)
         .send(statusUpdate);
 
-      expect(response.status).to.be.oneOf([400, 422]);
-      expect(response.body).to.have.property('message');
+      expect([400, 422]).toContain(response.status);
+      expect(response.body).toHaveProperty('message');
     });
   });
 
@@ -217,11 +217,11 @@ beforeAll(async () => {
         .set('Cookie', authCookie)
         .send(circleData);
 
-      expect(response.status).to.equal(201);
-      expect(response.body).to.have.property('id');
-      expect(response.body).to.have.property('labId', testLabId);
-      expect(response.body).to.have.property('circleId', testCircleId);
-      expect(response.body).to.have.property('role', circleData.role);
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('id');
+      expect(response.body).toHaveProperty('labId', testLabId);
+      expect(response.body).toHaveProperty('circleId', testCircleId);
+      expect(response.body).toHaveProperty('role', circleData.role);
     });
 
     it('Can get circles for a lab', async () => {
@@ -233,14 +233,14 @@ beforeAll(async () => {
         .get(`/api/labs/${testLabId}/circles`)
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(200);
-      expect(response.body).to.be.an('array');
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
       // Should have at least the one we added
-      expect(response.body.length).to.be.at.least(1);
+      expect(response.body.length).toBeGreaterThanOrEqual(1);
       
       // Verify the circle details
       const circleFound = response.body.some(c => c.circle && c.circle.id === testCircleId);
-      expect(circleFound).to.be.true;
+      expect(circleFound).toBe(true);
     });
 
     it('Can get circle stats for a lab', async () => {
@@ -252,10 +252,10 @@ beforeAll(async () => {
         .get(`/api/labs/${testLabId}/circles/stats`)
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(200);
-      expect(response.body).to.be.an('object');
-      expect(response.body).to.have.property('circles');
-      expect(response.body.circles).to.be.an('array');
+      expect(response.status).toBe(200);
+      expect(typeof response.body).toBe('object');
+      expect(response.body).toHaveProperty('circles');
+      expect(Array.isArray(response.body.circles)).toBe(true);
     });
 
     it('Can update a circle role in a lab', async () => {
@@ -272,10 +272,10 @@ beforeAll(async () => {
         .set('Cookie', authCookie)
         .send(updateData);
 
-      expect(response.status).to.equal(200);
-      expect(response.body).to.have.property('labId', testLabId);
-      expect(response.body).to.have.property('circleId', testCircleId);
-      expect(response.body).to.have.property('role', updateData.role);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('labId', testLabId);
+      expect(response.body).toHaveProperty('circleId', testCircleId);
+      expect(response.body).toHaveProperty('role', updateData.role);
     });
   });
 
