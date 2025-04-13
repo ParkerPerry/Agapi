@@ -7,24 +7,34 @@ let authenticatedAgent;
 let testUserId;
 let testLabId = null;
 let testCircleId = null;
+let authCookie;
 
 // Find a working base URL for the API
 beforeAll(async () => {
-  // Try to use environment variable if set, otherwise default to localhost
-  baseUrl = process.env.BASE_URL || 'http://localhost:5000';
-  
   try {
-    const authResponse = await authHelper.authenticate(baseUrl);
-    authenticatedAgent = authResponse.agent;
-    testUserId = authResponse.userId;
+    // Initialize the base URL
+    baseUrl = await authHelper.initializeBaseUrl();
+    console.log(`Labs API tests using base URL: ${baseUrl}`);
     
-    console.log(`Authenticated with user ID: ${testUserId}`);
+    // Get authenticated agent
+    console.log('Creating authenticated test user...');
+    const auth = await authHelper.getAuthenticatedAgent();
+    
+    // Extract agent and user details
+    authenticatedAgent = auth.agent;
+    testUserId = auth.user.id;
+    
+    // Get the auth cookie
+    authCookie = auth.cookie;
+    
+    console.log(`Test user has ID: ${testUserId}`);
   } catch (error) {
-    console.error('Authentication error:', error.message);
+    console.error('Setup failed:', error);
     throw error;
   }
 });
 
+describe('Lab API Tests', () => {
   // Test creating a new lab
   describe('Lab Creation', () => {
     it('Can create a new lab', async () => {
@@ -44,10 +54,15 @@ beforeAll(async () => {
         }
       };
 
+      console.log(`Using authCookie: ${authCookie}`);
+      
       const response = await request(baseUrl)
         .post('/api/labs')
         .set('Cookie', authCookie)
         .send(labData);
+      
+      console.log(`Lab creation response status: ${response.status}`);
+      console.log(`Lab creation response body: ${JSON.stringify(response.body)}`);
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('id');
@@ -179,7 +194,7 @@ beforeAll(async () => {
   // Test lab circles
   describe('Lab Circles', () => {
     // Create a test circle to use with lab
-    before(async () => {
+    beforeAll(async () => {
       // Skip circle creation if we already have one
       if (testCircleId) return;
 
@@ -363,5 +378,5 @@ beforeAll(async () => {
 
       expect(response.status).toBe(404);
     });
-    });
+  });
 });
