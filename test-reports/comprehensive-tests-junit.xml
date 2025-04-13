@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="108" failures="3" errors="0" time="192.854">
-  <testsuite name="Auth Helper" errors="0" failures="3" skipped="0" timestamp="2025-04-13T10:47:06" time="126.059" tests="5">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.005">
+<testsuites name="jest tests" tests="108" failures="3" errors="0" time="204.227">
+  <testsuite name="Auth Helper" errors="0" failures="3" skipped="0" timestamp="2025-04-13T11:02:44" time="126.917" tests="5">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.003">
     </testcase>
-    <testcase classname="Direct Chat API Tests Can send a direct message to an AI follower" name="Direct Chat API Tests Can send a direct message to an AI follower" time="60.002">
+    <testcase classname="Direct Chat API Tests Can send a direct message to an AI follower" name="Direct Chat API Tests Can send a direct message to an AI follower" time="60.004">
       <failure>Error: thrown: &quot;Exceeded timeout of 60000 ms for a test.
 Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.&quot;
     at /home/runner/workspace/tests/api/direct-chat-api.test.cjs:61:3
@@ -17,7 +17,7 @@ Add a timeout value to this test to increase the timeout, if this is a long-runn
     at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)
     at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)</failure>
     </testcase>
-    <testcase classname="Direct Chat API Tests Can get chat history with an AI follower" name="Direct Chat API Tests Can get chat history with an AI follower" time="1.105">
+    <testcase classname="Direct Chat API Tests Can get chat history with an AI follower" name="Direct Chat API Tests Can get chat history with an AI follower" time="1.329">
       <failure>Error: expect(received).toBe(expected) // Object.is equality
 
 Expected: true
@@ -25,7 +25,7 @@ Received: false
     at Object.&lt;anonymous&gt; (/home/runner/workspace/tests/api/direct-chat-api.test.cjs:93:44)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
     </testcase>
-    <testcase classname="Direct Chat API Tests Can get unread message count" name="Direct Chat API Tests Can get unread message count" time="0.165">
+    <testcase classname="Direct Chat API Tests Can get unread message count" name="Direct Chat API Tests Can get unread message count" time="0.168">
     </testcase>
     <testcase classname="Direct Chat API Tests Can mark messages as read" name="Direct Chat API Tests Can mark messages as read" time="60.002">
       <failure>Error: thrown: &quot;Exceeded timeout of 60000 ms for a test.
@@ -42,246 +42,246 @@ Add a timeout value to this test to increase the timeout, if this is a long-runn
     at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)</failure>
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:49:12" time="10.119" tests="5">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:04:51" time="12.124" tests="16">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
     </testcase>
-    <testcase classname="CircleTube Workflow Tests AI Follower Interaction Workflow Create follower -&gt; Create post -&gt; Verify follower response" name="CircleTube Workflow Tests AI Follower Interaction Workflow Create follower -&gt; Create post -&gt; Verify follower response" time="5.051">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" name="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" time="0.167">
     </testcase>
-    <testcase classname="CircleTube Workflow Tests Circle Collaboration Workflow Create circle -&gt; Invite member -&gt; Member joins -&gt; Create post -&gt; View activity" name="CircleTube Workflow Tests Circle Collaboration Workflow Create circle -&gt; Invite member -&gt; Member joins -&gt; Create post -&gt; View activity" time="1.144">
-    </testcase>
-    <testcase classname="CircleTube Workflow Tests User Profile and Settings Workflow Update profile -&gt; Change settings -&gt; Verify changes persisted" name="CircleTube Workflow Tests User Profile and Settings Workflow Update profile -&gt; Change settings -&gt; Verify changes persisted" time="0.246">
-    </testcase>
-    <testcase classname="CircleTube Workflow Tests AI Follower Collective Workflow Create collective -&gt; Add follower -&gt; Verify follower is in collective" name="CircleTube Workflow Tests AI Follower Collective Workflow Create collective -&gt; Add follower -&gt; Verify follower is in collective" time="3.073">
-    </testcase>
-  </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:49:22" time="10.862" tests="16">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
-    </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" name="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" time="0.168">
-    </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" name="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" time="0.244">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" name="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" time="0.245">
     </testcase>
     <testcase classname="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" name="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" time="0.239">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" time="0.62">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" time="0.603">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" time="0.615">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" time="0.635">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" time="0.312">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" time="0.543">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" time="0.237">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" time="0.255">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" time="0.228">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" time="0.244">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" time="0.983">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" time="0.992">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" time="0.242">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" time="0.243">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" time="0.16">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" time="0.166">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" time="3.328">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" time="3.673">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" time="1.187">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" time="1.378">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" time="1.01">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" time="1.013">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" name="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" time="0.413">
+    <testcase classname="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" name="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" time="0.49">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:49:33" time="7.679" tests="6">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:05:04" time="13.665" tests="5">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
-    <testcase classname="AI Follower Collectives API Tests Can create a new AI follower collective" name="AI Follower Collectives API Tests Can create a new AI follower collective" time="0.098">
+    <testcase classname="CircleTube Workflow Tests AI Follower Interaction Workflow Create follower -&gt; Create post -&gt; Verify follower response" name="CircleTube Workflow Tests AI Follower Interaction Workflow Create follower -&gt; Create post -&gt; Verify follower response" time="8.309">
     </testcase>
-    <testcase classname="AI Follower Collectives API Tests Can get a list of AI follower collectives" name="AI Follower Collectives API Tests Can get a list of AI follower collectives" time="0.171">
+    <testcase classname="CircleTube Workflow Tests Circle Collaboration Workflow Create circle -&gt; Invite member -&gt; Member joins -&gt; Create post -&gt; View activity" name="CircleTube Workflow Tests Circle Collaboration Workflow Create circle -&gt; Invite member -&gt; Member joins -&gt; Create post -&gt; View activity" time="0.936">
     </testcase>
-    <testcase classname="AI Follower Collectives API Tests Can get details of a specific AI follower collective" name="AI Follower Collectives API Tests Can get details of a specific AI follower collective" time="0.165">
+    <testcase classname="CircleTube Workflow Tests User Profile and Settings Workflow Update profile -&gt; Change settings -&gt; Verify changes persisted" name="CircleTube Workflow Tests User Profile and Settings Workflow Update profile -&gt; Change settings -&gt; Verify changes persisted" time="0.256">
     </testcase>
-    <testcase classname="AI Follower Collectives API Tests Can add a follower to a collective" name="AI Follower Collectives API Tests Can add a follower to a collective" time="0.091">
-    </testcase>
-    <testcase classname="AI Follower Collectives API Tests Can get members of a collective" name="AI Follower Collectives API Tests Can get members of a collective" time="0.417">
+    <testcase classname="CircleTube Workflow Tests AI Follower Collective Workflow Create collective -&gt; Add follower -&gt; Verify follower is in collective" name="CircleTube Workflow Tests AI Follower Collective Workflow Create collective -&gt; Add follower -&gt; Verify follower is in collective" time="3.599">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:49:41" time="7.492" tests="18">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:05:17" time="8.143" tests="6">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
-    <testcase classname="Lab API Tests Lab Creation Can create a new lab" name="Lab API Tests Lab Creation Can create a new lab" time="0.168">
+    <testcase classname="AI Follower Collectives API Tests Can create a new AI follower collective" name="AI Follower Collectives API Tests Can create a new AI follower collective" time="0.104">
     </testcase>
-    <testcase classname="Lab API Tests Lab Creation Cannot create a lab without required fields" name="Lab API Tests Lab Creation Cannot create a lab without required fields" time="0.091">
+    <testcase classname="AI Follower Collectives API Tests Can get a list of AI follower collectives" name="AI Follower Collectives API Tests Can get a list of AI follower collectives" time="0.169">
     </testcase>
-    <testcase classname="Lab API Tests Lab Retrieval Can get all labs" name="Lab API Tests Lab Retrieval Can get all labs" time="0.167">
+    <testcase classname="AI Follower Collectives API Tests Can get details of a specific AI follower collective" name="AI Follower Collectives API Tests Can get details of a specific AI follower collective" time="0.183">
     </testcase>
-    <testcase classname="Lab API Tests Lab Retrieval Can get a specific lab by ID" name="Lab API Tests Lab Retrieval Can get a specific lab by ID" time="0.171">
+    <testcase classname="AI Follower Collectives API Tests Can add a follower to a collective" name="AI Follower Collectives API Tests Can add a follower to a collective" time="0.096">
     </testcase>
-    <testcase classname="Lab API Tests Lab Retrieval Returns 404 for non-existent lab" name="Lab API Tests Lab Retrieval Returns 404 for non-existent lab" time="0.164">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Updates Can update a lab" name="Lab API Tests Lab Updates Can update a lab" time="0.239">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Updates Can update lab status" name="Lab API Tests Lab Updates Can update lab status" time="0.401">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Updates Validates lab status updates" name="Lab API Tests Lab Updates Validates lab status updates" time="0.163">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Circles Can add a circle to a lab" name="Lab API Tests Lab Circles Can add a circle to a lab" time="0.609">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Circles Can get circles for a lab" name="Lab API Tests Lab Circles Can get circles for a lab" time="0.311">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Circles Can get circle stats for a lab" name="Lab API Tests Lab Circles Can get circle stats for a lab" time="0.535">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Circles Can update a circle role in a lab" name="Lab API Tests Lab Circles Can update a circle role in a lab" time="0.389">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Duplication Can duplicate a lab" name="Lab API Tests Lab Duplication Can duplicate a lab" time="0.387">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Posts Can get posts for a lab" name="Lab API Tests Lab Posts Can get posts for a lab" time="0.244">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Deletion Can remove a circle from a lab" name="Lab API Tests Lab Deletion Can remove a circle from a lab" time="0.33">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Deletion Can delete a lab" name="Lab API Tests Lab Deletion Can delete a lab" time="0.313">
-    </testcase>
-    <testcase classname="Lab API Tests Lab Deletion Cannot access a deleted lab" name="Lab API Tests Lab Deletion Cannot access a deleted lab" time="0.189">
+    <testcase classname="AI Follower Collectives API Tests Can get members of a collective" name="AI Follower Collectives API Tests Can get members of a collective" time="0.427">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:49:48" time="5.276" tests="5">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:05:25" time="8.907" tests="5">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
-    <testcase classname="Circle-Follower API Integration Tests Can add a follower to a circle" name="Circle-Follower API Integration Tests Can add a follower to a circle" time="0.242">
+    <testcase classname="Lab Validation Tests Can create an AI follower for the test circle" name="Lab Validation Tests Can create an AI follower for the test circle" time="4.866">
     </testcase>
-    <testcase classname="Circle-Follower API Integration Tests Can get followers for a circle" name="Circle-Follower API Integration Tests Can get followers for a circle" time="0.256">
+    <testcase classname="Lab Validation Tests Can create a pending response for the test post" name="Lab Validation Tests Can create a pending response for the test post" time="0.324">
     </testcase>
-    <testcase classname="Circle-Follower API Integration Tests Can toggle mute status for a follower in a circle" name="Circle-Follower API Integration Tests Can toggle mute status for a follower in a circle" time="0.238">
+    <testcase classname="Lab Validation Tests Can verify pending responses are retrievable via get post API" name="Lab Validation Tests Can verify pending responses are retrievable via get post API" time="1.196">
     </testcase>
-    <testcase classname="Circle-Follower API Integration Tests Can remove a follower from a circle" name="Circle-Follower API Integration Tests Can remove a follower from a circle" time="0.509">
-    </testcase>
-  </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:49:54" time="6.52" tests="12">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
-    </testcase>
-    <testcase classname="Data Creation Tests User Profile Tests Can retrieve authenticated user profile" name="Data Creation Tests User Profile Tests Can retrieve authenticated user profile" time="0.086">
-    </testcase>
-    <testcase classname="Data Creation Tests User Profile Tests Can update user profile" name="Data Creation Tests User Profile Tests Can update user profile" time="0.11">
-    </testcase>
-    <testcase classname="Data Creation Tests Circle Tests Can create a new circle" name="Data Creation Tests Circle Tests Can create a new circle" time="0.164">
-    </testcase>
-    <testcase classname="Data Creation Tests Circle Tests Can retrieve created circle" name="Data Creation Tests Circle Tests Can retrieve created circle" time="0.235">
-    </testcase>
-    <testcase classname="Data Creation Tests Circle Tests Can update circle details" name="Data Creation Tests Circle Tests Can update circle details" time="0.239">
-    </testcase>
-    <testcase classname="Data Creation Tests Post Tests Can create a new post" name="Data Creation Tests Post Tests Can create a new post" time="0.397">
-    </testcase>
-    <testcase classname="Data Creation Tests Post Tests Can retrieve created post" name="Data Creation Tests Post Tests Can retrieve created post" time="0.594">
-    </testcase>
-    <testcase classname="Data Creation Tests AI Follower Tests Can create a new AI follower" name="Data Creation Tests AI Follower Tests Can create a new AI follower" time="2.752">
-    </testcase>
-    <testcase classname="Data Creation Tests AI Follower Tests Can retrieve created AI follower" name="Data Creation Tests AI Follower Tests Can retrieve created AI follower" time="0.227">
-    </testcase>
-    <testcase classname="Data Creation Tests AI Follower Tests Can update AI follower details" name="Data Creation Tests AI Follower Tests Can update AI follower details" time="0.233">
-    </testcase>
-    <testcase classname="Data Creation Tests Workflow Tests Complete workflow: Create circle -&gt; Create post in circle -&gt; Verify post in circle" name="Data Creation Tests Workflow Tests Complete workflow: Create circle -&gt; Create post in circle -&gt; Verify post in circle" time="0.913">
+    <testcase classname="Lab Validation Tests Can verify lab posts are properly processed by ThreadManager" name="Lab Validation Tests Can verify lab posts are properly processed by ThreadManager" time="0.616">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:00" time="7.508" tests="5">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:05:34" time="7.455" tests="18">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
-    <testcase classname="Lab Validation Tests Can create an AI follower for the test circle" name="Lab Validation Tests Can create an AI follower for the test circle" time="3.211">
+    <testcase classname="Lab API Tests Lab Creation Can create a new lab" name="Lab API Tests Lab Creation Can create a new lab" time="0.203">
     </testcase>
-    <testcase classname="Lab Validation Tests Can create a pending response for the test post" name="Lab Validation Tests Can create a pending response for the test post" time="0.315">
+    <testcase classname="Lab API Tests Lab Creation Cannot create a lab without required fields" name="Lab API Tests Lab Creation Cannot create a lab without required fields" time="0.107">
     </testcase>
-    <testcase classname="Lab Validation Tests Can verify pending responses are retrievable via get post API" name="Lab Validation Tests Can verify pending responses are retrievable via get post API" time="1.183">
+    <testcase classname="Lab API Tests Lab Retrieval Can get all labs" name="Lab API Tests Lab Retrieval Can get all labs" time="0.166">
     </testcase>
-    <testcase classname="Lab Validation Tests Can verify lab posts are properly processed by ThreadManager" name="Lab Validation Tests Can verify lab posts are properly processed by ThreadManager" time="0.609">
+    <testcase classname="Lab API Tests Lab Retrieval Can get a specific lab by ID" name="Lab API Tests Lab Retrieval Can get a specific lab by ID" time="0.183">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Retrieval Returns 404 for non-existent lab" name="Lab API Tests Lab Retrieval Returns 404 for non-existent lab" time="0.159">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Updates Can update a lab" name="Lab API Tests Lab Updates Can update a lab" time="0.237">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Updates Can update lab status" name="Lab API Tests Lab Updates Can update lab status" time="0.393">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Updates Validates lab status updates" name="Lab API Tests Lab Updates Validates lab status updates" time="0.164">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Circles Can add a circle to a lab" name="Lab API Tests Lab Circles Can add a circle to a lab" time="0.607">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Circles Can get circles for a lab" name="Lab API Tests Lab Circles Can get circles for a lab" time="0.309">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Circles Can get circle stats for a lab" name="Lab API Tests Lab Circles Can get circle stats for a lab" time="0.531">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Circles Can update a circle role in a lab" name="Lab API Tests Lab Circles Can update a circle role in a lab" time="0.444">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Duplication Can duplicate a lab" name="Lab API Tests Lab Duplication Can duplicate a lab" time="0.386">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Posts Can get posts for a lab" name="Lab API Tests Lab Posts Can get posts for a lab" time="0.238">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Deletion Can remove a circle from a lab" name="Lab API Tests Lab Deletion Can remove a circle from a lab" time="0.311">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Deletion Can delete a lab" name="Lab API Tests Lab Deletion Can delete a lab" time="0.308">
+    </testcase>
+    <testcase classname="Lab API Tests Lab Deletion Cannot access a deleted lab" name="Lab API Tests Lab Deletion Cannot access a deleted lab" time="0.162">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:08" time="3.387" tests="3">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:05:42" time="9.586" tests="12">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
-    <testcase classname="AI Follower API Specific Tests Can create an AI follower with complete required data" name="AI Follower API Specific Tests Can create an AI follower with complete required data" time="2.658">
+    <testcase classname="Data Creation Tests User Profile Tests Can retrieve authenticated user profile" name="Data Creation Tests User Profile Tests Can retrieve authenticated user profile" time="0.084">
     </testcase>
-    <testcase classname="AI Follower API Specific Tests Can query AI followers list" name="AI Follower API Specific Tests Can query AI followers list" time="0.159">
+    <testcase classname="Data Creation Tests User Profile Tests Can update user profile" name="Data Creation Tests User Profile Tests Can update user profile" time="0.086">
+    </testcase>
+    <testcase classname="Data Creation Tests Circle Tests Can create a new circle" name="Data Creation Tests Circle Tests Can create a new circle" time="0.158">
+    </testcase>
+    <testcase classname="Data Creation Tests Circle Tests Can retrieve created circle" name="Data Creation Tests Circle Tests Can retrieve created circle" time="0.23">
+    </testcase>
+    <testcase classname="Data Creation Tests Circle Tests Can update circle details" name="Data Creation Tests Circle Tests Can update circle details" time="0.231">
+    </testcase>
+    <testcase classname="Data Creation Tests Post Tests Can create a new post" name="Data Creation Tests Post Tests Can create a new post" time="0.388">
+    </testcase>
+    <testcase classname="Data Creation Tests Post Tests Can retrieve created post" name="Data Creation Tests Post Tests Can retrieve created post" time="0.585">
+    </testcase>
+    <testcase classname="Data Creation Tests AI Follower Tests Can create a new AI follower" name="Data Creation Tests AI Follower Tests Can create a new AI follower" time="5.925">
+    </testcase>
+    <testcase classname="Data Creation Tests AI Follower Tests Can retrieve created AI follower" name="Data Creation Tests AI Follower Tests Can retrieve created AI follower" time="0.226">
+    </testcase>
+    <testcase classname="Data Creation Tests AI Follower Tests Can update AI follower details" name="Data Creation Tests AI Follower Tests Can update AI follower details" time="0.229">
+    </testcase>
+    <testcase classname="Data Creation Tests Workflow Tests Complete workflow: Create circle -&gt; Create post in circle -&gt; Verify post in circle" name="Data Creation Tests Workflow Tests Complete workflow: Create circle -&gt; Create post in circle -&gt; Verify post in circle" time="0.911">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:11" time="2.124" tests="4">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:05:51" time="5.344" tests="5">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
+    </testcase>
+    <testcase classname="Circle-Follower API Integration Tests Can add a follower to a circle" name="Circle-Follower API Integration Tests Can add a follower to a circle" time="0.243">
+    </testcase>
+    <testcase classname="Circle-Follower API Integration Tests Can get followers for a circle" name="Circle-Follower API Integration Tests Can get followers for a circle" time="0.25">
+    </testcase>
+    <testcase classname="Circle-Follower API Integration Tests Can toggle mute status for a follower in a circle" name="Circle-Follower API Integration Tests Can toggle mute status for a follower in a circle" time="0.247">
+    </testcase>
+    <testcase classname="Circle-Follower API Integration Tests Can remove a follower from a circle" name="Circle-Follower API Integration Tests Can remove a follower from a circle" time="0.474">
+    </testcase>
+  </testsuite>
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:05:57" time="3.658" tests="3">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
+    </testcase>
+    <testcase classname="AI Follower API Specific Tests Can create an AI follower with complete required data" name="AI Follower API Specific Tests Can create an AI follower with complete required data" time="2.913">
+    </testcase>
+    <testcase classname="AI Follower API Specific Tests Can query AI followers list" name="AI Follower API Specific Tests Can query AI followers list" time="0.174">
+    </testcase>
+  </testsuite>
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:00" time="2.46" tests="4">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
     <testcase classname="Posts API Tests Can create a post in a circle" name="Posts API Tests Can create a post in a circle" time="0.24">
     </testcase>
-    <testcase classname="Posts API Tests Can retrieve posts from a circle" name="Posts API Tests Can retrieve posts from a circle" time="0.533">
+    <testcase classname="Posts API Tests Can retrieve posts from a circle" name="Posts API Tests Can retrieve posts from a circle" time="0.853">
     </testcase>
-    <testcase classname="Posts API Tests Can retrieve a specific post" name="Posts API Tests Can retrieve a specific post" time="0.609">
+    <testcase classname="Posts API Tests Can retrieve a specific post" name="Posts API Tests Can retrieve a specific post" time="0.636">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:13" time="1.732" tests="5">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:03" time="1.716" tests="5">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
     </testcase>
-    <testcase classname="Circles API Tests Can create a new circle" name="Circles API Tests Can create a new circle" time="0.177">
+    <testcase classname="Circles API Tests Can create a new circle" name="Circles API Tests Can create a new circle" time="0.16">
     </testcase>
-    <testcase classname="Circles API Tests Can retrieve circles for user" name="Circles API Tests Can retrieve circles for user" time="0.485">
+    <testcase classname="Circles API Tests Can retrieve circles for user" name="Circles API Tests Can retrieve circles for user" time="0.462">
     </testcase>
-    <testcase classname="Circles API Tests Can retrieve a specific circle" name="Circles API Tests Can retrieve a specific circle" time="0.249">
+    <testcase classname="Circles API Tests Can retrieve a specific circle" name="Circles API Tests Can retrieve a specific circle" time="0.247">
     </testcase>
-    <testcase classname="Circles API Tests Can update circle details" name="Circles API Tests Can update circle details" time="0.246">
-    </testcase>
-  </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:15" time="1.444" tests="4">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
-    </testcase>
-    <testcase classname="Default Circle API Tests Can get default circle using /api/default-circle endpoint" name="Default Circle API Tests Can get default circle using /api/default-circle endpoint" time="0.405">
-    </testcase>
-    <testcase classname="Default Circle API Tests Can get default circle using alternative /api/circles/default endpoint" name="Default Circle API Tests Can get default circle using alternative /api/circles/default endpoint" time="0.16">
-    </testcase>
-    <testcase classname="Default Circle API Tests Both default circle endpoints return the same circle" name="Default Circle API Tests Both default circle endpoints return the same circle" time="0.327">
+    <testcase classname="Circles API Tests Can update circle details" name="Circles API Tests Can update circle details" time="0.244">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:16" time="1.355" tests="5">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:05" time="1.777" tests="4">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
-    <testcase classname="Tools API Tests Can get a list of available tools" name="Tools API Tests Can get a list of available tools" time="0.087">
+    <testcase classname="Default Circle API Tests Can get default circle using /api/default-circle endpoint" name="Default Circle API Tests Can get default circle using /api/default-circle endpoint" time="0.502">
     </testcase>
-    <testcase classname="Tools API Tests Can get details of a specific tool" name="Tools API Tests Can get details of a specific tool" time="0.172">
+    <testcase classname="Default Circle API Tests Can get default circle using alternative /api/circles/default endpoint" name="Default Circle API Tests Can get default circle using alternative /api/circles/default endpoint" time="0.384">
     </testcase>
-    <testcase classname="Tools API Tests Can execute a calculator tool" name="Tools API Tests Can execute a calculator tool" time="0.087">
-    </testcase>
-    <testcase classname="Tools API Tests Can get tool execution history" name="Tools API Tests Can get tool execution history" time="0.089">
+    <testcase classname="Default Circle API Tests Both default circle endpoints return the same circle" name="Default Circle API Tests Both default circle endpoints return the same circle" time="0.336">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:18" time="0.561" tests="3">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
-    </testcase>
-    <testcase classname="Authentication Endpoints Registration endpoint exists and accepts requests" name="Authentication Endpoints Registration endpoint exists and accepts requests" time="0.195">
-    </testcase>
-    <testcase classname="Authentication Endpoints Login endpoint returns successful response" name="Authentication Endpoints Login endpoint returns successful response" time="0.308">
-    </testcase>
-  </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:18" time="0.138" tests="3">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:06" time="1.162" tests="5">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
-    <testcase classname="Health API Tests GET /api/health returns basic health status" name="Health API Tests GET /api/health returns basic health status" time="0.005">
+    <testcase classname="Tools API Tests Can get a list of available tools" name="Tools API Tests Can get a list of available tools" time="0.09">
     </testcase>
-    <testcase classname="Health API Tests GET /api/health/details returns detailed health information" name="Health API Tests GET /api/health/details returns detailed health information" time="0.083">
+    <testcase classname="Tools API Tests Can get details of a specific tool" name="Tools API Tests Can get details of a specific tool" time="0.316">
     </testcase>
-  </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:19" time="0.088" tests="3">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.004">
+    <testcase classname="Tools API Tests Can execute a calculator tool" name="Tools API Tests Can execute a calculator tool" time="0.097">
     </testcase>
-    <testcase classname="Server API GET /api/user returns 401 when not authenticated" name="Server API GET /api/user returns 401 when not authenticated" time="0.011">
-    </testcase>
-    <testcase classname="Server API GET /api endpoint exists" name="Server API GET /api endpoint exists" time="0.021">
+    <testcase classname="Tools API Tests Can get tool execution history" name="Tools API Tests Can get tool execution history" time="0.092">
     </testcase>
   </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:19" time="0.052" tests="1">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:08" time="0.556" tests="3">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
+    </testcase>
+    <testcase classname="Authentication Endpoints Registration endpoint exists and accepts requests" name="Authentication Endpoints Registration endpoint exists and accepts requests" time="0.194">
+    </testcase>
+    <testcase classname="Authentication Endpoints Login endpoint returns successful response" name="Authentication Endpoints Login endpoint returns successful response" time="0.304">
+    </testcase>
+  </testsuite>
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:08" time="0.14" tests="3">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
+    </testcase>
+    <testcase classname="Health API Tests GET /api/health returns basic health status" name="Health API Tests GET /api/health returns basic health status" time="0.009">
+    </testcase>
+    <testcase classname="Health API Tests GET /api/health/details returns detailed health information" name="Health API Tests GET /api/health/details returns detailed health information" time="0.079">
+    </testcase>
+  </testsuite>
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:08" time="0.082" tests="3">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
+    </testcase>
+    <testcase classname="Server API GET /api/user returns 401 when not authenticated" name="Server API GET /api/user returns 401 when not authenticated" time="0.009">
+    </testcase>
+    <testcase classname="Server API GET /api endpoint exists" name="Server API GET /api endpoint exists" time="0.014">
+    </testcase>
+  </testsuite>
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:08" time="0.044" tests="1">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="Zod Schema Validation" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:19" time="0.036" tests="3">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:08" time="0.024" tests="2">
+    <testcase classname=" 1 + 1 equals 2" name=" 1 + 1 equals 2" time="0.001">
+    </testcase>
+    <testcase classname=" 2 * 3 equals 6" name=" 2 * 3 equals 6" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Zod Schema Validation" errors="0" failures="0" skipped="0" timestamp="2025-04-13T11:06:09" time="0.034" tests="3">
     <testcase classname="Zod Schema Validation validates valid user data" name="Zod Schema Validation validates valid user data" time="0.003">
     </testcase>
     <testcase classname="Zod Schema Validation rejects invalid user data" name="Zod Schema Validation rejects invalid user data" time="0.002">
     </testcase>
     <testcase classname="Zod Schema Validation schema validates with optional fields missing" name="Zod Schema Validation schema validates with optional fields missing" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-04-13T10:50:19" time="0.041" tests="2">
-    <testcase classname=" 1 + 1 equals 2" name=" 1 + 1 equals 2" time="0.001">
-    </testcase>
-    <testcase classname=" 2 * 3 equals 6" name=" 2 * 3 equals 6" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>
