@@ -27,6 +27,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const scheduler = ResponseScheduler.getInstance();
   scheduler.start();
   
+  // Since we're using a separate Python server on port 3000 for test reports
+  // We don't need to serve them from this Express server
+  
   // ===========================================================================
   // DIRECT API ROUTES - Register these first to ensure they take precedence
   // ===========================================================================
