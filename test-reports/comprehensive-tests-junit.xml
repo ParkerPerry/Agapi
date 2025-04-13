@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="3" failures="0" errors="0" time="0.941">
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T09:53:51" time="0.891" tests="3">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="0.819">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T09:58:45" time="0.783" tests="3">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
     </testcase>
-    <testcase classname="Authentication Endpoints Registration endpoint exists and accepts requests" name="Authentication Endpoints Registration endpoint exists and accepts requests" time="0.26">
+    <testcase classname="Authentication Endpoints Registration endpoint exists and accepts requests" name="Authentication Endpoints Registration endpoint exists and accepts requests" time="0.21">
     </testcase>
-    <testcase classname="Authentication Endpoints Login endpoint returns successful response" name="Authentication Endpoints Login endpoint returns successful response" time="0.309">
+    <testcase classname="Authentication Endpoints Login endpoint returns successful response" name="Authentication Endpoints Login endpoint returns successful response" time="0.317">
     </testcase>
   </testsuite>
 </testsuites>

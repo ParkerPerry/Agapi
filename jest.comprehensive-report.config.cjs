@@ -33,7 +33,7 @@ module.exports = {
     ['./tests/custom-reporter.cjs', {}],
     ['./tests/api-trace-reporter.cjs', {
       outputDir: './test-reports',
-      outputFile: 'comprehensive-api-trace.json',
+      outputFile: 'api-traces.json', // Let's use the file name that's already being created
       htmlReport: 'comprehensive-api-trace.html'
     }]
   ],

@@ -59,24 +59,52 @@ class ApiTraceReporter {
         fs.mkdirSync(this.outputDir, { recursive: true });
       }
       
-      // Debug configuration values
-      console.log(`\n[API Trace Reporter] Configuration:`);
-      console.log(`  Output Directory: ${this.outputDir}`);
-      console.log(`  JSON Output File: ${this.outputFile}`);
-      console.log(`  HTML Report: ${this.htmlReport}`);
-      
-      // Write the API calls to a JSON file
-      const outputJsonPath = path.join(this.outputDir, this.outputFile);
-      fs.writeFileSync(outputJsonPath, JSON.stringify(apiCalls, null, 2));
-      console.log(`[API Trace Reporter] Saved API calls to ${outputJsonPath}`);
-      
-      // Generate an HTML report for easier viewing
-      const htmlOutputPath = path.join(this.outputDir, this.htmlReport);
-      this.generateHtmlReport(apiCalls, htmlOutputPath);
-      
-      console.log(`\n[API Trace Reporter] API Trace Report generated: ${outputJsonPath}`);
-      console.log(`[API Trace Reporter] HTML Report generated: ${htmlOutputPath}`);
-      console.log(`[API Trace Reporter] Total API calls traced: ${apiCalls.length}`);
+      try {
+        // Get the constructor options for debugging
+        console.log(`\n[API Trace Reporter] Reporter instantiated with options:`);
+        console.log(JSON.stringify(this.options, null, 2));
+        
+        // Debug configuration values
+        console.log(`\n[API Trace Reporter] Configuration:`);
+        console.log(`  Output Directory: ${this.outputDir}`);
+        console.log(`  JSON Output File: ${this.outputFile}`);
+        console.log(`  HTML Report: ${this.htmlReport}`);
+        
+        // Write the API calls to a JSON file
+        const outputJsonPath = path.join(this.outputDir, this.outputFile);
+        fs.writeFileSync(outputJsonPath, JSON.stringify(apiCalls, null, 2));
+        console.log(`[API Trace Reporter] Saved API calls to ${outputJsonPath}`);
+        
+        // Generate an HTML report for easier viewing
+        const htmlOutputPath = path.join(this.outputDir, this.htmlReport);
+        console.log(`[API Trace Reporter] Attempting to create HTML report at: ${htmlOutputPath}`);
+        
+        // Check if file or directory exists before attempting to write
+        if (fs.existsSync(htmlOutputPath)) {
+          if (fs.statSync(htmlOutputPath).isDirectory()) {
+            console.log(`[API Trace Reporter] ERROR: ${htmlOutputPath} is a directory, cannot write file`);
+          } else {
+            console.log(`[API Trace Reporter] File exists, will be overwritten: ${htmlOutputPath}`);
+          }
+        }
+        
+        this.generateHtmlReport(apiCalls, htmlOutputPath);
+        
+        // Verify the HTML report was created
+        if (fs.existsSync(htmlOutputPath)) {
+          const stats = fs.statSync(htmlOutputPath);
+          console.log(`[API Trace Reporter] HTML report created successfully: ${htmlOutputPath} (${stats.size} bytes)`);
+        } else {
+          console.log(`[API Trace Reporter] ERROR: Failed to create HTML report at ${htmlOutputPath}`);
+        }
+        
+        console.log(`\n[API Trace Reporter] API Trace Report generated: ${outputJsonPath}`);
+        console.log(`[API Trace Reporter] HTML Report generated: ${htmlOutputPath}`);
+        console.log(`[API Trace Reporter] Total API calls traced: ${apiCalls.length}`);
+      } catch (error) {
+        console.error(`[API Trace Reporter] ERROR during report generation: ${error.message}`);
+        console.error(error.stack);
+      }
       
       // Stats
       const methodCounts = apiCalls.reduce((counts, call) => {
@@ -120,8 +148,9 @@ class ApiTraceReporter {
     }, 1000); // Wait 1 second to ensure all async operations complete
   }
 
-  generateHtmlReport(apiCalls) {
-    const htmlPath = path.join(this.outputDir, this.htmlReport);
+  generateHtmlReport(apiCalls, htmlPath) {
+    // If htmlPath is not provided, use default
+    htmlPath = htmlPath || path.join(this.outputDir, this.htmlReport);
     
     // Group API calls by test
     const testGroups = {};
