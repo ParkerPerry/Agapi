@@ -18,6 +18,8 @@ let testUserId;
 let testLabId = null;
 let testCircleId = null;
 let testSecondCircleId = null;
+let controlCirclePostId = null;
+let treatmentCirclePostId = null;
 
 // Find a working base URL for the API
 beforeAll(async () => {
@@ -302,9 +304,7 @@ describe('Lab Creation Wizard Flow Tests', () => {
 
   // Step 5: Create content for the lab circles
   describe('Step 5: Content Creation', () => {
-    // Test variables to hold the created post IDs
-    let controlCirclePostId = null;
-    let treatmentCirclePostId = null;
+    // Post IDs are tracked at the global level for use in later steps
 
     it('Can create test content post in control circle', async () => {
       // Skip if lab or circle wasn't created
