@@ -1,21 +1,18 @@
 /**
  * Jest configuration for simple tests with reporting
- * 
- * IMPORTANT: This configuration is intended for the full suite of FOUNDATIONAL tests
- * that verify critical system functionality. If these tests fail, more complex
- * functionality will likely also fail, so these should be run first.
- * 
- * Due to Replit agent timeouts, it's recommended to test specific parts directly with:
- * npx jest tests/api/specific-test-file.test.cjs --config jest.simple-report.config.cjs
- * 
- * See TEST-README.md for more information on testing strategy.
  */
 module.exports = {
   // Run tests sequentially to avoid port conflicts
   maxWorkers: 1,
   
-  // Increase timeout for API tests
-  testTimeout: 30000,
+  // Increase timeout for API tests and ensure tests exit properly
+  testTimeout: 60000,
+  
+  // Force Jest to exit after tests complete (prevents hanging)
+  forceExit: true,
+  
+  // Show open handles that might prevent proper termination
+  detectOpenHandles: true,
   
   // Use more descriptive test reports
   reporters: [
@@ -30,10 +27,15 @@ module.exports = {
       outputDirectory: './test-reports',
       outputName: 'simple-tests-junit.xml',
     }],
-    ['./tests/custom-reporter.cjs', {}]
+    ['<rootDir>/tests/custom-reporter.cjs', {}],
+    ['<rootDir>/tests/api-trace-reporter.cjs', {
+      outputDir: './test-reports',
+      outputFile: 'simple-api-trace.json',
+      htmlReport: 'simple-api-trace.html'
+    }]
   ],
   
-  // Test testMatch to include all foundational test files
+  // Test testMatch to include only simple test files
   testMatch: [
     "**/tests/api/auth-endpoints.test.cjs",
     "**/tests/api/data-creation.test.cjs",

@@ -15,6 +15,14 @@ class ApiTraceReporter {
     this.outputDir = options.outputDir || './test-reports';
     this.outputFile = options.outputFile || 'api-trace-report.json';
     this.htmlReport = options.htmlReport || 'api-trace-report.html';
+    
+    console.log('============================================');
+    console.log('API TRACE REPORTER INITIALIZED');
+    console.log('Output Directory:', this.outputDir);
+    console.log('Output File:', this.outputFile);
+    console.log('HTML Report:', this.htmlReport);
+    console.log('Options:', JSON.stringify(options, null, 2));
+    console.log('============================================');
   }
 
   onRunStart() {
