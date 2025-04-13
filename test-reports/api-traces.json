@@ -1816,5 +1816,205 @@
       "fullName": "Authentication Endpoints Login endpoint returns successful response",
       "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
     }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:10:06 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 24,
+    "timestamp": "2025-04-13T10:10:06.701Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:10:06 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 55,
+    "timestamp": "2025-04-13T10:10:06.709Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "288",
+        "etag": "W/\"120-NSCAbc8m814PR8ekxKRlTiEVvE0\"",
+        "set-cookie": [
+          "sid=s%3AMOViUO6MeqjcvrENaGzIfiWG5AEHZlNI.uv1ExLD6PY6Ea1QRqhvu4D6UH%2BbqTi80iCO0J5iWncc; Path=/; Expires=Mon, 14 Apr 2025 10:10:06 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:10:06 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 386,
+        "username": "testuser_1744539006725",
+        "password": "8bca283d32e92c00aa6baee58afa73d08ba8c91e835f755673432ee5b17558ddd1f5e456cac84406246bf02a670a923eae0bdc02b7c0233ac83bfd059338db54.26b429c16af49e284b79ba1e4d6eda9f",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:10:06.890Z"
+      }
+    },
+    "error": null,
+    "duration": 212,
+    "timestamp": "2025-04-13T10:10:06.941Z",
+    "test": {
+      "name": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "fullName": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "288",
+        "etag": "W/\"120-NSCAbc8m814PR8ekxKRlTiEVvE0\"",
+        "set-cookie": [
+          "sid=s%3AMOViUO6MeqjcvrENaGzIfiWG5AEHZlNI.uv1ExLD6PY6Ea1QRqhvu4D6UH%2BbqTi80iCO0J5iWncc; Path=/; Expires=Mon, 14 Apr 2025 10:10:06 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:10:06 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 386,
+        "username": "testuser_1744539006725",
+        "password": "8bca283d32e92c00aa6baee58afa73d08ba8c91e835f755673432ee5b17558ddd1f5e456cac84406246bf02a670a923eae0bdc02b7c0233ac83bfd059338db54.26b429c16af49e284b79ba1e4d6eda9f",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:10:06.890Z"
+      }
+    },
+    "error": null,
+    "duration": 215,
+    "timestamp": "2025-04-13T10:10:06.943Z",
+    "test": {
+      "name": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "fullName": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "288",
+        "etag": "W/\"120-gl/2JsjdNfvtmmyK+OsspxOGu+A\"",
+        "set-cookie": [
+          "sid=s%3AIbifYw-DYIaFO-X9rMaQxianvCK9orl0.kd5DfK9wYoRgciH7K7Xec%2Fn79M%2Fxmh0AkHR2dp7asUU; Path=/; Expires=Mon, 14 Apr 2025 10:10:07 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:10:07 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 387,
+        "username": "testuser_1744539006948",
+        "password": "dc053b56b1c939c3449f82704cfb78b02e6a4f9175eb3ee2a701409810ed39e7e3fde99f376a782ff86df69b3f950b25d089211977b9420b52ec6ac0dcc66a1d.c206f8347aab68e9ad62447ade947037",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:10:07.100Z"
+      }
+    },
+    "error": null,
+    "duration": 193,
+    "timestamp": "2025-04-13T10:10:07.144Z",
+    "test": {
+      "name": "Authentication Endpoints Login endpoint returns successful response",
+      "fullName": "Authentication Endpoints Login endpoint returns successful response",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "288",
+        "etag": "W/\"120-gl/2JsjdNfvtmmyK+OsspxOGu+A\"",
+        "set-cookie": [
+          "sid=s%3AIbifYw-DYIaFO-X9rMaQxianvCK9orl0.kd5DfK9wYoRgciH7K7Xec%2Fn79M%2Fxmh0AkHR2dp7asUU; Path=/; Expires=Mon, 14 Apr 2025 10:10:07 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:10:07 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 387,
+        "username": "testuser_1744539006948",
+        "password": "dc053b56b1c939c3449f82704cfb78b02e6a4f9175eb3ee2a701409810ed39e7e3fde99f376a782ff86df69b3f950b25d089211977b9420b52ec6ac0dcc66a1d.c206f8347aab68e9ad62447ade947037",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:10:07.100Z"
+      }
+    },
+    "error": null,
+    "duration": 194,
+    "timestamp": "2025-04-13T10:10:07.145Z",
+    "test": {
+      "name": "Authentication Endpoints Login endpoint returns successful response",
+      "fullName": "Authentication Endpoints Login endpoint returns successful response",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
   }
 ]

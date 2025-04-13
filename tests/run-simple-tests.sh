@@ -43,6 +43,10 @@ if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   
   TEST_EXIT_CODE=$?
   
+  # Generate API trace report regardless of test outcome
+  echo "📊 Generating API trace report..."
+  node generate-api-trace-report.cjs
+  
   # If any specific test needs to be run with different parameters, run it here
   # For example, the workflow test with a specific test name:
   echo ""
@@ -53,9 +57,11 @@ if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   if [ $TEST_EXIT_CODE -eq 0 ]; then
     echo "✅ Essential tests completed successfully."
     echo "Check the detailed HTML report at: ./test-reports/simple-tests-report.html"
+    echo "API trace report available at: ./test-reports/comprehensive-api-trace.html"
   else
     echo "❌ Some essential tests failed."
     echo "Review the detailed HTML report at: ./test-reports/simple-tests-report.html"
+    echo "API trace report available at: ./test-reports/comprehensive-api-trace.html"
   fi
 else
   # Original individual test approach for backward compatibility
@@ -91,8 +97,22 @@ else
   echo ""
   echo "🔄 Running default circles tests..."
   npx jest tests/api/default-circle-api.test.cjs --config jest.config.cjs
+  
+  # Generate API trace report in legacy mode
+  echo ""
+  echo "📊 Generating API trace report..."
+  node generate-api-trace-report.cjs
 fi
 
+# Add summary section
+echo ""
+echo "====================================="
+echo "✅ CircleTube Essential Tests Complete"
+echo "====================================="
+echo ""
+echo "Test Reports:"
+echo "- HTML Test Report: ./test-reports/simple-tests-report.html"
+echo "- API Trace Report: ./test-reports/comprehensive-api-trace.html"
 echo ""
 echo "For more comprehensive testing, run the comprehensive test suite:"
 echo "./tests/run-comprehensive-tests.sh"

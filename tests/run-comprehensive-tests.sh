@@ -65,13 +65,19 @@ if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   
   TEST_EXIT_CODE=$?
   
+  # Generate API trace report regardless of test outcome
+  echo "📊 Generating API trace report..."
+  node generate-api-trace-report.cjs
+  
   echo ""
   if [ $TEST_EXIT_CODE -eq 0 ]; then
     echo "✅ Comprehensive tests completed successfully."
     echo "Check the detailed HTML report at: ./test-reports/comprehensive-tests-report.html"
+    echo "API trace report available at: ./test-reports/comprehensive-api-trace.html"
   else
     echo "❌ Some comprehensive tests failed."
     echo "Review the detailed HTML report at: ./test-reports/comprehensive-tests-report.html"
+    echo "API trace report available at: ./test-reports/comprehensive-api-trace.html"
   fi
 else
   # Legacy mode - run tests individually
@@ -180,11 +186,21 @@ else
   fi
 fi
 
+# If in legacy mode, also generate API trace report
+if [ "$USE_CONSOLIDATED_TESTS" = false ]; then
+  echo "📊 Generating API trace report..."
+  node generate-api-trace-report.cjs
+fi
+
 # Add a summary section
 echo ""
 echo "=============================================="
 echo "✅ CircleTube Comprehensive Test Suite Complete"
 echo "=============================================="
+echo ""
+echo "Test Reports:"
+echo "- HTML Test Report: ./test-reports/comprehensive-tests-report.html"
+echo "- API Trace Report: ./test-reports/comprehensive-api-trace.html"
 echo ""
 echo "For more targeted testing, run individual test files directly:"
 echo "npx jest tests/api/specific-test-file.test.cjs --config jest.config.cjs"
