@@ -54,14 +54,14 @@ describe('Default Circle API Tests', () => {
     console.log(`Default circle details:
       ID: ${response.body.id}
       Name: ${response.body.name}
-      Owner: ${response.body.ownerId}
+      Owner: ${response.body.userId}
     `);
     
     // Validate default circle properties
     expect(response.body).toHaveProperty('id');
     expect(response.body).toHaveProperty('name');
-    expect(response.body).toHaveProperty('ownerId');
-    expect(response.body.ownerId).toBe(testUserId);
+    expect(response.body).toHaveProperty('userId');  // API uses userId not ownerId
+    expect(response.body.userId).toBe(testUserId);
   });
   
   test('Can get default circle using alternative /api/circles/default endpoint', async () => {
@@ -74,8 +74,8 @@ describe('Default Circle API Tests', () => {
     // Validate default circle properties
     expect(response.body).toHaveProperty('id');
     expect(response.body).toHaveProperty('name');
-    expect(response.body).toHaveProperty('ownerId');
-    expect(response.body.ownerId).toBe(testUserId);
+    expect(response.body).toHaveProperty('userId');  // API uses userId not ownerId
+    expect(response.body.userId).toBe(testUserId);
   });
   
   test('Both default circle endpoints return the same circle', async () => {
