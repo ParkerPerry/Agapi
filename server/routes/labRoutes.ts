@@ -194,7 +194,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     }
     
     // Set launchedAt timestamp when status changes to active
-    const updateData = { status };
+    const updateData: any = { status };
     if (status === 'active') {
       updateData.launchedAt = new Date();
     }

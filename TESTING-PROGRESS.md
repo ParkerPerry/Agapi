@@ -107,11 +107,12 @@ Our testing approach focuses on:
 1. **Implemented Comprehensive Labs API Tests**: Created labs-api.test.cjs to test all lab-related endpoints including CRUD operations, status updates, and circle integrations
 2. **Added Lab Wizard Flow Tests**: Created lab-wizard-flow.test.cjs to test the complete multi-step lab creation process including basic info, goals, metrics, circle association, and activation, matching the UI wizard flow
 3. **Fixed API/Database Inconsistency**: Identified and fixed mismatch between API route validation and database constraints for lab status values ("running" vs "active")
-4. **Fixed Tools API Tests**: Updated the tools-api.test.cjs to correctly handle object response formats rather than expecting arrays, particularly for the tool history endpoint
-5. **Enhanced Follower Collectives API Tests**: Improved URL handling and response format checking in follower-collectives-api.test.cjs to avoid technical failures
-6. **Error Handling**: Added robust error handling throughout tests to gracefully handle API inconsistencies
-7. **Dynamic Entity Creation**: Improved tests to attempt to use dynamically created test entities before falling back to hardcoded IDs
-8. **Test Scripts**: Enhanced run-simple-tests.sh and run-comprehensive-tests.sh to properly manage test execution and dependencies
+4. **Fixed launchedAt Date Handling**: Resolved TypeScript errors for launchedAt timestamp field to ensure labs properly record their activation time
+5. **Fixed Tools API Tests**: Updated the tools-api.test.cjs to correctly handle object response formats rather than expecting arrays, particularly for the tool history endpoint
+6. **Enhanced Follower Collectives API Tests**: Improved URL handling and response format checking in follower-collectives-api.test.cjs to avoid technical failures
+7. **Error Handling**: Added robust error handling throughout tests to gracefully handle API inconsistencies
+8. **Dynamic Entity Creation**: Improved tests to attempt to use dynamically created test entities before falling back to hardcoded IDs
+9. **Test Scripts**: Enhanced run-simple-tests.sh and run-comprehensive-tests.sh to properly manage test execution and dependencies
 
 ### Labs API Test Improvements (April 2025)
 
@@ -141,7 +142,7 @@ Our testing approach focuses on:
 5. **Progress Tracking**: Detailed console logging tracks progress through each step of the wizard flow
 6. **Schema Alignment**: Test validation matches actual API response formats and behavior
 7. **Status Value Consistency**: Fixed mismatches between route validation for status values ("running" vs. "active") to match database schema constraints
-8. **Skipped Validation**: Temporarily skipped launchedAt timestamp validation as it appears to have implementation issues in the API
+8. **Fixed launchedAt Timestamp**: Resolved TypeScript error with launchedAt timestamp field to ensure proper timestamp setting when a lab is activated
 9. **API Response Checking**: Thorough verification of API responses at each step to ensure proper object creation and updates
 10. **Cleanup**: Optional test section for setting lab to completed status after testing, providing full lifecycle coverage
 
