@@ -15,6 +15,8 @@ describe('Auth Helper', () => {
 const supertest = require('supertest');
 const { z } = require('zod');
 const { randomUUID } = require('crypto');
+const path = require('path');
+const apiTraceHelper = require(path.resolve(__dirname, '../api-trace-helper.cjs'));
 
 // Fixed base URL for API requests, always using port 5000
 const BASE_URL = 'http://localhost:5000';  // Internal port for the server
@@ -22,8 +24,8 @@ const BASE_URL = 'http://localhost:5000';  // Internal port for the server
 // Simple function to log the base URL being used
 async function findWorkingBaseUrl() {
   try {
-    // Use supertest for consistent behavior with the rest of the tests
-    const request = supertest(BASE_URL);
+    // Use traced supertest for proper API call logging
+    const request = apiTraceHelper.createTracedAgent(BASE_URL);
     const response = await request.get('/api/user');
     
     // We expect a 401 for unauthenticated requests - that means the server is up
@@ -89,7 +91,8 @@ async function registerTestUser(agent = null, userData = null) {
     BASE_URL = await initializeBaseUrl();
   }
   
-  const request = agent || supertest(BASE_URL);
+  // Use traced agent if no agent is provided, otherwise wrap the existing agent
+  const request = agent ? apiTraceHelper.traceAgent(agent) : apiTraceHelper.createTracedAgent(BASE_URL);
   const testUser = userData || createUniqueTestUser();
   
   console.log(`Attempting to register user: ${testUser.username}`);
@@ -147,7 +150,8 @@ async function loginTestUser(agent = null, username = TEST_USER.username, passwo
     BASE_URL = await initializeBaseUrl();
   }
   
-  const request = agent || supertest.agent(BASE_URL);
+  // Use traced agent if no agent is provided, otherwise wrap the existing agent
+  const request = agent ? apiTraceHelper.traceAgent(agent) : apiTraceHelper.createTracedAgent(BASE_URL);
   
   try {
     const loginResponse = await request
@@ -192,7 +196,9 @@ async function loginTestUser(agent = null, username = TEST_USER.username, passwo
  */
 async function isAuthenticated(agent) {
   try {
-    const response = await agent.get('/api/user');
+    // Ensure agent is traced
+    const tracedAgent = apiTraceHelper.traceAgent(agent);
+    const response = await tracedAgent.get('/api/user');
     return response.status === 200;
   } catch (error) {
     console.error('Error checking authentication:', error);
@@ -211,8 +217,8 @@ async function getAuthenticatedAgent() {
       BASE_URL = await initializeBaseUrl();
     }
     
-    // Create an agent to maintain cookies/session
-    const agent = supertest.agent(BASE_URL);
+    // Create a traced agent to maintain cookies/session
+    const agent = apiTraceHelper.createTracedAgent(BASE_URL);
     
     // Create a unique test user
     const testUser = createUniqueTestUser();
@@ -248,8 +254,8 @@ async function getAuthenticatedAgent() {
       // Instead of failing, we'll try a workaround to create a session
       console.log("Trying alternate session creation approach...");
       
-      // First try to use a fresh agent
-      const freshAgent = supertest.agent(BASE_URL);
+      // First try to use a fresh traced agent
+      const freshAgent = apiTraceHelper.createTracedAgent(BASE_URL);
       
       // Sometimes we need to hit an endpoint to establish a session before login
       await freshAgent.get('/api');
