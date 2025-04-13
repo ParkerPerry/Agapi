@@ -45,12 +45,19 @@ class ApiTraceReporter {
   }
 
   onRunComplete() {
+    console.log('\n[API Trace Reporter] onRunComplete triggered');
+    
     // Use setTimeout to ensure all API calls are processed
     // by allowing the event loop to complete first
     setTimeout(() => {
+      console.log('[API Trace Reporter] Processing API calls after timeout');
+      
       // Get API calls from both memory logger and global variable if available
       const memoryApiCalls = apiTraceLogger.getApiCalls();
+      console.log(`[API Trace Reporter] Found ${memoryApiCalls.length} API calls in memory logger`);
+      
       const globalApiCalls = global.__apiTraces || [];
+      console.log(`[API Trace Reporter] Found ${globalApiCalls.length} API calls in global storage`);
       
       // Combine API calls, prioritizing memory logger calls
       const apiCalls = [...memoryApiCalls];

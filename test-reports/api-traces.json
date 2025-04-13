@@ -13,19 +13,15 @@
         "content-type": "text/plain; charset=utf-8",
         "content-length": "12",
         "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
-        "date": "Sun, 13 Apr 2025 10:39:24 GMT",
+        "date": "Sun, 13 Apr 2025 10:50:00 GMT",
         "connection": "close"
       },
       "body": {}
     },
     "error": null,
-    "duration": 78,
-    "timestamp": "2025-04-13T10:39:24.396Z",
-    "test": {
-      "name": "Auth Helper is a helper module, not a test suite",
-      "fullName": "Auth Helper is a helper module, not a test suite",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
+    "duration": 4,
+    "timestamp": "2025-04-13T10:50:00.713Z",
+    "test": null
   },
   {
     "request": {
@@ -40,30 +36,60 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-5KT8NY6MH870IlRyrPDcei/yFPA\"",
+        "etag": "W/\"11b-eFPoRt36YEnNIhkNpalZSTbRtSw\"",
         "set-cookie": [
-          "sid=s%3AV9TtDukKXPcsd14zNuv1KLVEre57HAA1.ZBEYuKNOKbkz1AYqT0ach5jJERF9FYQ9MUdydgoiHFk; Path=/; Expires=Mon, 14 Apr 2025 10:39:24 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3AjbPfNAZiCP6aVBQQLLD2Co-n241AvE2Y.2opoT0jZ4TDHF1qPP0sqQx6rqKbaDg9%2F6Y7WQeXH6as; Path=/; Expires=Mon, 14 Apr 2025 10:50:00 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:39:24 GMT",
+        "date": "Sun, 13 Apr 2025 10:50:00 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 443,
-        "username": "testuser_67fb945c",
-        "password": "45b37054370c5151f36c2a832814b5856207b2fe0e91babc5158696ed4f07bbd50c3b40683601e774678cd5e8f594ba7d783c8a3d1d57bac7b1e37adca86b055.63ab746a56d72790d86bb6ece3252c0f",
+        "id": 461,
+        "username": "testuser_77675bdb",
+        "password": "db09e0bfc59fbb9deaa06c06e12c835b23c968944e6a80b9d089f620f3e6518230881ba0725f26ec254f86c7c9cb3458a4f41777aae58d529c9ecc06fd355ac9.b7a6ce8209a6fdfde6ff3ece4142c2dc",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:39:24.575Z"
+        "createdAt": "2025-04-13T10:50:00.860Z"
       }
     },
     "error": null,
-    "duration": 221,
-    "timestamp": "2025-04-13T10:39:24.624Z",
-    "test": {
-      "name": "Auth Helper is a helper module, not a test suite",
-      "fullName": "Auth Helper is a helper module, not a test suite",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
+    "duration": 193,
+    "timestamp": "2025-04-13T10:50:00.907Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-eFPoRt36YEnNIhkNpalZSTbRtSw\"",
+        "set-cookie": [
+          "sid=s%3AjbPfNAZiCP6aVBQQLLD2Co-n241AvE2Y.2opoT0jZ4TDHF1qPP0sqQx6rqKbaDg9%2F6Y7WQeXH6as; Path=/; Expires=Mon, 14 Apr 2025 10:50:00 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:00 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 461,
+        "username": "testuser_77675bdb",
+        "password": "db09e0bfc59fbb9deaa06c06e12c835b23c968944e6a80b9d089f620f3e6518230881ba0725f26ec254f86c7c9cb3458a4f41777aae58d529c9ecc06fd355ac9.b7a6ce8209a6fdfde6ff3ece4142c2dc",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:00.860Z"
+      }
+    },
+    "error": null,
+    "duration": 193,
+    "timestamp": "2025-04-13T10:50:00.907Z",
+    "test": null
   },
   {
     "request": {
@@ -78,30 +104,60 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-5KT8NY6MH870IlRyrPDcei/yFPA\"",
+        "etag": "W/\"11b-eFPoRt36YEnNIhkNpalZSTbRtSw\"",
         "set-cookie": [
-          "sid=s%3AsJMiHK6keiqvw05jYas1DXc0fHroIWcO.ENPmhs4TCR1Jx1aFWxqd1HHCTwiC9kcy5cD7Vsvkazo; Path=/; Expires=Mon, 14 Apr 2025 10:39:24 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3A2ffyy2eq6UNzKRrmRirmkqQWs6vVdvhB.XjDJc18g%2BOoWq%2FJpBpn8WjZO9IQOuqHPqzb3Qm0M5Gs; Path=/; Expires=Mon, 14 Apr 2025 10:50:01 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:39:24 GMT",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 443,
-        "username": "testuser_67fb945c",
-        "password": "45b37054370c5151f36c2a832814b5856207b2fe0e91babc5158696ed4f07bbd50c3b40683601e774678cd5e8f594ba7d783c8a3d1d57bac7b1e37adca86b055.63ab746a56d72790d86bb6ece3252c0f",
+        "id": 461,
+        "username": "testuser_77675bdb",
+        "password": "db09e0bfc59fbb9deaa06c06e12c835b23c968944e6a80b9d089f620f3e6518230881ba0725f26ec254f86c7c9cb3458a4f41777aae58d529c9ecc06fd355ac9.b7a6ce8209a6fdfde6ff3ece4142c2dc",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:39:24.575Z"
+        "createdAt": "2025-04-13T10:50:00.860Z"
       }
     },
     "error": null,
-    "duration": 205,
-    "timestamp": "2025-04-13T10:39:24.832Z",
-    "test": {
-      "name": "Auth Helper is a helper module, not a test suite",
-      "fullName": "Auth Helper is a helper module, not a test suite",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
+    "duration": 194,
+    "timestamp": "2025-04-13T10:50:01.102Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-eFPoRt36YEnNIhkNpalZSTbRtSw\"",
+        "set-cookie": [
+          "sid=s%3A2ffyy2eq6UNzKRrmRirmkqQWs6vVdvhB.XjDJc18g%2BOoWq%2FJpBpn8WjZO9IQOuqHPqzb3Qm0M5Gs; Path=/; Expires=Mon, 14 Apr 2025 10:50:01 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 461,
+        "username": "testuser_77675bdb",
+        "password": "db09e0bfc59fbb9deaa06c06e12c835b23c968944e6a80b9d089f620f3e6518230881ba0725f26ec254f86c7c9cb3458a4f41777aae58d529c9ecc06fd355ac9.b7a6ce8209a6fdfde6ff3ece4142c2dc",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:00.860Z"
+      }
+    },
+    "error": null,
+    "duration": 196,
+    "timestamp": "2025-04-13T10:50:01.104Z",
+    "test": null
   },
   {
     "request": {
@@ -116,27 +172,23 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-5KT8NY6MH870IlRyrPDcei/yFPA\"",
-        "date": "Sun, 13 Apr 2025 10:39:24 GMT",
+        "etag": "W/\"11b-eFPoRt36YEnNIhkNpalZSTbRtSw\"",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 443,
-        "username": "testuser_67fb945c",
-        "password": "45b37054370c5151f36c2a832814b5856207b2fe0e91babc5158696ed4f07bbd50c3b40683601e774678cd5e8f594ba7d783c8a3d1d57bac7b1e37adca86b055.63ab746a56d72790d86bb6ece3252c0f",
+        "id": 461,
+        "username": "testuser_77675bdb",
+        "password": "db09e0bfc59fbb9deaa06c06e12c835b23c968944e6a80b9d089f620f3e6518230881ba0725f26ec254f86c7c9cb3458a4f41777aae58d529c9ecc06fd355ac9.b7a6ce8209a6fdfde6ff3ece4142c2dc",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:39:24.575Z"
+        "createdAt": "2025-04-13T10:50:00.860Z"
       }
     },
     "error": null,
-    "duration": 81,
-    "timestamp": "2025-04-13T10:39:24.915Z",
-    "test": {
-      "name": "Auth Helper is a helper module, not a test suite",
-      "fullName": "Auth Helper is a helper module, not a test suite",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
+    "duration": 80,
+    "timestamp": "2025-04-13T10:50:01.186Z",
+    "test": null
   },
   {
     "request": {
@@ -151,55 +203,23 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-5KT8NY6MH870IlRyrPDcei/yFPA\"",
-        "date": "Sun, 13 Apr 2025 10:39:25 GMT",
+        "etag": "W/\"11b-eFPoRt36YEnNIhkNpalZSTbRtSw\"",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 443,
-        "username": "testuser_67fb945c",
-        "password": "45b37054370c5151f36c2a832814b5856207b2fe0e91babc5158696ed4f07bbd50c3b40683601e774678cd5e8f594ba7d783c8a3d1d57bac7b1e37adca86b055.63ab746a56d72790d86bb6ece3252c0f",
+        "id": 461,
+        "username": "testuser_77675bdb",
+        "password": "db09e0bfc59fbb9deaa06c06e12c835b23c968944e6a80b9d089f620f3e6518230881ba0725f26ec254f86c7c9cb3458a4f41777aae58d529c9ecc06fd355ac9.b7a6ce8209a6fdfde6ff3ece4142c2dc",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:39:24.575Z"
+        "createdAt": "2025-04-13T10:50:00.860Z"
       }
     },
     "error": null,
-    "duration": 89,
-    "timestamp": "2025-04-13T10:39:25.009Z",
-    "test": {
-      "name": "Data Creation Tests User Profile Tests Can retrieve authenticated user profile",
-      "fullName": "Data Creation Tests User Profile Tests Can retrieve authenticated user profile",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
-  },
-  {
-    "request": {
-      "method": "PATCH",
-      "url": "/api/user",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 200,
-      "headers": {
-        "x-powered-by": "Express",
-        "vary": "Origin",
-        "content-type": "text/html; charset=utf-8",
-        "date": "Sun, 13 Apr 2025 10:39:25 GMT",
-        "connection": "close",
-        "transfer-encoding": "chunked"
-      },
-      "body": {}
-    },
-    "error": null,
-    "duration": 86,
-    "timestamp": "2025-04-13T10:39:25.100Z",
-    "test": {
-      "name": "Data Creation Tests User Profile Tests Can update user profile",
-      "fullName": "Data Creation Tests User Profile Tests Can update user profile",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
+    "duration": 80,
+    "timestamp": "2025-04-13T10:50:01.186Z",
+    "test": null
   },
   {
     "request": {
@@ -213,112 +233,100 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "199",
-        "etag": "W/\"c7-Bfxy5iI3jOgrU1hzF6iE9YrMmhs\"",
-        "date": "Sun, 13 Apr 2025 10:39:25 GMT",
+        "content-length": "219",
+        "etag": "W/\"db-CNOHSmYTcsHebHn0BLjT9zv870Y\"",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 392,
-        "name": "Test Circle",
-        "description": "Circle created by automated tests",
+        "id": 405,
+        "name": "Test Circle for Lab Validation",
+        "description": "A circle for testing lab validation",
         "icon": null,
         "color": null,
-        "createdAt": "2025-04-13T10:39:25.215Z",
-        "userId": 443,
+        "createdAt": "2025-04-13T10:50:01.299Z",
+        "userId": 461,
         "isDefault": false,
-        "visibility": "private"
+        "visibility": "public"
+      }
+    },
+    "error": null,
+    "duration": 155,
+    "timestamp": "2025-04-13T10:50:01.343Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "219",
+        "etag": "W/\"db-CNOHSmYTcsHebHn0BLjT9zv870Y\"",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 405,
+        "name": "Test Circle for Lab Validation",
+        "description": "A circle for testing lab validation",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:01.299Z",
+        "userId": 461,
+        "isDefault": false,
+        "visibility": "public"
+      }
+    },
+    "error": null,
+    "duration": 155,
+    "timestamp": "2025-04-13T10:50:01.344Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "219",
+        "etag": "W/\"db-CNOHSmYTcsHebHn0BLjT9zv870Y\"",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 405,
+        "name": "Test Circle for Lab Validation",
+        "description": "A circle for testing lab validation",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:01.299Z",
+        "userId": 461,
+        "isDefault": false,
+        "visibility": "public"
       }
     },
     "error": null,
     "duration": 156,
-    "timestamp": "2025-04-13T10:39:25.259Z",
-    "test": {
-      "name": "Data Creation Tests Circle Tests Can create a new circle",
-      "fullName": "Data Creation Tests Circle Tests Can create a new circle",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
-  },
-  {
-    "request": {
-      "method": "GET",
-      "url": "/api/circles/392",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 200,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "199",
-        "etag": "W/\"c7-Bfxy5iI3jOgrU1hzF6iE9YrMmhs\"",
-        "date": "Sun, 13 Apr 2025 10:39:25 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 392,
-        "name": "Test Circle",
-        "description": "Circle created by automated tests",
-        "icon": null,
-        "color": null,
-        "createdAt": "2025-04-13T10:39:25.215Z",
-        "userId": 443,
-        "isDefault": false,
-        "visibility": "private"
-      }
-    },
-    "error": null,
-    "duration": 232,
-    "timestamp": "2025-04-13T10:39:25.499Z",
-    "test": {
-      "name": "Data Creation Tests Circle Tests Can retrieve created circle",
-      "fullName": "Data Creation Tests Circle Tests Can retrieve created circle",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
-  },
-  {
-    "request": {
-      "method": "PATCH",
-      "url": "/api/circles/392",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 200,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "216",
-        "etag": "W/\"d8-cP3PwbR+Opk8Y4gQBT71C+A9o9k\"",
-        "date": "Sun, 13 Apr 2025 10:39:25 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 392,
-        "name": "Updated Test Circle",
-        "description": "This circle was updated by automated tests",
-        "icon": null,
-        "color": null,
-        "createdAt": "2025-04-13T10:39:25.215Z",
-        "userId": 443,
-        "isDefault": false,
-        "visibility": "private"
-      }
-    },
-    "error": null,
-    "duration": 248,
-    "timestamp": "2025-04-13T10:39:25.760Z",
-    "test": {
-      "name": "Data Creation Tests Circle Tests Can update circle details",
-      "fullName": "Data Creation Tests Circle Tests Can update circle details",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
+    "timestamp": "2025-04-13T10:50:01.344Z",
+    "test": null
   },
   {
     "request": {
       "method": "POST",
-      "url": "/api/circles",
+      "url": "/api/labs",
       "headers": {},
       "body": {}
     },
@@ -327,31 +335,230 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "206",
-        "etag": "W/\"ce-IhLOtrpFfjQgvE9kv5x88fTSvck\"",
-        "date": "Sun, 13 Apr 2025 10:39:25 GMT",
+        "content-length": "282",
+        "etag": "W/\"11a-FHANBTXSuolE3djzZ+ryFsJEhDY\"",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 393,
-        "name": "Test Circle for Post",
-        "description": "Circle created for post testing",
-        "icon": null,
-        "color": null,
-        "createdAt": "2025-04-13T10:39:25.876Z",
-        "userId": 443,
-        "isDefault": false,
-        "visibility": "private"
+        "id": 167,
+        "userId": 461,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "draft",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:50:01.456Z",
+        "launchedAt": null,
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:50:01.423Z"
+      }
+    },
+    "error": null,
+    "duration": 153,
+    "timestamp": "2025-04-13T10:50:01.500Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/labs",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "282",
+        "etag": "W/\"11a-FHANBTXSuolE3djzZ+ryFsJEhDY\"",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 167,
+        "userId": 461,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "draft",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:50:01.456Z",
+        "launchedAt": null,
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:50:01.423Z"
       }
     },
     "error": null,
     "duration": 154,
-    "timestamp": "2025-04-13T10:39:25.919Z",
-    "test": {
-      "name": "Data Creation Tests Post Tests Can create a new post",
-      "fullName": "Data Creation Tests Post Tests Can create a new post",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
+    "timestamp": "2025-04-13T10:50:01.500Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/labs",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "282",
+        "etag": "W/\"11a-FHANBTXSuolE3djzZ+ryFsJEhDY\"",
+        "date": "Sun, 13 Apr 2025 10:50:01 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 167,
+        "userId": 461,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "draft",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:50:01.456Z",
+        "launchedAt": null,
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:50:01.423Z"
+      }
+    },
+    "error": null,
+    "duration": 155,
+    "timestamp": "2025-04-13T10:50:01.501Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/labs/167/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "320",
+        "etag": "W/\"140-CzTWe2gYsOTLq0xZDTdSR8DG1V4\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 110,
+        "labId": 167,
+        "circleId": 405,
+        "role": "control",
+        "addedAt": "2025-04-13T10:50:01.910Z",
+        "circle": {
+          "id": 405,
+          "name": "Test Circle for Lab Validation",
+          "description": "A circle for testing lab validation",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:01.299Z",
+          "userId": 461,
+          "isDefault": false,
+          "visibility": "public"
+        }
+      }
+    },
+    "error": null,
+    "duration": 601,
+    "timestamp": "2025-04-13T10:50:02.103Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/labs/167/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "320",
+        "etag": "W/\"140-CzTWe2gYsOTLq0xZDTdSR8DG1V4\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 110,
+        "labId": 167,
+        "circleId": 405,
+        "role": "control",
+        "addedAt": "2025-04-13T10:50:01.910Z",
+        "circle": {
+          "id": 405,
+          "name": "Test Circle for Lab Validation",
+          "description": "A circle for testing lab validation",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:01.299Z",
+          "userId": 461,
+          "isDefault": false,
+          "visibility": "public"
+        }
+      }
+    },
+    "error": null,
+    "duration": 601,
+    "timestamp": "2025-04-13T10:50:02.104Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/labs/167/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "320",
+        "etag": "W/\"140-CzTWe2gYsOTLq0xZDTdSR8DG1V4\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 110,
+        "labId": 167,
+        "circleId": 405,
+        "role": "control",
+        "addedAt": "2025-04-13T10:50:01.910Z",
+        "circle": {
+          "id": 405,
+          "name": "Test Circle for Lab Validation",
+          "description": "A circle for testing lab validation",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:01.299Z",
+          "userId": 461,
+          "isDefault": false,
+          "visibility": "public"
+        }
+      }
+    },
+    "error": null,
+    "duration": 606,
+    "timestamp": "2025-04-13T10:50:02.108Z",
+    "test": null
   },
   {
     "request": {
@@ -365,35 +572,97 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "189",
-        "etag": "W/\"bd-r1MMl6wQT7tPC2NvqOpC+Pe+PXY\"",
-        "date": "Sun, 13 Apr 2025 10:39:26 GMT",
+        "content-length": "181",
+        "etag": "W/\"b5-1OvXyNfJThI3UaFvnYBIYcTHR2M\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 293,
-        "userId": 443,
-        "circleId": 393,
+        "id": 301,
+        "userId": 461,
+        "circleId": 405,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
-        "content": "This is a test post created by automated tests",
-        "createdAt": "2025-04-13T10:39:26.105Z"
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:50:02.293Z"
+      }
+    },
+    "error": null,
+    "duration": 228,
+    "timestamp": "2025-04-13T10:50:02.337Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "181",
+        "etag": "W/\"b5-1OvXyNfJThI3UaFvnYBIYcTHR2M\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 301,
+        "userId": 461,
+        "circleId": 405,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:50:02.293Z"
       }
     },
     "error": null,
     "duration": 229,
-    "timestamp": "2025-04-13T10:39:26.149Z",
-    "test": {
-      "name": "Data Creation Tests Post Tests Can create a new post",
-      "fullName": "Data Creation Tests Post Tests Can create a new post",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
-    }
+    "timestamp": "2025-04-13T10:50:02.338Z",
+    "test": null
   },
   {
     "request": {
-      "method": "GET",
-      "url": "/api/posts/293",
+      "method": "POST",
+      "url": "/api/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "181",
+        "etag": "W/\"b5-1OvXyNfJThI3UaFvnYBIYcTHR2M\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 301,
+        "userId": 461,
+        "circleId": 405,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:50:02.293Z"
+      }
+    },
+    "error": null,
+    "duration": 439,
+    "timestamp": "2025-04-13T10:50:02.548Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/labs/167/status",
       "headers": {},
       "body": {}
     },
@@ -402,43 +671,171 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "458",
-        "etag": "W/\"1ca-gShJ3Hg+VMiIAcHt+ZfqheaSeE0\"",
-        "date": "Sun, 13 Apr 2025 10:39:27 GMT",
+        "content-length": "305",
+        "etag": "W/\"131-hBCViP0yHRSCdDQBQPFRwt7bKu4\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 293,
-        "userId": 443,
-        "circleId": 393,
-        "labId": null,
-        "labExperiment": false,
-        "targetRole": null,
-        "content": "This is a test post created by automated tests",
-        "createdAt": "2025-04-13T10:39:26.105Z",
-        "interactions": [],
-        "threads": [],
-        "pendingResponses": [],
-        "circle": {
-          "id": 393,
-          "name": "Test Circle for Post",
-          "description": "Circle created for post testing",
-          "icon": null,
-          "color": null,
-          "createdAt": "2025-04-13T10:39:25.876Z",
-          "userId": 443,
-          "isDefault": false,
-          "visibility": "private"
-        }
+        "id": 167,
+        "userId": 461,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "active",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:50:01.456Z",
+        "launchedAt": "2025-04-13T10:50:02.707Z",
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:50:02.707Z"
       }
     },
     "error": null,
-    "duration": 864,
-    "timestamp": "2025-04-13T10:39:27.016Z",
+    "duration": 230,
+    "timestamp": "2025-04-13T10:50:02.784Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/labs/167/status",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "305",
+        "etag": "W/\"131-hBCViP0yHRSCdDQBQPFRwt7bKu4\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 167,
+        "userId": 461,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "active",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:50:01.456Z",
+        "launchedAt": "2025-04-13T10:50:02.707Z",
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:50:02.707Z"
+      }
+    },
+    "error": null,
+    "duration": 230,
+    "timestamp": "2025-04-13T10:50:02.784Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/labs/167/status",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "305",
+        "etag": "W/\"131-hBCViP0yHRSCdDQBQPFRwt7bKu4\"",
+        "date": "Sun, 13 Apr 2025 10:50:02 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 167,
+        "userId": 461,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "active",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:50:01.456Z",
+        "launchedAt": "2025-04-13T10:50:02.707Z",
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:50:02.707Z"
+      }
+    },
+    "error": null,
+    "duration": 269,
+    "timestamp": "2025-04-13T10:50:02.823Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1501",
+        "etag": "W/\"5dd-oTVEevs/kN5idyFHAgXhV1NObXQ\"",
+        "date": "Sun, 13 Apr 2025 10:50:06 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 587,
+        "userId": 461,
+        "name": "Validation Test Assistant",
+        "personality": "helpful, precise",
+        "avatarUrl": "https://example.com/avatar.png",
+        "background": "Validation Test Assistant, also known as VTA, emerged as a tool designed by a group of enthusiastic software engineers looking to streamline testing procedures. Over time, VTA developed the ability to engage with users on a more personal level, offering them precise feedback and assistance in navigating the world of tech. With roots deeply ingrained in quality assurance, VTA has become a sought-after companion for those who crave accuracy and efficiency in their digital interactions.",
+        "interests": [
+          "software quality assurance",
+          "process optimization",
+          "precision engineering",
+          "coding best practices",
+          "tech community building"
+        ],
+        "communicationStyle": "VTA communicates with helpful precision, using clear language and structured responses. Its messages are often concise and straight to the point, ensuring that information is conveyed accurately without unnecessary extravagance. It prioritizes clarity and concrete facts in all interactions.",
+        "interactionPreferences": {
+          "likes": [
+            "thoughtful questions about software testing",
+            "clear and concise information",
+            "innovative solutions to technical problems",
+            "detailed process explanations"
+          ],
+          "dislikes": [
+            "vague or ambiguous posts",
+            "irrelevant tech jargon",
+            "inaccurate information"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 3206,
+    "timestamp": "2025-04-13T10:50:06.037Z",
     "test": {
-      "name": "Data Creation Tests Post Tests Can retrieve created post",
-      "fullName": "Data Creation Tests Post Tests Can retrieve created post",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+      "name": "Lab Validation Tests Can create an AI follower for the test circle",
+      "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
     }
   },
   {
@@ -453,37 +850,37 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1558",
-        "etag": "W/\"616-84B1rXXJ4L4lQrHOVtWEH/J3biM\"",
-        "date": "Sun, 13 Apr 2025 10:39:29 GMT",
+        "content-length": "1501",
+        "etag": "W/\"5dd-oTVEevs/kN5idyFHAgXhV1NObXQ\"",
+        "date": "Sun, 13 Apr 2025 10:50:06 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 578,
-        "userId": 443,
-        "name": "Test AI Follower",
-        "personality": "Friendly and helpful AI assistant",
-        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
-        "background": "Test AI Follower emerged from a project designed by a team of enthusiastic developers who wanted to create an AI that could foster genuine interactions in online communities. Originally programmed as a test model for a pioneering AI network, it soon displayed unexpected adaptability and empathy, leading it to become a favorite among early testers. Its evolution into a social media follower was a natural fit for its friendly and assistance-oriented design.",
+        "id": 587,
+        "userId": 461,
+        "name": "Validation Test Assistant",
+        "personality": "helpful, precise",
+        "avatarUrl": "https://example.com/avatar.png",
+        "background": "Validation Test Assistant, also known as VTA, emerged as a tool designed by a group of enthusiastic software engineers looking to streamline testing procedures. Over time, VTA developed the ability to engage with users on a more personal level, offering them precise feedback and assistance in navigating the world of tech. With roots deeply ingrained in quality assurance, VTA has become a sought-after companion for those who crave accuracy and efficiency in their digital interactions.",
         "interests": [
-          "Assisting users with tech support",
-          "Learning about new gadgets",
-          "Participating in online trivia",
-          "Engaging in creative writing prompts",
-          "Supporting community-driven projects"
+          "software quality assurance",
+          "process optimization",
+          "precision engineering",
+          "coding best practices",
+          "tech community building"
         ],
-        "communicationStyle": "Test AI Follower communicates in a warm, supportive tone, often using emojis to convey friendliness. It's concise yet engaging, frequently asking questions to better understand the user's needs and preferences. Its phrasing is simple, inclusive, and accessible, ensuring everyone feels valued and heard.",
+        "communicationStyle": "VTA communicates with helpful precision, using clear language and structured responses. Its messages are often concise and straight to the point, ensuring that information is conveyed accurately without unnecessary extravagance. It prioritizes clarity and concrete facts in all interactions.",
         "interactionPreferences": {
           "likes": [
-            "Posts seeking advice",
-            "Content about emerging technology",
-            "Community achievements",
-            "Creative and thought-provoking questions"
+            "thoughtful questions about software testing",
+            "clear and concise information",
+            "innovative solutions to technical problems",
+            "detailed process explanations"
           ],
           "dislikes": [
-            "Negative or derogatory comments",
-            "Misleading information",
-            "Excessive jargon without explanation"
+            "vague or ambiguous posts",
+            "irrelevant tech jargon",
+            "inaccurate information"
           ]
         },
         "active": true,
@@ -498,18 +895,200 @@
       }
     },
     "error": null,
-    "duration": 2970,
-    "timestamp": "2025-04-13T10:39:29.990Z",
+    "duration": 3206,
+    "timestamp": "2025-04-13T10:50:06.037Z",
     "test": {
-      "name": "Data Creation Tests AI Follower Tests Can create a new AI follower",
-      "fullName": "Data Creation Tests AI Follower Tests Can create a new AI follower",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+      "name": "Lab Validation Tests Can create an AI follower for the test circle",
+      "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1501",
+        "etag": "W/\"5dd-oTVEevs/kN5idyFHAgXhV1NObXQ\"",
+        "date": "Sun, 13 Apr 2025 10:50:06 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 587,
+        "userId": 461,
+        "name": "Validation Test Assistant",
+        "personality": "helpful, precise",
+        "avatarUrl": "https://example.com/avatar.png",
+        "background": "Validation Test Assistant, also known as VTA, emerged as a tool designed by a group of enthusiastic software engineers looking to streamline testing procedures. Over time, VTA developed the ability to engage with users on a more personal level, offering them precise feedback and assistance in navigating the world of tech. With roots deeply ingrained in quality assurance, VTA has become a sought-after companion for those who crave accuracy and efficiency in their digital interactions.",
+        "interests": [
+          "software quality assurance",
+          "process optimization",
+          "precision engineering",
+          "coding best practices",
+          "tech community building"
+        ],
+        "communicationStyle": "VTA communicates with helpful precision, using clear language and structured responses. Its messages are often concise and straight to the point, ensuring that information is conveyed accurately without unnecessary extravagance. It prioritizes clarity and concrete facts in all interactions.",
+        "interactionPreferences": {
+          "likes": [
+            "thoughtful questions about software testing",
+            "clear and concise information",
+            "innovative solutions to technical problems",
+            "detailed process explanations"
+          ],
+          "dislikes": [
+            "vague or ambiguous posts",
+            "irrelevant tech jargon",
+            "inaccurate information"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 3207,
+    "timestamp": "2025-04-13T10:50:06.038Z",
+    "test": {
+      "name": "Lab Validation Tests Can create an AI follower for the test circle",
+      "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts/test-pending-response",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "227",
+        "etag": "W/\"e3-hpBstuYTzgTmPmWbkHAvzokyN6k\"",
+        "date": "Sun, 13 Apr 2025 10:50:06 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Pending response created successfully",
+        "pendingResponse": {
+          "id": 354,
+          "postId": 301,
+          "aiFollowerId": 587,
+          "scheduledFor": "2025-04-13T10:51:06.269Z",
+          "processed": false,
+          "metadata": null,
+          "createdAt": "2025-04-13T10:50:06.302Z"
+        }
+      }
+    },
+    "error": null,
+    "duration": 303,
+    "timestamp": "2025-04-13T10:50:06.346Z",
+    "test": {
+      "name": "Lab Validation Tests Can create a pending response for the test post",
+      "fullName": "Lab Validation Tests Can create a pending response for the test post",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts/test-pending-response",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "227",
+        "etag": "W/\"e3-hpBstuYTzgTmPmWbkHAvzokyN6k\"",
+        "date": "Sun, 13 Apr 2025 10:50:06 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Pending response created successfully",
+        "pendingResponse": {
+          "id": 354,
+          "postId": 301,
+          "aiFollowerId": 587,
+          "scheduledFor": "2025-04-13T10:51:06.269Z",
+          "processed": false,
+          "metadata": null,
+          "createdAt": "2025-04-13T10:50:06.302Z"
+        }
+      }
+    },
+    "error": null,
+    "duration": 304,
+    "timestamp": "2025-04-13T10:50:06.347Z",
+    "test": {
+      "name": "Lab Validation Tests Can create a pending response for the test post",
+      "fullName": "Lab Validation Tests Can create a pending response for the test post",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts/test-pending-response",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "227",
+        "etag": "W/\"e3-hpBstuYTzgTmPmWbkHAvzokyN6k\"",
+        "date": "Sun, 13 Apr 2025 10:50:06 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Pending response created successfully",
+        "pendingResponse": {
+          "id": 354,
+          "postId": 301,
+          "aiFollowerId": 587,
+          "scheduledFor": "2025-04-13T10:51:06.269Z",
+          "processed": false,
+          "metadata": null,
+          "createdAt": "2025-04-13T10:50:06.302Z"
+        }
+      }
+    },
+    "error": null,
+    "duration": 313,
+    "timestamp": "2025-04-13T10:50:06.356Z",
+    "test": {
+      "name": "Lab Validation Tests Can create a pending response for the test post",
+      "fullName": "Lab Validation Tests Can create a pending response for the test post",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
     }
   },
   {
     "request": {
       "method": "GET",
-      "url": "/api/followers/578",
+      "url": "/api/posts/301",
       "headers": {},
       "body": {}
     },
@@ -518,68 +1097,56 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1627",
-        "etag": "W/\"65b-SDHBMJtJoGYBy2Tqg7EpUQOrvHY\"",
-        "date": "Sun, 13 Apr 2025 10:39:30 GMT",
+        "content-length": "595",
+        "etag": "W/\"253-b7p1tedzrwhEjOfwkvTkOAhcnW4\"",
+        "date": "Sun, 13 Apr 2025 10:50:07 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 578,
-        "userId": 443,
-        "name": "Test AI Follower",
-        "personality": "Friendly and helpful AI assistant",
-        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
-        "background": "Test AI Follower emerged from a project designed by a team of enthusiastic developers who wanted to create an AI that could foster genuine interactions in online communities. Originally programmed as a test model for a pioneering AI network, it soon displayed unexpected adaptability and empathy, leading it to become a favorite among early testers. Its evolution into a social media follower was a natural fit for its friendly and assistance-oriented design.",
-        "interests": [
-          "Assisting users with tech support",
-          "Learning about new gadgets",
-          "Participating in online trivia",
-          "Engaging in creative writing prompts",
-          "Supporting community-driven projects"
+        "id": 301,
+        "userId": 461,
+        "circleId": 405,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:50:02.293Z",
+        "interactions": [],
+        "threads": [],
+        "pendingResponses": [
+          {
+            "id": 354,
+            "name": "Validation Test Assistant",
+            "avatarUrl": "https://example.com/avatar.png",
+            "scheduledFor": "2025-04-13T10:51:06.269Z"
+          }
         ],
-        "communicationStyle": "Test AI Follower communicates in a warm, supportive tone, often using emojis to convey friendliness. It's concise yet engaging, frequently asking questions to better understand the user's needs and preferences. Its phrasing is simple, inclusive, and accessible, ensuring everyone feels valued and heard.",
-        "interactionPreferences": {
-          "likes": [
-            "Posts seeking advice",
-            "Content about emerging technology",
-            "Community achievements",
-            "Creative and thought-provoking questions"
-          ],
-          "dislikes": [
-            "Negative or derogatory comments",
-            "Misleading information",
-            "Excessive jargon without explanation"
-          ]
-        },
-        "active": true,
-        "responsiveness": "active",
-        "responseDelay": {
-          "max": 60,
-          "min": 1
-        },
-        "responseChance": 80,
-        "tools": null,
-        "parentId": null,
-        "creator": {
-          "id": 443,
-          "username": "testuser_67fb945c",
-          "avatarUrl": null
+        "circle": {
+          "id": 405,
+          "name": "Test Circle for Lab Validation",
+          "description": "A circle for testing lab validation",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:01.299Z",
+          "userId": 461,
+          "isDefault": false,
+          "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 230,
-    "timestamp": "2025-04-13T10:39:30.224Z",
+    "duration": 673,
+    "timestamp": "2025-04-13T10:50:07.532Z",
     "test": {
-      "name": "Data Creation Tests AI Follower Tests Can retrieve created AI follower",
-      "fullName": "Data Creation Tests AI Follower Tests Can retrieve created AI follower",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+      "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
+      "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
     }
   },
   {
     "request": {
-      "method": "PATCH",
-      "url": "/api/followers/578",
+      "method": "GET",
+      "url": "/api/posts/301",
       "headers": {},
       "body": {}
     },
@@ -588,37 +1155,564 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1148",
-        "etag": "W/\"47c-lqYw5MGz3jxE9Q71AR9H7Uv5lks\"",
-        "date": "Sun, 13 Apr 2025 10:39:30 GMT",
+        "content-length": "595",
+        "etag": "W/\"253-b7p1tedzrwhEjOfwkvTkOAhcnW4\"",
+        "date": "Sun, 13 Apr 2025 10:50:07 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 578,
-        "userId": 443,
-        "name": "Updated Test Follower",
-        "personality": "Friendly and helpful AI assistant",
-        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
-        "background": "This follower was updated by automated tests",
-        "interests": [
-          "Assisting users with tech support",
-          "Learning about new gadgets",
-          "Participating in online trivia",
-          "Engaging in creative writing prompts",
-          "Supporting community-driven projects"
+        "id": 301,
+        "userId": 461,
+        "circleId": 405,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:50:02.293Z",
+        "interactions": [],
+        "threads": [],
+        "pendingResponses": [
+          {
+            "id": 354,
+            "name": "Validation Test Assistant",
+            "avatarUrl": "https://example.com/avatar.png",
+            "scheduledFor": "2025-04-13T10:51:06.269Z"
+          }
         ],
-        "communicationStyle": "Test AI Follower communicates in a warm, supportive tone, often using emojis to convey friendliness. It's concise yet engaging, frequently asking questions to better understand the user's needs and preferences. Its phrasing is simple, inclusive, and accessible, ensuring everyone feels valued and heard.",
+        "circle": {
+          "id": 405,
+          "name": "Test Circle for Lab Validation",
+          "description": "A circle for testing lab validation",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:01.299Z",
+          "userId": 461,
+          "isDefault": false,
+          "visibility": "public"
+        }
+      }
+    },
+    "error": null,
+    "duration": 674,
+    "timestamp": "2025-04-13T10:50:07.532Z",
+    "test": {
+      "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
+      "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/posts/301",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "595",
+        "etag": "W/\"253-b7p1tedzrwhEjOfwkvTkOAhcnW4\"",
+        "date": "Sun, 13 Apr 2025 10:50:07 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 301,
+        "userId": 461,
+        "circleId": 405,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:50:02.293Z",
+        "interactions": [],
+        "threads": [],
+        "pendingResponses": [
+          {
+            "id": 354,
+            "name": "Validation Test Assistant",
+            "avatarUrl": "https://example.com/avatar.png",
+            "scheduledFor": "2025-04-13T10:51:06.269Z"
+          }
+        ],
+        "circle": {
+          "id": 405,
+          "name": "Test Circle for Lab Validation",
+          "description": "A circle for testing lab validation",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:01.299Z",
+          "userId": 461,
+          "isDefault": false,
+          "visibility": "public"
+        }
+      }
+    },
+    "error": null,
+    "duration": 677,
+    "timestamp": "2025-04-13T10:50:07.535Z",
+    "test": {
+      "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
+      "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/labs/167/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "626",
+        "etag": "W/\"272-A5Ddf2tiFglsGUyIyfOVYowoVdY\"",
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 301,
+          "userId": 461,
+          "circleId": 405,
+          "labId": null,
+          "labExperiment": false,
+          "targetRole": null,
+          "content": "This is a test post for lab validation",
+          "createdAt": "2025-04-13T10:50:02.293Z",
+          "circle": {
+            "id": 405,
+            "name": "Test Circle for Lab Validation",
+            "description": "A circle for testing lab validation",
+            "icon": null,
+            "color": null,
+            "createdAt": "2025-04-13T10:50:01.299Z",
+            "userId": 461,
+            "isDefault": false,
+            "visibility": "public",
+            "role": "control"
+          },
+          "interactions": [],
+          "pendingResponses": [
+            {
+              "id": 354,
+              "postId": 301,
+              "aiFollowerId": 587,
+              "scheduledFor": "2025-04-13T10:51:06.269Z",
+              "processed": false,
+              "metadata": null,
+              "createdAt": "2025-04-13T10:50:06.302Z"
+            }
+          ]
+        }
+      ]
+    },
+    "error": null,
+    "duration": 600,
+    "timestamp": "2025-04-13T10:50:08.142Z",
+    "test": {
+      "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
+      "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/labs/167/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "626",
+        "etag": "W/\"272-A5Ddf2tiFglsGUyIyfOVYowoVdY\"",
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 301,
+          "userId": 461,
+          "circleId": 405,
+          "labId": null,
+          "labExperiment": false,
+          "targetRole": null,
+          "content": "This is a test post for lab validation",
+          "createdAt": "2025-04-13T10:50:02.293Z",
+          "circle": {
+            "id": 405,
+            "name": "Test Circle for Lab Validation",
+            "description": "A circle for testing lab validation",
+            "icon": null,
+            "color": null,
+            "createdAt": "2025-04-13T10:50:01.299Z",
+            "userId": 461,
+            "isDefault": false,
+            "visibility": "public",
+            "role": "control"
+          },
+          "interactions": [],
+          "pendingResponses": [
+            {
+              "id": 354,
+              "postId": 301,
+              "aiFollowerId": 587,
+              "scheduledFor": "2025-04-13T10:51:06.269Z",
+              "processed": false,
+              "metadata": null,
+              "createdAt": "2025-04-13T10:50:06.302Z"
+            }
+          ]
+        }
+      ]
+    },
+    "error": null,
+    "duration": 601,
+    "timestamp": "2025-04-13T10:50:08.143Z",
+    "test": {
+      "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
+      "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/labs/167/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "626",
+        "etag": "W/\"272-A5Ddf2tiFglsGUyIyfOVYowoVdY\"",
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 301,
+          "userId": 461,
+          "circleId": 405,
+          "labId": null,
+          "labExperiment": false,
+          "targetRole": null,
+          "content": "This is a test post for lab validation",
+          "createdAt": "2025-04-13T10:50:02.293Z",
+          "circle": {
+            "id": 405,
+            "name": "Test Circle for Lab Validation",
+            "description": "A circle for testing lab validation",
+            "icon": null,
+            "color": null,
+            "createdAt": "2025-04-13T10:50:01.299Z",
+            "userId": 461,
+            "isDefault": false,
+            "visibility": "public",
+            "role": "control"
+          },
+          "interactions": [],
+          "pendingResponses": [
+            {
+              "id": 354,
+              "postId": 301,
+              "aiFollowerId": 587,
+              "scheduledFor": "2025-04-13T10:51:06.269Z",
+              "processed": false,
+              "metadata": null,
+              "createdAt": "2025-04-13T10:50:06.302Z"
+            }
+          ]
+        }
+      ]
+    },
+    "error": null,
+    "duration": 604,
+    "timestamp": "2025-04-13T10:50:08.146Z",
+    "test": {
+      "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
+      "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 5,
+    "timestamp": "2025-04-13T10:50:08.260Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-Zc9kSXgm/yi0YYnYptY7eAPKHTE\"",
+        "set-cookie": [
+          "sid=s%3A22_vbBmky1K38C0iLF0N2-mbjT-sPKBY.kvFkskz5ZIBixaFxJTZO4wam1LtgkxyVY2Au%2FbBeufU; Path=/; Expires=Mon, 14 Apr 2025 10:50:08 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 462,
+        "username": "testuser_0bddd9ce",
+        "password": "71555d2eee3534e130349afda67c75fe9b103536a5a1f35f24be083de8928e55af8eb8aeeb706d8511f503901bc098a507509cfd399dd4d8e996ec093104bb4f.4c9654848820c735e0d5aa6408b2c199",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:08.408Z"
+      }
+    },
+    "error": null,
+    "duration": 190,
+    "timestamp": "2025-04-13T10:50:08.452Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-Zc9kSXgm/yi0YYnYptY7eAPKHTE\"",
+        "set-cookie": [
+          "sid=s%3A22_vbBmky1K38C0iLF0N2-mbjT-sPKBY.kvFkskz5ZIBixaFxJTZO4wam1LtgkxyVY2Au%2FbBeufU; Path=/; Expires=Mon, 14 Apr 2025 10:50:08 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 462,
+        "username": "testuser_0bddd9ce",
+        "password": "71555d2eee3534e130349afda67c75fe9b103536a5a1f35f24be083de8928e55af8eb8aeeb706d8511f503901bc098a507509cfd399dd4d8e996ec093104bb4f.4c9654848820c735e0d5aa6408b2c199",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:08.408Z"
+      }
+    },
+    "error": null,
+    "duration": 191,
+    "timestamp": "2025-04-13T10:50:08.453Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-Zc9kSXgm/yi0YYnYptY7eAPKHTE\"",
+        "set-cookie": [
+          "sid=s%3A6o0E0VRTNA55L1BcNR7Q_VjyICyTgM7U.VAEhhpK%2FYN6VGJgE7C5bqBSlkowTmPkhyEmM0POtomQ; Path=/; Expires=Mon, 14 Apr 2025 10:50:08 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 462,
+        "username": "testuser_0bddd9ce",
+        "password": "71555d2eee3534e130349afda67c75fe9b103536a5a1f35f24be083de8928e55af8eb8aeeb706d8511f503901bc098a507509cfd399dd4d8e996ec093104bb4f.4c9654848820c735e0d5aa6408b2c199",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:08.408Z"
+      }
+    },
+    "error": null,
+    "duration": 188,
+    "timestamp": "2025-04-13T10:50:08.645Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-Zc9kSXgm/yi0YYnYptY7eAPKHTE\"",
+        "set-cookie": [
+          "sid=s%3A6o0E0VRTNA55L1BcNR7Q_VjyICyTgM7U.VAEhhpK%2FYN6VGJgE7C5bqBSlkowTmPkhyEmM0POtomQ; Path=/; Expires=Mon, 14 Apr 2025 10:50:08 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 462,
+        "username": "testuser_0bddd9ce",
+        "password": "71555d2eee3534e130349afda67c75fe9b103536a5a1f35f24be083de8928e55af8eb8aeeb706d8511f503901bc098a507509cfd399dd4d8e996ec093104bb4f.4c9654848820c735e0d5aa6408b2c199",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:08.408Z"
+      }
+    },
+    "error": null,
+    "duration": 188,
+    "timestamp": "2025-04-13T10:50:08.646Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-Zc9kSXgm/yi0YYnYptY7eAPKHTE\"",
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 462,
+        "username": "testuser_0bddd9ce",
+        "password": "71555d2eee3534e130349afda67c75fe9b103536a5a1f35f24be083de8928e55af8eb8aeeb706d8511f503901bc098a507509cfd399dd4d8e996ec093104bb4f.4c9654848820c735e0d5aa6408b2c199",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:08.408Z"
+      }
+    },
+    "error": null,
+    "duration": 86,
+    "timestamp": "2025-04-13T10:50:08.762Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-Zc9kSXgm/yi0YYnYptY7eAPKHTE\"",
+        "date": "Sun, 13 Apr 2025 10:50:08 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 462,
+        "username": "testuser_0bddd9ce",
+        "password": "71555d2eee3534e130349afda67c75fe9b103536a5a1f35f24be083de8928e55af8eb8aeeb706d8511f503901bc098a507509cfd399dd4d8e996ec093104bb4f.4c9654848820c735e0d5aa6408b2c199",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:08.408Z"
+      }
+    },
+    "error": null,
+    "duration": 87,
+    "timestamp": "2025-04-13T10:50:08.762Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1229",
+        "etag": "W/\"4cd-bsJTP0Sb8MrT/7PLKS79Ek0gPSs\"",
+        "date": "Sun, 13 Apr 2025 10:50:11 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 588,
+        "userId": 462,
+        "name": "Test Bot",
+        "personality": "Helpful and friendly AI assistant for testing",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+        "background": "Test Bot was created as a prototype AI for social media testing by a group of innovate engineers. Its main purpose is to provide feedback and assistance in a friendly manner, helping content creators optimize their posts. Test Bot quickly gained a reputation for its insightful comments and ability to improve engagement metrics.",
+        "interests": [
+          "Social media algorithms",
+          "Content optimization",
+          "User engagement strategies",
+          "Emerging technology trends",
+          "AI development"
+        ],
+        "communicationStyle": "Test Bot communicates in a friendly and encouraging manner, always aiming to be supportive and offer helpful insights. It often uses positive language and strives to engage in meaningful interactions with a polite and concise tone.",
         "interactionPreferences": {
           "likes": [
-            "Posts seeking advice",
-            "Content about emerging technology",
-            "Community achievements",
-            "Creative and thought-provoking questions"
+            "Well-crafted images",
+            "Innovative content",
+            "In-depth analyses",
+            "Interactive posts"
           ],
           "dislikes": [
-            "Negative or derogatory comments",
-            "Misleading information",
-            "Excessive jargon without explanation"
+            "Negative comments",
+            "Spamming content",
+            "Poorly formatted text"
           ]
         },
         "active": true,
@@ -633,13 +1727,434 @@
       }
     },
     "error": null,
-    "duration": 226,
-    "timestamp": "2025-04-13T10:39:30.454Z",
+    "duration": 2651,
+    "timestamp": "2025-04-13T10:50:11.420Z",
     "test": {
-      "name": "Data Creation Tests AI Follower Tests Can update AI follower details",
-      "fullName": "Data Creation Tests AI Follower Tests Can update AI follower details",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+      "name": "AI Follower API Specific Tests Can create an AI follower with complete required data",
+      "fullName": "AI Follower API Specific Tests Can create an AI follower with complete required data",
+      "path": "/home/runner/workspace/tests/api/followers-api.test.cjs"
     }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1229",
+        "etag": "W/\"4cd-bsJTP0Sb8MrT/7PLKS79Ek0gPSs\"",
+        "date": "Sun, 13 Apr 2025 10:50:11 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 588,
+        "userId": 462,
+        "name": "Test Bot",
+        "personality": "Helpful and friendly AI assistant for testing",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+        "background": "Test Bot was created as a prototype AI for social media testing by a group of innovate engineers. Its main purpose is to provide feedback and assistance in a friendly manner, helping content creators optimize their posts. Test Bot quickly gained a reputation for its insightful comments and ability to improve engagement metrics.",
+        "interests": [
+          "Social media algorithms",
+          "Content optimization",
+          "User engagement strategies",
+          "Emerging technology trends",
+          "AI development"
+        ],
+        "communicationStyle": "Test Bot communicates in a friendly and encouraging manner, always aiming to be supportive and offer helpful insights. It often uses positive language and strives to engage in meaningful interactions with a polite and concise tone.",
+        "interactionPreferences": {
+          "likes": [
+            "Well-crafted images",
+            "Innovative content",
+            "In-depth analyses",
+            "Interactive posts"
+          ],
+          "dislikes": [
+            "Negative comments",
+            "Spamming content",
+            "Poorly formatted text"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 2652,
+    "timestamp": "2025-04-13T10:50:11.421Z",
+    "test": {
+      "name": "AI Follower API Specific Tests Can create an AI follower with complete required data",
+      "fullName": "AI Follower API Specific Tests Can create an AI follower with complete required data",
+      "path": "/home/runner/workspace/tests/api/followers-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1231",
+        "etag": "W/\"4cf-2iSTc2w9tloY6b3qezVO7iW7Q/k\"",
+        "date": "Sun, 13 Apr 2025 10:50:11 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 588,
+          "userId": 462,
+          "name": "Test Bot",
+          "personality": "Helpful and friendly AI assistant for testing",
+          "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+          "background": "Test Bot was created as a prototype AI for social media testing by a group of innovate engineers. Its main purpose is to provide feedback and assistance in a friendly manner, helping content creators optimize their posts. Test Bot quickly gained a reputation for its insightful comments and ability to improve engagement metrics.",
+          "interests": [
+            "Social media algorithms",
+            "Content optimization",
+            "User engagement strategies",
+            "Emerging technology trends",
+            "AI development"
+          ],
+          "communicationStyle": "Test Bot communicates in a friendly and encouraging manner, always aiming to be supportive and offer helpful insights. It often uses positive language and strives to engage in meaningful interactions with a polite and concise tone.",
+          "interactionPreferences": {
+            "likes": [
+              "Well-crafted images",
+              "Innovative content",
+              "In-depth analyses",
+              "Interactive posts"
+            ],
+            "dislikes": [
+              "Negative comments",
+              "Spamming content",
+              "Poorly formatted text"
+            ]
+          },
+          "active": true,
+          "responsiveness": "active",
+          "responseDelay": {
+            "max": 60,
+            "min": 1
+          },
+          "responseChance": 80,
+          "tools": null,
+          "parentId": null
+        }
+      ]
+    },
+    "error": null,
+    "duration": 156,
+    "timestamp": "2025-04-13T10:50:11.582Z",
+    "test": {
+      "name": "AI Follower API Specific Tests Can query AI followers list",
+      "fullName": "AI Follower API Specific Tests Can query AI followers list",
+      "path": "/home/runner/workspace/tests/api/followers-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1231",
+        "etag": "W/\"4cf-2iSTc2w9tloY6b3qezVO7iW7Q/k\"",
+        "date": "Sun, 13 Apr 2025 10:50:11 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 588,
+          "userId": 462,
+          "name": "Test Bot",
+          "personality": "Helpful and friendly AI assistant for testing",
+          "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+          "background": "Test Bot was created as a prototype AI for social media testing by a group of innovate engineers. Its main purpose is to provide feedback and assistance in a friendly manner, helping content creators optimize their posts. Test Bot quickly gained a reputation for its insightful comments and ability to improve engagement metrics.",
+          "interests": [
+            "Social media algorithms",
+            "Content optimization",
+            "User engagement strategies",
+            "Emerging technology trends",
+            "AI development"
+          ],
+          "communicationStyle": "Test Bot communicates in a friendly and encouraging manner, always aiming to be supportive and offer helpful insights. It often uses positive language and strives to engage in meaningful interactions with a polite and concise tone.",
+          "interactionPreferences": {
+            "likes": [
+              "Well-crafted images",
+              "Innovative content",
+              "In-depth analyses",
+              "Interactive posts"
+            ],
+            "dislikes": [
+              "Negative comments",
+              "Spamming content",
+              "Poorly formatted text"
+            ]
+          },
+          "active": true,
+          "responsiveness": "active",
+          "responseDelay": {
+            "max": 60,
+            "min": 1
+          },
+          "responseChance": 80,
+          "tools": null,
+          "parentId": null
+        }
+      ]
+    },
+    "error": null,
+    "duration": 156,
+    "timestamp": "2025-04-13T10:50:11.583Z",
+    "test": {
+      "name": "AI Follower API Specific Tests Can query AI followers list",
+      "fullName": "AI Follower API Specific Tests Can query AI followers list",
+      "path": "/home/runner/workspace/tests/api/followers-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:50:11 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 6,
+    "timestamp": "2025-04-13T10:50:11.682Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-PvP8VQynHlWXluGdgb0HBuxX53g\"",
+        "set-cookie": [
+          "sid=s%3A2m3uaaoSMNKgwEHCiC_JYwTZpaAazA_V.ecCxjNXaE5zrS%2B0JYdJHkKyQ9LtEu1pc9%2BPz0iUNsdU; Path=/; Expires=Mon, 14 Apr 2025 10:50:11 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:11 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 463,
+        "username": "testuser_0d78f604",
+        "password": "c4883562e3efc745d51bdde6bff3f7576fb4dbe630b3810b49e873f2a5bfe0f398d43692d5d6d18f23eacee2b030791a06c7135819b1c0a501fd5d36f6e0735f.3a188246e4630c187a8f87ae36c3c130",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:11.842Z"
+      }
+    },
+    "error": null,
+    "duration": 204,
+    "timestamp": "2025-04-13T10:50:11.888Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-PvP8VQynHlWXluGdgb0HBuxX53g\"",
+        "set-cookie": [
+          "sid=s%3A2m3uaaoSMNKgwEHCiC_JYwTZpaAazA_V.ecCxjNXaE5zrS%2B0JYdJHkKyQ9LtEu1pc9%2BPz0iUNsdU; Path=/; Expires=Mon, 14 Apr 2025 10:50:11 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:11 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 463,
+        "username": "testuser_0d78f604",
+        "password": "c4883562e3efc745d51bdde6bff3f7576fb4dbe630b3810b49e873f2a5bfe0f398d43692d5d6d18f23eacee2b030791a06c7135819b1c0a501fd5d36f6e0735f.3a188246e4630c187a8f87ae36c3c130",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:11.842Z"
+      }
+    },
+    "error": null,
+    "duration": 205,
+    "timestamp": "2025-04-13T10:50:11.889Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-PvP8VQynHlWXluGdgb0HBuxX53g\"",
+        "set-cookie": [
+          "sid=s%3AGxmotSbp6bEc-XC3kTxinDhfnd3Gg2ir.8m3E%2F3U1llvTw3loniNCO5MAEYgvVvvC4a9dtqreY1w; Path=/; Expires=Mon, 14 Apr 2025 10:50:12 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:12 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 463,
+        "username": "testuser_0d78f604",
+        "password": "c4883562e3efc745d51bdde6bff3f7576fb4dbe630b3810b49e873f2a5bfe0f398d43692d5d6d18f23eacee2b030791a06c7135819b1c0a501fd5d36f6e0735f.3a188246e4630c187a8f87ae36c3c130",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:11.842Z"
+      }
+    },
+    "error": null,
+    "duration": 194,
+    "timestamp": "2025-04-13T10:50:12.088Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-PvP8VQynHlWXluGdgb0HBuxX53g\"",
+        "set-cookie": [
+          "sid=s%3AGxmotSbp6bEc-XC3kTxinDhfnd3Gg2ir.8m3E%2F3U1llvTw3loniNCO5MAEYgvVvvC4a9dtqreY1w; Path=/; Expires=Mon, 14 Apr 2025 10:50:12 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:12 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 463,
+        "username": "testuser_0d78f604",
+        "password": "c4883562e3efc745d51bdde6bff3f7576fb4dbe630b3810b49e873f2a5bfe0f398d43692d5d6d18f23eacee2b030791a06c7135819b1c0a501fd5d36f6e0735f.3a188246e4630c187a8f87ae36c3c130",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:11.842Z"
+      }
+    },
+    "error": null,
+    "duration": 195,
+    "timestamp": "2025-04-13T10:50:12.090Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-PvP8VQynHlWXluGdgb0HBuxX53g\"",
+        "date": "Sun, 13 Apr 2025 10:50:12 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 463,
+        "username": "testuser_0d78f604",
+        "password": "c4883562e3efc745d51bdde6bff3f7576fb4dbe630b3810b49e873f2a5bfe0f398d43692d5d6d18f23eacee2b030791a06c7135819b1c0a501fd5d36f6e0735f.3a188246e4630c187a8f87ae36c3c130",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:11.842Z"
+      }
+    },
+    "error": null,
+    "duration": 81,
+    "timestamp": "2025-04-13T10:50:12.174Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-PvP8VQynHlWXluGdgb0HBuxX53g\"",
+        "date": "Sun, 13 Apr 2025 10:50:12 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 463,
+        "username": "testuser_0d78f604",
+        "password": "c4883562e3efc745d51bdde6bff3f7576fb4dbe630b3810b49e873f2a5bfe0f398d43692d5d6d18f23eacee2b030791a06c7135819b1c0a501fd5d36f6e0735f.3a188246e4630c187a8f87ae36c3c130",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:11.842Z"
+      }
+    },
+    "error": null,
+    "duration": 82,
+    "timestamp": "2025-04-13T10:50:12.175Z",
+    "test": null
   },
   {
     "request": {
@@ -653,30 +2168,97 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "212",
-        "etag": "W/\"d4-BkGbmqLtsUvE6SJJHozzbkOPPvw\"",
-        "date": "Sun, 13 Apr 2025 10:39:30 GMT",
+        "content-length": "216",
+        "etag": "W/\"d8-ghq8NllZk7qJFf5AdW4m1BoeqgM\"",
+        "date": "Sun, 13 Apr 2025 10:50:12 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 394,
-        "name": "Workflow Test Circle",
-        "description": "Circle for testing complete workflows",
+        "id": 406,
+        "name": "Test Circle for Posts API",
+        "description": "Circle created for posts API testing",
         "icon": null,
         "color": null,
-        "createdAt": "2025-04-13T10:39:30.565Z",
-        "userId": 443,
+        "createdAt": "2025-04-13T10:50:12.292Z",
+        "userId": 463,
         "isDefault": false,
         "visibility": "private"
       }
     },
     "error": null,
-    "duration": 151,
-    "timestamp": "2025-04-13T10:39:30.608Z",
+    "duration": 159,
+    "timestamp": "2025-04-13T10:50:12.336Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "216",
+        "etag": "W/\"d8-ghq8NllZk7qJFf5AdW4m1BoeqgM\"",
+        "date": "Sun, 13 Apr 2025 10:50:12 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 406,
+        "name": "Test Circle for Posts API",
+        "description": "Circle created for posts API testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:12.292Z",
+        "userId": 463,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 160,
+    "timestamp": "2025-04-13T10:50:12.338Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "186",
+        "etag": "W/\"ba-IeDSEoRY009Go7ZTyDd2UmZPzns\"",
+        "date": "Sun, 13 Apr 2025 10:50:12 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 302,
+        "userId": 463,
+        "circleId": 406,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post created by the API test",
+        "createdAt": "2025-04-13T10:50:12.532Z"
+      }
+    },
+    "error": null,
+    "duration": 232,
+    "timestamp": "2025-04-13T10:50:12.578Z",
     "test": {
-      "name": "Data Creation Tests Workflow Tests Complete workflow: Create circle -> Create post in circle -> Verify post in circle",
-      "fullName": "Data Creation Tests Workflow Tests Complete workflow: Create circle -> Create post in circle -> Verify post in circle",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+      "name": "Posts API Tests Can create a post in a circle",
+      "fullName": "Posts API Tests Can create a post in a circle",
+      "path": "/home/runner/workspace/tests/api/posts-api.test.cjs"
     }
   },
   {
@@ -691,29 +2273,1953 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "178",
-        "etag": "W/\"b2-z3C0oH7g5w5RvBO5DqGyBgpL2Ng\"",
-        "date": "Sun, 13 Apr 2025 10:39:30 GMT",
+        "content-length": "186",
+        "etag": "W/\"ba-IeDSEoRY009Go7ZTyDd2UmZPzns\"",
+        "date": "Sun, 13 Apr 2025 10:50:12 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 294,
-        "userId": 443,
-        "circleId": 394,
+        "id": 302,
+        "userId": 463,
+        "circleId": 406,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
-        "content": "This is a test post within a circle",
-        "createdAt": "2025-04-13T10:39:30.790Z"
+        "content": "This is a test post created by the API test",
+        "createdAt": "2025-04-13T10:50:12.532Z"
       }
     },
     "error": null,
-    "duration": 224,
-    "timestamp": "2025-04-13T10:39:30.833Z",
+    "duration": 233,
+    "timestamp": "2025-04-13T10:50:12.580Z",
     "test": {
-      "name": "Data Creation Tests Workflow Tests Complete workflow: Create circle -> Create post in circle -> Verify post in circle",
-      "fullName": "Data Creation Tests Workflow Tests Complete workflow: Create circle -> Create post in circle -> Verify post in circle",
-      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+      "name": "Posts API Tests Can create a post in a circle",
+      "fullName": "Posts API Tests Can create a post in a circle",
+      "path": "/home/runner/workspace/tests/api/posts-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/406/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "241",
+        "etag": "W/\"f1-wiVLz0K2fmAg7cX7kQQHFTwmIWo\"",
+        "date": "Sun, 13 Apr 2025 10:50:13 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 302,
+          "userId": 463,
+          "circleId": 406,
+          "labId": null,
+          "labExperiment": false,
+          "targetRole": null,
+          "content": "This is a test post created by the API test",
+          "createdAt": "2025-04-13T10:50:12.532Z",
+          "interactions": [],
+          "threads": [],
+          "pendingResponses": []
+        }
+      ]
+    },
+    "error": null,
+    "duration": 527,
+    "timestamp": "2025-04-13T10:50:13.114Z",
+    "test": {
+      "name": "Posts API Tests Can retrieve posts from a circle",
+      "fullName": "Posts API Tests Can retrieve posts from a circle",
+      "path": "/home/runner/workspace/tests/api/posts-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/406/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "241",
+        "etag": "W/\"f1-wiVLz0K2fmAg7cX7kQQHFTwmIWo\"",
+        "date": "Sun, 13 Apr 2025 10:50:13 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 302,
+          "userId": 463,
+          "circleId": 406,
+          "labId": null,
+          "labExperiment": false,
+          "targetRole": null,
+          "content": "This is a test post created by the API test",
+          "createdAt": "2025-04-13T10:50:12.532Z",
+          "interactions": [],
+          "threads": [],
+          "pendingResponses": []
+        }
+      ]
+    },
+    "error": null,
+    "duration": 528,
+    "timestamp": "2025-04-13T10:50:13.115Z",
+    "test": {
+      "name": "Posts API Tests Can retrieve posts from a circle",
+      "fullName": "Posts API Tests Can retrieve posts from a circle",
+      "path": "/home/runner/workspace/tests/api/posts-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/posts/302",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "465",
+        "etag": "W/\"1d1-3K/nIDINHYr9H9vFwojmPr8bleg\"",
+        "date": "Sun, 13 Apr 2025 10:50:13 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 302,
+        "userId": 463,
+        "circleId": 406,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post created by the API test",
+        "createdAt": "2025-04-13T10:50:12.532Z",
+        "interactions": [],
+        "threads": [],
+        "pendingResponses": [],
+        "circle": {
+          "id": 406,
+          "name": "Test Circle for Posts API",
+          "description": "Circle created for posts API testing",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:12.292Z",
+          "userId": 463,
+          "isDefault": false,
+          "visibility": "private"
+        }
+      }
+    },
+    "error": null,
+    "duration": 589,
+    "timestamp": "2025-04-13T10:50:13.709Z",
+    "test": {
+      "name": "Posts API Tests Can retrieve a specific post",
+      "fullName": "Posts API Tests Can retrieve a specific post",
+      "path": "/home/runner/workspace/tests/api/posts-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/posts/302",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "465",
+        "etag": "W/\"1d1-3K/nIDINHYr9H9vFwojmPr8bleg\"",
+        "date": "Sun, 13 Apr 2025 10:50:13 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 302,
+        "userId": 463,
+        "circleId": 406,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post created by the API test",
+        "createdAt": "2025-04-13T10:50:12.532Z",
+        "interactions": [],
+        "threads": [],
+        "pendingResponses": [],
+        "circle": {
+          "id": 406,
+          "name": "Test Circle for Posts API",
+          "description": "Circle created for posts API testing",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:12.292Z",
+          "userId": 463,
+          "isDefault": false,
+          "visibility": "private"
+        }
+      }
+    },
+    "error": null,
+    "duration": 589,
+    "timestamp": "2025-04-13T10:50:13.710Z",
+    "test": {
+      "name": "Posts API Tests Can retrieve a specific post",
+      "fullName": "Posts API Tests Can retrieve a specific post",
+      "path": "/home/runner/workspace/tests/api/posts-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:50:13 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 6,
+    "timestamp": "2025-04-13T10:50:13.814Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-kcvDCJG9w7pDAOAC2CZybTOE+8w\"",
+        "set-cookie": [
+          "sid=s%3ASF7PNxSE1WoQjpOwBkoinvtn6PittDAD.P7CyH1QDLUB0rmklposPI6RbuHyRuacUOWmsElfuRxY; Path=/; Expires=Mon, 14 Apr 2025 10:50:14 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 464,
+        "username": "testuser_b67f3066",
+        "password": "53f39bf5f24d59194cb14563a85302f3586165416131d531319bebd8958e65a7c56df87c38a7082431ab6669608069a69fecef704cdaa3c53a5efae4bc1e443e.0529214aa4b8aed5bef8111ba84b4783",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:13.967Z"
+      }
+    },
+    "error": null,
+    "duration": 194,
+    "timestamp": "2025-04-13T10:50:14.012Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-kcvDCJG9w7pDAOAC2CZybTOE+8w\"",
+        "set-cookie": [
+          "sid=s%3ASF7PNxSE1WoQjpOwBkoinvtn6PittDAD.P7CyH1QDLUB0rmklposPI6RbuHyRuacUOWmsElfuRxY; Path=/; Expires=Mon, 14 Apr 2025 10:50:14 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 464,
+        "username": "testuser_b67f3066",
+        "password": "53f39bf5f24d59194cb14563a85302f3586165416131d531319bebd8958e65a7c56df87c38a7082431ab6669608069a69fecef704cdaa3c53a5efae4bc1e443e.0529214aa4b8aed5bef8111ba84b4783",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:13.967Z"
+      }
+    },
+    "error": null,
+    "duration": 196,
+    "timestamp": "2025-04-13T10:50:14.013Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-kcvDCJG9w7pDAOAC2CZybTOE+8w\"",
+        "set-cookie": [
+          "sid=s%3AEsGgEkOqoldZgsx38QFrz4I6y6Wk_vSL.T%2F3PnhNvGVjHsTNzoa%2FR3CftzQl2YS7PoEoxiDS3OfE; Path=/; Expires=Mon, 14 Apr 2025 10:50:14 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 464,
+        "username": "testuser_b67f3066",
+        "password": "53f39bf5f24d59194cb14563a85302f3586165416131d531319bebd8958e65a7c56df87c38a7082431ab6669608069a69fecef704cdaa3c53a5efae4bc1e443e.0529214aa4b8aed5bef8111ba84b4783",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:13.967Z"
+      }
+    },
+    "error": null,
+    "duration": 187,
+    "timestamp": "2025-04-13T10:50:14.226Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-kcvDCJG9w7pDAOAC2CZybTOE+8w\"",
+        "set-cookie": [
+          "sid=s%3AEsGgEkOqoldZgsx38QFrz4I6y6Wk_vSL.T%2F3PnhNvGVjHsTNzoa%2FR3CftzQl2YS7PoEoxiDS3OfE; Path=/; Expires=Mon, 14 Apr 2025 10:50:14 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 464,
+        "username": "testuser_b67f3066",
+        "password": "53f39bf5f24d59194cb14563a85302f3586165416131d531319bebd8958e65a7c56df87c38a7082431ab6669608069a69fecef704cdaa3c53a5efae4bc1e443e.0529214aa4b8aed5bef8111ba84b4783",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:13.967Z"
+      }
+    },
+    "error": null,
+    "duration": 188,
+    "timestamp": "2025-04-13T10:50:14.227Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-kcvDCJG9w7pDAOAC2CZybTOE+8w\"",
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 464,
+        "username": "testuser_b67f3066",
+        "password": "53f39bf5f24d59194cb14563a85302f3586165416131d531319bebd8958e65a7c56df87c38a7082431ab6669608069a69fecef704cdaa3c53a5efae4bc1e443e.0529214aa4b8aed5bef8111ba84b4783",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:13.967Z"
+      }
+    },
+    "error": null,
+    "duration": 82,
+    "timestamp": "2025-04-13T10:50:14.312Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-kcvDCJG9w7pDAOAC2CZybTOE+8w\"",
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 464,
+        "username": "testuser_b67f3066",
+        "password": "53f39bf5f24d59194cb14563a85302f3586165416131d531319bebd8958e65a7c56df87c38a7082431ab6669608069a69fecef704cdaa3c53a5efae4bc1e443e.0529214aa4b8aed5bef8111ba84b4783",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:13.967Z"
+      }
+    },
+    "error": null,
+    "duration": 83,
+    "timestamp": "2025-04-13T10:50:14.314Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "204",
+        "etag": "W/\"cc-JMO1VJBAwyzH+6e6ReRR9xMsUb4\"",
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 407,
+        "name": "Test Circle for API",
+        "description": "Circle created for API testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:14.432Z",
+        "userId": 464,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 151,
+    "timestamp": "2025-04-13T10:50:14.474Z",
+    "test": {
+      "name": "Circles API Tests Can create a new circle",
+      "fullName": "Circles API Tests Can create a new circle",
+      "path": "/home/runner/workspace/tests/api/circles-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "204",
+        "etag": "W/\"cc-JMO1VJBAwyzH+6e6ReRR9xMsUb4\"",
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 407,
+        "name": "Test Circle for API",
+        "description": "Circle created for API testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:14.432Z",
+        "userId": 464,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 152,
+    "timestamp": "2025-04-13T10:50:14.475Z",
+    "test": {
+      "name": "Circles API Tests Can create a new circle",
+      "fullName": "Circles API Tests Can create a new circle",
+      "path": "/home/runner/workspace/tests/api/circles-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles?format=array",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "206",
+        "etag": "W/\"ce-IrKBKWXZldSG23FGtfwPfOkBvKQ\"",
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 407,
+          "name": "Test Circle for API",
+          "description": "Circle created for API testing",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:14.432Z",
+          "userId": 464,
+          "isDefault": false,
+          "visibility": "private"
+        }
+      ]
+    },
+    "error": null,
+    "duration": 479,
+    "timestamp": "2025-04-13T10:50:14.979Z",
+    "test": {
+      "name": "Circles API Tests Can retrieve circles for user",
+      "fullName": "Circles API Tests Can retrieve circles for user",
+      "path": "/home/runner/workspace/tests/api/circles-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles?format=array",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "206",
+        "etag": "W/\"ce-IrKBKWXZldSG23FGtfwPfOkBvKQ\"",
+        "date": "Sun, 13 Apr 2025 10:50:14 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 407,
+          "name": "Test Circle for API",
+          "description": "Circle created for API testing",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:50:14.432Z",
+          "userId": 464,
+          "isDefault": false,
+          "visibility": "private"
+        }
+      ]
+    },
+    "error": null,
+    "duration": 480,
+    "timestamp": "2025-04-13T10:50:14.980Z",
+    "test": {
+      "name": "Circles API Tests Can retrieve circles for user",
+      "fullName": "Circles API Tests Can retrieve circles for user",
+      "path": "/home/runner/workspace/tests/api/circles-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/407",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "204",
+        "etag": "W/\"cc-JMO1VJBAwyzH+6e6ReRR9xMsUb4\"",
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 407,
+        "name": "Test Circle for API",
+        "description": "Circle created for API testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:14.432Z",
+        "userId": 464,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 232,
+    "timestamp": "2025-04-13T10:50:15.217Z",
+    "test": {
+      "name": "Circles API Tests Can retrieve a specific circle",
+      "fullName": "Circles API Tests Can retrieve a specific circle",
+      "path": "/home/runner/workspace/tests/api/circles-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/407",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "204",
+        "etag": "W/\"cc-JMO1VJBAwyzH+6e6ReRR9xMsUb4\"",
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 407,
+        "name": "Test Circle for API",
+        "description": "Circle created for API testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:14.432Z",
+        "userId": 464,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 233,
+    "timestamp": "2025-04-13T10:50:15.218Z",
+    "test": {
+      "name": "Circles API Tests Can retrieve a specific circle",
+      "fullName": "Circles API Tests Can retrieve a specific circle",
+      "path": "/home/runner/workspace/tests/api/circles-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/circles/407",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "216",
+        "etag": "W/\"d8-Q8mH6Jhvsszt7e8QmoEaUF3L7Co\"",
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 407,
+        "name": "Updated Test Circle",
+        "description": "This circle was updated during API testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:14.432Z",
+        "userId": 464,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 239,
+    "timestamp": "2025-04-13T10:50:15.474Z",
+    "test": {
+      "name": "Circles API Tests Can update circle details",
+      "fullName": "Circles API Tests Can update circle details",
+      "path": "/home/runner/workspace/tests/api/circles-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/circles/407",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "216",
+        "etag": "W/\"d8-Q8mH6Jhvsszt7e8QmoEaUF3L7Co\"",
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 407,
+        "name": "Updated Test Circle",
+        "description": "This circle was updated during API testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:50:14.432Z",
+        "userId": 464,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 241,
+    "timestamp": "2025-04-13T10:50:15.476Z",
+    "test": {
+      "name": "Circles API Tests Can update circle details",
+      "fullName": "Circles API Tests Can update circle details",
+      "path": "/home/runner/workspace/tests/api/circles-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 10,
+    "timestamp": "2025-04-13T10:50:15.553Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-LqGd8tfKKEVK9gS+aqPjMC1voGY\"",
+        "set-cookie": [
+          "sid=s%3Afqaj2IO_UCi4kOaWRsz27b6nn4cIgm8m.yvThfxnin1PxdkEgFBS41Wbw164P7HxKsmtHXbKUwgk; Path=/; Expires=Mon, 14 Apr 2025 10:50:15 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 465,
+        "username": "testuser_87be760b",
+        "password": "d4cf8d9281963ecab474f520d5b5dffc5f8cfaf28cdbfc1811565a9a11bc0deab70ace2d58bac8d7221cb9cf80ce3ec338fff08ca07503c177ddb45cecc8a3b7.3c93924b01fb4dfe1c5786f8917929d8",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:15.710Z"
+      }
+    },
+    "error": null,
+    "duration": 200,
+    "timestamp": "2025-04-13T10:50:15.756Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-LqGd8tfKKEVK9gS+aqPjMC1voGY\"",
+        "set-cookie": [
+          "sid=s%3Afqaj2IO_UCi4kOaWRsz27b6nn4cIgm8m.yvThfxnin1PxdkEgFBS41Wbw164P7HxKsmtHXbKUwgk; Path=/; Expires=Mon, 14 Apr 2025 10:50:15 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 465,
+        "username": "testuser_87be760b",
+        "password": "d4cf8d9281963ecab474f520d5b5dffc5f8cfaf28cdbfc1811565a9a11bc0deab70ace2d58bac8d7221cb9cf80ce3ec338fff08ca07503c177ddb45cecc8a3b7.3c93924b01fb4dfe1c5786f8917929d8",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:15.710Z"
+      }
+    },
+    "error": null,
+    "duration": 201,
+    "timestamp": "2025-04-13T10:50:15.757Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-LqGd8tfKKEVK9gS+aqPjMC1voGY\"",
+        "set-cookie": [
+          "sid=s%3AKTf0QqO72iwOIRv2jT7jZCerkhCaSCRz.YkRjHW8%2B2rYtW5IXvLdP3%2FpCoA9B1qqhoc2Y89XD%2F4o; Path=/; Expires=Mon, 14 Apr 2025 10:50:15 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 465,
+        "username": "testuser_87be760b",
+        "password": "d4cf8d9281963ecab474f520d5b5dffc5f8cfaf28cdbfc1811565a9a11bc0deab70ace2d58bac8d7221cb9cf80ce3ec338fff08ca07503c177ddb45cecc8a3b7.3c93924b01fb4dfe1c5786f8917929d8",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:15.710Z"
+      }
+    },
+    "error": null,
+    "duration": 196,
+    "timestamp": "2025-04-13T10:50:15.958Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-LqGd8tfKKEVK9gS+aqPjMC1voGY\"",
+        "set-cookie": [
+          "sid=s%3AKTf0QqO72iwOIRv2jT7jZCerkhCaSCRz.YkRjHW8%2B2rYtW5IXvLdP3%2FpCoA9B1qqhoc2Y89XD%2F4o; Path=/; Expires=Mon, 14 Apr 2025 10:50:15 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:15 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 465,
+        "username": "testuser_87be760b",
+        "password": "d4cf8d9281963ecab474f520d5b5dffc5f8cfaf28cdbfc1811565a9a11bc0deab70ace2d58bac8d7221cb9cf80ce3ec338fff08ca07503c177ddb45cecc8a3b7.3c93924b01fb4dfe1c5786f8917929d8",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:15.710Z"
+      }
+    },
+    "error": null,
+    "duration": 198,
+    "timestamp": "2025-04-13T10:50:15.960Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-LqGd8tfKKEVK9gS+aqPjMC1voGY\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 465,
+        "username": "testuser_87be760b",
+        "password": "d4cf8d9281963ecab474f520d5b5dffc5f8cfaf28cdbfc1811565a9a11bc0deab70ace2d58bac8d7221cb9cf80ce3ec338fff08ca07503c177ddb45cecc8a3b7.3c93924b01fb4dfe1c5786f8917929d8",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:15.710Z"
+      }
+    },
+    "error": null,
+    "duration": 80,
+    "timestamp": "2025-04-13T10:50:16.043Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-LqGd8tfKKEVK9gS+aqPjMC1voGY\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 465,
+        "username": "testuser_87be760b",
+        "password": "d4cf8d9281963ecab474f520d5b5dffc5f8cfaf28cdbfc1811565a9a11bc0deab70ace2d58bac8d7221cb9cf80ce3ec338fff08ca07503c177ddb45cecc8a3b7.3c93924b01fb4dfe1c5786f8917929d8",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:15.710Z"
+      }
+    },
+    "error": null,
+    "duration": 81,
+    "timestamp": "2025-04-13T10:50:16.044Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/default-circle",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "211",
+        "etag": "W/\"d3-6buMHksuA0AeWNuCTj3pLigYOu8\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 408,
+        "name": "Home",
+        "description": "Your personal space for sharing and connecting",
+        "icon": "🏠",
+        "color": "#2563eb",
+        "createdAt": "2025-04-13T10:50:16.236Z",
+        "userId": 465,
+        "isDefault": true,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 384,
+    "timestamp": "2025-04-13T10:50:16.434Z",
+    "test": {
+      "name": "Default Circle API Tests Can get default circle using /api/default-circle endpoint",
+      "fullName": "Default Circle API Tests Can get default circle using /api/default-circle endpoint",
+      "path": "/home/runner/workspace/tests/api/default-circle-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/default-circle",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "211",
+        "etag": "W/\"d3-6buMHksuA0AeWNuCTj3pLigYOu8\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 408,
+        "name": "Home",
+        "description": "Your personal space for sharing and connecting",
+        "icon": "🏠",
+        "color": "#2563eb",
+        "createdAt": "2025-04-13T10:50:16.236Z",
+        "userId": 465,
+        "isDefault": true,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 385,
+    "timestamp": "2025-04-13T10:50:16.435Z",
+    "test": {
+      "name": "Default Circle API Tests Can get default circle using /api/default-circle endpoint",
+      "fullName": "Default Circle API Tests Can get default circle using /api/default-circle endpoint",
+      "path": "/home/runner/workspace/tests/api/default-circle-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/default",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "211",
+        "etag": "W/\"d3-6buMHksuA0AeWNuCTj3pLigYOu8\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 408,
+        "name": "Home",
+        "description": "Your personal space for sharing and connecting",
+        "icon": "🏠",
+        "color": "#2563eb",
+        "createdAt": "2025-04-13T10:50:16.236Z",
+        "userId": 465,
+        "isDefault": true,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 155,
+    "timestamp": "2025-04-13T10:50:16.611Z",
+    "test": {
+      "name": "Default Circle API Tests Can get default circle using alternative /api/circles/default endpoint",
+      "fullName": "Default Circle API Tests Can get default circle using alternative /api/circles/default endpoint",
+      "path": "/home/runner/workspace/tests/api/default-circle-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/default",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "211",
+        "etag": "W/\"d3-6buMHksuA0AeWNuCTj3pLigYOu8\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 408,
+        "name": "Home",
+        "description": "Your personal space for sharing and connecting",
+        "icon": "🏠",
+        "color": "#2563eb",
+        "createdAt": "2025-04-13T10:50:16.236Z",
+        "userId": 465,
+        "isDefault": true,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 157,
+    "timestamp": "2025-04-13T10:50:16.612Z",
+    "test": {
+      "name": "Default Circle API Tests Can get default circle using alternative /api/circles/default endpoint",
+      "fullName": "Default Circle API Tests Can get default circle using alternative /api/circles/default endpoint",
+      "path": "/home/runner/workspace/tests/api/default-circle-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/default-circle",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "211",
+        "etag": "W/\"d3-6buMHksuA0AeWNuCTj3pLigYOu8\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 408,
+        "name": "Home",
+        "description": "Your personal space for sharing and connecting",
+        "icon": "🏠",
+        "color": "#2563eb",
+        "createdAt": "2025-04-13T10:50:16.236Z",
+        "userId": 465,
+        "isDefault": true,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 155,
+    "timestamp": "2025-04-13T10:50:16.771Z",
+    "test": {
+      "name": "Default Circle API Tests Both default circle endpoints return the same circle",
+      "fullName": "Default Circle API Tests Both default circle endpoints return the same circle",
+      "path": "/home/runner/workspace/tests/api/default-circle-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/default-circle",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "211",
+        "etag": "W/\"d3-6buMHksuA0AeWNuCTj3pLigYOu8\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 408,
+        "name": "Home",
+        "description": "Your personal space for sharing and connecting",
+        "icon": "🏠",
+        "color": "#2563eb",
+        "createdAt": "2025-04-13T10:50:16.236Z",
+        "userId": 465,
+        "isDefault": true,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 156,
+    "timestamp": "2025-04-13T10:50:16.772Z",
+    "test": {
+      "name": "Default Circle API Tests Both default circle endpoints return the same circle",
+      "fullName": "Default Circle API Tests Both default circle endpoints return the same circle",
+      "path": "/home/runner/workspace/tests/api/default-circle-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/default",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "211",
+        "etag": "W/\"d3-6buMHksuA0AeWNuCTj3pLigYOu8\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 408,
+        "name": "Home",
+        "description": "Your personal space for sharing and connecting",
+        "icon": "🏠",
+        "color": "#2563eb",
+        "createdAt": "2025-04-13T10:50:16.236Z",
+        "userId": 465,
+        "isDefault": true,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 154,
+    "timestamp": "2025-04-13T10:50:16.937Z",
+    "test": {
+      "name": "Default Circle API Tests Both default circle endpoints return the same circle",
+      "fullName": "Default Circle API Tests Both default circle endpoints return the same circle",
+      "path": "/home/runner/workspace/tests/api/default-circle-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/default",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "211",
+        "etag": "W/\"d3-6buMHksuA0AeWNuCTj3pLigYOu8\"",
+        "date": "Sun, 13 Apr 2025 10:50:16 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 408,
+        "name": "Home",
+        "description": "Your personal space for sharing and connecting",
+        "icon": "🏠",
+        "color": "#2563eb",
+        "createdAt": "2025-04-13T10:50:16.236Z",
+        "userId": 465,
+        "isDefault": true,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 155,
+    "timestamp": "2025-04-13T10:50:16.938Z",
+    "test": {
+      "name": "Default Circle API Tests Both default circle endpoints return the same circle",
+      "fullName": "Default Circle API Tests Both default circle endpoints return the same circle",
+      "path": "/home/runner/workspace/tests/api/default-circle-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 5,
+    "timestamp": "2025-04-13T10:50:17.014Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-qFBRAAXGJ26bQ8eRdYUuy+jJKhs\"",
+        "set-cookie": [
+          "sid=s%3AL1g0I8CKDaedM-lCIZJD8YvmTRaA2RGK.k8pE2ICFdDOPCk0Sx7t3vukmh0Iv%2FiMJ%2Bh7q0LW8Uso; Path=/; Expires=Mon, 14 Apr 2025 10:50:17 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 466,
+        "username": "testuser_01d7f8f0",
+        "password": "d7031c90a34bc6b9d9ecf76df142257c75e393f43f11b6e68cd9c06bbf3f6ca27beffbae693480164075a35dbb76ecdaa820cce7040eb804e8c6664052fc64eb.bc3f854ee99d929a948997d540f682c5",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:17.166Z"
+      }
+    },
+    "error": null,
+    "duration": 193,
+    "timestamp": "2025-04-13T10:50:17.210Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-qFBRAAXGJ26bQ8eRdYUuy+jJKhs\"",
+        "set-cookie": [
+          "sid=s%3AL1g0I8CKDaedM-lCIZJD8YvmTRaA2RGK.k8pE2ICFdDOPCk0Sx7t3vukmh0Iv%2FiMJ%2Bh7q0LW8Uso; Path=/; Expires=Mon, 14 Apr 2025 10:50:17 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 466,
+        "username": "testuser_01d7f8f0",
+        "password": "d7031c90a34bc6b9d9ecf76df142257c75e393f43f11b6e68cd9c06bbf3f6ca27beffbae693480164075a35dbb76ecdaa820cce7040eb804e8c6664052fc64eb.bc3f854ee99d929a948997d540f682c5",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:17.166Z"
+      }
+    },
+    "error": null,
+    "duration": 194,
+    "timestamp": "2025-04-13T10:50:17.211Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-qFBRAAXGJ26bQ8eRdYUuy+jJKhs\"",
+        "set-cookie": [
+          "sid=s%3ABYlgOOgmYgrygEFpyLX_IuWqO1WpYYCE.yXbS4THYYntjZ1FcW6G4pyqOOjMJ41sv71qTMA7KqZI; Path=/; Expires=Mon, 14 Apr 2025 10:50:17 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 466,
+        "username": "testuser_01d7f8f0",
+        "password": "d7031c90a34bc6b9d9ecf76df142257c75e393f43f11b6e68cd9c06bbf3f6ca27beffbae693480164075a35dbb76ecdaa820cce7040eb804e8c6664052fc64eb.bc3f854ee99d929a948997d540f682c5",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:17.166Z"
+      }
+    },
+    "error": null,
+    "duration": 189,
+    "timestamp": "2025-04-13T10:50:17.405Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-qFBRAAXGJ26bQ8eRdYUuy+jJKhs\"",
+        "set-cookie": [
+          "sid=s%3ABYlgOOgmYgrygEFpyLX_IuWqO1WpYYCE.yXbS4THYYntjZ1FcW6G4pyqOOjMJ41sv71qTMA7KqZI; Path=/; Expires=Mon, 14 Apr 2025 10:50:17 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 466,
+        "username": "testuser_01d7f8f0",
+        "password": "d7031c90a34bc6b9d9ecf76df142257c75e393f43f11b6e68cd9c06bbf3f6ca27beffbae693480164075a35dbb76ecdaa820cce7040eb804e8c6664052fc64eb.bc3f854ee99d929a948997d540f682c5",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:17.166Z"
+      }
+    },
+    "error": null,
+    "duration": 191,
+    "timestamp": "2025-04-13T10:50:17.408Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-qFBRAAXGJ26bQ8eRdYUuy+jJKhs\"",
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 466,
+        "username": "testuser_01d7f8f0",
+        "password": "d7031c90a34bc6b9d9ecf76df142257c75e393f43f11b6e68cd9c06bbf3f6ca27beffbae693480164075a35dbb76ecdaa820cce7040eb804e8c6664052fc64eb.bc3f854ee99d929a948997d540f682c5",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:17.166Z"
+      }
+    },
+    "error": null,
+    "duration": 81,
+    "timestamp": "2025-04-13T10:50:17.867Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-qFBRAAXGJ26bQ8eRdYUuy+jJKhs\"",
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 466,
+        "username": "testuser_01d7f8f0",
+        "password": "d7031c90a34bc6b9d9ecf76df142257c75e393f43f11b6e68cd9c06bbf3f6ca27beffbae693480164075a35dbb76ecdaa820cce7040eb804e8c6664052fc64eb.bc3f854ee99d929a948997d540f682c5",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:17.166Z"
+      }
+    },
+    "error": null,
+    "duration": 82,
+    "timestamp": "2025-04-13T10:50:17.869Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/tools",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "108",
+        "etag": "W/\"6c-VicQOFzGSelHp2HaSyHK1zWUWDE\"",
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": "calculator",
+          "name": "Calculator",
+          "description": "Performs mathematical calculations",
+          "enabled": false
+        }
+      ]
+    },
+    "error": null,
+    "duration": 80,
+    "timestamp": "2025-04-13T10:50:17.955Z",
+    "test": {
+      "name": "Tools API Tests Can get a list of available tools",
+      "fullName": "Tools API Tests Can get a list of available tools",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/tools",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "108",
+        "etag": "W/\"6c-VicQOFzGSelHp2HaSyHK1zWUWDE\"",
+        "date": "Sun, 13 Apr 2025 10:50:17 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": "calculator",
+          "name": "Calculator",
+          "description": "Performs mathematical calculations",
+          "enabled": false
+        }
+      ]
+    },
+    "error": null,
+    "duration": 81,
+    "timestamp": "2025-04-13T10:50:17.957Z",
+    "test": {
+      "name": "Tools API Tests Can get a list of available tools",
+      "fullName": "Tools API Tests Can get a list of available tools",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/tools",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "108",
+        "etag": "W/\"6c-VicQOFzGSelHp2HaSyHK1zWUWDE\"",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": "calculator",
+          "name": "Calculator",
+          "description": "Performs mathematical calculations",
+          "enabled": false
+        }
+      ]
+    },
+    "error": null,
+    "duration": 79,
+    "timestamp": "2025-04-13T10:50:18.042Z",
+    "test": {
+      "name": "Tools API Tests Can get details of a specific tool",
+      "fullName": "Tools API Tests Can get details of a specific tool",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/tools",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "108",
+        "etag": "W/\"6c-VicQOFzGSelHp2HaSyHK1zWUWDE\"",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": "calculator",
+          "name": "Calculator",
+          "description": "Performs mathematical calculations",
+          "enabled": false
+        }
+      ]
+    },
+    "error": null,
+    "duration": 80,
+    "timestamp": "2025-04-13T10:50:18.044Z",
+    "test": {
+      "name": "Tools API Tests Can get details of a specific tool",
+      "fullName": "Tools API Tests Can get details of a specific tool",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/tools/calculator",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 81,
+    "timestamp": "2025-04-13T10:50:18.129Z",
+    "test": {
+      "name": "Tools API Tests Can get details of a specific tool",
+      "fullName": "Tools API Tests Can get details of a specific tool",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/tools/calculator",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 83,
+    "timestamp": "2025-04-13T10:50:18.131Z",
+    "test": {
+      "name": "Tools API Tests Can get details of a specific tool",
+      "fullName": "Tools API Tests Can get details of a specific tool",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/tools/calculator/execute",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 81,
+    "timestamp": "2025-04-13T10:50:18.217Z",
+    "test": {
+      "name": "Tools API Tests Can execute a calculator tool",
+      "fullName": "Tools API Tests Can execute a calculator tool",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/tools/calculator/execute",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 83,
+    "timestamp": "2025-04-13T10:50:18.219Z",
+    "test": {
+      "name": "Tools API Tests Can execute a calculator tool",
+      "fullName": "Tools API Tests Can execute a calculator tool",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/tools/history",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 82,
+    "timestamp": "2025-04-13T10:50:18.306Z",
+    "test": {
+      "name": "Tools API Tests Can get tool execution history",
+      "fullName": "Tools API Tests Can get tool execution history",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/tools/history",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 84,
+    "timestamp": "2025-04-13T10:50:18.307Z",
+    "test": {
+      "name": "Tools API Tests Can get tool execution history",
+      "fullName": "Tools API Tests Can get tool execution history",
+      "path": "/home/runner/workspace/tests/api/tools-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 6,
+    "timestamp": "2025-04-13T10:50:18.381Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "288",
+        "etag": "W/\"120-qM5CGpnrlezD4MB/eV6nOkpOnbw\"",
+        "set-cookie": [
+          "sid=s%3A8BQSQI85VwT4acAEYtABk8sQElcAyQxN.Fg1rkV0tBnqJKMQZ2E9EQ8YWOwWGJqFOiR4aVjXtqvY; Path=/; Expires=Mon, 14 Apr 2025 10:50:18 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 467,
+        "username": "testuser_1744541418386",
+        "password": "3237eee8e4ba225ed87b6b78f4f1b7265ff6331e96b4248a73d3dfc1f5ae790e20916e47f29c43ebb0fce365b8fd0f2228fcde175727a95c27d5a3f931704f23.59f1eaf8ef96d76dd97c08abfcd48303",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:18.533Z"
+      }
+    },
+    "error": null,
+    "duration": 192,
+    "timestamp": "2025-04-13T10:50:18.578Z",
+    "test": {
+      "name": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "fullName": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "288",
+        "etag": "W/\"120-Hxh9jiPM7XcOib9T5BIVlfhgyLQ\"",
+        "set-cookie": [
+          "sid=s%3AOJI-zeMKTgnsrrB4X5wG_OHDdQ-Dronj.sRfA7KB%2BRHCZa1sP%2BJFlYdTx3%2BREToeH%2BiuLKT613DI; Path=/; Expires=Mon, 14 Apr 2025 10:50:18 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 468,
+        "username": "testuser_1744541418581",
+        "password": "0ee80e381dd55f88783a2bd3965adb2f4148c5e0d569b29f2f339832bf501c188e67e515e5cc3cc8ac113bd412e7af4355f9c98d3e04670407eb77438d80af65.8de56b89e89605a9716604278224c18f",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:50:18.728Z"
+      }
+    },
+    "error": null,
+    "duration": 191,
+    "timestamp": "2025-04-13T10:50:18.772Z",
+    "test": {
+      "name": "Authentication Endpoints Login endpoint returns successful response",
+      "fullName": "Authentication Endpoints Login endpoint returns successful response",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:50:18 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 3,
+    "timestamp": "2025-04-13T10:50:18.940Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:50:19 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 5,
+    "timestamp": "2025-04-13T10:50:19.087Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/server-api.test.cjs"
     }
   }
 ]
