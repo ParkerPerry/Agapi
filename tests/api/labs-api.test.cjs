@@ -290,10 +290,10 @@ beforeAll(async () => {
         .post(`/api/labs/${testLabId}/duplicate`)
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(201);
-      expect(response.body).to.have.property('id');
-      expect(response.body.id).to.not.equal(testLabId); // Should be a new ID
-      expect(response.body.name).to.include('Copy'); // Name should indicate it's a copy
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('id');
+      expect(response.body.id).not.toBe(testLabId); // Should be a new ID
+      expect(response.body.name).toContain('Copy'); // Name should indicate it's a copy
     });
   });
 
@@ -308,8 +308,8 @@ beforeAll(async () => {
         .get(`/api/labs/${testLabId}/posts`)
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(200);
-      expect(response.body).to.be.an('array');
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
       // May be empty if no posts exist yet
     });
   });
@@ -325,12 +325,12 @@ beforeAll(async () => {
         .delete(`/api/labs/${testLabId}/circles/${testCircleId}`)
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(200);
+      expect(response.status).toBe(200);
       // Should return success message or deleted record
       if (response.body.message) {
-        expect(response.body.message).to.include('success');
+        expect(response.body.message).toContain('success');
       } else {
-        expect(response.body).to.have.property('circleId', testCircleId);
+        expect(response.body).toHaveProperty('circleId', testCircleId);
       }
     });
 
@@ -343,12 +343,12 @@ beforeAll(async () => {
         .delete(`/api/labs/${testLabId}`)
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(200);
+      expect(response.status).toBe(200);
       // Should return success message or deleted record
       if (response.body.message) {
-        expect(response.body.message).to.include('success');
+        expect(response.body.message).toContain('success');
       } else {
-        expect(response.body).to.have.property('id', testLabId);
+        expect(response.body).toHaveProperty('id', testLabId);
       }
     });
 
@@ -361,7 +361,7 @@ beforeAll(async () => {
         .get(`/api/labs/${testLabId}`)
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(404);
+      expect(response.status).toBe(404);
     });
-  });
+    });
 });
