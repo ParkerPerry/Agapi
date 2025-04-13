@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="8" failures="0" errors="0" time="1.953">
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T02:56:16" time="1.333" tests="5">
+<testsuites name="jest tests" tests="5" failures="0" errors="0" time="1.16">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T03:03:12" time="1.125" tests="5">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
     </testcase>
-    <testcase classname="Tools API Tests Can get a list of available tools" name="Tools API Tests Can get a list of available tools" time="0.076">
+    <testcase classname="Tools API Tests Can get a list of available tools" name="Tools API Tests Can get a list of available tools" time="0.08">
     </testcase>
-    <testcase classname="Tools API Tests Can get details of a specific tool" name="Tools API Tests Can get details of a specific tool" time="0.154">
+    <testcase classname="Tools API Tests Can get details of a specific tool" name="Tools API Tests Can get details of a specific tool" time="0.162">
     </testcase>
-    <testcase classname="Tools API Tests Can execute a calculator tool" name="Tools API Tests Can execute a calculator tool" time="0.08">
+    <testcase classname="Tools API Tests Can execute a calculator tool" name="Tools API Tests Can execute a calculator tool" time="0.085">
     </testcase>
-    <testcase classname="Tools API Tests Can get tool execution history" name="Tools API Tests Can get tool execution history" time="0.083">
-    </testcase>
-  </testsuite>
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T02:56:17" time="0.563" tests="3">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.001">
-    </testcase>
-    <testcase classname="Authentication Endpoints Registration endpoint exists and accepts requests" name="Authentication Endpoints Registration endpoint exists and accepts requests" time="0.188">
-    </testcase>
-    <testcase classname="Authentication Endpoints Login endpoint returns successful response" name="Authentication Endpoints Login endpoint returns successful response" time="0.299">
+    <testcase classname="Tools API Tests Can get tool execution history" name="Tools API Tests Can get tool execution history" time="0.084">
     </testcase>
   </testsuite>
 </testsuites>
