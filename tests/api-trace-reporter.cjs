@@ -59,15 +59,23 @@ class ApiTraceReporter {
         fs.mkdirSync(this.outputDir, { recursive: true });
       }
       
+      // Debug configuration values
+      console.log(`\n[API Trace Reporter] Configuration:`);
+      console.log(`  Output Directory: ${this.outputDir}`);
+      console.log(`  JSON Output File: ${this.outputFile}`);
+      console.log(`  HTML Report: ${this.htmlReport}`);
+      
       // Write the API calls to a JSON file
-      const outputPath = path.join(this.outputDir, this.outputFile);
-      fs.writeFileSync(outputPath, JSON.stringify(apiCalls, null, 2));
+      const outputJsonPath = path.join(this.outputDir, this.outputFile);
+      fs.writeFileSync(outputJsonPath, JSON.stringify(apiCalls, null, 2));
+      console.log(`[API Trace Reporter] Saved API calls to ${outputJsonPath}`);
       
       // Generate an HTML report for easier viewing
-      this.generateHtmlReport(apiCalls);
+      const htmlOutputPath = path.join(this.outputDir, this.htmlReport);
+      this.generateHtmlReport(apiCalls, htmlOutputPath);
       
-      console.log(`\n[API Trace Reporter] API Trace Report generated: ${outputPath}`);
-      console.log(`[API Trace Reporter] HTML Report generated: ${path.join(this.outputDir, this.htmlReport)}`);
+      console.log(`\n[API Trace Reporter] API Trace Report generated: ${outputJsonPath}`);
+      console.log(`[API Trace Reporter] HTML Report generated: ${htmlOutputPath}`);
       console.log(`[API Trace Reporter] Total API calls traced: ${apiCalls.length}`);
       
       // Stats
