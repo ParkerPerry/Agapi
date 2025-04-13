@@ -26,6 +26,12 @@ try {
   const fileContent = fs.readFileSync(inputFile, 'utf8');
   if (fileContent.trim()) {
     apiCalls = JSON.parse(fileContent);
+    console.log(`Successfully parsed JSON with ${apiCalls.length} items`);
+    
+    // Debug the first few items to see their structure
+    if (apiCalls.length > 0) {
+      console.log(`First item request method: ${apiCalls[0].request?.method}, url: ${apiCalls[0].request?.url}`);
+    }
   }
 } catch (error) {
   console.error(`Error reading API traces from file: ${error.message}`);
