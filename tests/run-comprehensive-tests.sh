@@ -66,9 +66,14 @@ if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   
   TEST_EXIT_CODE=$?
   
-  # Generate API trace report regardless of test outcome
-  echo "📊 Generating API trace report..."
+  # Generate API trace reports regardless of test outcome
+  echo "📊 Generating API trace reports..."
+  
+  # Generate main API trace report
   node generate-api-trace-report.cjs
+  
+  # Generate comprehensive API trace report
+  cd tests && node -e "require('./api-trace-helper.cjs').generateTraceReport('comprehensive-api-trace')" && cd ..
   
   echo ""
   if [ $TEST_EXIT_CODE -eq 0 ]; then
@@ -202,6 +207,7 @@ echo ""
 echo "Test Reports:"
 echo "- HTML Test Report: ./test-reports/comprehensive-tests-report.html"
 echo "- API Trace Report: ./test-reports/comprehensive-api-trace.html"
+echo "- Test Reports Directory: ./test-reports/index.html"
 echo ""
 echo "For more targeted testing, run individual test files directly:"
 echo "npx jest tests/api/specific-test-file.test.cjs --config jest.config.cjs"

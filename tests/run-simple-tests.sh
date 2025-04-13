@@ -43,9 +43,14 @@ if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   
   TEST_EXIT_CODE=$?
   
-  # Generate API trace report regardless of test outcome
-  echo "📊 Generating API trace report..."
+  # Generate API trace reports regardless of test outcome
+  echo "📊 Generating API trace reports..."
+  
+  # Generate main API trace report
   node generate-api-trace-report.cjs
+  
+  # Generate simple API trace report
+  cd tests && node -e "require('./api-trace-helper.cjs').generateTraceReport('simple-api-trace')" && cd ..
   
   # If any specific test needs to be run with different parameters, run it here
   # For example, the workflow test with a specific test name:
@@ -57,11 +62,11 @@ if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   if [ $TEST_EXIT_CODE -eq 0 ]; then
     echo "✅ Essential tests completed successfully."
     echo "Check the detailed HTML report at: ./test-reports/simple-tests-report.html"
-    echo "API trace report available at: ./test-reports/comprehensive-api-trace.html"
+    echo "API trace report available at: ./test-reports/simple-api-trace.html"
   else
     echo "❌ Some essential tests failed."
     echo "Review the detailed HTML report at: ./test-reports/simple-tests-report.html"
-    echo "API trace report available at: ./test-reports/comprehensive-api-trace.html"
+    echo "API trace report available at: ./test-reports/simple-api-trace.html"
   fi
 else
   # Original individual test approach for backward compatibility
@@ -112,7 +117,8 @@ echo "====================================="
 echo ""
 echo "Test Reports:"
 echo "- HTML Test Report: ./test-reports/simple-tests-report.html"
-echo "- API Trace Report: ./test-reports/comprehensive-api-trace.html"
+echo "- API Trace Report: ./test-reports/simple-api-trace.html"
+echo "- Test Reports Directory: ./test-reports/index.html"
 echo ""
 echo "For more comprehensive testing, run the comprehensive test suite:"
 echo "./tests/run-comprehensive-tests.sh"
