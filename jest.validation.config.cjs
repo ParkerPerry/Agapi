@@ -16,6 +16,11 @@ module.exports = {
       filename: 'validation-tests-report.html',
       pageTitle: 'CircleTube Validation Tests Report',
       expand: true,
+    }],
+    ['./tests/api-trace-reporter.cjs', {
+      outputDir: './test-reports',
+      outputFile: 'validation-api-trace.json',
+      htmlReport: 'validation-api-trace.html'
     }]
   ],
   

@@ -1,50 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="16" failures="0" errors="0" time="1.362">
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="13" timestamp="2025-04-13T04:22:18" time="1.328" tests="16">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0">
-      <skipped/>
+<testsuites name="jest tests" tests="16" failures="0" errors="0" time="10.756">
+  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T04:32:23" time="10.719" tests="16">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" name="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" name="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" time="0.151">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" name="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" name="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" time="0.222">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" name="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" name="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" time="0.222">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" time="0.593">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" time="0.586">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" time="0.52">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" time="0.226">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" time="0.222">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" time="0.95">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" time="0.222">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" time="0.149">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" time="0.01">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" time="3.165">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" time="0.01">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" time="1.163">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" time="0.008">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" time="0.957">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" name="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" time="0">
-      <skipped/>
+    <testcase classname="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" name="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" time="0.373">
     </testcase>
   </testsuite>
 </testsuites>

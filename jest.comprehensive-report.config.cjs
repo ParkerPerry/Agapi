@@ -30,7 +30,12 @@ module.exports = {
       outputDirectory: './test-reports',
       outputName: 'comprehensive-tests-junit.xml',
     }],
-    ['./tests/custom-reporter.cjs', {}]
+    ['./tests/custom-reporter.cjs', {}],
+    ['./tests/api-trace-reporter.cjs', {
+      outputDir: './test-reports',
+      outputFile: 'comprehensive-api-trace.json',
+      htmlReport: 'comprehensive-api-trace.html'
+    }]
   ],
   
   // Test all API test files for comprehensive coverage

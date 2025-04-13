@@ -21,7 +21,12 @@ export default {
       outputDirectory: './test-reports',
       outputName: 'simple-tests-junit.xml',
     }],
-    ['<rootDir>/tests/custom-reporter.cjs', {}]
+    ['<rootDir>/tests/custom-reporter.cjs', {}],
+    ['<rootDir>/tests/api-trace-reporter.cjs', {
+      outputDir: './test-reports',
+      outputFile: 'simple-api-trace.json',
+      htmlReport: 'simple-api-trace.html'
+    }]
   ],
   
   // Test testMatch to include only simple test files

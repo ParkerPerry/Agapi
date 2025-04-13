@@ -1,0 +1,163 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>API Trace Report</title>
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+          line-height: 1.6;
+          color: #333;
+          margin: 0;
+          padding: 20px;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+          color: #2c3e50;
+          border-bottom: 2px solid #3498db;
+          padding-bottom: 10px;
+        }
+        h2 {
+          color: #2c3e50;
+          margin-top: 30px;
+          padding-bottom: 8px;
+          border-bottom: 1px solid #ddd;
+        }
+        .test-name {
+          background-color: #f8f9fa;
+          padding: 10px;
+          border-radius: 4px;
+          margin-bottom: 15px;
+          border-left: 4px solid #3498db;
+        }
+        .api-call {
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          margin-bottom: 15px;
+          background-color: #fff;
+        }
+        .api-call-header {
+          display: flex;
+          justify-content: space-between;
+          background-color: #e9ecef;
+          padding: 8px 15px;
+          cursor: pointer;
+          user-select: none;
+        }
+        .api-call-method {
+          font-weight: bold;
+          margin-right: 10px;
+        }
+        .method-GET { color: #28a745; }
+        .method-POST { color: #007bff; }
+        .method-PUT, .method-PATCH { color: #fd7e14; }
+        .method-DELETE { color: #dc3545; }
+        .status-success { color: #28a745; }
+        .status-redirect { color: #fd7e14; }
+        .status-client-error { color: #dc3545; }
+        .status-server-error { color: #dc3545; }
+        .api-call-details {
+          padding: 15px;
+          display: none;
+          border-top: 1px solid #ddd;
+        }
+        .active .api-call-details {
+          display: block;
+        }
+        .detail-section {
+          margin-bottom: 15px;
+        }
+        .detail-section h4 {
+          margin-bottom: 5px;
+          color: #555;
+        }
+        pre {
+          background-color: #f8f9fa;
+          padding: 10px;
+          border-radius: 4px;
+          overflow: auto;
+          margin: 0;
+        }
+        .summary {
+          margin-bottom: 20px;
+          padding: 15px;
+          background-color: #e9ecef;
+          border-radius: 4px;
+        }
+        .menu {
+          position: sticky;
+          top: 10px;
+          max-height: calc(100vh - 40px);
+          overflow-y: auto;
+          background-color: #fff;
+          padding: 15px;
+          border-radius: 4px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          margin-bottom: 20px;
+        }
+        .menu ul {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+        }
+        .menu li {
+          margin-bottom: 8px;
+        }
+        .menu a {
+          color: #3498db;
+          text-decoration: none;
+        }
+        .menu a:hover {
+          text-decoration: underline;
+        }
+        .two-columns {
+          display: grid;
+          grid-template-columns: 1fr 3fr;
+          gap: 20px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>API Trace Report</h1>
+        <div class="summary">
+          <p><strong>Generated:</strong> 4/13/2025, 4:37:49 AM</p>
+          <p><strong>Total API Calls:</strong> 0</p>
+          <p><strong>Tests:</strong> 0</p>
+        </div>
+        
+        <div class="two-columns">
+          <div class="menu">
+            <h3>Tests</h3>
+            <ul>
+              
+            </ul>
+          </div>
+          
+          <div class="content">
+    
+          </div>
+        </div>
+      </div>
+      <script>
+        // Add click handlers to expand/collapse API call details
+        document.querySelectorAll('.api-call-header').forEach(header => {
+          header.addEventListener('click', () => {
+            const call = header.parentElement;
+            call.classList.toggle('active');
+          });
+        });
+      </script>
+    </body>
+    </html>
+    

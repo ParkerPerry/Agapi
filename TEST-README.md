@@ -58,6 +58,9 @@ npx jest tests/api/labs-api.test.cjs --config jest.comprehensive-report.config.c
 
 # For workflow tests
 npx jest tests/api/lab-wizard-flow.test.cjs --config jest.comprehensive-report.config.cjs
+
+# For lab validation tests only
+npx jest --config jest.validation.config.cjs
 ```
 
 ## Test Reports
@@ -68,6 +71,27 @@ Test results are generated in multiple formats for better visibility:
 2. **HTML Reports** - Detailed reports at `./test-reports/simple-tests-report.html` and `./test-reports/comprehensive-tests-report.html`
 3. **JUnit XML** - CI/CD compatible reports at `./test-reports/simple-tests-junit.xml` and `./test-reports/comprehensive-tests-junit.xml`
 4. **Custom Summary** - API group categorization with success percentages
+5. **API Trace Reports** - Detailed logs of all API requests and responses in both JSON and HTML formats:
+   - `test-reports/simple-api-trace.json` and `test-reports/simple-api-trace.html`
+   - `test-reports/comprehensive-api-trace.json` and `test-reports/comprehensive-api-trace.html`
+   - `test-reports/validation-api-trace.json` and `test-reports/validation-api-trace.html`
+
+### API Trace Reports
+
+The API trace reports provide complete visibility into all API interactions during test execution:
+
+- **Request details**: Method, URL, headers, and body data
+- **Response details**: Status code, headers, and complete response data 
+- **Timing information**: Duration of each API call for performance analysis
+- **Error details**: Complete error information when API calls fail
+- **Test context**: Which test triggered the API call
+
+These reports are particularly useful for:
+- Debugging failing tests by examining the exact API responses
+- Verifying that the API behaves as expected even when tests pass
+- Understanding the sequence of API calls in complex workflow tests
+- Documenting the API for future reference
+- Performance analysis of API endpoints
 
 ## Test Structure
 
@@ -98,6 +122,23 @@ Step 7 specifically tests that AI followers correctly queue responses to posts i
 - Pending responses can be created for posts
 - The API properly returns pending response information
 - ThreadManager correctly processes post interactions and responses
+
+### Focused Lab Validation Testing
+
+For targeted testing of just the lab validation functionality, use the dedicated test file:
+
+```bash
+npx jest --config jest.validation.config.cjs
+```
+
+This test (`lab-validation.test.cjs`) creates a minimal setup to focus on verifying AI response queuing:
+1. Creates a single test circle and lab
+2. Associates the circle with the lab as a control group
+3. Creates a test post in the circle
+4. Activates the lab to trigger response scheduling
+5. Creates an AI follower for the circle
+6. Manually creates a pending response for the post
+7. Verifies the pending response structure and accessibility via API
 
 ## Best Practices
 

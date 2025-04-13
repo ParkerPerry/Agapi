@@ -97,4 +97,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python -m http.server 5001 --bind 0.0.0.0 --directory /test-reports"
+args = "python -m http.server 5001 --bind 0.0.0.0 --directory test-reports"
