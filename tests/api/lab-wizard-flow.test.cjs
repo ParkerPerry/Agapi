@@ -490,7 +490,8 @@ describe('Lab Creation Wizard Flow Tests', () => {
       const followerData = {
         name: 'Test AI Assistant',
         personality: 'friendly, helpful',
-        circleId: testCircleId
+        circleId: testCircleId,
+        avatarUrl: 'https://example.com/avatar.png'  // Adding required avatar URL
       };
 
       const followerResponse = await authenticatedAgent
