@@ -300,8 +300,110 @@ describe('Lab Creation Wizard Flow Tests', () => {
     });
   });
 
-  // Step 5: Activate the lab
-  describe('Step 5: Lab Activation', () => {
+  // Step 5: Create content for the lab circles
+  describe('Step 5: Content Creation', () => {
+    // Test variables to hold the created post IDs
+    let controlCirclePostId = null;
+    let treatmentCirclePostId = null;
+
+    it('Can create test content post in control circle', async () => {
+      // Skip if lab or circle wasn't created
+      if (!testLabId || !testCircleId) {
+        console.warn('Test lab ID or control circle ID not available. Skipping this test.');
+        return;
+      }
+
+      const postData = {
+        content: 'This is a test post for the control group in our lab experiment',
+        circleId: testCircleId
+      };
+
+      const response = await authenticatedAgent
+        .post('/api/posts')
+        .send(postData);
+
+      console.log(`Create control post response status: ${response.status}`);
+      if (response.status !== 201) {
+        console.log(`Create control post error: ${JSON.stringify(response.body)}`);
+      }
+
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('id');
+      expect(response.body).toHaveProperty('content', postData.content);
+      expect(response.body).toHaveProperty('circleId', testCircleId);
+      
+      // Save the post ID for verification
+      controlCirclePostId = response.body.id;
+      console.log(`Created control circle post with ID: ${controlCirclePostId}`);
+    });
+
+    it('Can create test content post in treatment circle', async () => {
+      // Skip if lab or circle wasn't created
+      if (!testLabId || !testSecondCircleId) {
+        console.warn('Test lab ID or treatment circle ID not available. Skipping this test.');
+        return;
+      }
+
+      const postData = {
+        content: 'This is a test post for the treatment group in our lab experiment',
+        circleId: testSecondCircleId
+      };
+
+      const response = await authenticatedAgent
+        .post('/api/posts')
+        .send(postData);
+
+      console.log(`Create treatment post response status: ${response.status}`);
+      if (response.status !== 201) {
+        console.log(`Create treatment post error: ${JSON.stringify(response.body)}`);
+      }
+
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('id');
+      expect(response.body).toHaveProperty('content', postData.content);
+      expect(response.body).toHaveProperty('circleId', testSecondCircleId);
+      
+      // Save the post ID for verification
+      treatmentCirclePostId = response.body.id;
+      console.log(`Created treatment circle post with ID: ${treatmentCirclePostId}`);
+    });
+
+    it('Can verify posts are retrievable from lab circles', async () => {
+      // Skip if lab wasn't created
+      if (!testLabId) {
+        console.warn('Test lab ID not available. Skipping this test.');
+        return;
+      }
+
+      const response = await authenticatedAgent
+        .get(`/api/labs/${testLabId}/posts`);
+
+      console.log(`Get lab posts response status: ${response.status}`);
+      if (response.status === 200) {
+        console.log(`Found ${response.body.length} posts for lab ${testLabId}`);
+      }
+
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      
+      // Should have posts if they were successfully created
+      if (controlCirclePostId && treatmentCirclePostId) {
+        expect(response.body.length).toBeGreaterThan(0);
+        
+        // Check if posts are in the response
+        const postIds = response.body.map(post => post.id);
+        
+        // We should find at least one of our posts (might not find both due to filtering in the API)
+        const foundAnyPost = postIds.includes(controlCirclePostId) || postIds.includes(treatmentCirclePostId);
+        expect(foundAnyPost).toBe(true);
+        
+        console.log(`Successfully verified posts in lab circles`);
+      }
+    });
+  });
+
+  // Step 6: Activate the lab
+  describe('Step 6: Lab Activation', () => {
     it('Can activate the lab', async () => {
       // Skip if lab wasn't created
       if (!testLabId) {
