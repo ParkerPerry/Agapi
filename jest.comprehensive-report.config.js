@@ -21,7 +21,12 @@ export default {
       outputDirectory: './test-reports',
       outputName: 'comprehensive-tests-junit.xml',
     }],
-    ['<rootDir>/tests/custom-reporter.cjs', {}]
+    ['<rootDir>/tests/custom-reporter.cjs', {}],
+    ['<rootDir>/tests/api-trace-reporter.cjs', {
+      outputDir: './test-reports',
+      outputFile: 'comprehensive-api-trace.json',
+      htmlReport: 'comprehensive-api-trace.html'
+    }]
   ],
   
   // Test all API test files

@@ -47,7 +47,7 @@ beforeAll(async () => {
       visibility: 'public'
     };
     
-    const circleResponse = await authenticatedAgent
+    const circleResponse = await tracedAgent
       .post('/api/circles')
       .send(circleData);
       
@@ -65,7 +65,7 @@ beforeAll(async () => {
       experimentType: 'a_b_test'
     };
     
-    const labResponse = await authenticatedAgent
+    const labResponse = await tracedAgent
       .post('/api/labs')
       .send(labData);
     
@@ -79,7 +79,7 @@ beforeAll(async () => {
         role: 'control'
       };
       
-      await authenticatedAgent
+      await tracedAgent
         .post(`/api/labs/${testLabId}/circles`)
         .send(circleAssociation);
         
@@ -91,7 +91,7 @@ beforeAll(async () => {
         circleId: testCircleId
       };
       
-      const postResponse = await authenticatedAgent
+      const postResponse = await tracedAgent
         .post('/api/posts')
         .send(postData);
         
@@ -100,7 +100,7 @@ beforeAll(async () => {
         console.log(`Created test post with ID: ${testPostId}`);
         
         // Activate the lab
-        await authenticatedAgent
+        await tracedAgent
           .patch(`/api/labs/${testLabId}/status`)
           .send({ status: 'active' });
           
@@ -202,7 +202,7 @@ describe('Lab Validation Tests', () => {
       return;
     }
     
-    const response = await authenticatedAgent
+    const response = await tracedAgent
       .get(`/api/labs/${testLabId}/posts`);
       
     console.log(`Get lab posts with threads status: ${response.status}`);
