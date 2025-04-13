@@ -1,7 +1,7 @@
 /**
  * Jest configuration for comprehensive tests with reporting
  */
-module.exports = {
+export default {
   // Run tests sequentially to avoid port conflicts
   maxWorkers: 1,
   
@@ -21,7 +21,7 @@ module.exports = {
       outputDirectory: './test-reports',
       outputName: 'comprehensive-tests-junit.xml',
     }],
-    ['./tests/custom-reporter.js']
+    ['<rootDir>/tests/custom-reporter.cjs', {}]
   ],
   
   // Test all API test files

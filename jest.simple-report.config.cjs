@@ -1,7 +1,7 @@
 /**
  * Jest configuration for simple tests with reporting
  */
-export default {
+module.exports = {
   // Run tests sequentially to avoid port conflicts
   maxWorkers: 1,
   
@@ -21,7 +21,7 @@ export default {
       outputDirectory: './test-reports',
       outputName: 'simple-tests-junit.xml',
     }],
-    ['<rootDir>/tests/custom-reporter.cjs', {}]
+    ['./tests/custom-reporter.cjs', {}]
   ],
   
   // Test testMatch to include only simple test files

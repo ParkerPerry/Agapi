@@ -1,7 +1,7 @@
 /**
  * Custom Jest reporter that provides a detailed summary after test execution
  */
-export default class CustomReporter {
+class CustomReporter {
   constructor(globalConfig, options) {
     this._globalConfig = globalConfig;
     this._options = options;
@@ -130,3 +130,5 @@ export default class CustomReporter {
     }
   }
 }
+
+module.exports = CustomReporter;
