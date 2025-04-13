@@ -77,6 +77,10 @@ echo ""
 echo "🔄 Running health API tests..."
 npx jest tests/api/health-api.test.cjs --config jest.config.cjs
 
+echo ""
+echo "🔄 Running labs API tests..."
+npx jest tests/api/labs-api.test.cjs --config jest.config.cjs
+
 # Add a summary section
 echo ""
 echo "=============================================="
