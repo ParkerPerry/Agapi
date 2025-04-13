@@ -9,6 +9,9 @@ const authHelper = require(path.resolve(__dirname, './auth-helper.test.cjs'));
 const request = require('supertest');
 const apiTraceHelper = require('../api-trace-helper.cjs');
 
+// Clear trace data at the beginning of test execution
+apiTraceHelper.clearTraceData();
+
 let baseUrl;
 let authenticatedAgent;
 let tracedAgent; // Traced agent for API tracking
@@ -235,5 +238,12 @@ describe('Lab Validation Tests', () => {
         }
       }
     }
+  });
+  
+  // After all tests are done, generate the validation API trace report
+  afterAll(() => {
+    console.log('Generating validation API trace report...');
+    apiTraceHelper.generateTraceReport('validation-api-trace');
+    console.log('API trace report generation completed.');
   });
 });
