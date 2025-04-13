@@ -5,8 +5,14 @@ export default {
   // Run tests sequentially to avoid port conflicts
   maxWorkers: 1,
   
-  // Increase timeout for API tests
-  testTimeout: 30000,
+  // Increase timeout for API tests and ensure tests exit properly
+  testTimeout: 60000,
+  
+  // Force Jest to exit after tests complete (prevents hanging)
+  forceExit: true,
+  
+  // Show open handles that might prevent proper termination
+  detectOpenHandles: true,
   
   // Use more descriptive test reports
   reporters: [

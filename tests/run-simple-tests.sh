@@ -39,7 +39,7 @@ USE_CONSOLIDATED_TESTS=${USE_CONSOLIDATED_TESTS:-true}
 if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   # Run all tests at once using the reporting config
   echo "🔄 Running all essential tests with consolidated reporting..."
-  npx jest --config jest.simple-report.config.cjs
+  npx jest --config jest.simple-report.config.cjs --forceExit --detectOpenHandles
   
   TEST_EXIT_CODE=$?
   
@@ -51,7 +51,7 @@ if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   # For example, the workflow test with a specific test name:
   echo ""
   echo "🔄 Running essential workflow test..."
-  npx jest tests/api/workflow.test.cjs -t "Update profile" --config jest.config.cjs
+  npx jest tests/api/workflow.test.cjs -t "Update profile" --config jest.config.cjs --forceExit --detectOpenHandles
 
   echo ""
   if [ $TEST_EXIT_CODE -eq 0 ]; then
