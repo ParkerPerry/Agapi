@@ -6,6 +6,17 @@ echo "====================================="
 echo "Note: Tests will use port 5000 for API connections"
 echo ""
 
+# IMPORTANT NOTES FOR TEST EXECUTION:
+# 
+# This script runs the FOUNDATIONAL test suite that verifies critical functionality.
+# These tests should pass before attempting comprehensive tests.
+#
+# When running in Replit, this script may time out due to agent limitations.
+# For targeted testing, use direct commands like:
+#   npx jest tests/api/auth-endpoints.test.cjs --config jest.simple-report.config.cjs
+#
+# See TEST-README.md for more detailed information on testing strategy.
+
 # Check if we're in the project root or tests directory
 if [ -d "api" ]; then
   # We're in the tests directory
@@ -28,7 +39,7 @@ USE_CONSOLIDATED_TESTS=${USE_CONSOLIDATED_TESTS:-true}
 if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   # Run all tests at once using the reporting config
   echo "🔄 Running all essential tests with consolidated reporting..."
-  npx jest --config jest.simple-report.config.js
+  npx jest --config jest.simple-report.config.cjs
   
   TEST_EXIT_CODE=$?
   

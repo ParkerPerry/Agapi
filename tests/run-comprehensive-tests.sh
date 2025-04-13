@@ -6,6 +6,17 @@ echo "=============================================="
 echo "Note: This will run ALL tests, providing detailed reporting"
 echo ""
 
+# IMPORTANT NOTES FOR TEST EXECUTION:
+# 
+# This script runs the ADVANCED test suite that verifies complete functionality.
+# These tests should ONLY be run AFTER the simple/foundational tests pass.
+#
+# When running in Replit, this script may time out due to agent limitations.
+# For targeted testing, use direct commands like:
+#   npx jest tests/api/labs-api.test.cjs --config jest.comprehensive-report.config.cjs
+#
+# See TEST-README.md for more detailed information on testing strategy.
+
 # Check if we're in the project root or tests directory
 if [ -d "api" ]; then
   # We're in the tests directory
@@ -50,7 +61,7 @@ fi
 if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   # Run all tests at once using the reporting config
   echo "🔄 Running all comprehensive tests with consolidated reporting..."
-  npx jest --config jest.comprehensive-report.config.js
+  npx jest --config jest.comprehensive-report.config.cjs
   
   TEST_EXIT_CODE=$?
   

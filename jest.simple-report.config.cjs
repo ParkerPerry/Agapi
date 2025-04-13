@@ -1,5 +1,14 @@
 /**
  * Jest configuration for simple tests with reporting
+ * 
+ * IMPORTANT: This configuration is intended for the full suite of FOUNDATIONAL tests
+ * that verify critical system functionality. If these tests fail, more complex
+ * functionality will likely also fail, so these should be run first.
+ * 
+ * Due to Replit agent timeouts, it's recommended to test specific parts directly with:
+ * npx jest tests/api/specific-test-file.test.cjs --config jest.simple-report.config.cjs
+ * 
+ * See TEST-README.md for more information on testing strategy.
  */
 module.exports = {
   // Run tests sequentially to avoid port conflicts
@@ -24,7 +33,7 @@ module.exports = {
     ['./tests/custom-reporter.cjs', {}]
   ],
   
-  // Test testMatch to include only simple test files
+  // Test testMatch to include all foundational test files
   testMatch: [
     "**/tests/api/auth-endpoints.test.cjs",
     "**/tests/api/data-creation.test.cjs",

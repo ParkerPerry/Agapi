@@ -127,7 +127,7 @@ Our testing approach focuses on:
 ### Test Reporting Improvements (April 2025)
 
 1. **Consolidated Test Reporting**: Implemented a centralized reporting system that runs tests in a single Jest process rather than sequentially, which provides comprehensive test statistics
-2. **Custom Reporter Integration**: Created a custom Jest reporter (tests/custom-reporter.js) that provides detailed summary statistics including:
+2. **Custom Reporter Integration**: Created a custom Jest reporter (tests/custom-reporter.cjs) that provides detailed summary statistics including:
    - Overall test count, pass rate, and failure count
    - API group coverage reporting with pass percentages
    - Failed test listings with error messages
@@ -137,6 +137,9 @@ Our testing approach focuses on:
 5. **Backward Compatibility**: Maintained backward compatibility with the original sequential testing approach via environment variable flags
 6. **Simplified Test Running**: Now a single Jest process handles all tests, avoiding the complexities of multiple process coordination
 7. **Test Group Categorization**: Organized tests by API groups for better visibility in reports
+8. **CommonJS Module Compatibility**: Fixed Jest configuration files to use proper CommonJS format (.cjs extension) consistent with the project's module system
+9. **Replit Agent Guidance**: Added clear notes to test scripts and documentation about how to handle potential Replit agent timeouts with specific test commands
+10. **TEST-README.md**: Created comprehensive testing documentation in TEST-README.md with detailed guidance on test architecture, best practices, execution flows, and troubleshooting
 
 ### Next Steps
 
