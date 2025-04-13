@@ -5,8 +5,9 @@
  * It stores API call details for later reporting by the API trace reporter.
  */
 
-// Storage for API calls
-let apiCalls = [];
+// Storage for API calls - make it globally accessible
+global.__apiTraces = global.__apiTraces || [];
+let apiCalls = global.__apiTraces;
 let currentTest = null;
 
 /**
@@ -62,7 +63,8 @@ function getApiCalls() {
  * Clear all logged API calls
  */
 function clearApiCalls() {
-  apiCalls = [];
+  apiCalls.length = 0;  // Clear the array while keeping the reference
+  global.__apiTraces = apiCalls;  // Ensure global reference is updated
 }
 
 module.exports = {

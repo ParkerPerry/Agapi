@@ -40,7 +40,31 @@ class ApiTraceReporter {
     // Use setTimeout to ensure all API calls are processed
     // by allowing the event loop to complete first
     setTimeout(() => {
-      const apiCalls = apiTraceLogger.getApiCalls();
+      // Get API calls from both memory logger and global variable if available
+      const memoryApiCalls = apiTraceLogger.getApiCalls();
+      const globalApiCalls = global.__apiTraces || [];
+      
+      // Combine API calls, prioritizing memory logger calls
+      const apiCalls = [...memoryApiCalls];
+      
+      // Add global API calls that aren't already in memory logger
+      if (globalApiCalls.length > memoryApiCalls.length) {
+        console.log(`[API Trace Reporter] Found additional API calls in global storage (${globalApiCalls.length})`);
+        
+        // Simple deduplication by request URL and method
+        const existingUrls = new Set(
+          memoryApiCalls.map(call => `${call.request?.method || ''}:${call.request?.url || ''}`)
+        );
+        
+        globalApiCalls.forEach(call => {
+          const key = `${call.request?.method || ''}:${call.request?.url || ''}`;
+          if (!existingUrls.has(key)) {
+            apiCalls.push(call);
+            existingUrls.add(key);
+          }
+        });
+      }
+      
       console.log(`\n[API Trace Reporter] Processing ${apiCalls.length} API calls`);
       
       // If no API calls, no need to generate reports
@@ -53,6 +77,9 @@ class ApiTraceReporter {
         console.log('\nPossible solution: Make sure to await all API calls in your tests and use the tracedAgent for all requests.');
         return;
       }
+      
+      // Also store in global.__apiTraces for other scripts to use
+      global.__apiTraces = apiCalls;
       
       // Ensure the output directory exists
       if (!fs.existsSync(this.outputDir)) {
