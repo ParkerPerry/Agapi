@@ -55,6 +55,9 @@ npx jest tests/api/auth-endpoints.test.cjs --config jest.simple-report.config.cj
 
 # For advanced tests
 npx jest tests/api/labs-api.test.cjs --config jest.comprehensive-report.config.cjs
+
+# For workflow tests
+npx jest tests/api/lab-wizard-flow.test.cjs --config jest.comprehensive-report.config.cjs
 ```
 
 ## Test Reports
