@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CircleTube Test Reports</title>
+  <title>CircleTube API Test Reports</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -13,7 +13,6 @@
       padding: 20px;
       background-color: #f5f5f5;
     }
-    
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -22,344 +21,283 @@
       border-radius: 5px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    
     h1 {
       color: #2c3e50;
       border-bottom: 2px solid #3498db;
       padding-bottom: 10px;
     }
-    
-    .filter-container {
-      margin-bottom: 20px;
-      padding: 15px;
-      background-color: #f8f9fa;
-      border-radius: 5px;
-      border: 1px solid #e9ecef;
+    h2 {
+      color: #2c3e50;
+      margin-top: 30px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ddd;
     }
-    
-    .filter {
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 8px 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      background-color: #e9ecef;
+    }
+    .filter-btn.active {
+      background-color: #3498db;
+      color: white;
+      border-color: #3498db;
+    }
+    .search-box {
+      padding: 8px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 15px;
+    }
+    .report-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .report-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .report-item:hover {
+      background-color: #f8f9fa;
+    }
+    .report-link {
+      color: #3498db;
+      text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 8px;
     }
-    
-    input, select {
-      padding: 8px 12px;
-      border: 1px solid #ced4da;
+    .report-link:hover {
+      text-decoration: underline;
+    }
+    .report-type {
+      font-size: 14px;
       border-radius: 4px;
+      padding: 2px 8px;
+      margin-left: 10px;
+    }
+    .type-json {
+      background-color: #ffe0b2;
+      color: #e65100;
+    }
+    .type-html {
+      background-color: #c8e6c9;
+      color: #2e7d32;
+    }
+    .timestamp {
+      color: #6c757d;
       font-size: 14px;
     }
-    
-    input[type="text"] {
-      flex: 1;
-    }
-    
-    .file-list {
-      border: 1px solid #e9ecef;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    th, td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #e9ecef;
-    }
-    
-    th {
-      background-color: #f8f9fa;
-      font-weight: 600;
-    }
-    
-    tr:hover {
-      background-color: #f8f9fa;
-    }
-    
-    .file-icon {
-      margin-right: 8px;
-      color: #6c757d;
-    }
-    
-    .html-file { color: #e34c26; }
-    .json-file { color: #f1e05a; }
-    .xml-file { color: #563d7c; }
-    
-    .file-size {
-      font-size: 12px;
-      color: #6c757d;
-    }
-    
-    .empty-message {
+    .no-reports {
       padding: 20px;
       text-align: center;
       color: #6c757d;
-    }
-    
-    .actions {
-      display: flex;
-      gap: 10px;
-    }
-    
-    .timestamp {
-      font-size: 12px;
-      color: #6c757d;
-    }
-    
-    .summary {
-      margin-top: 20px;
-      padding: 15px;
       background-color: #f8f9fa;
-      border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
+      border-radius: 4px;
     }
-    
-    .stat {
-      text-align: center;
+    .refresh-btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 15px;
+      cursor: pointer;
+      margin-bottom: 15px;
     }
-    
-    .stat-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #2c3e50;
-    }
-    
-    .stat-label {
-      font-size: 12px;
-      color: #6c757d;
+    .refresh-btn:hover {
+      background-color: #2980b9;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>CircleTube Test Reports</h1>
+    <h1>CircleTube API Test Reports</h1>
     
-    <div class="filter-container">
-      <div class="filter">
-        <input type="text" id="search" placeholder="Filter files..." onkeyup="filterFiles()">
-        <select id="type-filter" onchange="filterFiles()">
-          <option value="all">All Files</option>
-          <option value="html">HTML Reports</option>
-          <option value="json">JSON Data</option>
-          <option value="xml">XML Reports</option>
-        </select>
-      </div>
-      <div class="filter">
-        <label>
-          <input type="checkbox" id="hide-data-files" onchange="filterFiles()">
-          Hide data files (JSON, XML)
-        </label>
-      </div>
+    <button id="refresh-btn" class="refresh-btn">Refresh List</button>
+    
+    <input type="text" id="search-box" class="search-box" placeholder="Search reports...">
+    
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="json">JSON</button>
+      <button class="filter-btn" data-filter="html">HTML</button>
+      <button class="filter-btn" data-filter="simple">Simple Tests</button>
+      <button class="filter-btn" data-filter="comprehensive">Comprehensive Tests</button>
     </div>
     
-    <div class="file-list">
-      <table id="files-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Last Modified</th>
-            <th>Size</th>
-          </tr>
-        </thead>
-        <tbody id="files-list">
-          <!-- Files will be loaded dynamically -->
-          <tr>
-            <td colspan="3" class="empty-message">Loading files...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    <div class="summary">
-      <div class="stat">
-        <div id="total-files" class="stat-value">0</div>
-        <div class="stat-label">Total Files</div>
-      </div>
-      <div class="stat">
-        <div id="html-files" class="stat-value">0</div>
-        <div class="stat-label">HTML Reports</div>
-      </div>
-      <div class="stat">
-        <div id="json-files" class="stat-value">0</div>
-        <div class="stat-label">JSON Data</div>
-      </div>
-      <div class="stat">
-        <div id="xml-files" class="stat-value">0</div>
-        <div class="stat-label">XML Reports</div>
-      </div>
+    <div id="report-container">
+      <p class="no-reports">Loading reports...</p>
     </div>
   </div>
-  
+
   <script>
-    // Function to load directory contents
-    function loadDirectoryContents() {
-      // This is a client-side directory listing that works in the browser
-      // It uses the Fetch API to get a listing of files
-      fetch('.')
-        .then(response => response.text())
-        .then(html => {
-          // Parse the directory listing HTML
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const links = Array.from(doc.querySelectorAll('a'));
-          
-          // Filter out parent directory
-          const files = links
-            .filter(link => !link.href.endsWith('/') && !link.href.endsWith('../'))
-            .map(link => {
-              // Try to extract size and date from the listing
-              const row = link.closest('tr');
-              let date = new Date();
-              let size = '';
-              
-              if (row) {
-                const cells = row.querySelectorAll('td');
-                if (cells.length >= 3) {
-                  date = new Date(cells[1].textContent.trim());
-                  size = cells[2].textContent.trim();
-                }
-              }
-              
-              return {
-                name: link.textContent.trim(),
-                href: link.href,
-                date: date,
-                size: size,
-                extension: link.textContent.split('.').pop().toLowerCase()
-              };
-            });
-          
-          displayFiles(files);
-        })
-        .catch(error => {
-          console.error('Error loading directory:', error);
-          document.getElementById('files-list').innerHTML = `
-            <tr>
-              <td colspan="3" class="empty-message">Error loading files. Please refresh the page.</td>
-            </tr>
-          `;
-        });
+    document.addEventListener('DOMContentLoaded', fetchReportList);
+    document.getElementById('refresh-btn').addEventListener('click', fetchReportList);
+    document.getElementById('search-box').addEventListener('input', filterReports);
+
+    // Add event listeners to filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // Remove active class from all buttons
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        // Add active class to clicked button
+        e.target.classList.add('active');
+        filterReports();
+      });
+    });
+
+    // Current file list (will be populated by the fetchReportList function)
+    let fileList = [];
+
+    async function fetchReportList() {
+      try {
+        const reportContainer = document.getElementById('report-container');
+        reportContainer.innerHTML = '<p class="no-reports">Loading reports...</p>';
+        
+        // In a local environment, we need to scan the directory
+        // This is simulating a directory scan by scanning the current location for files
+        const files = await listDirectoryFiles();
+        fileList = files;
+        
+        renderReportList(files);
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+        document.getElementById('report-container').innerHTML = 
+          `<p class="no-reports">Error loading reports: ${error.message}</p>`;
+      }
     }
-    
-    // Function to display files
-    function displayFiles(files) {
-      const filesList = document.getElementById('files-list');
+
+    async function listDirectoryFiles() {
+      // Simplified directory scan
+      // Fetches the current directory (self) and parses for links
+      // For real applications, we'd have a server endpoint returning this data
+      const response = await fetch('.');
+      const html = await response.text();
+      
+      // Use a regex to extract file links and timestamps
+      // This is very specific to the format of the directory listing page
+      const regex = /<td><a href="([^"]+)">[^<]+<\/a><\/td><td[^>]*>([^<]+)<\/td>/g;
+      
+      const files = [];
+      let match;
+      while ((match = regex.exec(html)) !== null) {
+        const fileName = match[1];
+        const timestamp = match[2];
+        
+        // Skip directories and non-report files
+        if (fileName.endsWith('/') || !isReportFile(fileName)) {
+          continue;
+        }
+        
+        // Add each file with metadata
+        files.push({
+          name: fileName,
+          path: fileName,
+          type: getFileType(fileName),
+          category: getReportCategory(fileName),
+          timestamp: timestamp
+        });
+      }
+      
+      return files;
+    }
+
+    function isReportFile(fileName) {
+      return fileName.endsWith('.html') || fileName.endsWith('.json');
+    }
+
+    function getFileType(fileName) {
+      if (fileName.endsWith('.html')) return 'html';
+      if (fileName.endsWith('.json')) return 'json';
+      return 'other';
+    }
+
+    function getReportCategory(fileName) {
+      if (fileName.includes('simple')) return 'simple';
+      if (fileName.includes('comprehensive')) return 'comprehensive';
+      return 'other';
+    }
+
+    function renderReportList(files) {
+      const reportContainer = document.getElementById('report-container');
       
       if (files.length === 0) {
-        filesList.innerHTML = `
-          <tr>
-            <td colspan="3" class="empty-message">No files found</td>
-          </tr>
-        `;
+        reportContainer.innerHTML = '<p class="no-reports">No reports found</p>';
         return;
       }
       
-      // Sort files: directories first, then alphabetically
+      // Sort files by timestamp, newest first
       files.sort((a, b) => {
-        if (a.name === 'index.html') return -1;
-        if (b.name === 'index.html') return 1;
-        return a.name.localeCompare(b.name);
+        return new Date(b.timestamp) - new Date(a.timestamp);
       });
       
-      // Display files
-      filesList.innerHTML = files.map(file => {
-        // Skip the index.html file itself
-        if (file.name === 'index.html') return '';
-        
-        // Determine file icon based on extension
-        let iconClass = 'file-icon';
-        if (file.extension === 'html') iconClass += ' html-file';
-        else if (file.extension === 'json') iconClass += ' json-file';
-        else if (file.extension === 'xml') iconClass += ' xml-file';
-        
-        const dateStr = file.date instanceof Date ? file.date.toLocaleString() : 'Unknown';
-        
-        return `
-          <tr class="file-item" data-type="${file.extension}" data-name="${file.name.toLowerCase()}">
-            <td>
-              <span class="${iconClass}">📄</span>
-              <a href="${file.name}">${file.name}</a>
-            </td>
-            <td class="timestamp">${dateStr}</td>
-            <td class="file-size">${file.size || 'Unknown'}</td>
-          </tr>
-        `;
-      }).join('');
+      const reportList = document.createElement('ul');
+      reportList.className = 'report-list';
       
-      // Update stats
-      updateStats(files);
-      
-      // Apply initial filtering
-      filterFiles();
-    }
-    
-    // Function to filter files
-    function filterFiles() {
-      const searchTerm = document.getElementById('search').value.toLowerCase();
-      const typeFilter = document.getElementById('type-filter').value;
-      const hideDataFiles = document.getElementById('hide-data-files').checked;
-      
-      const fileItems = document.querySelectorAll('.file-item');
-      let visibleCount = 0;
-      
-      fileItems.forEach(item => {
-        const fileName = item.getAttribute('data-name');
-        const fileType = item.getAttribute('data-type');
+      files.forEach(file => {
+        const listItem = document.createElement('li');
+        listItem.className = 'report-item';
+        listItem.dataset.type = file.type;
+        listItem.dataset.category = file.category;
         
-        let visible = fileName.includes(searchTerm);
+        const reportLink = document.createElement('a');
+        reportLink.href = file.path;
+        reportLink.className = 'report-link';
+        reportLink.target = '_blank';
+        reportLink.textContent = file.name;
         
-        // Apply type filter
-        if (typeFilter !== 'all' && fileType !== typeFilter) {
-          visible = false;
-        }
+        const reportType = document.createElement('span');
+        reportType.className = `report-type type-${file.type}`;
+        reportType.textContent = file.type.toUpperCase();
+        reportLink.appendChild(reportType);
         
-        // Apply hide data files filter
-        if (hideDataFiles && (fileType === 'json' || fileType === 'xml')) {
-          visible = false;
-        }
+        const timestamp = document.createElement('span');
+        timestamp.className = 'timestamp';
+        timestamp.textContent = file.timestamp;
         
-        item.style.display = visible ? '' : 'none';
-        if (visible) visibleCount++;
+        listItem.appendChild(reportLink);
+        listItem.appendChild(timestamp);
+        reportList.appendChild(listItem);
       });
       
-      // Show empty message if no files match the filter
-      const filesList = document.getElementById('files-list');
-      if (visibleCount === 0 && filesList.querySelector('.empty-message') === null) {
-        const emptyRow = document.createElement('tr');
-        emptyRow.className = 'empty-message-row';
-        emptyRow.innerHTML = `
-          <td colspan="3" class="empty-message">No files match the filter</td>
-        `;
-        filesList.appendChild(emptyRow);
-      } else {
-        const emptyRow = filesList.querySelector('.empty-message-row');
-        if (emptyRow && visibleCount > 0) {
-          emptyRow.remove();
-        }
-      }
+      reportContainer.innerHTML = '';
+      reportContainer.appendChild(reportList);
     }
-    
-    // Function to update statistics
-    function updateStats(files) {
-      const totalFiles = files.length;
-      const htmlFiles = files.filter(file => file.extension === 'html').length;
-      const jsonFiles = files.filter(file => file.extension === 'json').length;
-      const xmlFiles = files.filter(file => file.extension === 'xml').length;
+
+    function filterReports() {
+      const searchText = document.getElementById('search-box').value.toLowerCase();
+      const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
       
-      document.getElementById('total-files').textContent = totalFiles;
-      document.getElementById('html-files').textContent = htmlFiles;
-      document.getElementById('json-files').textContent = jsonFiles;
-      document.getElementById('xml-files').textContent = xmlFiles;
+      const filteredFiles = fileList.filter(file => {
+        const matchesSearch = file.name.toLowerCase().includes(searchText);
+        
+        let matchesFilter = true;
+        if (activeFilter === 'json') matchesFilter = file.type === 'json';
+        else if (activeFilter === 'html') matchesFilter = file.type === 'html';
+        else if (activeFilter === 'simple') matchesFilter = file.category === 'simple';
+        else if (activeFilter === 'comprehensive') matchesFilter = file.category === 'comprehensive';
+        
+        return matchesSearch && matchesFilter;
+      });
+      
+      renderReportList(filteredFiles);
     }
-    
-    // Load directory contents when the page loads
-    window.addEventListener('DOMContentLoaded', loadDirectoryContents);
   </script>
 </body>
 </html>

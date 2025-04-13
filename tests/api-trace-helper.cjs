@@ -38,7 +38,19 @@ try {
 function saveTraceData(data) {
   traceData.push(data);
   try {
+    // Save to default trace file
     fs.writeFileSync(TRACE_FILE, JSON.stringify(traceData, null, 2));
+    
+    // Also write to simple-api-trace.json
+    const simpleTraceFile = path.join(TRACE_DIR, 'simple-api-trace.json');
+    fs.writeFileSync(simpleTraceFile, JSON.stringify(traceData, null, 2));
+    
+    // Generate HTML report at periodic intervals (not on every call to avoid performance issues)
+    // We'll generate HTML report after every 5 API calls
+    if (traceData.length % 5 === 0) {
+      const simpleHtmlFile = path.join(TRACE_DIR, 'simple-api-trace.html');
+      generateHtmlReport(traceData, simpleHtmlFile);
+    }
   } catch (error) {
     console.error('Error saving trace data:', error);
   }
@@ -211,6 +223,17 @@ function generateTraceReport(traceName) {
   const traceFileName = traceName || 'api-traces';
   const outputPath = path.join(TRACE_DIR, `${traceFileName}.json`);
   const htmlPath = path.join(TRACE_DIR, `${traceFileName}.html`);
+  
+  // Also generate the simple API trace files (both JSON and HTML)
+  const simpleTraceFile = path.join(TRACE_DIR, 'simple-api-trace.json');
+  const simpleHtmlFile = path.join(TRACE_DIR, 'simple-api-trace.html');
+  
+  fs.writeFileSync(simpleTraceFile, JSON.stringify(traceData, null, 2));
+  console.log(`[API Trace Helper] Generated simple API trace JSON: ${simpleTraceFile}`);
+  
+  // Generate HTML report for simple API trace
+  generateHtmlReport(traceData, simpleHtmlFile);
+  console.log(`[API Trace Helper] Generated simple API trace HTML: ${simpleHtmlFile}`);
   
   try {
     // Save JSON file
