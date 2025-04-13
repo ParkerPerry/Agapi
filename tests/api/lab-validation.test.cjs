@@ -2,13 +2,16 @@
  * Lab Validation API Test Suite
  * 
  * Tests just the lab validation step to ensure AI follower response queuing works
+ * Uses the API trace helper for detailed API request/response logging
  */
 const path = require('path');
 const authHelper = require(path.resolve(__dirname, './auth-helper.test.cjs'));
 const request = require('supertest');
+const apiTraceHelper = require('../api-trace-helper.cjs');
 
 let baseUrl;
 let authenticatedAgent;
+let tracedAgent; // Traced agent for API tracking
 let testUserId;
 let testCircleId = null;
 let testLabId = null;
@@ -29,6 +32,9 @@ beforeAll(async () => {
     // Extract agent and user details
     authenticatedAgent = auth.agent;
     testUserId = auth.user.id;
+    
+    // Create a traced agent for API request/response tracking
+    tracedAgent = apiTraceHelper.traceAgent(authenticatedAgent);
     
     console.log(`Test user has ID: ${testUserId}`);
     
@@ -121,7 +127,7 @@ describe('Lab Validation Tests', () => {
       avatarUrl: 'https://example.com/avatar.png'  // Adding required avatar URL
     };
     
-    const response = await authenticatedAgent
+    const response = await tracedAgent
       .post('/api/followers')
       .send(followerData);
       
@@ -146,7 +152,7 @@ describe('Lab Validation Tests', () => {
       delayMinutes: 1 // Short delay for testing
     };
     
-    const response = await authenticatedAgent
+    const response = await tracedAgent
       .post('/api/posts/test-pending-response')
       .send(pendingData);
       
@@ -168,7 +174,7 @@ describe('Lab Validation Tests', () => {
     // Wait briefly to ensure the pending response is properly stored
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    const response = await authenticatedAgent
+    const response = await tracedAgent
       .get(`/api/posts/${testPostId}`);
       
     console.log(`Get post with pending responses status: ${response.status}`);

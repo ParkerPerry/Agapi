@@ -1,17 +1,12 @@
 /**
  * API Trace Reporter for Jest
  * 
- * This reporter captures API request/response details during test execution
- * and generates a detailed report of all API interactions.
+ * This reporter generates detailed API trace reports from API calls logged
+ * during test execution using the api-trace-logger module.
  */
 const fs = require('fs');
 const path = require('path');
-
-// Store all API calls with request/response details
-let apiCalls = [];
-
-// Track the current test being executed
-let currentTest = null;
+const apiTraceLogger = require('./api-trace-logger.cjs');
 
 class ApiTraceReporter {
   constructor(globalConfig, options) {
@@ -20,81 +15,36 @@ class ApiTraceReporter {
     this.outputDir = options.outputDir || './test-reports';
     this.outputFile = options.outputFile || 'api-trace-report.json';
     this.htmlReport = options.htmlReport || 'api-trace-report.html';
-    this.apiCalls = [];
-    
-    // Hook into the supertest library to capture request/response
-    this.setupSupertestHook();
-  }
-
-  setupSupertestHook() {
-    try {
-      // Hook into the supertest request execution
-      const supertest = require('supertest');
-      const originalRequest = supertest.Request.prototype.end;
-      
-      supertest.Request.prototype.end = function(fn) {
-        const req = this;
-        const startTime = Date.now();
-        
-        return originalRequest.call(this, function(err, res) {
-          const endTime = Date.now();
-          
-          // Capture API call details
-          if (currentTest) {
-            const apiCall = {
-              test: currentTest,
-              timestamp: new Date().toISOString(),
-              duration: endTime - startTime,
-              request: {
-                method: req.method,
-                url: req.url,
-                headers: req._header || {},
-                body: req._data || {},
-              },
-              response: {
-                status: res ? res.status : null,
-                statusText: res ? res.statusText : null,
-                headers: res ? res.headers : {},
-                body: res ? res.body : null,
-              },
-              error: err ? {
-                message: err.message,
-                stack: err.stack
-              } : null
-            };
-            
-            apiCalls.push(apiCall);
-          }
-          
-          // Call the original callback
-          if (fn) return fn(err, res);
-        });
-      };
-    } catch (e) {
-      console.warn('Failed to hook into supertest:', e.message);
-    }
   }
 
   onRunStart() {
     // Clear previous API calls
-    apiCalls = [];
+    apiTraceLogger.clearApiCalls();
   }
 
   onTestStart(test) {
     // Track the current test
-    currentTest = {
+    apiTraceLogger.initializeTest({
       name: test.name,
       path: test.path,
       fullName: test.fullName
-    };
+    });
   }
 
   onTestEnd() {
     // Clear current test
-    currentTest = null;
+    apiTraceLogger.clearTest();
   }
 
   onRunComplete() {
+    const apiCalls = apiTraceLogger.getApiCalls();
+    
+    // If no API calls, no need to generate reports
+    if (apiCalls.length === 0) {
+      console.log('\nNo API calls were traced during test execution.');
+      return;
+    }
+    
     // Ensure the output directory exists
     if (!fs.existsSync(this.outputDir)) {
       fs.mkdirSync(this.outputDir, { recursive: true });
@@ -105,18 +55,28 @@ class ApiTraceReporter {
     fs.writeFileSync(outputPath, JSON.stringify(apiCalls, null, 2));
     
     // Generate an HTML report for easier viewing
-    this.generateHtmlReport();
+    this.generateHtmlReport(apiCalls);
     
     console.log(`\nAPI Trace Report generated: ${outputPath}`);
     console.log(`HTML Report generated: ${path.join(this.outputDir, this.htmlReport)}`);
+    console.log(`Total API calls traced: ${apiCalls.length}`);
   }
 
-  generateHtmlReport() {
+  generateHtmlReport(apiCalls) {
     const htmlPath = path.join(this.outputDir, this.htmlReport);
     
     // Group API calls by test
     const testGroups = {};
     apiCalls.forEach(call => {
+      if (!call.test) {
+        // For API calls not associated with a test
+        if (!testGroups['Unassociated API Calls']) {
+          testGroups['Unassociated API Calls'] = [];
+        }
+        testGroups['Unassociated API Calls'].push(call);
+        return;
+      }
+      
       const testName = call.test.fullName;
       if (!testGroups[testName]) {
         testGroups[testName] = [];
@@ -252,6 +212,29 @@ class ApiTraceReporter {
           grid-template-columns: 1fr 3fr;
           gap: 20px;
         }
+        .stats {
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+          margin-bottom: 20px;
+        }
+        .stat-item {
+          background-color: #e9ecef;
+          border-radius: 4px;
+          padding: 10px 15px;
+          flex: 1;
+          min-width: 150px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .stat-label {
+          font-size: 12px;
+          color: #6c757d;
+          margin-bottom: 5px;
+        }
+        .stat-value {
+          font-size: 18px;
+          font-weight: bold;
+        }
       </style>
     </head>
     <body>
@@ -261,6 +244,33 @@ class ApiTraceReporter {
           <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
           <p><strong>Total API Calls:</strong> ${apiCalls.length}</p>
           <p><strong>Tests:</strong> ${Object.keys(testGroups).length}</p>
+        </div>
+        
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-label">Total API Calls</div>
+            <div class="stat-value">${apiCalls.length}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">GET Requests</div>
+            <div class="stat-value">${apiCalls.filter(call => call.request?.method === 'GET').length}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">POST Requests</div>
+            <div class="stat-value">${apiCalls.filter(call => call.request?.method === 'POST').length}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">PUT/PATCH Requests</div>
+            <div class="stat-value">${apiCalls.filter(call => ['PUT', 'PATCH'].includes(call.request?.method)).length}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">DELETE Requests</div>
+            <div class="stat-value">${apiCalls.filter(call => call.request?.method === 'DELETE').length}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Average Response Time</div>
+            <div class="stat-value">${Math.round(apiCalls.reduce((sum, call) => sum + (call.duration || 0), 0) / apiCalls.length)}ms</div>
+          </div>
         </div>
         
         <div class="two-columns">
@@ -285,7 +295,7 @@ class ApiTraceReporter {
       
       // Add each API call
       calls.forEach((call, index) => {
-        const statusCode = call.response.status;
+        const statusCode = call.response?.status;
         let statusClass = '';
         
         if (statusCode >= 200 && statusCode < 300) statusClass = 'status-success';
@@ -297,19 +307,19 @@ class ApiTraceReporter {
           <div class="api-call" data-call-id="${index}">
             <div class="api-call-header">
               <span>
-                <span class="api-call-method method-${call.request.method}">${call.request.method}</span>
-                <span class="api-call-url">${call.request.url}</span>
+                <span class="api-call-method method-${call.request?.method}">${call.request?.method || 'UNKNOWN'}</span>
+                <span class="api-call-url">${call.request?.url || 'Unknown URL'}</span>
               </span>
-              <span class="api-call-status ${statusClass}">${call.response.status} (${call.duration}ms)</span>
+              <span class="api-call-status ${statusClass}">${statusCode || 'No response'} (${call.duration || 0}ms)</span>
             </div>
             <div class="api-call-details">
               <div class="detail-section">
                 <h4>Request</h4>
-                <pre>${JSON.stringify(call.request, null, 2)}</pre>
+                <pre>${JSON.stringify(call.request || {}, null, 2)}</pre>
               </div>
               <div class="detail-section">
                 <h4>Response</h4>
-                <pre>${JSON.stringify(call.response, null, 2)}</pre>
+                <pre>${JSON.stringify(call.response || {}, null, 2)}</pre>
               </div>
               ${call.error ? `
               <div class="detail-section">
@@ -317,6 +327,10 @@ class ApiTraceReporter {
                 <pre>${JSON.stringify(call.error, null, 2)}</pre>
               </div>
               ` : ''}
+              <div class="detail-section">
+                <h4>Timestamp</h4>
+                <pre>${call.timestamp}</pre>
+              </div>
             </div>
           </div>
         `;
