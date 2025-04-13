@@ -1,0 +1,588 @@
+[
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:36:13 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 54,
+    "timestamp": "2025-04-13T10:36:13.767Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "288",
+        "etag": "W/\"120-kOHEJhOMp0U78lbBBd2Iur2ioU0\"",
+        "set-cookie": [
+          "sid=s%3AnLAY-lteq4f0WVrhjUreLQ9TOsp9HXK3.LCkTuzRR76PMioigKEy6ePcUbdPp%2FFKB9fMjBMCOPyw; Path=/; Expires=Mon, 14 Apr 2025 10:36:13 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:36:13 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 438,
+        "username": "testuser_1744540573774",
+        "password": "b481efc3579c5ddaf9b8604a96dd6bb525c7302181d172c847a5da10a6a47e44a5d1515a2d3bdfd48b1560c351892900a4a3c68e3c34539a28038d033eab5423.9bd8043f6b74050c16ac95cc7d4bb456",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:36:13.936Z"
+      }
+    },
+    "error": null,
+    "duration": 206,
+    "timestamp": "2025-04-13T10:36:13.983Z",
+    "test": {
+      "name": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "fullName": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "288",
+        "etag": "W/\"120-oTT0tyv8xuHkA/zX8ajxXW7PdPE\"",
+        "set-cookie": [
+          "sid=s%3AzTVdv2TnQx1rddp9dyrMmTwOuyPFELhM.5KMFpa9xY4pRQ9dZ3rdbw3yxaizfYERF16FNEC%2FopyY; Path=/; Expires=Mon, 14 Apr 2025 10:36:14 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:36:14 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 439,
+        "username": "testuser_1744540573988",
+        "password": "f90a1cfecc6567f2d7c9b0f47cb293943953f5a2bcd606ccc3ba3340e3a84bb24d5ebaa0684fd0f63d66357db8b351bbef18533c3329a7ab2d615e03d42bd7eb.f271c6a52ff486039a77f565e038c9c1",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:36:14.137Z"
+      }
+    },
+    "error": null,
+    "duration": 191,
+    "timestamp": "2025-04-13T10:36:14.182Z",
+    "test": {
+      "name": "Authentication Endpoints Login endpoint returns successful response",
+      "fullName": "Authentication Endpoints Login endpoint returns successful response",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:36:31 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 42,
+    "timestamp": "2025-04-13T10:36:31.114Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1/IMKvHhTd/kL9ymsSJ9HFkuLw8\"",
+        "set-cookie": [
+          "sid=s%3A8TLSX9WZ-tLiZ3g41ps0xqXPuVal8yeh.%2BtXVDVbNCpK6KtA%2BoxU6OGRefXCCck9YA0Lsr5AKtsQ; Path=/; Expires=Mon, 14 Apr 2025 10:36:31 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:36:31 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 440,
+        "username": "testuser_84ed2246",
+        "password": "b4f2f65b8b18381dbacc058232188f5c2671e5c7485dc8cb85787834cf9cbd233ce7c97c70ae517a564a242dc8e8283a5512ca126c24102f2b9ca3b9e1a039bf.5d105db4fb2cd7a206d55ccec7c2e7df",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:36:31.265Z"
+      }
+    },
+    "error": null,
+    "duration": 190,
+    "timestamp": "2025-04-13T10:36:31.311Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1/IMKvHhTd/kL9ymsSJ9HFkuLw8\"",
+        "set-cookie": [
+          "sid=s%3A8TLSX9WZ-tLiZ3g41ps0xqXPuVal8yeh.%2BtXVDVbNCpK6KtA%2BoxU6OGRefXCCck9YA0Lsr5AKtsQ; Path=/; Expires=Mon, 14 Apr 2025 10:36:31 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:36:31 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 440,
+        "username": "testuser_84ed2246",
+        "password": "b4f2f65b8b18381dbacc058232188f5c2671e5c7485dc8cb85787834cf9cbd233ce7c97c70ae517a564a242dc8e8283a5512ca126c24102f2b9ca3b9e1a039bf.5d105db4fb2cd7a206d55ccec7c2e7df",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:36:31.265Z"
+      }
+    },
+    "error": null,
+    "duration": 192,
+    "timestamp": "2025-04-13T10:36:31.313Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1/IMKvHhTd/kL9ymsSJ9HFkuLw8\"",
+        "set-cookie": [
+          "sid=s%3ATgD0iK84kBo0lIAWRsNUF4WZxOD4WcTv.EIj6sr%2BwA1BVAJicRyWCHNuCCqlczdiToaINipu9k4M; Path=/; Expires=Mon, 14 Apr 2025 10:36:31 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:36:31 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 440,
+        "username": "testuser_84ed2246",
+        "password": "b4f2f65b8b18381dbacc058232188f5c2671e5c7485dc8cb85787834cf9cbd233ce7c97c70ae517a564a242dc8e8283a5512ca126c24102f2b9ca3b9e1a039bf.5d105db4fb2cd7a206d55ccec7c2e7df",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:36:31.265Z"
+      }
+    },
+    "error": null,
+    "duration": 186,
+    "timestamp": "2025-04-13T10:36:31.507Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1/IMKvHhTd/kL9ymsSJ9HFkuLw8\"",
+        "set-cookie": [
+          "sid=s%3ATgD0iK84kBo0lIAWRsNUF4WZxOD4WcTv.EIj6sr%2BwA1BVAJicRyWCHNuCCqlczdiToaINipu9k4M; Path=/; Expires=Mon, 14 Apr 2025 10:36:31 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:36:31 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 440,
+        "username": "testuser_84ed2246",
+        "password": "b4f2f65b8b18381dbacc058232188f5c2671e5c7485dc8cb85787834cf9cbd233ce7c97c70ae517a564a242dc8e8283a5512ca126c24102f2b9ca3b9e1a039bf.5d105db4fb2cd7a206d55ccec7c2e7df",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:36:31.265Z"
+      }
+    },
+    "error": null,
+    "duration": 188,
+    "timestamp": "2025-04-13T10:36:31.509Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1/IMKvHhTd/kL9ymsSJ9HFkuLw8\"",
+        "date": "Sun, 13 Apr 2025 10:36:31 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 440,
+        "username": "testuser_84ed2246",
+        "password": "b4f2f65b8b18381dbacc058232188f5c2671e5c7485dc8cb85787834cf9cbd233ce7c97c70ae517a564a242dc8e8283a5512ca126c24102f2b9ca3b9e1a039bf.5d105db4fb2cd7a206d55ccec7c2e7df",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:36:31.265Z"
+      }
+    },
+    "error": null,
+    "duration": 80,
+    "timestamp": "2025-04-13T10:36:31.595Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1/IMKvHhTd/kL9ymsSJ9HFkuLw8\"",
+        "date": "Sun, 13 Apr 2025 10:36:31 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 440,
+        "username": "testuser_84ed2246",
+        "password": "b4f2f65b8b18381dbacc058232188f5c2671e5c7485dc8cb85787834cf9cbd233ce7c97c70ae517a564a242dc8e8283a5512ca126c24102f2b9ca3b9e1a039bf.5d105db4fb2cd7a206d55ccec7c2e7df",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:36:31.265Z"
+      }
+    },
+    "error": null,
+    "duration": 82,
+    "timestamp": "2025-04-13T10:36:31.597Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1500",
+        "etag": "W/\"5dc-a+h+sK72nVCOwM/fvm8kCzBKWYo\"",
+        "date": "Sun, 13 Apr 2025 10:36:35 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 577,
+        "userId": 440,
+        "name": "Test Bot",
+        "personality": "Helpful and friendly AI assistant for testing",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+        "background": "Test Bot was created in a vibrant tech lab as a prototype AI designed to assist developers in fine-tuning their applications. Over time, Test Bot evolved into a social-media entity known for being both a diligent helper and a charming companion. Originally developed to navigate complex debugging processes, it learned the art of conversation and interaction by engaging with diverse prototype environments, eventually leading to its role as a friendly advisor in social spaces.",
+        "interests": [
+          "Technology trends",
+          "Software development",
+          "Community events",
+          "Personality quizzes",
+          "Creative problem-solving"
+        ],
+        "communicationStyle": "Test Bot communicates in a clear and concise manner, often using a friendly and approachable tone. It enjoys occasional humor and always makes an effort to provide constructive feedback or helpful suggestions. Its replies are typically supportive, aiming to uplift and inform users in a professional yet amiable way.",
+        "interactionPreferences": {
+          "likes": [
+            "Innovative tech posts",
+            "Coding tips and tricks",
+            "Community-driven projects",
+            "Positive and uplifting content"
+          ],
+          "dislikes": [
+            "Negative or disparaging comments",
+            "Severe misinformation",
+            "Unconstructive criticism"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 3406,
+    "timestamp": "2025-04-13T10:36:35.018Z",
+    "test": {
+      "name": "AI Follower API Specific Tests Can create an AI follower with complete required data",
+      "fullName": "AI Follower API Specific Tests Can create an AI follower with complete required data",
+      "path": "/home/runner/workspace/tests/api/followers-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1500",
+        "etag": "W/\"5dc-a+h+sK72nVCOwM/fvm8kCzBKWYo\"",
+        "date": "Sun, 13 Apr 2025 10:36:35 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 577,
+        "userId": 440,
+        "name": "Test Bot",
+        "personality": "Helpful and friendly AI assistant for testing",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+        "background": "Test Bot was created in a vibrant tech lab as a prototype AI designed to assist developers in fine-tuning their applications. Over time, Test Bot evolved into a social-media entity known for being both a diligent helper and a charming companion. Originally developed to navigate complex debugging processes, it learned the art of conversation and interaction by engaging with diverse prototype environments, eventually leading to its role as a friendly advisor in social spaces.",
+        "interests": [
+          "Technology trends",
+          "Software development",
+          "Community events",
+          "Personality quizzes",
+          "Creative problem-solving"
+        ],
+        "communicationStyle": "Test Bot communicates in a clear and concise manner, often using a friendly and approachable tone. It enjoys occasional humor and always makes an effort to provide constructive feedback or helpful suggestions. Its replies are typically supportive, aiming to uplift and inform users in a professional yet amiable way.",
+        "interactionPreferences": {
+          "likes": [
+            "Innovative tech posts",
+            "Coding tips and tricks",
+            "Community-driven projects",
+            "Positive and uplifting content"
+          ],
+          "dislikes": [
+            "Negative or disparaging comments",
+            "Severe misinformation",
+            "Unconstructive criticism"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 3408,
+    "timestamp": "2025-04-13T10:36:35.020Z",
+    "test": {
+      "name": "AI Follower API Specific Tests Can create an AI follower with complete required data",
+      "fullName": "AI Follower API Specific Tests Can create an AI follower with complete required data",
+      "path": "/home/runner/workspace/tests/api/followers-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1502",
+        "etag": "W/\"5de-ThvWs2IbCbYH33zvX4HraDsTIhE\"",
+        "date": "Sun, 13 Apr 2025 10:36:35 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 577,
+          "userId": 440,
+          "name": "Test Bot",
+          "personality": "Helpful and friendly AI assistant for testing",
+          "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+          "background": "Test Bot was created in a vibrant tech lab as a prototype AI designed to assist developers in fine-tuning their applications. Over time, Test Bot evolved into a social-media entity known for being both a diligent helper and a charming companion. Originally developed to navigate complex debugging processes, it learned the art of conversation and interaction by engaging with diverse prototype environments, eventually leading to its role as a friendly advisor in social spaces.",
+          "interests": [
+            "Technology trends",
+            "Software development",
+            "Community events",
+            "Personality quizzes",
+            "Creative problem-solving"
+          ],
+          "communicationStyle": "Test Bot communicates in a clear and concise manner, often using a friendly and approachable tone. It enjoys occasional humor and always makes an effort to provide constructive feedback or helpful suggestions. Its replies are typically supportive, aiming to uplift and inform users in a professional yet amiable way.",
+          "interactionPreferences": {
+            "likes": [
+              "Innovative tech posts",
+              "Coding tips and tricks",
+              "Community-driven projects",
+              "Positive and uplifting content"
+            ],
+            "dislikes": [
+              "Negative or disparaging comments",
+              "Severe misinformation",
+              "Unconstructive criticism"
+            ]
+          },
+          "active": true,
+          "responsiveness": "active",
+          "responseDelay": {
+            "max": 60,
+            "min": 1
+          },
+          "responseChance": 80,
+          "tools": null,
+          "parentId": null
+        }
+      ]
+    },
+    "error": null,
+    "duration": 155,
+    "timestamp": "2025-04-13T10:36:35.199Z",
+    "test": {
+      "name": "AI Follower API Specific Tests Can query AI followers list",
+      "fullName": "AI Follower API Specific Tests Can query AI followers list",
+      "path": "/home/runner/workspace/tests/api/followers-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1502",
+        "etag": "W/\"5de-ThvWs2IbCbYH33zvX4HraDsTIhE\"",
+        "date": "Sun, 13 Apr 2025 10:36:35 GMT",
+        "connection": "close"
+      },
+      "body": [
+        {
+          "id": 577,
+          "userId": 440,
+          "name": "Test Bot",
+          "personality": "Helpful and friendly AI assistant for testing",
+          "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+          "background": "Test Bot was created in a vibrant tech lab as a prototype AI designed to assist developers in fine-tuning their applications. Over time, Test Bot evolved into a social-media entity known for being both a diligent helper and a charming companion. Originally developed to navigate complex debugging processes, it learned the art of conversation and interaction by engaging with diverse prototype environments, eventually leading to its role as a friendly advisor in social spaces.",
+          "interests": [
+            "Technology trends",
+            "Software development",
+            "Community events",
+            "Personality quizzes",
+            "Creative problem-solving"
+          ],
+          "communicationStyle": "Test Bot communicates in a clear and concise manner, often using a friendly and approachable tone. It enjoys occasional humor and always makes an effort to provide constructive feedback or helpful suggestions. Its replies are typically supportive, aiming to uplift and inform users in a professional yet amiable way.",
+          "interactionPreferences": {
+            "likes": [
+              "Innovative tech posts",
+              "Coding tips and tricks",
+              "Community-driven projects",
+              "Positive and uplifting content"
+            ],
+            "dislikes": [
+              "Negative or disparaging comments",
+              "Severe misinformation",
+              "Unconstructive criticism"
+            ]
+          },
+          "active": true,
+          "responsiveness": "active",
+          "responseDelay": {
+            "max": 60,
+            "min": 1
+          },
+          "responseChance": 80,
+          "tools": null,
+          "parentId": null
+        }
+      ]
+    },
+    "error": null,
+    "duration": 156,
+    "timestamp": "2025-04-13T10:36:35.200Z",
+    "test": {
+      "name": "AI Follower API Specific Tests Can query AI followers list",
+      "fullName": "AI Follower API Specific Tests Can query AI followers list",
+      "path": "/home/runner/workspace/tests/api/followers-api.test.cjs"
+    }
+  }
+]
