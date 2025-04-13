@@ -111,27 +111,66 @@ Our testing approach focuses on:
 5. **Dynamic Entity Creation**: Improved tests to attempt to use dynamically created test entities before falling back to hardcoded IDs
 6. **Test Scripts**: Enhanced run-simple-tests.sh and run-comprehensive-tests.sh to properly manage test execution and dependencies
 
+### Labs API Test Improvements (April 2025)
+
+1. **Authentication Fixes**: Corrected authentication in labs-api.test.cjs by using authenticatedAgent from auth-helper to maintain session cookies across requests
+2. **Test Data Independence**: Implemented isolated test data creation for each test section (creation, retrieval, updating, duplication, circle management, posts, deletion) to avoid test interdependencies
+3. **Response Format Alignment**: Updated test expectations to match actual API response formats instead of theoretical expectations
+4. **Flexible Validation**: Added more flexible validation that handles variations in response formats (e.g., empty objects or objects with specific properties)
+5. **Improved Error Logging**: Added detailed console logging to help diagnose test failures, showing response status codes and bodies
+6. **Test Setup Logic**: Added proper beforeAll() setup functions that create necessary test data (labs and circles) for each test section
+7. **Error Handling**: Added error checks to handle cases where setup might fail and prevent cascading test failures
+8. **Sequential Testing**: Restructured tests to follow proper API usage patterns (create → retrieve → update → manage circles → duplicate → posts → delete)
+9. **Status Code Focus**: Modified tests to focus on status codes for operations like deletion that might return minimal response data
+10. **Circle Integration**: Fixed lab-circle integration tests to correctly handle the actual circle relationship format returned by the API
+
+### Test Reporting Improvements (April 2025)
+
+1. **Consolidated Test Reporting**: Implemented a centralized reporting system that runs tests in a single Jest process rather than sequentially, which provides comprehensive test statistics
+2. **Custom Reporter Integration**: Created a custom Jest reporter (tests/custom-reporter.js) that provides detailed summary statistics including:
+   - Overall test count, pass rate, and failure count
+   - API group coverage reporting with pass percentages
+   - Failed test listings with error messages
+   - Test execution time tracking
+3. **HTML Report Generation**: Added HTML report generation via jest-html-reporters for both simple and comprehensive test suites
+4. **JUnit XML Reports**: Added JUnit XML report format for potential CI/CD integration
+5. **Backward Compatibility**: Maintained backward compatibility with the original sequential testing approach via environment variable flags
+6. **Simplified Test Running**: Now a single Jest process handles all tests, avoiding the complexities of multiple process coordination
+7. **Test Group Categorization**: Organized tests by API groups for better visibility in reports
+
 ### Next Steps
 
 1. **Improve Robustness**: Continue making tests robust against real-world API behaviors
 2. **Add Tests for NFT APIs**: Create tests for NFT functionality if it becomes a priority
-3. **Test Results Reporting**: Add summary reporting of test results and coverage 
-4. **Error Tracking**: Implement better error tracking and reporting in test scripts
-5. **CI/CD Integration**: Prepare tests for integration with CI/CD pipelines
+3. **CI/CD Integration**: Integrate test reporting with CI/CD pipelines
+4. **Test Coverage Analysis**: Add code coverage reporting to identify under-tested areas
+5. **Test Performance Metrics**: Track and report test execution time trends
 
 ### Running Tests
 
-To run the basic test suite:
+To run the basic test suite with comprehensive reporting:
 ```bash
 ./tests/run-simple-tests.sh
 ```
 
-To run the comprehensive test suite:
+To run the comprehensive test suite with detailed reporting:
 ```bash
 ./tests/run-comprehensive-tests.sh
+```
+
+To run tests in legacy mode (one by one):
+```bash
+USE_CONSOLIDATED_TESTS=false ./tests/run-simple-tests.sh
 ```
 
 To run an individual test file:
 ```bash
 npx jest tests/api/specific-test-file.test.cjs --config jest.config.cjs
 ```
+
+### Viewing Test Reports
+
+After running tests with the new consolidated approach, you can find the reports at:
+- HTML Report: `./test-reports/simple-tests-report.html` or `./test-reports/comprehensive-tests-report.html`
+- JUnit XML: `./test-reports/simple-tests-junit.xml` or `./test-reports/comprehensive-tests-junit.xml`
+- Console Summary: Displayed at the end of test execution

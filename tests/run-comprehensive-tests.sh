@@ -3,7 +3,7 @@
 echo "=============================================="
 echo "🧪 Running CircleTube COMPREHENSIVE Test Suite"
 echo "=============================================="
-echo "Note: This will run ALL tests, starting with essential tests"
+echo "Note: This will run ALL tests, providing detailed reporting"
 echo ""
 
 # Check if we're in the project root or tests directory
@@ -11,75 +11,163 @@ if [ -d "api" ]; then
   # We're in the tests directory
   cd ..
   echo "Detected running from tests directory, changing to project root for consistency"
-  SIMPLE_TESTS="./tests/run-simple-tests.sh"
-else
-  # We're in the project root
-  SIMPLE_TESTS="./tests/run-simple-tests.sh"
 fi
 
-# First run the simple essential tests to ensure core functionality works
-echo "🔄 Running essential tests first..."
-$SIMPLE_TESTS
+# Create test reports directory if it doesn't exist
+mkdir -p test-reports
 
-# Capture the exit code from simple tests
-SIMPLE_TESTS_EXIT_CODE=$?
+# First, check if required reporter packages are installed
+if ! npm list jest-html-reporters > /dev/null 2>&1 || ! npm list jest-junit > /dev/null 2>&1; then
+  echo "Installing required reporter packages for test reporting..."
+  npm install --save-dev jest-html-reporters jest-junit
+fi
 
-# If simple tests failed, exit early
-if [ $SIMPLE_TESTS_EXIT_CODE -ne 0 ]; then
+# Choose between new consolidated mode and legacy mode
+USE_CONSOLIDATED_TESTS=${USE_CONSOLIDATED_TESTS:-true}
+RUN_SIMPLE_TESTS_FIRST=${RUN_SIMPLE_TESTS_FIRST:-false}
+
+# If requested, run simple tests first to validate core functionality
+if [ "$RUN_SIMPLE_TESTS_FIRST" = true ]; then
+  echo "🔄 Running essential tests first..."
+  ./tests/run-simple-tests.sh
+  
+  # Capture the exit code from simple tests
+  SIMPLE_TESTS_EXIT_CODE=$?
+  
+  # If simple tests failed, exit early
+  if [ $SIMPLE_TESTS_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ Essential tests failed. Stopping comprehensive testing."
+    echo "Fix the essential tests before running comprehensive tests."
+    exit $SIMPLE_TESTS_EXIT_CODE
+  fi
+  
   echo ""
-  echo "❌ Essential tests failed. Stopping comprehensive testing."
-  echo "Fix the essential tests before running comprehensive tests."
-  exit $SIMPLE_TESTS_EXIT_CODE
+  echo "✅ Essential tests passed. Continuing with additional tests..."
+  echo ""
 fi
 
-echo ""
-echo "✅ Essential tests passed. Continuing with additional tests..."
-echo ""
-
-# Only run tests that aren't already part of simple tests
-# Simple tests already include:
-# - auth-endpoints.test.cjs
-# - data-creation.test.cjs
-# - circles-api.test.cjs
-# - followers-api.test.cjs
-# - tools-api.test.cjs (now in simple tests)
-# - circle-follower-api.test.cjs (now in simple tests)
-# - workflow.test.cjs -t "Update profile"
-
-echo "🔄 Running posts API tests..."
-npx jest tests/api/posts-api.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running schema validation tests..."
-npx jest tests/api/schema.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running server API tests..."
-npx jest tests/api/server-api.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running simple verification tests..."
-npx jest tests/api/simple.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running complete workflow tests (all tests, not just profile update)..."
-npx jest tests/api/workflow.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running auth helper tests..."
-npx jest tests/api/auth-helper.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running follower collectives tests..."
-npx jest tests/api/follower-collectives-api.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running health API tests..."
-npx jest tests/api/health-api.test.cjs --config jest.config.cjs
-
-echo ""
-echo "🔄 Running labs API tests..."
-npx jest tests/api/labs-api.test.cjs --config jest.config.cjs
+if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
+  # Run all tests at once using the reporting config
+  echo "🔄 Running all comprehensive tests with consolidated reporting..."
+  npx jest --config jest.comprehensive-report.config.js
+  
+  TEST_EXIT_CODE=$?
+  
+  echo ""
+  if [ $TEST_EXIT_CODE -eq 0 ]; then
+    echo "✅ Comprehensive tests completed successfully."
+    echo "Check the detailed HTML report at: ./test-reports/comprehensive-tests-report.html"
+  else
+    echo "❌ Some comprehensive tests failed."
+    echo "Review the detailed HTML report at: ./test-reports/comprehensive-tests-report.html"
+  fi
+else
+  # Legacy mode - run tests individually
+  echo "Running tests individually (legacy mode)..."
+  
+  # Only run tests that aren't already part of simple tests if we ran them first
+  if [ "$RUN_SIMPLE_TESTS_FIRST" = true ]; then
+    echo "🔄 Running posts API tests..."
+    npx jest tests/api/posts-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running schema validation tests..."
+    npx jest tests/api/schema.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running server API tests..."
+    npx jest tests/api/server-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running simple verification tests..."
+    npx jest tests/api/simple.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running complete workflow tests (all tests, not just profile update)..."
+    npx jest tests/api/workflow.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running auth helper tests..."
+    npx jest tests/api/auth-helper.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running follower collectives tests..."
+    npx jest tests/api/follower-collectives-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running health API tests..."
+    npx jest tests/api/health-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running labs API tests..."
+    npx jest tests/api/labs-api.test.cjs --config jest.config.cjs
+  else
+    # Run all tests if we didn't run simple tests first
+    echo "🔄 Running authentication tests..."
+    npx jest tests/api/auth-endpoints.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running data creation tests..."
+    npx jest tests/api/data-creation.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running circle operations tests..."
+    npx jest tests/api/circles-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running AI follower tests..."
+    npx jest tests/api/followers-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running workflow tests..."
+    npx jest tests/api/workflow.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running tools API tests..."
+    npx jest tests/api/tools-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running circle-follower integration tests..."
+    npx jest tests/api/circle-follower-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running default circles tests..."
+    npx jest tests/api/default-circle-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running posts API tests..."
+    npx jest tests/api/posts-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running schema validation tests..."
+    npx jest tests/api/schema.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running server API tests..."
+    npx jest tests/api/server-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running simple verification tests..."
+    npx jest tests/api/simple.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running auth helper tests..."
+    npx jest tests/api/auth-helper.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running follower collectives tests..."
+    npx jest tests/api/follower-collectives-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running health API tests..."
+    npx jest tests/api/health-api.test.cjs --config jest.config.cjs
+    
+    echo ""
+    echo "🔄 Running labs API tests..."
+    npx jest tests/api/labs-api.test.cjs --config jest.config.cjs
+  fi
+fi
 
 # Add a summary section
 echo ""
@@ -87,7 +175,5 @@ echo "=============================================="
 echo "✅ CircleTube Comprehensive Test Suite Complete"
 echo "=============================================="
 echo ""
-echo "If all tests passed, the CircleTube API is fully functional."
-echo ""
 echo "For more targeted testing, run individual test files directly:"
-echo "npx jest tests/api/workflow.test.cjs --config jest.config.cjs"
+echo "npx jest tests/api/specific-test-file.test.cjs --config jest.config.cjs"
