@@ -188,7 +188,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     }
     
     // Validate status
-    const validStatuses = ["draft", "running", "completed", "archived"];
+    const validStatuses = ["draft", "active", "completed", "archived"];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }

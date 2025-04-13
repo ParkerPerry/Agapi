@@ -310,7 +310,7 @@ describe('Lab Creation Wizard Flow Tests', () => {
       }
 
       const statusUpdate = {
-        status: 'running'  // Note: In routes.ts the valid status is 'running' not 'active'
+        status: 'active'  // The API allows 'active' but not 'running' based on db constraints
       };
 
       const response = await authenticatedAgent
@@ -340,8 +340,8 @@ describe('Lab Creation Wizard Flow Tests', () => {
       expect([200, 201]).toContain(response.status);
       expect(response.body).toHaveProperty('id', testLabId);
       
-      // Check that status is updated to running (or active)
-      expect(['running', 'active']).toContain(response.body.status);
+      // Check that status is updated to active
+      expect(response.body.status).toBe('active');
       
       // Check if launchedAt is set
       expect(response.body).toHaveProperty('launchedAt');
@@ -366,8 +366,8 @@ describe('Lab Creation Wizard Flow Tests', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('id', testLabId);
       
-      // Lab should be either running or active
-      expect(['running', 'active']).toContain(response.body.status);
+      // Lab should be active
+      expect(response.body.status).toBe('active');
       
       // launchedAt should be set
       expect(response.body).toHaveProperty('launchedAt');
