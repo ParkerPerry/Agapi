@@ -193,8 +193,14 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
       return res.status(400).json({ message: "Invalid status" });
     }
     
+    // Set launchedAt timestamp when status changes to active
+    const updateData = { status };
+    if (status === 'active') {
+      updateData.launchedAt = new Date();
+    }
+    
     // Update lab status
-    const updatedLab = await storage.updateLab(labId, { status });
+    const updatedLab = await storage.updateLab(labId, updateData);
     res.json(updatedLab);
   } catch (error) {
     console.error("Error updating lab status:", error);

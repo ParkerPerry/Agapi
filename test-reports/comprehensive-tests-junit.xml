@@ -1,37 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="10" failures="2" errors="0" time="4.562">
-  <testsuite name="Auth Helper" errors="0" failures="2" skipped="0" timestamp="2025-04-13T03:38:22" time="4.516" tests="10">
+<testsuites name="jest tests" tests="10" failures="2" errors="0" time="3.996">
+  <testsuite name="Auth Helper" errors="0" failures="2" skipped="0" timestamp="2025-04-13T03:39:26" time="3.957" tests="10">
     <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" name="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" time="0.156">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" name="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" time="0.154">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" name="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" time="0.225">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" name="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" time="0.227">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" name="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" time="0.23">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" name="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" time="0.228">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" time="0.603">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" time="0.607">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" time="0.587">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" time="0.599">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" time="0.531">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" time="0.302">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Lab Activation Can activate the lab" name="Lab Creation Wizard Flow Tests Step 5: Lab Activation Can activate the lab" time="0.309">
-      <failure>Error: expect(received).toContain(expected) // indexOf
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Lab Activation Can activate the lab" name="Lab Creation Wizard Flow Tests Step 5: Lab Activation Can activate the lab" time="0.228">
+      <failure>Error: expect(received).not.toBeNull()
 
-Expected value: 400
-Received array: [200, 201]
-    at Object.&lt;anonymous&gt; (/home/runner/workspace/tests/api/lab-wizard-flow.test.cjs:340:26)
+Received: null
+    at Object.&lt;anonymous&gt; (/home/runner/workspace/tests/api/lab-wizard-flow.test.cjs:348:44)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Lab Activation Can verify lab activation was successful" name="Lab Creation Wizard Flow Tests Step 5: Lab Activation Can verify lab activation was successful" time="0.156">
-      <failure>Error: expect(received).toBe(expected) // Object.is equality
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Lab Activation Can verify lab activation was successful" name="Lab Creation Wizard Flow Tests Step 5: Lab Activation Can verify lab activation was successful" time="0.153">
+      <failure>Error: expect(received).not.toBeNull()
 
-Expected: &quot;active&quot;
-Received: &quot;draft&quot;
-    at Object.&lt;anonymous&gt; (/home/runner/workspace/tests/api/lab-wizard-flow.test.cjs:370:36)
+Received: null
+    at Object.&lt;anonymous&gt; (/home/runner/workspace/tests/api/lab-wizard-flow.test.cjs:374:44)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" name="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" time="0.44">
+    <testcase classname="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" name="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" time="0.377">
     </testcase>
   </testsuite>
 </testsuites>
