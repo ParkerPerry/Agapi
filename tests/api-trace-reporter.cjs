@@ -100,7 +100,14 @@ class ApiTraceReporter {
         // Write the API calls to a JSON file
         const outputJsonPath = path.join(this.outputDir, this.outputFile);
         fs.writeFileSync(outputJsonPath, JSON.stringify(apiCalls, null, 2));
-        console.log(`[API Trace Reporter] Saved API calls to ${outputJsonPath}`);
+        console.log(`[API Trace Reporter] Saved ${apiCalls.length} API calls to ${outputJsonPath}`);
+        
+        // Also save to the global api-traces.json file for backward compatibility
+        const globalTracePath = path.join(this.outputDir, 'api-traces.json');
+        if (outputJsonPath !== globalTracePath) {
+          fs.writeFileSync(globalTracePath, JSON.stringify(apiCalls, null, 2));
+          console.log(`[API Trace Reporter] Also saved API calls to global trace file: ${globalTracePath}`);
+        }
         
         // Generate an HTML report for easier viewing
         const htmlOutputPath = path.join(this.outputDir, this.htmlReport);
