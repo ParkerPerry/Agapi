@@ -7,7 +7,6 @@ let authenticatedAgent;
 let testUserId;
 let testLabId = null;
 let testCircleId = null;
-let authCookie;
 
 // Find a working base URL for the API
 beforeAll(async () => {
@@ -23,9 +22,6 @@ beforeAll(async () => {
     // Extract agent and user details
     authenticatedAgent = auth.agent;
     testUserId = auth.user.id;
-    
-    // Get the auth cookie
-    authCookie = auth.cookie;
     
     console.log(`Test user has ID: ${testUserId}`);
   } catch (error) {
@@ -54,11 +50,8 @@ describe('Lab API Tests', () => {
         }
       };
 
-      console.log(`Using authCookie: ${authCookie}`);
-      
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .post('/api/labs')
-        .set('Cookie', authCookie)
         .send(labData);
       
       console.log(`Lab creation response status: ${response.status}`);
@@ -76,9 +69,9 @@ describe('Lab API Tests', () => {
     });
 
     it('Cannot create a lab without required fields', async () => {
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .post('/api/labs')
-        .set('Cookie', authCookie)
+        
         .send({
           // Missing name and experimentType
           description: 'An invalid lab that should fail'
@@ -93,9 +86,9 @@ describe('Lab API Tests', () => {
   // Test getting labs
   describe('Lab Retrieval', () => {
     it('Can get all labs', async () => {
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .get('/api/labs')
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
@@ -108,9 +101,9 @@ describe('Lab API Tests', () => {
         throw new Error('Test lab ID not available. Lab creation test may have failed.');
       }
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .get(`/api/labs/${testLabId}`)
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('id', testLabId);
@@ -119,9 +112,9 @@ describe('Lab API Tests', () => {
     });
 
     it('Returns 404 for non-existent lab', async () => {
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .get('/api/labs/99999') // Assuming this ID does not exist
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(404);
     });
@@ -140,9 +133,9 @@ describe('Lab API Tests', () => {
         goals: 'Updated goals for testing'
       };
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .patch(`/api/labs/${testLabId}`)
-        .set('Cookie', authCookie)
+        
         .send(updateData);
 
       expect(response.status).toBe(200);
@@ -161,9 +154,9 @@ describe('Lab API Tests', () => {
         status: 'active'
       };
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .patch(`/api/labs/${testLabId}/status`)
-        .set('Cookie', authCookie)
+        
         .send(statusUpdate);
 
       expect(response.status).toBe(200);
@@ -181,9 +174,9 @@ describe('Lab API Tests', () => {
         status: 'invalid_status' // Invalid status
       };
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .patch(`/api/labs/${testLabId}/status`)
-        .set('Cookie', authCookie)
+        
         .send(statusUpdate);
 
       expect([400, 422]).toContain(response.status);
@@ -204,9 +197,9 @@ describe('Lab API Tests', () => {
         visibility: 'public'
       };
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .post('/api/circles')
-        .set('Cookie', authCookie)
+        
         .send(circleData);
 
       if (response.status === 201 && response.body && response.body.id) {
@@ -227,9 +220,9 @@ describe('Lab API Tests', () => {
         role: 'treatment'
       };
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .post(`/api/labs/${testLabId}/circles`)
-        .set('Cookie', authCookie)
+        
         .send(circleData);
 
       expect(response.status).toBe(201);
@@ -244,9 +237,9 @@ describe('Lab API Tests', () => {
         throw new Error('Test lab ID not available. Lab creation test may have failed.');
       }
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .get(`/api/labs/${testLabId}/circles`)
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
@@ -263,9 +256,9 @@ describe('Lab API Tests', () => {
         throw new Error('Test lab ID not available. Lab creation test may have failed.');
       }
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .get(`/api/labs/${testLabId}/circles/stats`)
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(200);
       expect(typeof response.body).toBe('object');
@@ -282,9 +275,9 @@ describe('Lab API Tests', () => {
         role: 'control'
       };
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .patch(`/api/labs/${testLabId}/circles/${testCircleId}`)
-        .set('Cookie', authCookie)
+        
         .send(updateData);
 
       expect(response.status).toBe(200);
@@ -301,9 +294,9 @@ describe('Lab API Tests', () => {
         throw new Error('Test lab ID not available. Lab creation test may have failed.');
       }
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .post(`/api/labs/${testLabId}/duplicate`)
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('id');
@@ -319,9 +312,9 @@ describe('Lab API Tests', () => {
         throw new Error('Test lab ID not available. Lab creation test may have failed.');
       }
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .get(`/api/labs/${testLabId}/posts`)
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
@@ -336,9 +329,9 @@ describe('Lab API Tests', () => {
         throw new Error('Test lab ID or circle ID not available. Previous tests may have failed.');
       }
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .delete(`/api/labs/${testLabId}/circles/${testCircleId}`)
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(200);
       // Should return success message or deleted record
@@ -354,9 +347,9 @@ describe('Lab API Tests', () => {
         throw new Error('Test lab ID not available. Lab creation test may have failed.');
       }
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .delete(`/api/labs/${testLabId}`)
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(200);
       // Should return success message or deleted record
@@ -372,9 +365,9 @@ describe('Lab API Tests', () => {
         throw new Error('Test lab ID not available. Lab creation test may have failed.');
       }
 
-      const response = await request(baseUrl)
+      const response = await authenticatedAgent
         .get(`/api/labs/${testLabId}`)
-        .set('Cookie', authCookie);
+        ;
 
       expect(response.status).toBe(404);
     });
