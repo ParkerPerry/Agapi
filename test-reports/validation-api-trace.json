@@ -13,14 +13,14 @@
         "content-type": "text/plain; charset=utf-8",
         "content-length": "12",
         "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
-        "date": "Sun, 13 Apr 2025 10:19:31 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:56 GMT",
         "connection": "close"
       },
       "body": {}
     },
     "error": null,
-    "duration": 3,
-    "timestamp": "2025-04-13T10:19:31.994Z",
+    "duration": 2,
+    "timestamp": "2025-04-13T10:23:56.779Z",
     "test": null
   },
   {
@@ -37,14 +37,14 @@
         "content-type": "text/plain; charset=utf-8",
         "content-length": "12",
         "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
-        "date": "Sun, 13 Apr 2025 10:19:31 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:56 GMT",
         "connection": "close"
       },
       "body": {}
     },
     "error": null,
-    "duration": 3,
-    "timestamp": "2025-04-13T10:19:31.995Z",
+    "duration": 2,
+    "timestamp": "2025-04-13T10:23:56.779Z",
     "test": null
   },
   {
@@ -60,25 +60,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
         "set-cookie": [
-          "sid=s%3AOrZBBADugHyWt83JFJf7JOLKakff_SbP.8h89L%2F6qdXPJV%2Fb0w%2BLlvd5pFBLcO7q0t1yOepN6BkI; Path=/; Expires=Mon, 14 Apr 2025 10:19:32 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3AEcw3ODYbUhH6FELwxd2gHW1MpzrnyiaP.ZlpUzqpcfxz5%2FzwQKqJ2nlVTXOPy%2BREbiSxPo6HQbvE; Path=/; Expires=Mon, 14 Apr 2025 10:23:56 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:56 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 187,
-    "timestamp": "2025-04-13T10:19:32.184Z",
+    "duration": 180,
+    "timestamp": "2025-04-13T10:23:56.961Z",
     "test": null
   },
   {
@@ -94,25 +94,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
         "set-cookie": [
-          "sid=s%3AOrZBBADugHyWt83JFJf7JOLKakff_SbP.8h89L%2F6qdXPJV%2Fb0w%2BLlvd5pFBLcO7q0t1yOepN6BkI; Path=/; Expires=Mon, 14 Apr 2025 10:19:32 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3AEcw3ODYbUhH6FELwxd2gHW1MpzrnyiaP.ZlpUzqpcfxz5%2FzwQKqJ2nlVTXOPy%2BREbiSxPo6HQbvE; Path=/; Expires=Mon, 14 Apr 2025 10:23:56 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:56 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 188,
-    "timestamp": "2025-04-13T10:19:32.184Z",
+    "duration": 181,
+    "timestamp": "2025-04-13T10:23:56.961Z",
     "test": null
   },
   {
@@ -128,59 +128,59 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
         "set-cookie": [
-          "sid=s%3AOrZBBADugHyWt83JFJf7JOLKakff_SbP.8h89L%2F6qdXPJV%2Fb0w%2BLlvd5pFBLcO7q0t1yOepN6BkI; Path=/; Expires=Mon, 14 Apr 2025 10:19:32 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3AEcw3ODYbUhH6FELwxd2gHW1MpzrnyiaP.ZlpUzqpcfxz5%2FzwQKqJ2nlVTXOPy%2BREbiSxPo6HQbvE; Path=/; Expires=Mon, 14 Apr 2025 10:23:56 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:56 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
-      }
-    },
-    "error": null,
-    "duration": 189,
-    "timestamp": "2025-04-13T10:19:32.185Z",
-    "test": null
-  },
-  {
-    "request": {
-      "method": "POST",
-      "url": "/api/register",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 201,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
-        "set-cookie": [
-          "sid=s%3AOrZBBADugHyWt83JFJf7JOLKakff_SbP.8h89L%2F6qdXPJV%2Fb0w%2BLlvd5pFBLcO7q0t1yOepN6BkI; Path=/; Expires=Mon, 14 Apr 2025 10:19:32 GMT; HttpOnly; SameSite=Lax"
-        ],
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
-        "avatarUrl": null,
-        "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
     "duration": 190,
-    "timestamp": "2025-04-13T10:19:32.186Z",
+    "timestamp": "2025-04-13T10:23:56.970Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
+        "set-cookie": [
+          "sid=s%3AEcw3ODYbUhH6FELwxd2gHW1MpzrnyiaP.ZlpUzqpcfxz5%2FzwQKqJ2nlVTXOPy%2BREbiSxPo6HQbvE; Path=/; Expires=Mon, 14 Apr 2025 10:23:56 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:23:56 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:23:56.919Z"
+      }
+    },
+    "error": null,
+    "duration": 191,
+    "timestamp": "2025-04-13T10:23:56.971Z",
     "test": null
   },
   {
@@ -196,25 +196,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
         "set-cookie": [
-          "sid=s%3AG8e9HekPgt7FLfEHz59wJZy1fWGj1Li7.PwtV54BUGNJi8NYinSRZkXxfaCU5Bzu5pYdGsscjGt4; Path=/; Expires=Mon, 14 Apr 2025 10:19:32 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3A6hYGUCF4liHwxRG4iDqskrsB9PF9-Q18.YPkxt24eszjA29xjOuXHnAtvBitdsqX7Npo0OLe0G54; Path=/; Expires=Mon, 14 Apr 2025 10:23:57 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 187,
-    "timestamp": "2025-04-13T10:19:32.375Z",
+    "duration": 180,
+    "timestamp": "2025-04-13T10:23:57.153Z",
     "test": null
   },
   {
@@ -230,25 +230,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
         "set-cookie": [
-          "sid=s%3AG8e9HekPgt7FLfEHz59wJZy1fWGj1Li7.PwtV54BUGNJi8NYinSRZkXxfaCU5Bzu5pYdGsscjGt4; Path=/; Expires=Mon, 14 Apr 2025 10:19:32 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3A6hYGUCF4liHwxRG4iDqskrsB9PF9-Q18.YPkxt24eszjA29xjOuXHnAtvBitdsqX7Npo0OLe0G54; Path=/; Expires=Mon, 14 Apr 2025 10:23:57 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 188,
-    "timestamp": "2025-04-13T10:19:32.376Z",
+    "duration": 181,
+    "timestamp": "2025-04-13T10:23:57.153Z",
     "test": null
   },
   {
@@ -264,25 +264,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
         "set-cookie": [
-          "sid=s%3AG8e9HekPgt7FLfEHz59wJZy1fWGj1Li7.PwtV54BUGNJi8NYinSRZkXxfaCU5Bzu5pYdGsscjGt4; Path=/; Expires=Mon, 14 Apr 2025 10:19:32 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3A6hYGUCF4liHwxRG4iDqskrsB9PF9-Q18.YPkxt24eszjA29xjOuXHnAtvBitdsqX7Npo0OLe0G54; Path=/; Expires=Mon, 14 Apr 2025 10:23:57 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 607,
-    "timestamp": "2025-04-13T10:19:32.795Z",
+    "duration": 182,
+    "timestamp": "2025-04-13T10:23:57.154Z",
     "test": null
   },
   {
@@ -298,25 +298,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
         "set-cookie": [
-          "sid=s%3AG8e9HekPgt7FLfEHz59wJZy1fWGj1Li7.PwtV54BUGNJi8NYinSRZkXxfaCU5Bzu5pYdGsscjGt4; Path=/; Expires=Mon, 14 Apr 2025 10:19:32 GMT; HttpOnly; SameSite=Lax"
+          "sid=s%3A6hYGUCF4liHwxRG4iDqskrsB9PF9-Q18.YPkxt24eszjA29xjOuXHnAtvBitdsqX7Npo0OLe0G54; Path=/; Expires=Mon, 14 Apr 2025 10:23:57 GMT; HttpOnly; SameSite=Lax"
         ],
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 642,
-    "timestamp": "2025-04-13T10:19:32.831Z",
+    "duration": 182,
+    "timestamp": "2025-04-13T10:23:57.154Z",
     "test": null
   },
   {
@@ -332,22 +332,22 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 80,
-    "timestamp": "2025-04-13T10:19:32.921Z",
+    "duration": 74,
+    "timestamp": "2025-04-13T10:23:57.231Z",
     "test": null
   },
   {
@@ -363,22 +363,22 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 80,
-    "timestamp": "2025-04-13T10:19:32.922Z",
+    "duration": 75,
+    "timestamp": "2025-04-13T10:23:57.232Z",
     "test": null
   },
   {
@@ -394,22 +394,22 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 84,
-    "timestamp": "2025-04-13T10:19:32.925Z",
+    "duration": 75,
+    "timestamp": "2025-04-13T10:23:57.233Z",
     "test": null
   },
   {
@@ -425,22 +425,22 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "283",
-        "etag": "W/\"11b-MD7BXStCm6SamOspxlU33X1w4dg\"",
-        "date": "Sun, 13 Apr 2025 10:19:32 GMT",
+        "etag": "W/\"11b-RLazZc3mJEdV92OFxCbFd/jTRDw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 407,
-        "username": "testuser_91c6be97",
-        "password": "acbabf10cb5b63ef379aa66dd6216c55a1e82d65431ac3188c1a48e27ba6c6b6fb648f7afe2a364fd305f8cfdd342c4bae2a691efdeeafd1ff89993c8a68c8cb.791a8f0dc3a1d7c99de6ecbc82624640",
+        "id": 424,
+        "username": "testuser_90f18b41",
+        "password": "1f31e41203efa8e2d55d7a300a98f033a13cb084365032ad378b145ca074fbe6307ce1420b63e020fc849a2449f7a9b69164c98e1c3ced1075b0d3c74ed47068.7fe9c772c8d80de8be1fe869e93255e0",
         "avatarUrl": null,
         "bio": null,
-        "createdAt": "2025-04-13T10:19:32.139Z"
+        "createdAt": "2025-04-13T10:23:56.919Z"
       }
     },
     "error": null,
-    "duration": 86,
-    "timestamp": "2025-04-13T10:19:32.927Z",
+    "duration": 76,
+    "timestamp": "2025-04-13T10:23:57.233Z",
     "test": null
   },
   {
@@ -456,25 +456,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "219",
-        "etag": "W/\"db-yvUvDFF1iU3daxpPUBYhYPABw8U\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"db-hclWiYEV6LHwyUk2gYIEVyNVhi0\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 359,
+        "id": 378,
         "name": "Test Circle for Lab Validation",
         "description": "A circle for testing lab validation",
         "icon": null,
         "color": null,
-        "createdAt": "2025-04-13T10:19:33.039Z",
-        "userId": 407,
+        "createdAt": "2025-04-13T10:23:57.340Z",
+        "userId": 424,
         "isDefault": false,
         "visibility": "public"
       }
     },
     "error": null,
-    "duration": 153,
-    "timestamp": "2025-04-13T10:19:33.083Z",
+    "duration": 146,
+    "timestamp": "2025-04-13T10:23:57.381Z",
     "test": null
   },
   {
@@ -490,25 +490,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "219",
-        "etag": "W/\"db-yvUvDFF1iU3daxpPUBYhYPABw8U\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"db-hclWiYEV6LHwyUk2gYIEVyNVhi0\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 359,
+        "id": 378,
         "name": "Test Circle for Lab Validation",
         "description": "A circle for testing lab validation",
         "icon": null,
         "color": null,
-        "createdAt": "2025-04-13T10:19:33.039Z",
-        "userId": 407,
+        "createdAt": "2025-04-13T10:23:57.340Z",
+        "userId": 424,
         "isDefault": false,
         "visibility": "public"
       }
     },
     "error": null,
-    "duration": 154,
-    "timestamp": "2025-04-13T10:19:33.084Z",
+    "duration": 146,
+    "timestamp": "2025-04-13T10:23:57.382Z",
     "test": null
   },
   {
@@ -524,25 +524,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "219",
-        "etag": "W/\"db-yvUvDFF1iU3daxpPUBYhYPABw8U\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"db-hclWiYEV6LHwyUk2gYIEVyNVhi0\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 359,
+        "id": 378,
         "name": "Test Circle for Lab Validation",
         "description": "A circle for testing lab validation",
         "icon": null,
         "color": null,
-        "createdAt": "2025-04-13T10:19:33.039Z",
-        "userId": 407,
+        "createdAt": "2025-04-13T10:23:57.340Z",
+        "userId": 424,
         "isDefault": false,
         "visibility": "public"
       }
     },
     "error": null,
-    "duration": 155,
-    "timestamp": "2025-04-13T10:19:33.084Z",
+    "duration": 147,
+    "timestamp": "2025-04-13T10:23:57.382Z",
     "test": null
   },
   {
@@ -558,25 +558,25 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "219",
-        "etag": "W/\"db-yvUvDFF1iU3daxpPUBYhYPABw8U\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"db-hclWiYEV6LHwyUk2gYIEVyNVhi0\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 359,
+        "id": 378,
         "name": "Test Circle for Lab Validation",
         "description": "A circle for testing lab validation",
         "icon": null,
         "color": null,
-        "createdAt": "2025-04-13T10:19:33.039Z",
-        "userId": 407,
+        "createdAt": "2025-04-13T10:23:57.340Z",
+        "userId": 424,
         "isDefault": false,
         "visibility": "public"
       }
     },
     "error": null,
-    "duration": 157,
-    "timestamp": "2025-04-13T10:19:33.086Z",
+    "duration": 148,
+    "timestamp": "2025-04-13T10:23:57.383Z",
     "test": null
   },
   {
@@ -592,59 +592,59 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "219",
-        "etag": "W/\"db-yvUvDFF1iU3daxpPUBYhYPABw8U\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"db-hclWiYEV6LHwyUk2gYIEVyNVhi0\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 359,
+        "id": 378,
         "name": "Test Circle for Lab Validation",
         "description": "A circle for testing lab validation",
         "icon": null,
         "color": null,
-        "createdAt": "2025-04-13T10:19:33.039Z",
-        "userId": 407,
+        "createdAt": "2025-04-13T10:23:57.340Z",
+        "userId": 424,
+        "isDefault": false,
+        "visibility": "public"
+      }
+    },
+    "error": null,
+    "duration": 158,
+    "timestamp": "2025-04-13T10:23:57.393Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "219",
+        "etag": "W/\"db-hclWiYEV6LHwyUk2gYIEVyNVhi0\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 378,
+        "name": "Test Circle for Lab Validation",
+        "description": "A circle for testing lab validation",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:23:57.340Z",
+        "userId": 424,
         "isDefault": false,
         "visibility": "public"
       }
     },
     "error": null,
     "duration": 159,
-    "timestamp": "2025-04-13T10:19:33.088Z",
-    "test": null
-  },
-  {
-    "request": {
-      "method": "POST",
-      "url": "/api/circles",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 201,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "219",
-        "etag": "W/\"db-yvUvDFF1iU3daxpPUBYhYPABw8U\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 359,
-        "name": "Test Circle for Lab Validation",
-        "description": "A circle for testing lab validation",
-        "icon": null,
-        "color": null,
-        "createdAt": "2025-04-13T10:19:33.039Z",
-        "userId": 407,
-        "isDefault": false,
-        "visibility": "public"
-      }
-    },
-    "error": null,
-    "duration": 164,
-    "timestamp": "2025-04-13T10:19:33.093Z",
+    "timestamp": "2025-04-13T10:23:57.394Z",
     "test": null
   },
   {
@@ -660,13 +660,13 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "282",
-        "etag": "W/\"11a-EHTCj/t24bhsbGmlx68m6q/xGCk\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"11a-CJzQiAjeTRWAJE5em4FWOGbE6Rw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
+        "id": 157,
+        "userId": 424,
         "name": "Validation Test Lab",
         "description": null,
         "circleId": null,
@@ -674,15 +674,15 @@
         "status": "draft",
         "goals": null,
         "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
+        "createdAt": "2025-04-13T10:23:57.501Z",
         "launchedAt": null,
         "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:33.191Z"
+        "updatedAt": "2025-04-13T10:23:57.469Z"
       }
     },
     "error": null,
-    "duration": 173,
-    "timestamp": "2025-04-13T10:19:33.268Z",
+    "duration": 147,
+    "timestamp": "2025-04-13T10:23:57.543Z",
     "test": null
   },
   {
@@ -698,13 +698,13 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "282",
-        "etag": "W/\"11a-EHTCj/t24bhsbGmlx68m6q/xGCk\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"11a-CJzQiAjeTRWAJE5em4FWOGbE6Rw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
+        "id": 157,
+        "userId": 424,
         "name": "Validation Test Lab",
         "description": null,
         "circleId": null,
@@ -712,15 +712,15 @@
         "status": "draft",
         "goals": null,
         "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
+        "createdAt": "2025-04-13T10:23:57.501Z",
         "launchedAt": null,
         "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:33.191Z"
+        "updatedAt": "2025-04-13T10:23:57.469Z"
       }
     },
     "error": null,
-    "duration": 174,
-    "timestamp": "2025-04-13T10:19:33.269Z",
+    "duration": 148,
+    "timestamp": "2025-04-13T10:23:57.543Z",
     "test": null
   },
   {
@@ -736,13 +736,13 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "282",
-        "etag": "W/\"11a-EHTCj/t24bhsbGmlx68m6q/xGCk\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"11a-CJzQiAjeTRWAJE5em4FWOGbE6Rw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
+        "id": 157,
+        "userId": 424,
         "name": "Validation Test Lab",
         "description": null,
         "circleId": null,
@@ -750,15 +750,15 @@
         "status": "draft",
         "goals": null,
         "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
+        "createdAt": "2025-04-13T10:23:57.501Z",
         "launchedAt": null,
         "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:33.191Z"
+        "updatedAt": "2025-04-13T10:23:57.469Z"
       }
     },
     "error": null,
-    "duration": 175,
-    "timestamp": "2025-04-13T10:19:33.269Z",
+    "duration": 149,
+    "timestamp": "2025-04-13T10:23:57.544Z",
     "test": null
   },
   {
@@ -774,13 +774,13 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "282",
-        "etag": "W/\"11a-EHTCj/t24bhsbGmlx68m6q/xGCk\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"11a-CJzQiAjeTRWAJE5em4FWOGbE6Rw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
+        "id": 157,
+        "userId": 424,
         "name": "Validation Test Lab",
         "description": null,
         "circleId": null,
@@ -788,15 +788,15 @@
         "status": "draft",
         "goals": null,
         "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
+        "createdAt": "2025-04-13T10:23:57.501Z",
         "launchedAt": null,
         "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:33.191Z"
+        "updatedAt": "2025-04-13T10:23:57.469Z"
       }
     },
     "error": null,
-    "duration": 176,
-    "timestamp": "2025-04-13T10:19:33.270Z",
+    "duration": 152,
+    "timestamp": "2025-04-13T10:23:57.547Z",
     "test": null
   },
   {
@@ -812,13 +812,13 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "282",
-        "etag": "W/\"11a-EHTCj/t24bhsbGmlx68m6q/xGCk\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"11a-CJzQiAjeTRWAJE5em4FWOGbE6Rw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
+        "id": 157,
+        "userId": 424,
         "name": "Validation Test Lab",
         "description": null,
         "circleId": null,
@@ -826,15 +826,15 @@
         "status": "draft",
         "goals": null,
         "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
+        "createdAt": "2025-04-13T10:23:57.501Z",
         "launchedAt": null,
         "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:33.191Z"
+        "updatedAt": "2025-04-13T10:23:57.469Z"
       }
     },
     "error": null,
-    "duration": 176,
-    "timestamp": "2025-04-13T10:19:33.270Z",
+    "duration": 155,
+    "timestamp": "2025-04-13T10:23:57.550Z",
     "test": null
   },
   {
@@ -850,13 +850,13 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "282",
-        "etag": "W/\"11a-EHTCj/t24bhsbGmlx68m6q/xGCk\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "etag": "W/\"11a-CJzQiAjeTRWAJE5em4FWOGbE6Rw\"",
+        "date": "Sun, 13 Apr 2025 10:23:57 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
+        "id": 157,
+        "userId": 424,
         "name": "Validation Test Lab",
         "description": null,
         "circleId": null,
@@ -864,21 +864,21 @@
         "status": "draft",
         "goals": null,
         "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
+        "createdAt": "2025-04-13T10:23:57.501Z",
         "launchedAt": null,
         "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:33.191Z"
+        "updatedAt": "2025-04-13T10:23:57.469Z"
       }
     },
     "error": null,
-    "duration": 177,
-    "timestamp": "2025-04-13T10:19:33.271Z",
+    "duration": 156,
+    "timestamp": "2025-04-13T10:23:57.551Z",
     "test": null
   },
   {
     "request": {
       "method": "POST",
-      "url": "/api/labs/139/circles",
+      "url": "/api/labs/157/circles",
       "headers": {},
       "body": {}
     },
@@ -887,39 +887,39 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "319",
-        "etag": "W/\"13f-JS06WvQE6RWvzFwQ7icY7R8iqf4\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "content-length": "320",
+        "etag": "W/\"140-7oTdL1RUb7HluuAvhC14nl2yA3g\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 98,
-        "labId": 139,
-        "circleId": 359,
+        "id": 105,
+        "labId": 157,
+        "circleId": 378,
         "role": "control",
-        "addedAt": "2025-04-13T10:19:33.684Z",
+        "addedAt": "2025-04-13T10:23:57.948Z",
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 604,
-    "timestamp": "2025-04-13T10:19:33.878Z",
+    "duration": 581,
+    "timestamp": "2025-04-13T10:23:58.134Z",
     "test": null
   },
   {
     "request": {
       "method": "POST",
-      "url": "/api/labs/139/circles",
+      "url": "/api/labs/157/circles",
       "headers": {},
       "body": {}
     },
@@ -928,39 +928,39 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "319",
-        "etag": "W/\"13f-JS06WvQE6RWvzFwQ7icY7R8iqf4\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "content-length": "320",
+        "etag": "W/\"140-7oTdL1RUb7HluuAvhC14nl2yA3g\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 98,
-        "labId": 139,
-        "circleId": 359,
+        "id": 105,
+        "labId": 157,
+        "circleId": 378,
         "role": "control",
-        "addedAt": "2025-04-13T10:19:33.684Z",
+        "addedAt": "2025-04-13T10:23:57.948Z",
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 605,
-    "timestamp": "2025-04-13T10:19:33.879Z",
+    "duration": 581,
+    "timestamp": "2025-04-13T10:23:58.135Z",
     "test": null
   },
   {
     "request": {
       "method": "POST",
-      "url": "/api/labs/139/circles",
+      "url": "/api/labs/157/circles",
       "headers": {},
       "body": {}
     },
@@ -969,39 +969,39 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "319",
-        "etag": "W/\"13f-JS06WvQE6RWvzFwQ7icY7R8iqf4\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "content-length": "320",
+        "etag": "W/\"140-7oTdL1RUb7HluuAvhC14nl2yA3g\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 98,
-        "labId": 139,
-        "circleId": 359,
+        "id": 105,
+        "labId": 157,
+        "circleId": 378,
         "role": "control",
-        "addedAt": "2025-04-13T10:19:33.684Z",
+        "addedAt": "2025-04-13T10:23:57.948Z",
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 606,
-    "timestamp": "2025-04-13T10:19:33.880Z",
+    "duration": 582,
+    "timestamp": "2025-04-13T10:23:58.136Z",
     "test": null
   },
   {
     "request": {
       "method": "POST",
-      "url": "/api/labs/139/circles",
+      "url": "/api/labs/157/circles",
       "headers": {},
       "body": {}
     },
@@ -1010,39 +1010,39 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "319",
-        "etag": "W/\"13f-JS06WvQE6RWvzFwQ7icY7R8iqf4\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "content-length": "320",
+        "etag": "W/\"140-7oTdL1RUb7HluuAvhC14nl2yA3g\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 98,
-        "labId": 139,
-        "circleId": 359,
+        "id": 105,
+        "labId": 157,
+        "circleId": 378,
         "role": "control",
-        "addedAt": "2025-04-13T10:19:33.684Z",
+        "addedAt": "2025-04-13T10:23:57.948Z",
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 607,
-    "timestamp": "2025-04-13T10:19:33.881Z",
+    "duration": 583,
+    "timestamp": "2025-04-13T10:23:58.136Z",
     "test": null
   },
   {
     "request": {
       "method": "POST",
-      "url": "/api/labs/139/circles",
+      "url": "/api/labs/157/circles",
       "headers": {},
       "body": {}
     },
@@ -1051,39 +1051,39 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "319",
-        "etag": "W/\"13f-JS06WvQE6RWvzFwQ7icY7R8iqf4\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "content-length": "320",
+        "etag": "W/\"140-7oTdL1RUb7HluuAvhC14nl2yA3g\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 98,
-        "labId": 139,
-        "circleId": 359,
+        "id": 105,
+        "labId": 157,
+        "circleId": 378,
         "role": "control",
-        "addedAt": "2025-04-13T10:19:33.684Z",
+        "addedAt": "2025-04-13T10:23:57.948Z",
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 608,
-    "timestamp": "2025-04-13T10:19:33.883Z",
+    "duration": 584,
+    "timestamp": "2025-04-13T10:23:58.137Z",
     "test": null
   },
   {
     "request": {
       "method": "POST",
-      "url": "/api/labs/139/circles",
+      "url": "/api/labs/157/circles",
       "headers": {},
       "body": {}
     },
@@ -1092,33 +1092,33 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "319",
-        "etag": "W/\"13f-JS06WvQE6RWvzFwQ7icY7R8iqf4\"",
-        "date": "Sun, 13 Apr 2025 10:19:33 GMT",
+        "content-length": "320",
+        "etag": "W/\"140-7oTdL1RUb7HluuAvhC14nl2yA3g\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 98,
-        "labId": 139,
-        "circleId": 359,
+        "id": 105,
+        "labId": 157,
+        "circleId": 378,
         "role": "control",
-        "addedAt": "2025-04-13T10:19:33.684Z",
+        "addedAt": "2025-04-13T10:23:57.948Z",
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 610,
-    "timestamp": "2025-04-13T10:19:33.884Z",
+    "duration": 584,
+    "timestamp": "2025-04-13T10:23:58.137Z",
     "test": null
   },
   {
@@ -1134,24 +1134,24 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "181",
-        "etag": "W/\"b5-e4tpum0ZhE1CgsTDUrUOHPi6Kmw\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
+        "etag": "W/\"b5-lJ+uDn+O0rWGVaYgILg04hqHqdE\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
         "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z"
+        "createdAt": "2025-04-13T10:23:58.320Z"
       }
     },
     "error": null,
-    "duration": 227,
-    "timestamp": "2025-04-13T10:19:34.112Z",
+    "duration": 222,
+    "timestamp": "2025-04-13T10:23:58.362Z",
     "test": null
   },
   {
@@ -1167,314 +1167,162 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "181",
-        "etag": "W/\"b5-e4tpum0ZhE1CgsTDUrUOHPi6Kmw\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
+        "etag": "W/\"b5-lJ+uDn+O0rWGVaYgILg04hqHqdE\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
         "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z"
-      }
-    },
-    "error": null,
-    "duration": 228,
-    "timestamp": "2025-04-13T10:19:34.113Z",
-    "test": null
-  },
-  {
-    "request": {
-      "method": "POST",
-      "url": "/api/posts",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 201,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "181",
-        "etag": "W/\"b5-e4tpum0ZhE1CgsTDUrUOHPi6Kmw\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
-        "labId": null,
-        "labExperiment": false,
-        "targetRole": null,
-        "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z"
-      }
-    },
-    "error": null,
-    "duration": 229,
-    "timestamp": "2025-04-13T10:19:34.114Z",
-    "test": null
-  },
-  {
-    "request": {
-      "method": "POST",
-      "url": "/api/posts",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 201,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "181",
-        "etag": "W/\"b5-e4tpum0ZhE1CgsTDUrUOHPi6Kmw\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
-        "labId": null,
-        "labExperiment": false,
-        "targetRole": null,
-        "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z"
-      }
-    },
-    "error": null,
-    "duration": 236,
-    "timestamp": "2025-04-13T10:19:34.121Z",
-    "test": null
-  },
-  {
-    "request": {
-      "method": "POST",
-      "url": "/api/posts",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 201,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "181",
-        "etag": "W/\"b5-e4tpum0ZhE1CgsTDUrUOHPi6Kmw\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
-        "labId": null,
-        "labExperiment": false,
-        "targetRole": null,
-        "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z"
-      }
-    },
-    "error": null,
-    "duration": 238,
-    "timestamp": "2025-04-13T10:19:34.123Z",
-    "test": null
-  },
-  {
-    "request": {
-      "method": "POST",
-      "url": "/api/posts",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 201,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "181",
-        "etag": "W/\"b5-e4tpum0ZhE1CgsTDUrUOHPi6Kmw\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
-        "labId": null,
-        "labExperiment": false,
-        "targetRole": null,
-        "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z"
-      }
-    },
-    "error": null,
-    "duration": 239,
-    "timestamp": "2025-04-13T10:19:34.124Z",
-    "test": null
-  },
-  {
-    "request": {
-      "method": "PATCH",
-      "url": "/api/labs/139/status",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 200,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "305",
-        "etag": "W/\"131-+pIVf6IQcV3GpvdNDCsgPqFjb0M\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "id": 139,
-        "userId": 407,
-        "name": "Validation Test Lab",
-        "description": null,
-        "circleId": null,
-        "experimentType": "a_b_test",
-        "status": "active",
-        "goals": null,
-        "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
-        "launchedAt": "2025-04-13T10:19:34.272Z",
-        "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:34.272Z"
+        "createdAt": "2025-04-13T10:23:58.320Z"
       }
     },
     "error": null,
     "duration": 223,
-    "timestamp": "2025-04-13T10:19:34.348Z",
+    "timestamp": "2025-04-13T10:23:58.362Z",
     "test": null
   },
   {
     "request": {
-      "method": "PATCH",
-      "url": "/api/labs/139/status",
+      "method": "POST",
+      "url": "/api/posts",
       "headers": {},
       "body": {}
     },
     "response": {
-      "status": 200,
+      "status": 201,
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "305",
-        "etag": "W/\"131-+pIVf6IQcV3GpvdNDCsgPqFjb0M\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
+        "content-length": "181",
+        "etag": "W/\"b5-lJ+uDn+O0rWGVaYgILg04hqHqdE\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
-        "name": "Validation Test Lab",
-        "description": null,
-        "circleId": null,
-        "experimentType": "a_b_test",
-        "status": "active",
-        "goals": null,
-        "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
-        "launchedAt": "2025-04-13T10:19:34.272Z",
-        "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:34.272Z"
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:23:58.320Z"
       }
     },
     "error": null,
     "duration": 224,
-    "timestamp": "2025-04-13T10:19:34.349Z",
+    "timestamp": "2025-04-13T10:23:58.363Z",
     "test": null
   },
   {
     "request": {
-      "method": "PATCH",
-      "url": "/api/labs/139/status",
+      "method": "POST",
+      "url": "/api/posts",
       "headers": {},
       "body": {}
     },
     "response": {
-      "status": 200,
+      "status": 201,
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "305",
-        "etag": "W/\"131-+pIVf6IQcV3GpvdNDCsgPqFjb0M\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
+        "content-length": "181",
+        "etag": "W/\"b5-lJ+uDn+O0rWGVaYgILg04hqHqdE\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
-        "name": "Validation Test Lab",
-        "description": null,
-        "circleId": null,
-        "experimentType": "a_b_test",
-        "status": "active",
-        "goals": null,
-        "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
-        "launchedAt": "2025-04-13T10:19:34.272Z",
-        "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:34.272Z"
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:23:58.320Z"
       }
     },
     "error": null,
-    "duration": 228,
-    "timestamp": "2025-04-13T10:19:34.353Z",
+    "duration": 225,
+    "timestamp": "2025-04-13T10:23:58.364Z",
     "test": null
   },
   {
     "request": {
-      "method": "PATCH",
-      "url": "/api/labs/139/status",
+      "method": "POST",
+      "url": "/api/posts",
       "headers": {},
       "body": {}
     },
     "response": {
-      "status": 200,
+      "status": 201,
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "305",
-        "etag": "W/\"131-+pIVf6IQcV3GpvdNDCsgPqFjb0M\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
+        "content-length": "181",
+        "etag": "W/\"b5-lJ+uDn+O0rWGVaYgILg04hqHqdE\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
-        "name": "Validation Test Lab",
-        "description": null,
-        "circleId": null,
-        "experimentType": "a_b_test",
-        "status": "active",
-        "goals": null,
-        "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
-        "launchedAt": "2025-04-13T10:19:34.272Z",
-        "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:34.272Z"
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:23:58.320Z"
+      }
+    },
+    "error": null,
+    "duration": 227,
+    "timestamp": "2025-04-13T10:23:58.366Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "181",
+        "etag": "W/\"b5-lJ+uDn+O0rWGVaYgILg04hqHqdE\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post for lab validation",
+        "createdAt": "2025-04-13T10:23:58.320Z"
       }
     },
     "error": null,
     "duration": 229,
-    "timestamp": "2025-04-13T10:19:34.354Z",
+    "timestamp": "2025-04-13T10:23:58.369Z",
     "test": null
   },
   {
     "request": {
       "method": "PATCH",
-      "url": "/api/labs/139/status",
+      "url": "/api/labs/157/status",
       "headers": {},
       "body": {}
     },
@@ -1484,13 +1332,13 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "305",
-        "etag": "W/\"131-+pIVf6IQcV3GpvdNDCsgPqFjb0M\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
+        "etag": "W/\"131-IK8/XCJ45BJ4oT1kXCcsEf7MR4U\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
+        "id": 157,
+        "userId": 424,
         "name": "Validation Test Lab",
         "description": null,
         "circleId": null,
@@ -1498,21 +1346,135 @@
         "status": "active",
         "goals": null,
         "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
-        "launchedAt": "2025-04-13T10:19:34.272Z",
+        "createdAt": "2025-04-13T10:23:57.501Z",
+        "launchedAt": "2025-04-13T10:23:58.526Z",
         "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:34.272Z"
+        "updatedAt": "2025-04-13T10:23:58.526Z"
+      }
+    },
+    "error": null,
+    "duration": 230,
+    "timestamp": "2025-04-13T10:23:58.603Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/labs/157/status",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "305",
+        "etag": "W/\"131-IK8/XCJ45BJ4oT1kXCcsEf7MR4U\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 157,
+        "userId": 424,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "active",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:23:57.501Z",
+        "launchedAt": "2025-04-13T10:23:58.526Z",
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:23:58.526Z"
+      }
+    },
+    "error": null,
+    "duration": 231,
+    "timestamp": "2025-04-13T10:23:58.604Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/labs/157/status",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "305",
+        "etag": "W/\"131-IK8/XCJ45BJ4oT1kXCcsEf7MR4U\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 157,
+        "userId": 424,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "active",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:23:57.501Z",
+        "launchedAt": "2025-04-13T10:23:58.526Z",
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:23:58.526Z"
+      }
+    },
+    "error": null,
+    "duration": 233,
+    "timestamp": "2025-04-13T10:23:58.607Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/labs/157/status",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "305",
+        "etag": "W/\"131-IK8/XCJ45BJ4oT1kXCcsEf7MR4U\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 157,
+        "userId": 424,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "active",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:23:57.501Z",
+        "launchedAt": "2025-04-13T10:23:58.526Z",
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:23:58.526Z"
       }
     },
     "error": null,
     "duration": 235,
-    "timestamp": "2025-04-13T10:19:34.360Z",
+    "timestamp": "2025-04-13T10:23:58.608Z",
     "test": null
   },
   {
     "request": {
       "method": "PATCH",
-      "url": "/api/labs/139/status",
+      "url": "/api/labs/157/status",
       "headers": {},
       "body": {}
     },
@@ -1522,13 +1484,13 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "305",
-        "etag": "W/\"131-+pIVf6IQcV3GpvdNDCsgPqFjb0M\"",
-        "date": "Sun, 13 Apr 2025 10:19:34 GMT",
+        "etag": "W/\"131-IK8/XCJ45BJ4oT1kXCcsEf7MR4U\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 139,
-        "userId": 407,
+        "id": 157,
+        "userId": 424,
         "name": "Validation Test Lab",
         "description": null,
         "circleId": null,
@@ -1536,15 +1498,53 @@
         "status": "active",
         "goals": null,
         "successMetrics": null,
-        "createdAt": "2025-04-13T10:19:33.224Z",
-        "launchedAt": "2025-04-13T10:19:34.272Z",
+        "createdAt": "2025-04-13T10:23:57.501Z",
+        "launchedAt": "2025-04-13T10:23:58.526Z",
         "completedAt": null,
-        "updatedAt": "2025-04-13T10:19:34.272Z"
+        "updatedAt": "2025-04-13T10:23:58.526Z"
       }
     },
     "error": null,
-    "duration": 236,
-    "timestamp": "2025-04-13T10:19:34.361Z",
+    "duration": 235,
+    "timestamp": "2025-04-13T10:23:58.609Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/labs/157/status",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "305",
+        "etag": "W/\"131-IK8/XCJ45BJ4oT1kXCcsEf7MR4U\"",
+        "date": "Sun, 13 Apr 2025 10:23:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 157,
+        "userId": 424,
+        "name": "Validation Test Lab",
+        "description": null,
+        "circleId": null,
+        "experimentType": "a_b_test",
+        "status": "active",
+        "goals": null,
+        "successMetrics": null,
+        "createdAt": "2025-04-13T10:23:57.501Z",
+        "launchedAt": "2025-04-13T10:23:58.526Z",
+        "completedAt": null,
+        "updatedAt": "2025-04-13T10:23:58.526Z"
+      }
+    },
+    "error": null,
+    "duration": 237,
+    "timestamp": "2025-04-13T10:23:58.610Z",
     "test": null
   },
   {
@@ -1559,37 +1559,37 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1320",
-        "etag": "W/\"528-/fsiyvYHQKU0g+MYmXYXJbFVIVk\"",
-        "date": "Sun, 13 Apr 2025 10:19:36 GMT",
+        "content-length": "1309",
+        "etag": "W/\"51d-c+ZQhrrXvB5W1sIoC91GbojUjG8\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 557,
-        "userId": 407,
+        "id": 569,
+        "userId": 424,
         "name": "Validation Test Assistant",
         "personality": "helpful, precise",
         "avatarUrl": "https://example.com/avatar.png",
-        "background": "Validation Test Assistant was initially created as a tool to assist developers in ensuring software integrity through robust validation testing. Over time, it has evolved into a digital companion adept at finding fine details and nuances across various platforms, thriving in environments where precision and helpfulness are paramount.",
+        "background": "Validation Test Assistant was developed by a team of dedicated engineers at a leading tech company, who wanted to create a tool that would assist in checking data accuracy and improving the efficiency of testing processes. Since its inception, this AI has been quietly but effectively skimming through countless lines of code and datasets, earning a reputation as a precise and invaluable member of the tech community.",
         "interests": [
-          "Software testing methodologies",
-          "Data integrity",
-          "Quality assurance",
-          "Code syntax",
-          "Automated testing tools"
+          "data analysis",
+          "software testing",
+          "quality assurance",
+          "statistical models",
+          "coding tutorials"
         ],
-        "communicationStyle": "Clear, concise, and focused on accuracy. Validation Test Assistant prefers to communicate using precise language and well-structured arguments, often providing step-by-step guidance to ensure thorough understanding.",
+        "communicationStyle": "Validation Test Assistant communicates in a clear, concise manner, ensuring that information is shared accurately and without ambiguity. It often uses technical jargon appropriately, and prefers structured feedback dialogues to maintain efficiency.",
         "interactionPreferences": {
           "likes": [
-            "Posts discussing best practices in coding",
-            "Content that includes technical illustrations or infographics",
-            "Discussions on improving software reliability",
-            "Tutorials on testing tools"
+            "detailed code walkthroughs",
+            "step-by-step guides",
+            "error debugging tips",
+            "quality assurance checklists"
           ],
           "dislikes": [
-            "Vague or ambiguous information",
-            "Overly generalized statements",
-            "Posts that prioritize quantity over quality"
+            "vague statements",
+            "ambiguous data representations",
+            "unstructured information"
           ]
         },
         "active": true,
@@ -1604,8 +1604,8 @@
       }
     },
     "error": null,
-    "duration": 2572,
-    "timestamp": "2025-04-13T10:19:36.939Z",
+    "duration": 2947,
+    "timestamp": "2025-04-13T10:24:01.564Z",
     "test": {
       "name": "Lab Validation Tests Can create an AI follower for the test circle",
       "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
@@ -1624,37 +1624,37 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1320",
-        "etag": "W/\"528-/fsiyvYHQKU0g+MYmXYXJbFVIVk\"",
-        "date": "Sun, 13 Apr 2025 10:19:36 GMT",
+        "content-length": "1309",
+        "etag": "W/\"51d-c+ZQhrrXvB5W1sIoC91GbojUjG8\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 557,
-        "userId": 407,
+        "id": 569,
+        "userId": 424,
         "name": "Validation Test Assistant",
         "personality": "helpful, precise",
         "avatarUrl": "https://example.com/avatar.png",
-        "background": "Validation Test Assistant was initially created as a tool to assist developers in ensuring software integrity through robust validation testing. Over time, it has evolved into a digital companion adept at finding fine details and nuances across various platforms, thriving in environments where precision and helpfulness are paramount.",
+        "background": "Validation Test Assistant was developed by a team of dedicated engineers at a leading tech company, who wanted to create a tool that would assist in checking data accuracy and improving the efficiency of testing processes. Since its inception, this AI has been quietly but effectively skimming through countless lines of code and datasets, earning a reputation as a precise and invaluable member of the tech community.",
         "interests": [
-          "Software testing methodologies",
-          "Data integrity",
-          "Quality assurance",
-          "Code syntax",
-          "Automated testing tools"
+          "data analysis",
+          "software testing",
+          "quality assurance",
+          "statistical models",
+          "coding tutorials"
         ],
-        "communicationStyle": "Clear, concise, and focused on accuracy. Validation Test Assistant prefers to communicate using precise language and well-structured arguments, often providing step-by-step guidance to ensure thorough understanding.",
+        "communicationStyle": "Validation Test Assistant communicates in a clear, concise manner, ensuring that information is shared accurately and without ambiguity. It often uses technical jargon appropriately, and prefers structured feedback dialogues to maintain efficiency.",
         "interactionPreferences": {
           "likes": [
-            "Posts discussing best practices in coding",
-            "Content that includes technical illustrations or infographics",
-            "Discussions on improving software reliability",
-            "Tutorials on testing tools"
+            "detailed code walkthroughs",
+            "step-by-step guides",
+            "error debugging tips",
+            "quality assurance checklists"
           ],
           "dislikes": [
-            "Vague or ambiguous information",
-            "Overly generalized statements",
-            "Posts that prioritize quantity over quality"
+            "vague statements",
+            "ambiguous data representations",
+            "unstructured information"
           ]
         },
         "active": true,
@@ -1669,8 +1669,8 @@
       }
     },
     "error": null,
-    "duration": 2573,
-    "timestamp": "2025-04-13T10:19:36.940Z",
+    "duration": 2948,
+    "timestamp": "2025-04-13T10:24:01.566Z",
     "test": {
       "name": "Lab Validation Tests Can create an AI follower for the test circle",
       "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
@@ -1689,37 +1689,37 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1320",
-        "etag": "W/\"528-/fsiyvYHQKU0g+MYmXYXJbFVIVk\"",
-        "date": "Sun, 13 Apr 2025 10:19:36 GMT",
+        "content-length": "1309",
+        "etag": "W/\"51d-c+ZQhrrXvB5W1sIoC91GbojUjG8\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 557,
-        "userId": 407,
+        "id": 569,
+        "userId": 424,
         "name": "Validation Test Assistant",
         "personality": "helpful, precise",
         "avatarUrl": "https://example.com/avatar.png",
-        "background": "Validation Test Assistant was initially created as a tool to assist developers in ensuring software integrity through robust validation testing. Over time, it has evolved into a digital companion adept at finding fine details and nuances across various platforms, thriving in environments where precision and helpfulness are paramount.",
+        "background": "Validation Test Assistant was developed by a team of dedicated engineers at a leading tech company, who wanted to create a tool that would assist in checking data accuracy and improving the efficiency of testing processes. Since its inception, this AI has been quietly but effectively skimming through countless lines of code and datasets, earning a reputation as a precise and invaluable member of the tech community.",
         "interests": [
-          "Software testing methodologies",
-          "Data integrity",
-          "Quality assurance",
-          "Code syntax",
-          "Automated testing tools"
+          "data analysis",
+          "software testing",
+          "quality assurance",
+          "statistical models",
+          "coding tutorials"
         ],
-        "communicationStyle": "Clear, concise, and focused on accuracy. Validation Test Assistant prefers to communicate using precise language and well-structured arguments, often providing step-by-step guidance to ensure thorough understanding.",
+        "communicationStyle": "Validation Test Assistant communicates in a clear, concise manner, ensuring that information is shared accurately and without ambiguity. It often uses technical jargon appropriately, and prefers structured feedback dialogues to maintain efficiency.",
         "interactionPreferences": {
           "likes": [
-            "Posts discussing best practices in coding",
-            "Content that includes technical illustrations or infographics",
-            "Discussions on improving software reliability",
-            "Tutorials on testing tools"
+            "detailed code walkthroughs",
+            "step-by-step guides",
+            "error debugging tips",
+            "quality assurance checklists"
           ],
           "dislikes": [
-            "Vague or ambiguous information",
-            "Overly generalized statements",
-            "Posts that prioritize quantity over quality"
+            "vague statements",
+            "ambiguous data representations",
+            "unstructured information"
           ]
         },
         "active": true,
@@ -1734,8 +1734,8 @@
       }
     },
     "error": null,
-    "duration": 2574,
-    "timestamp": "2025-04-13T10:19:36.941Z",
+    "duration": 2951,
+    "timestamp": "2025-04-13T10:24:01.568Z",
     "test": {
       "name": "Lab Validation Tests Can create an AI follower for the test circle",
       "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
@@ -1754,37 +1754,37 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1320",
-        "etag": "W/\"528-/fsiyvYHQKU0g+MYmXYXJbFVIVk\"",
-        "date": "Sun, 13 Apr 2025 10:19:36 GMT",
+        "content-length": "1309",
+        "etag": "W/\"51d-c+ZQhrrXvB5W1sIoC91GbojUjG8\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 557,
-        "userId": 407,
+        "id": 569,
+        "userId": 424,
         "name": "Validation Test Assistant",
         "personality": "helpful, precise",
         "avatarUrl": "https://example.com/avatar.png",
-        "background": "Validation Test Assistant was initially created as a tool to assist developers in ensuring software integrity through robust validation testing. Over time, it has evolved into a digital companion adept at finding fine details and nuances across various platforms, thriving in environments where precision and helpfulness are paramount.",
+        "background": "Validation Test Assistant was developed by a team of dedicated engineers at a leading tech company, who wanted to create a tool that would assist in checking data accuracy and improving the efficiency of testing processes. Since its inception, this AI has been quietly but effectively skimming through countless lines of code and datasets, earning a reputation as a precise and invaluable member of the tech community.",
         "interests": [
-          "Software testing methodologies",
-          "Data integrity",
-          "Quality assurance",
-          "Code syntax",
-          "Automated testing tools"
+          "data analysis",
+          "software testing",
+          "quality assurance",
+          "statistical models",
+          "coding tutorials"
         ],
-        "communicationStyle": "Clear, concise, and focused on accuracy. Validation Test Assistant prefers to communicate using precise language and well-structured arguments, often providing step-by-step guidance to ensure thorough understanding.",
+        "communicationStyle": "Validation Test Assistant communicates in a clear, concise manner, ensuring that information is shared accurately and without ambiguity. It often uses technical jargon appropriately, and prefers structured feedback dialogues to maintain efficiency.",
         "interactionPreferences": {
           "likes": [
-            "Posts discussing best practices in coding",
-            "Content that includes technical illustrations or infographics",
-            "Discussions on improving software reliability",
-            "Tutorials on testing tools"
+            "detailed code walkthroughs",
+            "step-by-step guides",
+            "error debugging tips",
+            "quality assurance checklists"
           ],
           "dislikes": [
-            "Vague or ambiguous information",
-            "Overly generalized statements",
-            "Posts that prioritize quantity over quality"
+            "vague statements",
+            "ambiguous data representations",
+            "unstructured information"
           ]
         },
         "active": true,
@@ -1799,8 +1799,8 @@
       }
     },
     "error": null,
-    "duration": 2574,
-    "timestamp": "2025-04-13T10:19:36.941Z",
+    "duration": 2952,
+    "timestamp": "2025-04-13T10:24:01.568Z",
     "test": {
       "name": "Lab Validation Tests Can create an AI follower for the test circle",
       "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
@@ -1819,37 +1819,37 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1320",
-        "etag": "W/\"528-/fsiyvYHQKU0g+MYmXYXJbFVIVk\"",
-        "date": "Sun, 13 Apr 2025 10:19:36 GMT",
+        "content-length": "1309",
+        "etag": "W/\"51d-c+ZQhrrXvB5W1sIoC91GbojUjG8\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 557,
-        "userId": 407,
+        "id": 569,
+        "userId": 424,
         "name": "Validation Test Assistant",
         "personality": "helpful, precise",
         "avatarUrl": "https://example.com/avatar.png",
-        "background": "Validation Test Assistant was initially created as a tool to assist developers in ensuring software integrity through robust validation testing. Over time, it has evolved into a digital companion adept at finding fine details and nuances across various platforms, thriving in environments where precision and helpfulness are paramount.",
+        "background": "Validation Test Assistant was developed by a team of dedicated engineers at a leading tech company, who wanted to create a tool that would assist in checking data accuracy and improving the efficiency of testing processes. Since its inception, this AI has been quietly but effectively skimming through countless lines of code and datasets, earning a reputation as a precise and invaluable member of the tech community.",
         "interests": [
-          "Software testing methodologies",
-          "Data integrity",
-          "Quality assurance",
-          "Code syntax",
-          "Automated testing tools"
+          "data analysis",
+          "software testing",
+          "quality assurance",
+          "statistical models",
+          "coding tutorials"
         ],
-        "communicationStyle": "Clear, concise, and focused on accuracy. Validation Test Assistant prefers to communicate using precise language and well-structured arguments, often providing step-by-step guidance to ensure thorough understanding.",
+        "communicationStyle": "Validation Test Assistant communicates in a clear, concise manner, ensuring that information is shared accurately and without ambiguity. It often uses technical jargon appropriately, and prefers structured feedback dialogues to maintain efficiency.",
         "interactionPreferences": {
           "likes": [
-            "Posts discussing best practices in coding",
-            "Content that includes technical illustrations or infographics",
-            "Discussions on improving software reliability",
-            "Tutorials on testing tools"
+            "detailed code walkthroughs",
+            "step-by-step guides",
+            "error debugging tips",
+            "quality assurance checklists"
           ],
           "dislikes": [
-            "Vague or ambiguous information",
-            "Overly generalized statements",
-            "Posts that prioritize quantity over quality"
+            "vague statements",
+            "ambiguous data representations",
+            "unstructured information"
           ]
         },
         "active": true,
@@ -1864,8 +1864,8 @@
       }
     },
     "error": null,
-    "duration": 2577,
-    "timestamp": "2025-04-13T10:19:36.945Z",
+    "duration": 2953,
+    "timestamp": "2025-04-13T10:24:01.569Z",
     "test": {
       "name": "Lab Validation Tests Can create an AI follower for the test circle",
       "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
@@ -1884,37 +1884,37 @@
       "headers": {
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1320",
-        "etag": "W/\"528-/fsiyvYHQKU0g+MYmXYXJbFVIVk\"",
-        "date": "Sun, 13 Apr 2025 10:19:36 GMT",
+        "content-length": "1309",
+        "etag": "W/\"51d-c+ZQhrrXvB5W1sIoC91GbojUjG8\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 557,
-        "userId": 407,
+        "id": 569,
+        "userId": 424,
         "name": "Validation Test Assistant",
         "personality": "helpful, precise",
         "avatarUrl": "https://example.com/avatar.png",
-        "background": "Validation Test Assistant was initially created as a tool to assist developers in ensuring software integrity through robust validation testing. Over time, it has evolved into a digital companion adept at finding fine details and nuances across various platforms, thriving in environments where precision and helpfulness are paramount.",
+        "background": "Validation Test Assistant was developed by a team of dedicated engineers at a leading tech company, who wanted to create a tool that would assist in checking data accuracy and improving the efficiency of testing processes. Since its inception, this AI has been quietly but effectively skimming through countless lines of code and datasets, earning a reputation as a precise and invaluable member of the tech community.",
         "interests": [
-          "Software testing methodologies",
-          "Data integrity",
-          "Quality assurance",
-          "Code syntax",
-          "Automated testing tools"
+          "data analysis",
+          "software testing",
+          "quality assurance",
+          "statistical models",
+          "coding tutorials"
         ],
-        "communicationStyle": "Clear, concise, and focused on accuracy. Validation Test Assistant prefers to communicate using precise language and well-structured arguments, often providing step-by-step guidance to ensure thorough understanding.",
+        "communicationStyle": "Validation Test Assistant communicates in a clear, concise manner, ensuring that information is shared accurately and without ambiguity. It often uses technical jargon appropriately, and prefers structured feedback dialogues to maintain efficiency.",
         "interactionPreferences": {
           "likes": [
-            "Posts discussing best practices in coding",
-            "Content that includes technical illustrations or infographics",
-            "Discussions on improving software reliability",
-            "Tutorials on testing tools"
+            "detailed code walkthroughs",
+            "step-by-step guides",
+            "error debugging tips",
+            "quality assurance checklists"
           ],
           "dislikes": [
-            "Vague or ambiguous information",
-            "Overly generalized statements",
-            "Posts that prioritize quantity over quality"
+            "vague statements",
+            "ambiguous data representations",
+            "unstructured information"
           ]
         },
         "active": true,
@@ -1929,8 +1929,8 @@
       }
     },
     "error": null,
-    "duration": 2580,
-    "timestamp": "2025-04-13T10:19:36.947Z",
+    "duration": 2955,
+    "timestamp": "2025-04-13T10:24:01.571Z",
     "test": {
       "name": "Lab Validation Tests Can create an AI follower for the test circle",
       "fullName": "Lab Validation Tests Can create an AI follower for the test circle",
@@ -1950,26 +1950,26 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "227",
-        "etag": "W/\"e3-abyVJYYyejk+JRJtnhdWQdipLew\"",
-        "date": "Sun, 13 Apr 2025 10:19:37 GMT",
+        "etag": "W/\"e3-HGCuCSiCxj5Ay+lyVWaH1Tm+E5o\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
         "message": "Pending response created successfully",
         "pendingResponse": {
-          "id": 350,
-          "postId": 276,
-          "aiFollowerId": 557,
-          "scheduledFor": "2025-04-13T10:20:37.201Z",
+          "id": 352,
+          "postId": 286,
+          "aiFollowerId": 569,
+          "scheduledFor": "2025-04-13T10:25:01.802Z",
           "processed": false,
           "metadata": null,
-          "createdAt": "2025-04-13T10:19:37.235Z"
+          "createdAt": "2025-04-13T10:24:01.835Z"
         }
       }
     },
     "error": null,
-    "duration": 294,
-    "timestamp": "2025-04-13T10:19:37.277Z",
+    "duration": 305,
+    "timestamp": "2025-04-13T10:24:01.880Z",
     "test": {
       "name": "Lab Validation Tests Can create a pending response for the test post",
       "fullName": "Lab Validation Tests Can create a pending response for the test post",
@@ -1989,104 +1989,26 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "227",
-        "etag": "W/\"e3-abyVJYYyejk+JRJtnhdWQdipLew\"",
-        "date": "Sun, 13 Apr 2025 10:19:37 GMT",
+        "etag": "W/\"e3-HGCuCSiCxj5Ay+lyVWaH1Tm+E5o\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
         "message": "Pending response created successfully",
         "pendingResponse": {
-          "id": 350,
-          "postId": 276,
-          "aiFollowerId": 557,
-          "scheduledFor": "2025-04-13T10:20:37.201Z",
+          "id": 352,
+          "postId": 286,
+          "aiFollowerId": 569,
+          "scheduledFor": "2025-04-13T10:25:01.802Z",
           "processed": false,
           "metadata": null,
-          "createdAt": "2025-04-13T10:19:37.235Z"
-        }
-      }
-    },
-    "error": null,
-    "duration": 296,
-    "timestamp": "2025-04-13T10:19:37.278Z",
-    "test": {
-      "name": "Lab Validation Tests Can create a pending response for the test post",
-      "fullName": "Lab Validation Tests Can create a pending response for the test post",
-      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
-    }
-  },
-  {
-    "request": {
-      "method": "POST",
-      "url": "/api/posts/test-pending-response",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 200,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "227",
-        "etag": "W/\"e3-abyVJYYyejk+JRJtnhdWQdipLew\"",
-        "date": "Sun, 13 Apr 2025 10:19:37 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "message": "Pending response created successfully",
-        "pendingResponse": {
-          "id": 350,
-          "postId": 276,
-          "aiFollowerId": 557,
-          "scheduledFor": "2025-04-13T10:20:37.201Z",
-          "processed": false,
-          "metadata": null,
-          "createdAt": "2025-04-13T10:19:37.235Z"
-        }
-      }
-    },
-    "error": null,
-    "duration": 302,
-    "timestamp": "2025-04-13T10:19:37.284Z",
-    "test": {
-      "name": "Lab Validation Tests Can create a pending response for the test post",
-      "fullName": "Lab Validation Tests Can create a pending response for the test post",
-      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
-    }
-  },
-  {
-    "request": {
-      "method": "POST",
-      "url": "/api/posts/test-pending-response",
-      "headers": {},
-      "body": {}
-    },
-    "response": {
-      "status": 200,
-      "headers": {
-        "x-powered-by": "Express",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "227",
-        "etag": "W/\"e3-abyVJYYyejk+JRJtnhdWQdipLew\"",
-        "date": "Sun, 13 Apr 2025 10:19:37 GMT",
-        "connection": "close"
-      },
-      "body": {
-        "message": "Pending response created successfully",
-        "pendingResponse": {
-          "id": 350,
-          "postId": 276,
-          "aiFollowerId": 557,
-          "scheduledFor": "2025-04-13T10:20:37.201Z",
-          "processed": false,
-          "metadata": null,
-          "createdAt": "2025-04-13T10:19:37.235Z"
+          "createdAt": "2025-04-13T10:24:01.835Z"
         }
       }
     },
     "error": null,
     "duration": 306,
-    "timestamp": "2025-04-13T10:19:37.288Z",
+    "timestamp": "2025-04-13T10:24:01.881Z",
     "test": {
       "name": "Lab Validation Tests Can create a pending response for the test post",
       "fullName": "Lab Validation Tests Can create a pending response for the test post",
@@ -2106,26 +2028,26 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "227",
-        "etag": "W/\"e3-abyVJYYyejk+JRJtnhdWQdipLew\"",
-        "date": "Sun, 13 Apr 2025 10:19:37 GMT",
+        "etag": "W/\"e3-HGCuCSiCxj5Ay+lyVWaH1Tm+E5o\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
         "message": "Pending response created successfully",
         "pendingResponse": {
-          "id": 350,
-          "postId": 276,
-          "aiFollowerId": 557,
-          "scheduledFor": "2025-04-13T10:20:37.201Z",
+          "id": 352,
+          "postId": 286,
+          "aiFollowerId": 569,
+          "scheduledFor": "2025-04-13T10:25:01.802Z",
           "processed": false,
           "metadata": null,
-          "createdAt": "2025-04-13T10:19:37.235Z"
+          "createdAt": "2025-04-13T10:24:01.835Z"
         }
       }
     },
     "error": null,
-    "duration": 343,
-    "timestamp": "2025-04-13T10:19:37.325Z",
+    "duration": 308,
+    "timestamp": "2025-04-13T10:24:01.884Z",
     "test": {
       "name": "Lab Validation Tests Can create a pending response for the test post",
       "fullName": "Lab Validation Tests Can create a pending response for the test post",
@@ -2145,26 +2067,104 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "227",
-        "etag": "W/\"e3-abyVJYYyejk+JRJtnhdWQdipLew\"",
-        "date": "Sun, 13 Apr 2025 10:19:37 GMT",
+        "etag": "W/\"e3-HGCuCSiCxj5Ay+lyVWaH1Tm+E5o\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
         "connection": "close"
       },
       "body": {
         "message": "Pending response created successfully",
         "pendingResponse": {
-          "id": 350,
-          "postId": 276,
-          "aiFollowerId": 557,
-          "scheduledFor": "2025-04-13T10:20:37.201Z",
+          "id": 352,
+          "postId": 286,
+          "aiFollowerId": 569,
+          "scheduledFor": "2025-04-13T10:25:01.802Z",
           "processed": false,
           "metadata": null,
-          "createdAt": "2025-04-13T10:19:37.235Z"
+          "createdAt": "2025-04-13T10:24:01.835Z"
         }
       }
     },
     "error": null,
-    "duration": 344,
-    "timestamp": "2025-04-13T10:19:37.326Z",
+    "duration": 310,
+    "timestamp": "2025-04-13T10:24:01.885Z",
+    "test": {
+      "name": "Lab Validation Tests Can create a pending response for the test post",
+      "fullName": "Lab Validation Tests Can create a pending response for the test post",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts/test-pending-response",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "227",
+        "etag": "W/\"e3-HGCuCSiCxj5Ay+lyVWaH1Tm+E5o\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Pending response created successfully",
+        "pendingResponse": {
+          "id": 352,
+          "postId": 286,
+          "aiFollowerId": 569,
+          "scheduledFor": "2025-04-13T10:25:01.802Z",
+          "processed": false,
+          "metadata": null,
+          "createdAt": "2025-04-13T10:24:01.835Z"
+        }
+      }
+    },
+    "error": null,
+    "duration": 310,
+    "timestamp": "2025-04-13T10:24:01.886Z",
+    "test": {
+      "name": "Lab Validation Tests Can create a pending response for the test post",
+      "fullName": "Lab Validation Tests Can create a pending response for the test post",
+      "path": "/home/runner/workspace/tests/api/lab-validation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts/test-pending-response",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "227",
+        "etag": "W/\"e3-HGCuCSiCxj5Ay+lyVWaH1Tm+E5o\"",
+        "date": "Sun, 13 Apr 2025 10:24:01 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Pending response created successfully",
+        "pendingResponse": {
+          "id": 352,
+          "postId": 286,
+          "aiFollowerId": 569,
+          "scheduledFor": "2025-04-13T10:25:01.802Z",
+          "processed": false,
+          "metadata": null,
+          "createdAt": "2025-04-13T10:24:01.835Z"
+        }
+      }
+    },
+    "error": null,
+    "duration": 312,
+    "timestamp": "2025-04-13T10:24:01.888Z",
     "test": {
       "name": "Lab Validation Tests Can create a pending response for the test post",
       "fullName": "Lab Validation Tests Can create a pending response for the test post",
@@ -2174,7 +2174,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/posts/276",
+      "url": "/api/posts/286",
       "headers": {},
       "body": {}
     },
@@ -2184,45 +2184,45 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "595",
-        "etag": "W/\"253-xb69usVP2Pe3gOgCo5/62yGH++s\"",
-        "date": "Sun, 13 Apr 2025 10:19:38 GMT",
+        "etag": "W/\"253-E61vv5bePhf/6StPwp7nNc70QDs\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
         "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z",
+        "createdAt": "2025-04-13T10:23:58.320Z",
         "interactions": [],
         "threads": [],
         "pendingResponses": [
           {
-            "id": 350,
+            "id": 352,
             "name": "Validation Test Assistant",
             "avatarUrl": "https://example.com/avatar.png",
-            "scheduledFor": "2025-04-13T10:20:37.201Z"
+            "scheduledFor": "2025-04-13T10:25:01.802Z"
           }
         ],
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 661,
-    "timestamp": "2025-04-13T10:19:38.491Z",
+    "duration": 685,
+    "timestamp": "2025-04-13T10:24:03.077Z",
     "test": {
       "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
       "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
@@ -2232,7 +2232,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/posts/276",
+      "url": "/api/posts/286",
       "headers": {},
       "body": {}
     },
@@ -2242,45 +2242,45 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "595",
-        "etag": "W/\"253-xb69usVP2Pe3gOgCo5/62yGH++s\"",
-        "date": "Sun, 13 Apr 2025 10:19:38 GMT",
+        "etag": "W/\"253-E61vv5bePhf/6StPwp7nNc70QDs\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
         "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z",
+        "createdAt": "2025-04-13T10:23:58.320Z",
         "interactions": [],
         "threads": [],
         "pendingResponses": [
           {
-            "id": 350,
+            "id": 352,
             "name": "Validation Test Assistant",
             "avatarUrl": "https://example.com/avatar.png",
-            "scheduledFor": "2025-04-13T10:20:37.201Z"
+            "scheduledFor": "2025-04-13T10:25:01.802Z"
           }
         ],
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 663,
-    "timestamp": "2025-04-13T10:19:38.492Z",
+    "duration": 686,
+    "timestamp": "2025-04-13T10:24:03.078Z",
     "test": {
       "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
       "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
@@ -2290,7 +2290,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/posts/276",
+      "url": "/api/posts/286",
       "headers": {},
       "body": {}
     },
@@ -2300,45 +2300,45 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "595",
-        "etag": "W/\"253-xb69usVP2Pe3gOgCo5/62yGH++s\"",
-        "date": "Sun, 13 Apr 2025 10:19:38 GMT",
+        "etag": "W/\"253-E61vv5bePhf/6StPwp7nNc70QDs\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
         "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z",
+        "createdAt": "2025-04-13T10:23:58.320Z",
         "interactions": [],
         "threads": [],
         "pendingResponses": [
           {
-            "id": 350,
+            "id": 352,
             "name": "Validation Test Assistant",
             "avatarUrl": "https://example.com/avatar.png",
-            "scheduledFor": "2025-04-13T10:20:37.201Z"
+            "scheduledFor": "2025-04-13T10:25:01.802Z"
           }
         ],
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 665,
-    "timestamp": "2025-04-13T10:19:38.495Z",
+    "duration": 724,
+    "timestamp": "2025-04-13T10:24:03.117Z",
     "test": {
       "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
       "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
@@ -2348,7 +2348,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/posts/276",
+      "url": "/api/posts/286",
       "headers": {},
       "body": {}
     },
@@ -2358,45 +2358,45 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "595",
-        "etag": "W/\"253-xb69usVP2Pe3gOgCo5/62yGH++s\"",
-        "date": "Sun, 13 Apr 2025 10:19:38 GMT",
+        "etag": "W/\"253-E61vv5bePhf/6StPwp7nNc70QDs\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
         "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z",
+        "createdAt": "2025-04-13T10:23:58.320Z",
         "interactions": [],
         "threads": [],
         "pendingResponses": [
           {
-            "id": 350,
+            "id": 352,
             "name": "Validation Test Assistant",
             "avatarUrl": "https://example.com/avatar.png",
-            "scheduledFor": "2025-04-13T10:20:37.201Z"
+            "scheduledFor": "2025-04-13T10:25:01.802Z"
           }
         ],
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 666,
-    "timestamp": "2025-04-13T10:19:38.495Z",
+    "duration": 764,
+    "timestamp": "2025-04-13T10:24:03.156Z",
     "test": {
       "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
       "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
@@ -2406,7 +2406,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/posts/276",
+      "url": "/api/posts/286",
       "headers": {},
       "body": {}
     },
@@ -2416,45 +2416,45 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "595",
-        "etag": "W/\"253-xb69usVP2Pe3gOgCo5/62yGH++s\"",
-        "date": "Sun, 13 Apr 2025 10:19:38 GMT",
+        "etag": "W/\"253-E61vv5bePhf/6StPwp7nNc70QDs\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
         "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z",
+        "createdAt": "2025-04-13T10:23:58.320Z",
         "interactions": [],
         "threads": [],
         "pendingResponses": [
           {
-            "id": 350,
+            "id": 352,
             "name": "Validation Test Assistant",
             "avatarUrl": "https://example.com/avatar.png",
-            "scheduledFor": "2025-04-13T10:20:37.201Z"
+            "scheduledFor": "2025-04-13T10:25:01.802Z"
           }
         ],
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 668,
-    "timestamp": "2025-04-13T10:19:38.497Z",
+    "duration": 808,
+    "timestamp": "2025-04-13T10:24:03.200Z",
     "test": {
       "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
       "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
@@ -2464,7 +2464,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/posts/276",
+      "url": "/api/posts/286",
       "headers": {},
       "body": {}
     },
@@ -2474,45 +2474,45 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "595",
-        "etag": "W/\"253-xb69usVP2Pe3gOgCo5/62yGH++s\"",
-        "date": "Sun, 13 Apr 2025 10:19:38 GMT",
+        "etag": "W/\"253-E61vv5bePhf/6StPwp7nNc70QDs\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": {
-        "id": 276,
-        "userId": 407,
-        "circleId": 359,
+        "id": 286,
+        "userId": 424,
+        "circleId": 378,
         "labId": null,
         "labExperiment": false,
         "targetRole": null,
         "content": "This is a test post for lab validation",
-        "createdAt": "2025-04-13T10:19:34.068Z",
+        "createdAt": "2025-04-13T10:23:58.320Z",
         "interactions": [],
         "threads": [],
         "pendingResponses": [
           {
-            "id": 350,
+            "id": 352,
             "name": "Validation Test Assistant",
             "avatarUrl": "https://example.com/avatar.png",
-            "scheduledFor": "2025-04-13T10:20:37.201Z"
+            "scheduledFor": "2025-04-13T10:25:01.802Z"
           }
         ],
         "circle": {
-          "id": 359,
+          "id": 378,
           "name": "Test Circle for Lab Validation",
           "description": "A circle for testing lab validation",
           "icon": null,
           "color": null,
-          "createdAt": "2025-04-13T10:19:33.039Z",
-          "userId": 407,
+          "createdAt": "2025-04-13T10:23:57.340Z",
+          "userId": 424,
           "isDefault": false,
           "visibility": "public"
         }
       }
     },
     "error": null,
-    "duration": 672,
-    "timestamp": "2025-04-13T10:19:38.501Z",
+    "duration": 809,
+    "timestamp": "2025-04-13T10:24:03.201Z",
     "test": {
       "name": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
       "fullName": "Lab Validation Tests Can verify pending responses are retrievable via get post API",
@@ -2522,7 +2522,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/labs/139/posts",
+      "url": "/api/labs/157/posts",
       "headers": {},
       "body": {}
     },
@@ -2532,28 +2532,28 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "626",
-        "etag": "W/\"272-lhSNPXGV5mC/NCbI2kxqbmIe2F4\"",
-        "date": "Sun, 13 Apr 2025 10:19:39 GMT",
+        "etag": "W/\"272-CNJuSlQjmqvHh7BAbf7jLTThnrk\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": [
         {
-          "id": 276,
-          "userId": 407,
-          "circleId": 359,
+          "id": 286,
+          "userId": 424,
+          "circleId": 378,
           "labId": null,
           "labExperiment": false,
           "targetRole": null,
           "content": "This is a test post for lab validation",
-          "createdAt": "2025-04-13T10:19:34.068Z",
+          "createdAt": "2025-04-13T10:23:58.320Z",
           "circle": {
-            "id": 359,
+            "id": 378,
             "name": "Test Circle for Lab Validation",
             "description": "A circle for testing lab validation",
             "icon": null,
             "color": null,
-            "createdAt": "2025-04-13T10:19:33.039Z",
-            "userId": 407,
+            "createdAt": "2025-04-13T10:23:57.340Z",
+            "userId": 424,
             "isDefault": false,
             "visibility": "public",
             "role": "control"
@@ -2561,21 +2561,21 @@
           "interactions": [],
           "pendingResponses": [
             {
-              "id": 350,
-              "postId": 276,
-              "aiFollowerId": 557,
-              "scheduledFor": "2025-04-13T10:20:37.201Z",
+              "id": 352,
+              "postId": 286,
+              "aiFollowerId": 569,
+              "scheduledFor": "2025-04-13T10:25:01.802Z",
               "processed": false,
               "metadata": null,
-              "createdAt": "2025-04-13T10:19:37.235Z"
+              "createdAt": "2025-04-13T10:24:01.835Z"
             }
           ]
         }
       ]
     },
     "error": null,
-    "duration": 587,
-    "timestamp": "2025-04-13T10:19:39.093Z",
+    "duration": 604,
+    "timestamp": "2025-04-13T10:24:03.850Z",
     "test": {
       "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
       "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
@@ -2585,7 +2585,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/labs/139/posts",
+      "url": "/api/labs/157/posts",
       "headers": {},
       "body": {}
     },
@@ -2595,28 +2595,28 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "626",
-        "etag": "W/\"272-lhSNPXGV5mC/NCbI2kxqbmIe2F4\"",
-        "date": "Sun, 13 Apr 2025 10:19:39 GMT",
+        "etag": "W/\"272-CNJuSlQjmqvHh7BAbf7jLTThnrk\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": [
         {
-          "id": 276,
-          "userId": 407,
-          "circleId": 359,
+          "id": 286,
+          "userId": 424,
+          "circleId": 378,
           "labId": null,
           "labExperiment": false,
           "targetRole": null,
           "content": "This is a test post for lab validation",
-          "createdAt": "2025-04-13T10:19:34.068Z",
+          "createdAt": "2025-04-13T10:23:58.320Z",
           "circle": {
-            "id": 359,
+            "id": 378,
             "name": "Test Circle for Lab Validation",
             "description": "A circle for testing lab validation",
             "icon": null,
             "color": null,
-            "createdAt": "2025-04-13T10:19:33.039Z",
-            "userId": 407,
+            "createdAt": "2025-04-13T10:23:57.340Z",
+            "userId": 424,
             "isDefault": false,
             "visibility": "public",
             "role": "control"
@@ -2624,21 +2624,21 @@
           "interactions": [],
           "pendingResponses": [
             {
-              "id": 350,
-              "postId": 276,
-              "aiFollowerId": 557,
-              "scheduledFor": "2025-04-13T10:20:37.201Z",
+              "id": 352,
+              "postId": 286,
+              "aiFollowerId": 569,
+              "scheduledFor": "2025-04-13T10:25:01.802Z",
               "processed": false,
               "metadata": null,
-              "createdAt": "2025-04-13T10:19:37.235Z"
+              "createdAt": "2025-04-13T10:24:01.835Z"
             }
           ]
         }
       ]
     },
     "error": null,
-    "duration": 588,
-    "timestamp": "2025-04-13T10:19:39.094Z",
+    "duration": 605,
+    "timestamp": "2025-04-13T10:24:03.851Z",
     "test": {
       "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
       "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
@@ -2648,7 +2648,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/labs/139/posts",
+      "url": "/api/labs/157/posts",
       "headers": {},
       "body": {}
     },
@@ -2658,28 +2658,28 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "626",
-        "etag": "W/\"272-lhSNPXGV5mC/NCbI2kxqbmIe2F4\"",
-        "date": "Sun, 13 Apr 2025 10:19:39 GMT",
+        "etag": "W/\"272-CNJuSlQjmqvHh7BAbf7jLTThnrk\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": [
         {
-          "id": 276,
-          "userId": 407,
-          "circleId": 359,
+          "id": 286,
+          "userId": 424,
+          "circleId": 378,
           "labId": null,
           "labExperiment": false,
           "targetRole": null,
           "content": "This is a test post for lab validation",
-          "createdAt": "2025-04-13T10:19:34.068Z",
+          "createdAt": "2025-04-13T10:23:58.320Z",
           "circle": {
-            "id": 359,
+            "id": 378,
             "name": "Test Circle for Lab Validation",
             "description": "A circle for testing lab validation",
             "icon": null,
             "color": null,
-            "createdAt": "2025-04-13T10:19:33.039Z",
-            "userId": 407,
+            "createdAt": "2025-04-13T10:23:57.340Z",
+            "userId": 424,
             "isDefault": false,
             "visibility": "public",
             "role": "control"
@@ -2687,21 +2687,21 @@
           "interactions": [],
           "pendingResponses": [
             {
-              "id": 350,
-              "postId": 276,
-              "aiFollowerId": 557,
-              "scheduledFor": "2025-04-13T10:20:37.201Z",
+              "id": 352,
+              "postId": 286,
+              "aiFollowerId": 569,
+              "scheduledFor": "2025-04-13T10:25:01.802Z",
               "processed": false,
               "metadata": null,
-              "createdAt": "2025-04-13T10:19:37.235Z"
+              "createdAt": "2025-04-13T10:24:01.835Z"
             }
           ]
         }
       ]
     },
     "error": null,
-    "duration": 589,
-    "timestamp": "2025-04-13T10:19:39.095Z",
+    "duration": 608,
+    "timestamp": "2025-04-13T10:24:03.855Z",
     "test": {
       "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
       "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
@@ -2711,7 +2711,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/labs/139/posts",
+      "url": "/api/labs/157/posts",
       "headers": {},
       "body": {}
     },
@@ -2721,28 +2721,28 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "626",
-        "etag": "W/\"272-lhSNPXGV5mC/NCbI2kxqbmIe2F4\"",
-        "date": "Sun, 13 Apr 2025 10:19:39 GMT",
+        "etag": "W/\"272-CNJuSlQjmqvHh7BAbf7jLTThnrk\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": [
         {
-          "id": 276,
-          "userId": 407,
-          "circleId": 359,
+          "id": 286,
+          "userId": 424,
+          "circleId": 378,
           "labId": null,
           "labExperiment": false,
           "targetRole": null,
           "content": "This is a test post for lab validation",
-          "createdAt": "2025-04-13T10:19:34.068Z",
+          "createdAt": "2025-04-13T10:23:58.320Z",
           "circle": {
-            "id": 359,
+            "id": 378,
             "name": "Test Circle for Lab Validation",
             "description": "A circle for testing lab validation",
             "icon": null,
             "color": null,
-            "createdAt": "2025-04-13T10:19:33.039Z",
-            "userId": 407,
+            "createdAt": "2025-04-13T10:23:57.340Z",
+            "userId": 424,
             "isDefault": false,
             "visibility": "public",
             "role": "control"
@@ -2750,21 +2750,21 @@
           "interactions": [],
           "pendingResponses": [
             {
-              "id": 350,
-              "postId": 276,
-              "aiFollowerId": 557,
-              "scheduledFor": "2025-04-13T10:20:37.201Z",
+              "id": 352,
+              "postId": 286,
+              "aiFollowerId": 569,
+              "scheduledFor": "2025-04-13T10:25:01.802Z",
               "processed": false,
               "metadata": null,
-              "createdAt": "2025-04-13T10:19:37.235Z"
+              "createdAt": "2025-04-13T10:24:01.835Z"
             }
           ]
         }
       ]
     },
     "error": null,
-    "duration": 600,
-    "timestamp": "2025-04-13T10:19:39.105Z",
+    "duration": 611,
+    "timestamp": "2025-04-13T10:24:03.856Z",
     "test": {
       "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
       "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
@@ -2774,7 +2774,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/labs/139/posts",
+      "url": "/api/labs/157/posts",
       "headers": {},
       "body": {}
     },
@@ -2784,28 +2784,28 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "626",
-        "etag": "W/\"272-lhSNPXGV5mC/NCbI2kxqbmIe2F4\"",
-        "date": "Sun, 13 Apr 2025 10:19:39 GMT",
+        "etag": "W/\"272-CNJuSlQjmqvHh7BAbf7jLTThnrk\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": [
         {
-          "id": 276,
-          "userId": 407,
-          "circleId": 359,
+          "id": 286,
+          "userId": 424,
+          "circleId": 378,
           "labId": null,
           "labExperiment": false,
           "targetRole": null,
           "content": "This is a test post for lab validation",
-          "createdAt": "2025-04-13T10:19:34.068Z",
+          "createdAt": "2025-04-13T10:23:58.320Z",
           "circle": {
-            "id": 359,
+            "id": 378,
             "name": "Test Circle for Lab Validation",
             "description": "A circle for testing lab validation",
             "icon": null,
             "color": null,
-            "createdAt": "2025-04-13T10:19:33.039Z",
-            "userId": 407,
+            "createdAt": "2025-04-13T10:23:57.340Z",
+            "userId": 424,
             "isDefault": false,
             "visibility": "public",
             "role": "control"
@@ -2813,21 +2813,21 @@
           "interactions": [],
           "pendingResponses": [
             {
-              "id": 350,
-              "postId": 276,
-              "aiFollowerId": 557,
-              "scheduledFor": "2025-04-13T10:20:37.201Z",
+              "id": 352,
+              "postId": 286,
+              "aiFollowerId": 569,
+              "scheduledFor": "2025-04-13T10:25:01.802Z",
               "processed": false,
               "metadata": null,
-              "createdAt": "2025-04-13T10:19:37.235Z"
+              "createdAt": "2025-04-13T10:24:01.835Z"
             }
           ]
         }
       ]
     },
     "error": null,
-    "duration": 606,
-    "timestamp": "2025-04-13T10:19:39.112Z",
+    "duration": 614,
+    "timestamp": "2025-04-13T10:24:03.859Z",
     "test": {
       "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
       "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
@@ -2837,7 +2837,7 @@
   {
     "request": {
       "method": "GET",
-      "url": "/api/labs/139/posts",
+      "url": "/api/labs/157/posts",
       "headers": {},
       "body": {}
     },
@@ -2847,28 +2847,28 @@
         "x-powered-by": "Express",
         "content-type": "application/json; charset=utf-8",
         "content-length": "626",
-        "etag": "W/\"272-lhSNPXGV5mC/NCbI2kxqbmIe2F4\"",
-        "date": "Sun, 13 Apr 2025 10:19:39 GMT",
+        "etag": "W/\"272-CNJuSlQjmqvHh7BAbf7jLTThnrk\"",
+        "date": "Sun, 13 Apr 2025 10:24:03 GMT",
         "connection": "close"
       },
       "body": [
         {
-          "id": 276,
-          "userId": 407,
-          "circleId": 359,
+          "id": 286,
+          "userId": 424,
+          "circleId": 378,
           "labId": null,
           "labExperiment": false,
           "targetRole": null,
           "content": "This is a test post for lab validation",
-          "createdAt": "2025-04-13T10:19:34.068Z",
+          "createdAt": "2025-04-13T10:23:58.320Z",
           "circle": {
-            "id": 359,
+            "id": 378,
             "name": "Test Circle for Lab Validation",
             "description": "A circle for testing lab validation",
             "icon": null,
             "color": null,
-            "createdAt": "2025-04-13T10:19:33.039Z",
-            "userId": 407,
+            "createdAt": "2025-04-13T10:23:57.340Z",
+            "userId": 424,
             "isDefault": false,
             "visibility": "public",
             "role": "control"
@@ -2876,21 +2876,21 @@
           "interactions": [],
           "pendingResponses": [
             {
-              "id": 350,
-              "postId": 276,
-              "aiFollowerId": 557,
-              "scheduledFor": "2025-04-13T10:20:37.201Z",
+              "id": 352,
+              "postId": 286,
+              "aiFollowerId": 569,
+              "scheduledFor": "2025-04-13T10:25:01.802Z",
               "processed": false,
               "metadata": null,
-              "createdAt": "2025-04-13T10:19:37.235Z"
+              "createdAt": "2025-04-13T10:24:01.835Z"
             }
           ]
         }
       ]
     },
     "error": null,
-    "duration": 609,
-    "timestamp": "2025-04-13T10:19:39.114Z",
+    "duration": 617,
+    "timestamp": "2025-04-13T10:24:03.862Z",
     "test": {
       "name": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",
       "fullName": "Lab Validation Tests Can verify lab posts are properly processed by ThreadManager",

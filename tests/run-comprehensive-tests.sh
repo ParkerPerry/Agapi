@@ -61,7 +61,8 @@ fi
 if [ "$USE_CONSOLIDATED_TESTS" = true ]; then
   # Run all tests at once using the reporting config
   echo "🔄 Running all comprehensive tests with consolidated reporting..."
-  npx jest --config jest.comprehensive-report.config.cjs
+  # Set a timeout to ensure process terminates even if tests hang
+  npx jest --config jest.comprehensive-report.config.cjs --forceExit --detectOpenHandles
   
   TEST_EXIT_CODE=$?
   

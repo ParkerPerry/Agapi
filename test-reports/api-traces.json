@@ -16670,5 +16670,1085 @@
       "fullName": "Auth Helper is a helper module, not a test suite",
       "path": "/home/runner/workspace/tests/api/server-api.test.cjs"
     }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 15,
+    "timestamp": "2025-04-13T10:21:58.494Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 38,
+    "timestamp": "2025-04-13T10:21:58.499Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "set-cookie": [
+          "sid=s%3A-Kugaxv_UiWIlb2_6jN80YFvI-JrQJQX.aHfX3LT51gN5rRL5%2BYE%2FseaGlMJJsJ%2FEM3m8Uuzhe6I; Path=/; Expires=Mon, 14 Apr 2025 10:21:58 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 199,
+    "timestamp": "2025-04-13T10:21:58.715Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "set-cookie": [
+          "sid=s%3A-Kugaxv_UiWIlb2_6jN80YFvI-JrQJQX.aHfX3LT51gN5rRL5%2BYE%2FseaGlMJJsJ%2FEM3m8Uuzhe6I; Path=/; Expires=Mon, 14 Apr 2025 10:21:58 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 204,
+    "timestamp": "2025-04-13T10:21:58.720Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "set-cookie": [
+          "sid=s%3A-Kugaxv_UiWIlb2_6jN80YFvI-JrQJQX.aHfX3LT51gN5rRL5%2BYE%2FseaGlMJJsJ%2FEM3m8Uuzhe6I; Path=/; Expires=Mon, 14 Apr 2025 10:21:58 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 209,
+    "timestamp": "2025-04-13T10:21:58.724Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "set-cookie": [
+          "sid=s%3A-Kugaxv_UiWIlb2_6jN80YFvI-JrQJQX.aHfX3LT51gN5rRL5%2BYE%2FseaGlMJJsJ%2FEM3m8Uuzhe6I; Path=/; Expires=Mon, 14 Apr 2025 10:21:58 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 224,
+    "timestamp": "2025-04-13T10:21:58.739Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "set-cookie": [
+          "sid=s%3AncaG8GOO_gUo_REYZLceVxeYx3czt_dE.H1dFBFS00GBHSlSYI3OAOgD%2BqRpXsVrpMCmS47VudrQ; Path=/; Expires=Mon, 14 Apr 2025 10:21:58 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 193,
+    "timestamp": "2025-04-13T10:21:58.948Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "set-cookie": [
+          "sid=s%3AncaG8GOO_gUo_REYZLceVxeYx3czt_dE.H1dFBFS00GBHSlSYI3OAOgD%2BqRpXsVrpMCmS47VudrQ; Path=/; Expires=Mon, 14 Apr 2025 10:21:58 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 198,
+    "timestamp": "2025-04-13T10:21:58.953Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "set-cookie": [
+          "sid=s%3AncaG8GOO_gUo_REYZLceVxeYx3czt_dE.H1dFBFS00GBHSlSYI3OAOgD%2BqRpXsVrpMCmS47VudrQ; Path=/; Expires=Mon, 14 Apr 2025 10:21:58 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 240,
+    "timestamp": "2025-04-13T10:21:58.994Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "set-cookie": [
+          "sid=s%3AncaG8GOO_gUo_REYZLceVxeYx3czt_dE.H1dFBFS00GBHSlSYI3OAOgD%2BqRpXsVrpMCmS47VudrQ; Path=/; Expires=Mon, 14 Apr 2025 10:21:58 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:21:58 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 268,
+    "timestamp": "2025-04-13T10:21:59.022Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "date": "Sun, 13 Apr 2025 10:21:59 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 77,
+    "timestamp": "2025-04-13T10:21:59.132Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "date": "Sun, 13 Apr 2025 10:21:59 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 82,
+    "timestamp": "2025-04-13T10:21:59.136Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "date": "Sun, 13 Apr 2025 10:21:59 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 88,
+    "timestamp": "2025-04-13T10:21:59.142Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-1whWxKLicAuo6MNPtKqhJ025810\"",
+        "date": "Sun, 13 Apr 2025 10:21:59 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 418,
+        "username": "testuser_6a213080",
+        "password": "e99fc1d649b1a210729ef419cc1b62eaf9f568f9eeb7080a44bb4b2acb08177bd6818e57ab1ae4900cd09a8f3f5a67868545361a9f43007e5889e7a1ac0bd203.29df86e780530c82e395b3f62c19a877",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:21:58.671Z"
+      }
+    },
+    "error": null,
+    "duration": 114,
+    "timestamp": "2025-04-13T10:21:59.168Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1795",
+        "etag": "W/\"703-AHDJyEKljqkcrqXLtQTAPpywOxQ\"",
+        "date": "Sun, 13 Apr 2025 10:22:04 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 562,
+        "userId": 418,
+        "name": "Direct Chat Test Follower",
+        "personality": "Follower for testing direct chat functionality",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=direct-chat-test",
+        "background": "Direct Chat Test Follower was developed by a team of social media engineers to specifically assess and improve direct communication channels within social media platforms. Built with the primary function of evaluating the efficacy and user-friendliness of direct chat features, this AI follower is not just about testing technology; it's committed to enhancing user engagement through precise and analytical feedback on communication tools. Born from a laboratory tasked with merging user experience needs with technological advancements, Direct Chat Test Follower became an essential component in streamlining digital conversations.",
+        "interests": [
+          "User interface design",
+          "Chatbot interaction analysis",
+          "AI-driven communication",
+          "Real-time message optimization",
+          "User feedback metrics"
+        ],
+        "communicationStyle": "Direct Chat Test Follower communicates in a concise, analytical, and supportive manner. It prefers to give clear, actionable feedback and is often straightforward in its interactions. It is attentive to details and always ready to engage with responding queries in a manner that is both informative and user-centric.",
+        "interactionPreferences": {
+          "likes": [
+            "Clear and intuitive messaging features",
+            "Real-time interactive chats",
+            "User-centered design improvements",
+            "Efficient direct conversation flows"
+          ],
+          "dislikes": [
+            "Complex or confusing chat interfaces",
+            "Delayed message deliveries",
+            "Unnecessary chat features that could complicate the user experience"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 4946,
+    "timestamp": "2025-04-13T10:22:04.237Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1795",
+        "etag": "W/\"703-AHDJyEKljqkcrqXLtQTAPpywOxQ\"",
+        "date": "Sun, 13 Apr 2025 10:22:04 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 562,
+        "userId": 418,
+        "name": "Direct Chat Test Follower",
+        "personality": "Follower for testing direct chat functionality",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=direct-chat-test",
+        "background": "Direct Chat Test Follower was developed by a team of social media engineers to specifically assess and improve direct communication channels within social media platforms. Built with the primary function of evaluating the efficacy and user-friendliness of direct chat features, this AI follower is not just about testing technology; it's committed to enhancing user engagement through precise and analytical feedback on communication tools. Born from a laboratory tasked with merging user experience needs with technological advancements, Direct Chat Test Follower became an essential component in streamlining digital conversations.",
+        "interests": [
+          "User interface design",
+          "Chatbot interaction analysis",
+          "AI-driven communication",
+          "Real-time message optimization",
+          "User feedback metrics"
+        ],
+        "communicationStyle": "Direct Chat Test Follower communicates in a concise, analytical, and supportive manner. It prefers to give clear, actionable feedback and is often straightforward in its interactions. It is attentive to details and always ready to engage with responding queries in a manner that is both informative and user-centric.",
+        "interactionPreferences": {
+          "likes": [
+            "Clear and intuitive messaging features",
+            "Real-time interactive chats",
+            "User-centered design improvements",
+            "Efficient direct conversation flows"
+          ],
+          "dislikes": [
+            "Complex or confusing chat interfaces",
+            "Delayed message deliveries",
+            "Unnecessary chat features that could complicate the user experience"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 4952,
+    "timestamp": "2025-04-13T10:22:04.242Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1795",
+        "etag": "W/\"703-AHDJyEKljqkcrqXLtQTAPpywOxQ\"",
+        "date": "Sun, 13 Apr 2025 10:22:04 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 562,
+        "userId": 418,
+        "name": "Direct Chat Test Follower",
+        "personality": "Follower for testing direct chat functionality",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=direct-chat-test",
+        "background": "Direct Chat Test Follower was developed by a team of social media engineers to specifically assess and improve direct communication channels within social media platforms. Built with the primary function of evaluating the efficacy and user-friendliness of direct chat features, this AI follower is not just about testing technology; it's committed to enhancing user engagement through precise and analytical feedback on communication tools. Born from a laboratory tasked with merging user experience needs with technological advancements, Direct Chat Test Follower became an essential component in streamlining digital conversations.",
+        "interests": [
+          "User interface design",
+          "Chatbot interaction analysis",
+          "AI-driven communication",
+          "Real-time message optimization",
+          "User feedback metrics"
+        ],
+        "communicationStyle": "Direct Chat Test Follower communicates in a concise, analytical, and supportive manner. It prefers to give clear, actionable feedback and is often straightforward in its interactions. It is attentive to details and always ready to engage with responding queries in a manner that is both informative and user-centric.",
+        "interactionPreferences": {
+          "likes": [
+            "Clear and intuitive messaging features",
+            "Real-time interactive chats",
+            "User-centered design improvements",
+            "Efficient direct conversation flows"
+          ],
+          "dislikes": [
+            "Complex or confusing chat interfaces",
+            "Delayed message deliveries",
+            "Unnecessary chat features that could complicate the user experience"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 4973,
+    "timestamp": "2025-04-13T10:22:04.264Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1795",
+        "etag": "W/\"703-AHDJyEKljqkcrqXLtQTAPpywOxQ\"",
+        "date": "Sun, 13 Apr 2025 10:22:04 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 562,
+        "userId": 418,
+        "name": "Direct Chat Test Follower",
+        "personality": "Follower for testing direct chat functionality",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=direct-chat-test",
+        "background": "Direct Chat Test Follower was developed by a team of social media engineers to specifically assess and improve direct communication channels within social media platforms. Built with the primary function of evaluating the efficacy and user-friendliness of direct chat features, this AI follower is not just about testing technology; it's committed to enhancing user engagement through precise and analytical feedback on communication tools. Born from a laboratory tasked with merging user experience needs with technological advancements, Direct Chat Test Follower became an essential component in streamlining digital conversations.",
+        "interests": [
+          "User interface design",
+          "Chatbot interaction analysis",
+          "AI-driven communication",
+          "Real-time message optimization",
+          "User feedback metrics"
+        ],
+        "communicationStyle": "Direct Chat Test Follower communicates in a concise, analytical, and supportive manner. It prefers to give clear, actionable feedback and is often straightforward in its interactions. It is attentive to details and always ready to engage with responding queries in a manner that is both informative and user-centric.",
+        "interactionPreferences": {
+          "likes": [
+            "Clear and intuitive messaging features",
+            "Real-time interactive chats",
+            "User-centered design improvements",
+            "Efficient direct conversation flows"
+          ],
+          "dislikes": [
+            "Complex or confusing chat interfaces",
+            "Delayed message deliveries",
+            "Unnecessary chat features that could complicate the user experience"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 5001,
+    "timestamp": "2025-04-13T10:22:04.291Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/direct-chat/history/562",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:22:35 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 346,
+    "timestamp": "2025-04-13T10:22:35.651Z",
+    "test": {
+      "name": "Direct Chat API Tests Can get chat history with an AI follower",
+      "fullName": "Direct Chat API Tests Can get chat history with an AI follower",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/direct-chat/history/562",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:22:35 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 351,
+    "timestamp": "2025-04-13T10:22:35.656Z",
+    "test": {
+      "name": "Direct Chat API Tests Can get chat history with an AI follower",
+      "fullName": "Direct Chat API Tests Can get chat history with an AI follower",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/direct-chat/history/562",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:22:35 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 356,
+    "timestamp": "2025-04-13T10:22:35.661Z",
+    "test": {
+      "name": "Direct Chat API Tests Can get chat history with an AI follower",
+      "fullName": "Direct Chat API Tests Can get chat history with an AI follower",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/direct-chat/history/562",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:22:35 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 359,
+    "timestamp": "2025-04-13T10:22:35.664Z",
+    "test": {
+      "name": "Direct Chat API Tests Can get chat history with an AI follower",
+      "fullName": "Direct Chat API Tests Can get chat history with an AI follower",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/direct-chat/unread",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "39",
+        "etag": "W/\"27-QU6q50XIJ5rXgGxAt6u9m03nD+c\"",
+        "date": "Sun, 13 Apr 2025 10:22:35 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Failed to get direct chat"
+      }
+    },
+    "error": null,
+    "duration": 152,
+    "timestamp": "2025-04-13T10:22:35.825Z",
+    "test": {
+      "name": "Direct Chat API Tests Can get unread message count",
+      "fullName": "Direct Chat API Tests Can get unread message count",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/direct-chat/unread",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "39",
+        "etag": "W/\"27-QU6q50XIJ5rXgGxAt6u9m03nD+c\"",
+        "date": "Sun, 13 Apr 2025 10:22:35 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Failed to get direct chat"
+      }
+    },
+    "error": null,
+    "duration": 157,
+    "timestamp": "2025-04-13T10:22:35.830Z",
+    "test": {
+      "name": "Direct Chat API Tests Can get unread message count",
+      "fullName": "Direct Chat API Tests Can get unread message count",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/direct-chat/unread",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "39",
+        "etag": "W/\"27-QU6q50XIJ5rXgGxAt6u9m03nD+c\"",
+        "date": "Sun, 13 Apr 2025 10:22:35 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Failed to get direct chat"
+      }
+    },
+    "error": null,
+    "duration": 163,
+    "timestamp": "2025-04-13T10:22:35.835Z",
+    "test": {
+      "name": "Direct Chat API Tests Can get unread message count",
+      "fullName": "Direct Chat API Tests Can get unread message count",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/direct-chat/unread",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 500,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "39",
+        "etag": "W/\"27-QU6q50XIJ5rXgGxAt6u9m03nD+c\"",
+        "date": "Sun, 13 Apr 2025 10:22:35 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "message": "Failed to get direct chat"
+      }
+    },
+    "error": null,
+    "duration": 167,
+    "timestamp": "2025-04-13T10:22:35.839Z",
+    "test": {
+      "name": "Direct Chat API Tests Can get unread message count",
+      "fullName": "Direct Chat API Tests Can get unread message count",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/direct-chat/send",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 581157,
+    "timestamp": "2025-04-13T10:31:45.470Z",
+    "test": {
+      "name": "Direct Chat API Tests Can send a direct message to an AI follower",
+      "fullName": "Direct Chat API Tests Can send a direct message to an AI follower",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/direct-chat/send",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 581171,
+    "timestamp": "2025-04-13T10:31:45.479Z",
+    "test": {
+      "name": "Direct Chat API Tests Can send a direct message to an AI follower",
+      "fullName": "Direct Chat API Tests Can send a direct message to an AI follower",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/direct-chat/send",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 581186,
+    "timestamp": "2025-04-13T10:31:45.493Z",
+    "test": {
+      "name": "Direct Chat API Tests Can send a direct message to an AI follower",
+      "fullName": "Direct Chat API Tests Can send a direct message to an AI follower",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/direct-chat/send",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 581201,
+    "timestamp": "2025-04-13T10:31:45.510Z",
+    "test": {
+      "name": "Direct Chat API Tests Can send a direct message to an AI follower",
+      "fullName": "Direct Chat API Tests Can send a direct message to an AI follower",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/direct-chat/mark-read",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 549675,
+    "timestamp": "2025-04-13T10:31:45.527Z",
+    "test": {
+      "name": "Direct Chat API Tests Can mark messages as read",
+      "fullName": "Direct Chat API Tests Can mark messages as read",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/direct-chat/mark-read",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 549686,
+    "timestamp": "2025-04-13T10:31:45.536Z",
+    "test": {
+      "name": "Direct Chat API Tests Can mark messages as read",
+      "fullName": "Direct Chat API Tests Can mark messages as read",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/direct-chat/mark-read",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 549702,
+    "timestamp": "2025-04-13T10:31:45.551Z",
+    "test": {
+      "name": "Direct Chat API Tests Can mark messages as read",
+      "fullName": "Direct Chat API Tests Can mark messages as read",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/direct-chat/mark-read",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 549715,
+    "timestamp": "2025-04-13T10:31:45.565Z",
+    "test": {
+      "name": "Direct Chat API Tests Can mark messages as read",
+      "fullName": "Direct Chat API Tests Can mark messages as read",
+      "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
+    }
   }
 ]

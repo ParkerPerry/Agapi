@@ -109,8 +109,54 @@ function wrapSuperTestAgent(agent) {
         body: request._data || {}
       };
       
-      // Intercept both .end() and .then() since Jest tests 
-      // commonly use .then() with supertest
+      // Flag to track if this request has already been traced
+      // This prevents duplicate entries when both .end() and .then() are used
+      let hasBeenTraced = false;
+      
+      // Helper function to create a trace entry
+      const createTraceEntry = (res, err, duration) => {
+        return {
+          request: requestData,
+          response: res ? {
+            status: res.status,
+            statusText: res.statusText,
+            headers: res.headers,
+            body: res.body
+          } : null,
+          error: err ? {
+            message: err.message,
+            stack: err.stack
+          } : null,
+          duration,
+          timestamp: new Date().toISOString(),
+          test: currentTest
+        };
+      };
+      
+      // Helper function to log the trace once
+      const logTrace = (res, err, duration) => {
+        if (hasBeenTraced) {
+          // Skip if already traced to prevent duplicates
+          return;
+        }
+        
+        hasBeenTraced = true;
+        
+        const statusText = res ? `${res.status}` : (err ? 'error' : 'unknown');
+        console.log(`[API Trace] Completed ${method.toUpperCase()} request to ${url} with status ${statusText}`);
+        
+        // Create and save trace entry
+        const traceEntry = createTraceEntry(res, err, duration);
+        saveTraceData(traceEntry);
+        
+        // Also log to memory-based logger for reporter
+        apiTraceLogger.logApiCall(
+          requestData,
+          traceEntry.response,
+          err,
+          duration
+        );
+      };
       
       // Override .end() method
       request.end = function(callback) {
@@ -120,36 +166,7 @@ function wrapSuperTestAgent(agent) {
           const endTime = Date.now();
           const duration = endTime - startTime;
           
-          console.log(`[API Trace] Completed ${method.toUpperCase()} request to ${url} with status ${res ? res.status : 'error'}`);
-          
-          // Prepare trace data
-          const traceEntry = {
-            request: requestData,
-            response: res ? {
-              status: res.status,
-              statusText: res.statusText,
-              headers: res.headers,
-              body: res.body
-            } : null,
-            error: err ? {
-              message: err.message,
-              stack: err.stack
-            } : null,
-            duration,
-            timestamp: new Date().toISOString(),
-            test: currentTest
-          };
-          
-          // Save to our file-based storage
-          saveTraceData(traceEntry);
-          
-          // Also log to memory-based logger for reporter
-          apiTraceLogger.logApiCall(
-            requestData,
-            traceEntry.response,
-            err,
-            duration
-          );
+          logTrace(res, err, duration);
           
           // Call the original callback
           if (callback) {
@@ -167,33 +184,7 @@ function wrapSuperTestAgent(agent) {
             const endTime = Date.now();
             const duration = endTime - startTime;
             
-            console.log(`[API Trace] Completed ${method.toUpperCase()} request to ${url} with status ${res ? res.status : 'unknown'}`);
-            
-            // Prepare trace data
-            const traceEntry = {
-              request: requestData,
-              response: res ? {
-                status: res.status,
-                statusText: res.statusText,
-                headers: res.headers,
-                body: res.body
-              } : null,
-              error: null,
-              duration,
-              timestamp: new Date().toISOString(),
-              test: currentTest
-            };
-            
-            // Save to our file-based storage
-            saveTraceData(traceEntry);
-            
-            // Also log to memory-based logger for reporter
-            apiTraceLogger.logApiCall(
-              requestData,
-              traceEntry.response,
-              null,
-              duration
-            );
+            logTrace(res, null, duration);
             
             return onFulfilled ? onFulfilled(res) : res;
           },
@@ -201,31 +192,7 @@ function wrapSuperTestAgent(agent) {
             const endTime = Date.now();
             const duration = endTime - startTime;
             
-            console.log(`[API Trace] Error in ${method.toUpperCase()} request to ${url}: ${err.message}`);
-            
-            // Prepare trace data
-            const traceEntry = {
-              request: requestData,
-              response: null,
-              error: {
-                message: err.message,
-                stack: err.stack
-              },
-              duration,
-              timestamp: new Date().toISOString(),
-              test: currentTest
-            };
-            
-            // Save to our file-based storage
-            saveTraceData(traceEntry);
-            
-            // Also log to memory-based logger for reporter
-            apiTraceLogger.logApiCall(
-              requestData,
-              null,
-              err,
-              duration
-            );
+            logTrace(null, err, duration);
             
             return onRejected ? onRejected(err) : Promise.reject(err);
           }
