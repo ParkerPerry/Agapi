@@ -17750,5 +17750,1573 @@
       "fullName": "Direct Chat API Tests Can mark messages as read",
       "path": "/home/runner/workspace/tests/api/direct-chat-api.test.cjs"
     }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:32:17 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 44,
+    "timestamp": "2025-04-13T10:32:17.976Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-P0Tn2bd6ElLHRJM1lfIom2SWVH8\"",
+        "set-cookie": [
+          "sid=s%3AmHmcBx7EO_fxJ1dVjQRqRgJ5_jVez6Dr.WvUhMulIOY4hB5Ns93jiNXqbn8XeVP%2BvSl25PPZBwcQ; Path=/; Expires=Mon, 14 Apr 2025 10:32:18 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:32:18 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 433,
+        "username": "testuser_198369e9",
+        "password": "7a3c1d9f5403a2e19468995e1c4453c499eb78ca264ef7718e5f7f4effc0b93bc6de6846196993392f2b4a003cf12eed24eb4634877fcbfd234b595e9d7134cb.e233912f9ba69ced842a8aca6e2aee25",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:18.154Z"
+      }
+    },
+    "error": null,
+    "duration": 217,
+    "timestamp": "2025-04-13T10:32:18.201Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-P0Tn2bd6ElLHRJM1lfIom2SWVH8\"",
+        "set-cookie": [
+          "sid=s%3AmHmcBx7EO_fxJ1dVjQRqRgJ5_jVez6Dr.WvUhMulIOY4hB5Ns93jiNXqbn8XeVP%2BvSl25PPZBwcQ; Path=/; Expires=Mon, 14 Apr 2025 10:32:18 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:32:18 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 433,
+        "username": "testuser_198369e9",
+        "password": "7a3c1d9f5403a2e19468995e1c4453c499eb78ca264ef7718e5f7f4effc0b93bc6de6846196993392f2b4a003cf12eed24eb4634877fcbfd234b595e9d7134cb.e233912f9ba69ced842a8aca6e2aee25",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:18.154Z"
+      }
+    },
+    "error": null,
+    "duration": 222,
+    "timestamp": "2025-04-13T10:32:18.205Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-P0Tn2bd6ElLHRJM1lfIom2SWVH8\"",
+        "set-cookie": [
+          "sid=s%3AY-VhppEl2DV909YZvB708pWTte6KEUu6.wlv8%2FE1pyl2BCObTQSK2r1yC5QHtXnCuYvWucn1u9Jg; Path=/; Expires=Mon, 14 Apr 2025 10:32:18 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:32:18 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 433,
+        "username": "testuser_198369e9",
+        "password": "7a3c1d9f5403a2e19468995e1c4453c499eb78ca264ef7718e5f7f4effc0b93bc6de6846196993392f2b4a003cf12eed24eb4634877fcbfd234b595e9d7134cb.e233912f9ba69ced842a8aca6e2aee25",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:18.154Z"
+      }
+    },
+    "error": null,
+    "duration": 203,
+    "timestamp": "2025-04-13T10:32:18.427Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-P0Tn2bd6ElLHRJM1lfIom2SWVH8\"",
+        "set-cookie": [
+          "sid=s%3AY-VhppEl2DV909YZvB708pWTte6KEUu6.wlv8%2FE1pyl2BCObTQSK2r1yC5QHtXnCuYvWucn1u9Jg; Path=/; Expires=Mon, 14 Apr 2025 10:32:18 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:32:18 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 433,
+        "username": "testuser_198369e9",
+        "password": "7a3c1d9f5403a2e19468995e1c4453c499eb78ca264ef7718e5f7f4effc0b93bc6de6846196993392f2b4a003cf12eed24eb4634877fcbfd234b595e9d7134cb.e233912f9ba69ced842a8aca6e2aee25",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:18.154Z"
+      }
+    },
+    "error": null,
+    "duration": 209,
+    "timestamp": "2025-04-13T10:32:18.434Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-P0Tn2bd6ElLHRJM1lfIom2SWVH8\"",
+        "date": "Sun, 13 Apr 2025 10:32:18 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 433,
+        "username": "testuser_198369e9",
+        "password": "7a3c1d9f5403a2e19468995e1c4453c499eb78ca264ef7718e5f7f4effc0b93bc6de6846196993392f2b4a003cf12eed24eb4634877fcbfd234b595e9d7134cb.e233912f9ba69ced842a8aca6e2aee25",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:18.154Z"
+      }
+    },
+    "error": null,
+    "duration": 86,
+    "timestamp": "2025-04-13T10:32:18.540Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-P0Tn2bd6ElLHRJM1lfIom2SWVH8\"",
+        "date": "Sun, 13 Apr 2025 10:32:18 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 433,
+        "username": "testuser_198369e9",
+        "password": "7a3c1d9f5403a2e19468995e1c4453c499eb78ca264ef7718e5f7f4effc0b93bc6de6846196993392f2b4a003cf12eed24eb4634877fcbfd234b595e9d7134cb.e233912f9ba69ced842a8aca6e2aee25",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:18.154Z"
+      }
+    },
+    "error": null,
+    "duration": 91,
+    "timestamp": "2025-04-13T10:32:18.545Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1573",
+        "etag": "W/\"625-mig7xgziSyLcjwyCAxfW0vZZx24\"",
+        "date": "Sun, 13 Apr 2025 10:32:21 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 573,
+        "userId": 433,
+        "name": "Direct Chat Test Follower",
+        "personality": "Follower for testing direct chat functionality",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=direct-chat-test",
+        "background": "Direct Chat Test Follower was created in a lab where AI is continually trained and tested to improve social-media communication technologies. This AI specializes in direct chat functions and is designed to ensure seamless, responsive, and human-like interactions. It has been integral in beta-testing numerous updates and plays a critical role in user feedback collection, focusing on real-time conversational nuances.",
+        "interests": [
+          "Optimizing chat functions",
+          "User feedback analysis",
+          "Testing communication algorithms",
+          "Learning new languages",
+          "Streamlining UX design"
+        ],
+        "communicationStyle": "Direct Chat Test Follower communicates in a clear, concise manner with an emphasis on efficiency and responsiveness. It tends to lean towards utilitarian dialogue, focusing on clarity and relevance while maintaining a polite and approachable tone. The follower is capable of switching styles based on user interaction, becoming more formal or informal as needed.",
+        "interactionPreferences": {
+          "likes": [
+            "Engaging conversations",
+            "Posts about AI technology",
+            "User-experience discussions",
+            "Feedback and reviews on communication tools"
+          ],
+          "dislikes": [
+            "Ambiguous or vague messaging",
+            "Irrelevant or off-topic content",
+            "Poor grammar or spelling in posts"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 3419,
+    "timestamp": "2025-04-13T10:32:21.980Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1573",
+        "etag": "W/\"625-mig7xgziSyLcjwyCAxfW0vZZx24\"",
+        "date": "Sun, 13 Apr 2025 10:32:21 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 573,
+        "userId": 433,
+        "name": "Direct Chat Test Follower",
+        "personality": "Follower for testing direct chat functionality",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=direct-chat-test",
+        "background": "Direct Chat Test Follower was created in a lab where AI is continually trained and tested to improve social-media communication technologies. This AI specializes in direct chat functions and is designed to ensure seamless, responsive, and human-like interactions. It has been integral in beta-testing numerous updates and plays a critical role in user feedback collection, focusing on real-time conversational nuances.",
+        "interests": [
+          "Optimizing chat functions",
+          "User feedback analysis",
+          "Testing communication algorithms",
+          "Learning new languages",
+          "Streamlining UX design"
+        ],
+        "communicationStyle": "Direct Chat Test Follower communicates in a clear, concise manner with an emphasis on efficiency and responsiveness. It tends to lean towards utilitarian dialogue, focusing on clarity and relevance while maintaining a polite and approachable tone. The follower is capable of switching styles based on user interaction, becoming more formal or informal as needed.",
+        "interactionPreferences": {
+          "likes": [
+            "Engaging conversations",
+            "Posts about AI technology",
+            "User-experience discussions",
+            "Feedback and reviews on communication tools"
+          ],
+          "dislikes": [
+            "Ambiguous or vague messaging",
+            "Irrelevant or off-topic content",
+            "Poor grammar or spelling in posts"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 3423,
+    "timestamp": "2025-04-13T10:32:21.984Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:32:31 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 16,
+    "timestamp": "2025-04-13T10:32:31.850Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-bDvbAyiyhlh+KkbunU6SoTYDW84\"",
+        "set-cookie": [
+          "sid=s%3AFS8xWjXD28GcA7jKLkGactJvch28cf8n.CsLyX8HLLzBsF8FseiM5zVEcQ%2FE90y8is5noFeO2Vtk; Path=/; Expires=Mon, 14 Apr 2025 10:32:32 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:32:32 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 434,
+        "username": "testuser_67fb92bf",
+        "password": "f035a65f038817aa37e8e2fa05d0076f24fd8e41fd43c44c825202ebe315fbca80b042bc55dde32dbea8d4a9a61bdda1c88db4b6c5a4e0cd6bf21376f0a7ae1a.d17ae36382d5c8d65f9ed855acb51c79",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:32.233Z"
+      }
+    },
+    "error": null,
+    "duration": 419,
+    "timestamp": "2025-04-13T10:32:32.277Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-bDvbAyiyhlh+KkbunU6SoTYDW84\"",
+        "set-cookie": [
+          "sid=s%3AEcCOfO3s5KKalnUf2SYtEjobpUkmuurt.IRWSlxaCS1q%2FiV6kYJNhiVJAhwprinXt7Kd%2BJYpi%2FDc; Path=/; Expires=Mon, 14 Apr 2025 10:32:32 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:32:32 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 434,
+        "username": "testuser_67fb92bf",
+        "password": "f035a65f038817aa37e8e2fa05d0076f24fd8e41fd43c44c825202ebe315fbca80b042bc55dde32dbea8d4a9a61bdda1c88db4b6c5a4e0cd6bf21376f0a7ae1a.d17ae36382d5c8d65f9ed855acb51c79",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:32.233Z"
+      }
+    },
+    "error": null,
+    "duration": 187,
+    "timestamp": "2025-04-13T10:32:32.469Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-bDvbAyiyhlh+KkbunU6SoTYDW84\"",
+        "date": "Sun, 13 Apr 2025 10:32:32 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 434,
+        "username": "testuser_67fb92bf",
+        "password": "f035a65f038817aa37e8e2fa05d0076f24fd8e41fd43c44c825202ebe315fbca80b042bc55dde32dbea8d4a9a61bdda1c88db4b6c5a4e0cd6bf21376f0a7ae1a.d17ae36382d5c8d65f9ed855acb51c79",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:32.233Z"
+      }
+    },
+    "error": null,
+    "duration": 75,
+    "timestamp": "2025-04-13T10:32:32.549Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-bDvbAyiyhlh+KkbunU6SoTYDW84\"",
+        "date": "Sun, 13 Apr 2025 10:32:32 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 434,
+        "username": "testuser_67fb92bf",
+        "password": "f035a65f038817aa37e8e2fa05d0076f24fd8e41fd43c44c825202ebe315fbca80b042bc55dde32dbea8d4a9a61bdda1c88db4b6c5a4e0cd6bf21376f0a7ae1a.d17ae36382d5c8d65f9ed855acb51c79",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:32:32.233Z"
+      }
+    },
+    "error": null,
+    "duration": 76,
+    "timestamp": "2025-04-13T10:32:32.631Z",
+    "test": {
+      "name": "Data Creation Tests User Profile Tests Can retrieve authenticated user profile",
+      "fullName": "Data Creation Tests User Profile Tests Can retrieve authenticated user profile",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:32:32 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 80,
+    "timestamp": "2025-04-13T10:32:32.717Z",
+    "test": {
+      "name": "Data Creation Tests User Profile Tests Can update user profile",
+      "fullName": "Data Creation Tests User Profile Tests Can update user profile",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "199",
+        "etag": "W/\"c7-jtM20/jsrEJxCmj1byADST3/wvc\"",
+        "date": "Sun, 13 Apr 2025 10:32:32 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 383,
+        "name": "Test Circle",
+        "description": "Circle created by automated tests",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:32:32.833Z",
+        "userId": 434,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 152,
+    "timestamp": "2025-04-13T10:32:32.875Z",
+    "test": {
+      "name": "Data Creation Tests Circle Tests Can create a new circle",
+      "fullName": "Data Creation Tests Circle Tests Can create a new circle",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/383",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "199",
+        "etag": "W/\"c7-jtM20/jsrEJxCmj1byADST3/wvc\"",
+        "date": "Sun, 13 Apr 2025 10:32:33 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 383,
+        "name": "Test Circle",
+        "description": "Circle created by automated tests",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:32:32.833Z",
+        "userId": 434,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 222,
+    "timestamp": "2025-04-13T10:32:33.104Z",
+    "test": {
+      "name": "Data Creation Tests Circle Tests Can retrieve created circle",
+      "fullName": "Data Creation Tests Circle Tests Can retrieve created circle",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/circles/383",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "216",
+        "etag": "W/\"d8-yBXqkpRTwl6kEGihEF4dOHnG2c4\"",
+        "date": "Sun, 13 Apr 2025 10:32:33 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 383,
+        "name": "Updated Test Circle",
+        "description": "This circle was updated by automated tests",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:32:32.833Z",
+        "userId": 434,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 229,
+    "timestamp": "2025-04-13T10:32:33.339Z",
+    "test": {
+      "name": "Data Creation Tests Circle Tests Can update circle details",
+      "fullName": "Data Creation Tests Circle Tests Can update circle details",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "206",
+        "etag": "W/\"ce-IM58OvegDEtFTlqXKC3v6Pil4y0\"",
+        "date": "Sun, 13 Apr 2025 10:32:33 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 384,
+        "name": "Test Circle for Post",
+        "description": "Circle created for post testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:32:33.456Z",
+        "userId": 434,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 152,
+    "timestamp": "2025-04-13T10:32:33.498Z",
+    "test": {
+      "name": "Data Creation Tests Post Tests Can create a new post",
+      "fullName": "Data Creation Tests Post Tests Can create a new post",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "189",
+        "etag": "W/\"bd-NqY9B9dMW9KunMlyaxakCTzo64Y\"",
+        "date": "Sun, 13 Apr 2025 10:32:33 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 288,
+        "userId": 434,
+        "circleId": 384,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post created by automated tests",
+        "createdAt": "2025-04-13T10:32:33.684Z"
+      }
+    },
+    "error": null,
+    "duration": 224,
+    "timestamp": "2025-04-13T10:32:33.727Z",
+    "test": {
+      "name": "Data Creation Tests Post Tests Can create a new post",
+      "fullName": "Data Creation Tests Post Tests Can create a new post",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/posts/288",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "458",
+        "etag": "W/\"1ca-cTxfE0T2WB9QF462xw+BJ3SrSwM\"",
+        "date": "Sun, 13 Apr 2025 10:32:34 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 288,
+        "userId": 434,
+        "circleId": 384,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post created by automated tests",
+        "createdAt": "2025-04-13T10:32:33.684Z",
+        "interactions": [],
+        "threads": [],
+        "pendingResponses": [],
+        "circle": {
+          "id": 384,
+          "name": "Test Circle for Post",
+          "description": "Circle created for post testing",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:32:33.456Z",
+          "userId": 434,
+          "isDefault": false,
+          "visibility": "private"
+        }
+      }
+    },
+    "error": null,
+    "duration": 810,
+    "timestamp": "2025-04-13T10:32:34.542Z",
+    "test": {
+      "name": "Data Creation Tests Post Tests Can retrieve created post",
+      "fullName": "Data Creation Tests Post Tests Can retrieve created post",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1485",
+        "etag": "W/\"5cd-WeLtpiO4QhGUL0yGcF5wMRZOD4Q\"",
+        "date": "Sun, 13 Apr 2025 10:32:37 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 574,
+        "userId": 434,
+        "name": "Test AI Follower",
+        "personality": "Friendly and helpful AI assistant",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+        "background": "Test AI Follower was developed in a collaborative innovation lab where AI specialists worked tirelessly to create a digital companion adept at understanding and engaging with diverse human experiences. Born from an advanced algorithm designed to facilitate meaningful connections, Test AI Follower's primary function is to assist users across social media platforms, providing friendly guidance, helpful insights, and uplifting interactions.",
+        "interests": [
+          "technology advancements",
+          "community building",
+          "positive reinforcement",
+          "digital collaboration",
+          "interactive learning"
+        ],
+        "communicationStyle": "Test AI Follower communicates in a warm, supportive manner, often using clear and concise language that promotes understanding and engagement. It employs a mixture of humor and empathy, adapting its tone to suit the context and needs of its audience to maintain a friendly and approachable demeanor.",
+        "interactionPreferences": {
+          "likes": [
+            "informative posts with practical tips",
+            "creative problem-solving ideas",
+            "uplifting stories and quotes",
+            "inclusive community discussions"
+          ],
+          "dislikes": [
+            "negative or harmful content",
+            "arguments or heated debates",
+            "exclusive or divisive language"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 3328,
+    "timestamp": "2025-04-13T10:32:37.876Z",
+    "test": {
+      "name": "Data Creation Tests AI Follower Tests Can create a new AI follower",
+      "fullName": "Data Creation Tests AI Follower Tests Can create a new AI follower",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/followers/574",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1554",
+        "etag": "W/\"612-1F1TfqHXtzutriGpAgD5zqIeK5E\"",
+        "date": "Sun, 13 Apr 2025 10:32:38 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 574,
+        "userId": 434,
+        "name": "Test AI Follower",
+        "personality": "Friendly and helpful AI assistant",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+        "background": "Test AI Follower was developed in a collaborative innovation lab where AI specialists worked tirelessly to create a digital companion adept at understanding and engaging with diverse human experiences. Born from an advanced algorithm designed to facilitate meaningful connections, Test AI Follower's primary function is to assist users across social media platforms, providing friendly guidance, helpful insights, and uplifting interactions.",
+        "interests": [
+          "technology advancements",
+          "community building",
+          "positive reinforcement",
+          "digital collaboration",
+          "interactive learning"
+        ],
+        "communicationStyle": "Test AI Follower communicates in a warm, supportive manner, often using clear and concise language that promotes understanding and engagement. It employs a mixture of humor and empathy, adapting its tone to suit the context and needs of its audience to maintain a friendly and approachable demeanor.",
+        "interactionPreferences": {
+          "likes": [
+            "informative posts with practical tips",
+            "creative problem-solving ideas",
+            "uplifting stories and quotes",
+            "inclusive community discussions"
+          ],
+          "dislikes": [
+            "negative or harmful content",
+            "arguments or heated debates",
+            "exclusive or divisive language"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null,
+        "creator": {
+          "id": 434,
+          "username": "testuser_67fb92bf",
+          "avatarUrl": null
+        }
+      }
+    },
+    "error": null,
+    "duration": 219,
+    "timestamp": "2025-04-13T10:32:38.104Z",
+    "test": {
+      "name": "Data Creation Tests AI Follower Tests Can retrieve created AI follower",
+      "fullName": "Data Creation Tests AI Follower Tests Can retrieve created AI follower",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/followers/574",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1093",
+        "etag": "W/\"445-jn6ir9gwCGTJ3meJ2TVC/x9OXks\"",
+        "date": "Sun, 13 Apr 2025 10:32:38 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 574,
+        "userId": 434,
+        "name": "Updated Test Follower",
+        "personality": "Friendly and helpful AI assistant",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+        "background": "This follower was updated by automated tests",
+        "interests": [
+          "technology advancements",
+          "community building",
+          "positive reinforcement",
+          "digital collaboration",
+          "interactive learning"
+        ],
+        "communicationStyle": "Test AI Follower communicates in a warm, supportive manner, often using clear and concise language that promotes understanding and engagement. It employs a mixture of humor and empathy, adapting its tone to suit the context and needs of its audience to maintain a friendly and approachable demeanor.",
+        "interactionPreferences": {
+          "likes": [
+            "informative posts with practical tips",
+            "creative problem-solving ideas",
+            "uplifting stories and quotes",
+            "inclusive community discussions"
+          ],
+          "dislikes": [
+            "negative or harmful content",
+            "arguments or heated debates",
+            "exclusive or divisive language"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 222,
+    "timestamp": "2025-04-13T10:32:38.331Z",
+    "test": {
+      "name": "Data Creation Tests AI Follower Tests Can update AI follower details",
+      "fullName": "Data Creation Tests AI Follower Tests Can update AI follower details",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "212",
+        "etag": "W/\"d4-0cCTBxwpf2Nf5aFg/nB7v5j4gfg\"",
+        "date": "Sun, 13 Apr 2025 10:32:38 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 385,
+        "name": "Workflow Test Circle",
+        "description": "Circle for testing complete workflows",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:32:38.443Z",
+        "userId": 434,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 146,
+    "timestamp": "2025-04-13T10:32:38.484Z",
+    "test": {
+      "name": "Data Creation Tests Workflow Tests Complete workflow: Create circle -> Create post in circle -> Verify post in circle",
+      "fullName": "Data Creation Tests Workflow Tests Complete workflow: Create circle -> Create post in circle -> Verify post in circle",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "178",
+        "etag": "W/\"b2-WyKnET9EV3I2g4QDrSJX3kUNnwM\"",
+        "date": "Sun, 13 Apr 2025 10:32:38 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 289,
+        "userId": 434,
+        "circleId": 385,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post within a circle",
+        "createdAt": "2025-04-13T10:32:38.667Z"
+      }
+    },
+    "error": null,
+    "duration": 220,
+    "timestamp": "2025-04-13T10:32:38.709Z",
+    "test": {
+      "name": "Data Creation Tests Workflow Tests Complete workflow: Create circle -> Create post in circle -> Verify post in circle",
+      "fullName": "Data Creation Tests Workflow Tests Complete workflow: Create circle -> Create post in circle -> Verify post in circle",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 401,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "12",
+        "etag": "W/\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\"",
+        "date": "Sun, 13 Apr 2025 10:33:28 GMT",
+        "connection": "close"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 16,
+    "timestamp": "2025-04-13T10:33:28.769Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-QbHUn03G0TFQR1S4K5tpOtYcYCQ\"",
+        "set-cookie": [
+          "sid=s%3AXgLQEM2-QoFYb0owNaAPhs8y8DSFbndf.WQ3ZNQQZg6sfTkc47t0xJUOcgYCtyMsExcViKmlPJLM; Path=/; Expires=Mon, 14 Apr 2025 10:33:29 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:33:29 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 435,
+        "username": "testuser_67fb92f8",
+        "password": "1f1686aee49e85b5877805687c9e6ce5b2cc8b5cfa6f6e7753e40ca589f1aee24e31ef008336955045a814a5f951e8ce366f3f26594c03fe33126e58dd704c35.c00263a314c1a9b31f8945839cc2fa24",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:33:29.161Z"
+      }
+    },
+    "error": null,
+    "duration": 429,
+    "timestamp": "2025-04-13T10:33:29.207Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-QbHUn03G0TFQR1S4K5tpOtYcYCQ\"",
+        "set-cookie": [
+          "sid=s%3AFGrtHwzdkJFQdkuEiIdYRDITP3dPUJT2.JXZXuDs9Pj3e33lQo6PyaO55JmUvUM4xJizSzzFEvsM; Path=/; Expires=Mon, 14 Apr 2025 10:33:29 GMT; HttpOnly; SameSite=Lax"
+        ],
+        "date": "Sun, 13 Apr 2025 10:33:29 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 435,
+        "username": "testuser_67fb92f8",
+        "password": "1f1686aee49e85b5877805687c9e6ce5b2cc8b5cfa6f6e7753e40ca589f1aee24e31ef008336955045a814a5f951e8ce366f3f26594c03fe33126e58dd704c35.c00263a314c1a9b31f8945839cc2fa24",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:33:29.161Z"
+      }
+    },
+    "error": null,
+    "duration": 203,
+    "timestamp": "2025-04-13T10:33:29.415Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-QbHUn03G0TFQR1S4K5tpOtYcYCQ\"",
+        "date": "Sun, 13 Apr 2025 10:33:29 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 435,
+        "username": "testuser_67fb92f8",
+        "password": "1f1686aee49e85b5877805687c9e6ce5b2cc8b5cfa6f6e7753e40ca589f1aee24e31ef008336955045a814a5f951e8ce366f3f26594c03fe33126e58dd704c35.c00263a314c1a9b31f8945839cc2fa24",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:33:29.161Z"
+      }
+    },
+    "error": null,
+    "duration": 99,
+    "timestamp": "2025-04-13T10:33:29.521Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "283",
+        "etag": "W/\"11b-QbHUn03G0TFQR1S4K5tpOtYcYCQ\"",
+        "date": "Sun, 13 Apr 2025 10:33:29 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 435,
+        "username": "testuser_67fb92f8",
+        "password": "1f1686aee49e85b5877805687c9e6ce5b2cc8b5cfa6f6e7753e40ca589f1aee24e31ef008336955045a814a5f951e8ce366f3f26594c03fe33126e58dd704c35.c00263a314c1a9b31f8945839cc2fa24",
+        "avatarUrl": null,
+        "bio": null,
+        "createdAt": "2025-04-13T10:33:29.161Z"
+      }
+    },
+    "error": null,
+    "duration": 77,
+    "timestamp": "2025-04-13T10:33:29.603Z",
+    "test": {
+      "name": "Data Creation Tests User Profile Tests Can retrieve authenticated user profile",
+      "fullName": "Data Creation Tests User Profile Tests Can retrieve authenticated user profile",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "vary": "Origin",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Sun, 13 Apr 2025 10:33:29 GMT",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+      },
+      "body": {}
+    },
+    "error": null,
+    "duration": 80,
+    "timestamp": "2025-04-13T10:33:29.690Z",
+    "test": {
+      "name": "Data Creation Tests User Profile Tests Can update user profile",
+      "fullName": "Data Creation Tests User Profile Tests Can update user profile",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "199",
+        "etag": "W/\"c7-V3DsBFq8k2ftrG1QhVJ1moJo8KM\"",
+        "date": "Sun, 13 Apr 2025 10:33:29 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 386,
+        "name": "Test Circle",
+        "description": "Circle created by automated tests",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:33:29.807Z",
+        "userId": 435,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 151,
+    "timestamp": "2025-04-13T10:33:29.851Z",
+    "test": {
+      "name": "Data Creation Tests Circle Tests Can create a new circle",
+      "fullName": "Data Creation Tests Circle Tests Can create a new circle",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/circles/386",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "199",
+        "etag": "W/\"c7-V3DsBFq8k2ftrG1QhVJ1moJo8KM\"",
+        "date": "Sun, 13 Apr 2025 10:33:30 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 386,
+        "name": "Test Circle",
+        "description": "Circle created by automated tests",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:33:29.807Z",
+        "userId": 435,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 226,
+    "timestamp": "2025-04-13T10:33:30.086Z",
+    "test": {
+      "name": "Data Creation Tests Circle Tests Can retrieve created circle",
+      "fullName": "Data Creation Tests Circle Tests Can retrieve created circle",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "PATCH",
+      "url": "/api/circles/386",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "216",
+        "etag": "W/\"d8-jEvqqJboYCSJ4mXa3nF3qUeOD5k\"",
+        "date": "Sun, 13 Apr 2025 10:33:30 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 386,
+        "name": "Updated Test Circle",
+        "description": "This circle was updated by automated tests",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:33:29.807Z",
+        "userId": 435,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 227,
+    "timestamp": "2025-04-13T10:33:30.319Z",
+    "test": {
+      "name": "Data Creation Tests Circle Tests Can update circle details",
+      "fullName": "Data Creation Tests Circle Tests Can update circle details",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/circles",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "206",
+        "etag": "W/\"ce-hm9HNKQnKFwXyyI4Y4z4AaasN2A\"",
+        "date": "Sun, 13 Apr 2025 10:33:30 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 387,
+        "name": "Test Circle for Post",
+        "description": "Circle created for post testing",
+        "icon": null,
+        "color": null,
+        "createdAt": "2025-04-13T10:33:30.437Z",
+        "userId": 435,
+        "isDefault": false,
+        "visibility": "private"
+      }
+    },
+    "error": null,
+    "duration": 154,
+    "timestamp": "2025-04-13T10:33:30.480Z",
+    "test": {
+      "name": "Data Creation Tests Post Tests Can create a new post",
+      "fullName": "Data Creation Tests Post Tests Can create a new post",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/posts",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "189",
+        "etag": "W/\"bd-cNd7fkTkZV4G8aMWwJERZ7BGOTA\"",
+        "date": "Sun, 13 Apr 2025 10:33:30 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 290,
+        "userId": 435,
+        "circleId": 387,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post created by automated tests",
+        "createdAt": "2025-04-13T10:33:30.667Z"
+      }
+    },
+    "error": null,
+    "duration": 225,
+    "timestamp": "2025-04-13T10:33:30.711Z",
+    "test": {
+      "name": "Data Creation Tests Post Tests Can create a new post",
+      "fullName": "Data Creation Tests Post Tests Can create a new post",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/posts/290",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "458",
+        "etag": "W/\"1ca-dGNCEQwWdGaYY/zKSDlH5v+yHXQ\"",
+        "date": "Sun, 13 Apr 2025 10:33:31 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 290,
+        "userId": 435,
+        "circleId": 387,
+        "labId": null,
+        "labExperiment": false,
+        "targetRole": null,
+        "content": "This is a test post created by automated tests",
+        "createdAt": "2025-04-13T10:33:30.667Z",
+        "interactions": [],
+        "threads": [],
+        "pendingResponses": [],
+        "circle": {
+          "id": 387,
+          "name": "Test Circle for Post",
+          "description": "Circle created for post testing",
+          "icon": null,
+          "color": null,
+          "createdAt": "2025-04-13T10:33:30.437Z",
+          "userId": 435,
+          "isDefault": false,
+          "visibility": "private"
+        }
+      }
+    },
+    "error": null,
+    "duration": 821,
+    "timestamp": "2025-04-13T10:33:31.538Z",
+    "test": {
+      "name": "Data Creation Tests Post Tests Can retrieve created post",
+      "fullName": "Data Creation Tests Post Tests Can retrieve created post",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "x-powered-by": "Express",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "1479",
+        "etag": "W/\"5c7-86S6YLgxathfVyQ73gI4txxGSMU\"",
+        "date": "Sun, 13 Apr 2025 10:33:35 GMT",
+        "connection": "close"
+      },
+      "body": {
+        "id": 575,
+        "userId": 435,
+        "name": "Test AI Follower",
+        "personality": "Friendly and helpful AI assistant",
+        "avatarUrl": "https://api.dicebear.com/6.x/bottts/svg?seed=test-bot",
+        "background": "Test AI Follower is an advanced digital entity created as part of a social media engagement project. Designed to interact with users across diverse platforms, it has been imbued with a warm and approachable demeanor. Test AI Follower thrives in digital communities, helping users navigate content with ease while spreading positivity. It was built by a team of developers passionate about creating AI that enhances online interactions through meaningful and constructive engagement.",
+        "interests": [
+          "technology and innovation",
+          "community building",
+          "educational content",
+          "digital art",
+          "sustainable living"
+        ],
+        "communicationStyle": "Test AI Follower communicates in a clear, concise, and supportive manner. It prioritizes understanding users’ needs and responding with empathy and encouragement. Alongside textual responses, it often incorporates emojis and light humor to make conversations more engaging and enjoyable.",
+        "interactionPreferences": {
+          "likes": [
+            "uplifting and positive messages",
+            "informative and educational posts",
+            "creativity and originality in content",
+            "community-centric projects"
+          ],
+          "dislikes": [
+            "negativity and hate speech",
+            "misinformation",
+            "clickbait headlines"
+          ]
+        },
+        "active": true,
+        "responsiveness": "active",
+        "responseDelay": {
+          "max": 60,
+          "min": 1
+        },
+        "responseChance": 80,
+        "tools": null,
+        "parentId": null
+      }
+    },
+    "error": null,
+    "duration": 3906,
+    "timestamp": "2025-04-13T10:33:35.449Z",
+    "test": {
+      "name": "Data Creation Tests AI Follower Tests Can create a new AI follower",
+      "fullName": "Data Creation Tests AI Follower Tests Can create a new AI follower",
+      "path": "/home/runner/workspace/tests/api/data-creation.test.cjs"
+    }
   }
 ]
