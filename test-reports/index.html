@@ -50,6 +50,9 @@
       border-bottom: 2px solid var(--primary);
       padding-bottom: 0.5rem;
       margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     
     .files-grid {
@@ -113,6 +116,11 @@
       color: #c0392b;
     }
     
+    .file-type.folder {
+      background-color: rgba(142, 68, 173, 0.2);
+      color: #8e44ad;
+    }
+    
     .file-name {
       font-weight: bold;
       font-size: 1.1rem;
@@ -123,6 +131,13 @@
       color: var(--grey);
       font-size: 0.9rem;
       margin-top: 0.5rem;
+    }
+    
+    .file-date {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--grey);
+      margin-top: 0.7rem;
     }
     
     .btn {
@@ -202,6 +217,65 @@
       color: var(--grey);
       margin-top: 0.5rem;
     }
+    
+    .filter-controls {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+      align-items: center;
+    }
+    
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .filter-toggle input {
+      margin-right: 0.5rem;
+    }
+    
+    .search-box {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    
+    .no-files {
+      grid-column: 1 / -1;
+      padding: 2rem;
+      text-align: center;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .category-toggle {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      background-color: var(--light);
+      border: 1px solid var(--grey);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .category-toggle:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .hidden-section {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -213,6 +287,15 @@
     <div class="summary">
       <h2>Test Report Overview</h2>
       <p>Access test reports and API traces generated during testing of the CircleTube platform.</p>
+      
+      <div class="filter-controls">
+        <input type="text" id="search-input" class="search-box" placeholder="Search for reports...">
+        <label class="filter-toggle">
+          <input type="checkbox" id="html-only-toggle">
+          <span>View HTML reports only</span>
+        </label>
+        <button id="refresh-stats">Refresh</button>
+      </div>
       
       <div class="stats">
         <div class="stat-card">
@@ -233,22 +316,33 @@
         </div>
       </div>
       
-      <p class="last-update">Last updated: <span id="update-time"></span> <button id="refresh-stats">Refresh</button></p>
+      <p class="last-update">Last updated: <span id="update-time"></span></p>
     </div>
     
-    <h2>Test Reports</h2>
-    <div class="files-grid" id="test-reports-container">
-      <!-- Test Report Cards -->
-    </div>
-    
-    <h2>API Traces</h2>
-    <div class="files-grid" id="api-traces-container">
-      <!-- API Trace Cards -->
-    </div>
-    
-    <h2>CI/CD Integration</h2>
-    <div class="files-grid" id="xml-reports-container">
-      <!-- XML Report Cards -->
+    <div id="all-reports-container">
+      <div class="section-header">
+        <h2>Test Reports</h2>
+        <button id="toggle-test-reports" class="category-toggle">Hide</button>
+      </div>
+      <div class="files-grid" id="test-reports-container">
+        <!-- Test Report Cards -->
+      </div>
+      
+      <div class="section-header">
+        <h2>API Traces</h2>
+        <button id="toggle-api-traces" class="category-toggle">Hide</button>
+      </div>
+      <div class="files-grid" id="api-traces-container">
+        <!-- API Trace Cards -->
+      </div>
+      
+      <div class="section-header">
+        <h2>CI/CD Integration</h2>
+        <button id="toggle-xml-reports" class="category-toggle">Hide</button>
+      </div>
+      <div class="files-grid" id="xml-reports-container">
+        <!-- XML Report Cards -->
+      </div>
     </div>
   </div>
   
@@ -257,79 +351,92 @@
   </footer>
   
   <script>
-    // File definitions with metadata
-    const files = [
-      {
-        name: 'validation-api-trace.html',
-        type: 'html',
-        description: 'Visual representation of API calls made during lab validation tests',
-        category: 'api-traces'
-      },
-      {
-        name: 'validation-api-trace.json',
-        type: 'json',
-        description: 'Raw JSON data of API calls made during lab validation tests',
-        category: 'api-traces'
-      },
-      {
-        name: 'api-traces.json',
-        type: 'json',
-        description: 'Combined API traces from all test runs',
-        category: 'api-traces'
-      },
-      {
-        name: 'validation-tests-report.html',
-        type: 'html',
-        description: 'Detailed test results for lab validation tests',
-        category: 'test-reports'
-      },
-      {
-        name: 'comprehensive-tests-report.html',
-        type: 'html',
-        description: 'Full test suite results with all test cases',
-        category: 'test-reports'
-      },
-      {
-        name: 'simple-tests-report.html',
-        type: 'html',
-        description: 'Basic test results for simple tests',
-        category: 'test-reports'
-      },
-      {
-        name: 'comprehensive-tests-junit.xml',
-        type: 'xml',
-        description: 'JUnit XML output for comprehensive tests',
-        category: 'xml-reports'
-      },
-      {
-        name: 'simple-tests-junit.xml',
-        type: 'xml',
-        description: 'JUnit XML output for simple tests',
-        category: 'xml-reports'
-      },
-      {
-        name: 'jest-html-reporters-attach',
-        type: 'folder',
-        description: 'Attachments and assets for HTML test reports',
-        category: 'other'
+    // Initial file metadata - will be replaced with directory listing
+    const fileDescriptions = {
+      'validation-api-trace.html': 'Visual representation of API calls made during lab validation tests',
+      'validation-api-trace.json': 'Raw JSON data of API calls made during lab validation tests',
+      'api-traces.json': 'Combined API traces from all test runs',
+      'validation-tests-report.html': 'Detailed test results for lab validation tests',
+      'comprehensive-tests-report.html': 'Full test suite results with all test cases',
+      'simple-tests-report.html': 'Basic test results for simple tests',
+      'comprehensive-tests-junit.xml': 'JUnit XML output for comprehensive tests',
+      'simple-tests-junit.xml': 'JUnit XML output for simple tests',
+      'jest-html-reporters-attach': 'Attachments and assets for HTML test reports'
+    };
+    
+    // Function to categorize files
+    function categorizeFile(filename) {
+      if (filename.endsWith('.html')) {
+        if (filename.includes('api-trace')) {
+          return 'api-traces';
+        }
+        return 'test-reports';
+      } else if (filename.endsWith('.json')) {
+        return 'api-traces';
+      } else if (filename.endsWith('.xml')) {
+        return 'xml-reports';
+      } else if (!filename.includes('.')) {
+        return 'other';
       }
-    ];
+      return 'other';
+    }
     
-    // Initialize containers
-    document.getElementById('test-reports-container').innerHTML = '';
-    document.getElementById('api-traces-container').innerHTML = '';
-    document.getElementById('xml-reports-container').innerHTML = '';
+    // Function to determine file type
+    function getFileType(filename) {
+      if (filename.endsWith('.html')) {
+        return 'html';
+      } else if (filename.endsWith('.json')) {
+        return 'json';
+      } else if (filename.endsWith('.xml')) {
+        return 'xml';
+      } else if (!filename.includes('.')) {
+        return 'folder';
+      }
+      return 'other';
+    }
     
-    // Stats counters
-    let testReportCount = 0;
-    let apiTraceCount = 0;
-    let xmlReportCount = 0;
+    // Function to get file description
+    function getFileDescription(filename) {
+      return fileDescriptions[filename] || 'Test report file';
+    }
     
-    // Process each file
-    files.forEach(file => {
-      // Create card for file
+    // Function to extract date from filename
+    function getDateFromFilename(filename) {
+      // Look for date patterns in filename like YYYY-MM-DD or timestamps
+      const dateMatch = filename.match(/(\d{4}-\d{2}-\d{2})|(\d{8})/);
+      if (dateMatch) {
+        const dateStr = dateMatch[0];
+        if (dateStr.includes('-')) {
+          return new Date(dateStr);
+        } else {
+          // Format: YYYYMMDD
+          return new Date(
+            dateStr.substring(0, 4),
+            parseInt(dateStr.substring(4, 6)) - 1,
+            dateStr.substring(6, 8)
+          );
+        }
+      }
+      
+      // If no date in filename, try to get from file stats
+      const today = new Date();
+      return today;
+    }
+    
+    // Function to create a file card
+    function createFileCard(file) {
       const card = document.createElement('div');
       card.className = 'file-card';
+      card.dataset.type = file.type;
+      card.dataset.category = file.category;
+      card.dataset.name = file.name.toLowerCase();
+      
+      const fileDate = getDateFromFilename(file.name);
+      const dateStr = fileDate.toLocaleDateString(undefined, { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
       
       card.innerHTML = `
         <div class="file-header">
@@ -338,45 +445,214 @@
         </div>
         <div class="file-body">
           <p class="file-description">${file.description}</p>
+          <span class="file-date">Date: ${dateStr}</span>
         </div>
         <div class="file-footer">
           <a href="${file.name}" class="btn" target="_blank">View</a>
         </div>
       `;
       
-      // Add to appropriate container
-      if (file.category === 'test-reports') {
-        document.getElementById('test-reports-container').appendChild(card);
-        testReportCount++;
-      } else if (file.category === 'api-traces') {
-        document.getElementById('api-traces-container').appendChild(card);
-        apiTraceCount++;
-      } else if (file.category === 'xml-reports') {
-        document.getElementById('xml-reports-container').appendChild(card);
-        xmlReportCount++;
+      return card;
+    }
+    
+    // Function to fetch directory listing and update UI
+    async function fetchDirectoryListing() {
+      try {
+        // Clear the containers
+        document.getElementById('test-reports-container').innerHTML = '';
+        document.getElementById('api-traces-container').innerHTML = '';
+        document.getElementById('xml-reports-container').innerHTML = '';
+        
+        // Get page HTML
+        const response = await fetch(window.location.href);
+        const html = await response.text();
+        
+        // Parse links using DOMParser
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const links = Array.from(doc.querySelectorAll('a'));
+        
+        // Extract filenames
+        const files = links
+          .map(link => link.getAttribute('href'))
+          .filter(href => href && !href.startsWith('?') && !href.startsWith('/') && href !== '../' && href !== 'index.html')
+          .map(filename => ({
+            name: filename,
+            type: getFileType(filename),
+            description: getFileDescription(filename),
+            category: categorizeFile(filename),
+            date: getDateFromFilename(filename)
+          }));
+          
+        // Sort files by date (newest first)
+        files.sort((a, b) => b.date - a.date);
+        
+        // Stats counters
+        let testReportCount = 0;
+        let apiTraceCount = 0;
+        let xmlReportCount = 0;
+        let latestDate = null;
+        
+        // Process each file
+        files.forEach(file => {
+          // Create card for file
+          const card = createFileCard(file);
+          
+          // Add to appropriate container
+          if (file.category === 'test-reports') {
+            document.getElementById('test-reports-container').appendChild(card);
+            testReportCount++;
+            if (!latestDate || file.date > latestDate) {
+              latestDate = file.date;
+            }
+          } else if (file.category === 'api-traces') {
+            document.getElementById('api-traces-container').appendChild(card);
+            apiTraceCount++;
+          } else if (file.category === 'xml-reports') {
+            document.getElementById('xml-reports-container').appendChild(card);
+            xmlReportCount++;
+          }
+        });
+        
+        // Check if containers are empty and add a message
+        ['test-reports-container', 'api-traces-container', 'xml-reports-container'].forEach(containerId => {
+          const container = document.getElementById(containerId);
+          if (container.children.length === 0) {
+            container.innerHTML = '<div class="no-files">No files found in this category</div>';
+          }
+        });
+        
+        // Update stats
+        document.getElementById('test-report-count').textContent = testReportCount;
+        document.getElementById('api-trace-count').textContent = apiTraceCount;
+        document.getElementById('xml-report-count').textContent = xmlReportCount;
+        
+        // Get the date of the most recent file
+        if (latestDate) {
+          document.getElementById('last-run').textContent = latestDate.toLocaleDateString();
+        } else {
+          document.getElementById('last-run').textContent = 'N/A';
+        }
+        
+        // Apply current filter if active
+        applyFilters();
+      } catch (error) {
+        console.error('Error fetching directory listing:', error);
       }
-    });
+    }
     
-    // Update stats
-    document.getElementById('test-report-count').textContent = testReportCount;
-    document.getElementById('api-trace-count').textContent = apiTraceCount;
-    document.getElementById('xml-report-count').textContent = xmlReportCount;
-    
-    // Get the date of the most recent file
-    const today = new Date();
-    document.getElementById('last-run').textContent = today.toLocaleDateString();
+    // Function to filter cards
+    function applyFilters() {
+      const searchTerm = document.getElementById('search-input').value.toLowerCase();
+      const htmlOnly = document.getElementById('html-only-toggle').checked;
+      
+      // Get all cards
+      const cards = document.querySelectorAll('.file-card');
+      
+      // Iterate through each card and check if it matches the filters
+      cards.forEach(card => {
+        const fileName = card.dataset.name;
+        const fileType = card.dataset.type;
+        
+        // Check if card matches search term
+        const matchesSearch = searchTerm === '' || fileName.includes(searchTerm);
+        
+        // Check if card should be shown based on HTML only filter
+        const matchesHtmlFilter = !htmlOnly || fileType === 'html';
+        
+        // Set visibility based on both filters
+        card.style.display = matchesSearch && matchesHtmlFilter ? 'block' : 'none';
+      });
+      
+      // Check if any cards are visible in each section
+      ['test-reports-container', 'api-traces-container', 'xml-reports-container'].forEach(containerId => {
+        const container = document.getElementById(containerId);
+        const hasVisibleCards = Array.from(container.querySelectorAll('.file-card')).some(card => 
+          card.style.display !== 'none');
+          
+        // If no cards are visible, show a message
+        if (!hasVisibleCards) {
+          // Remove existing no-files message
+          const existingMessage = container.querySelector('.no-files');
+          if (existingMessage) {
+            container.removeChild(existingMessage);
+          }
+          
+          // Add new message
+          const message = document.createElement('div');
+          message.className = 'no-files';
+          message.textContent = 'No matching files found in this category';
+          container.appendChild(message);
+        } else {
+          // Remove no-files message if it exists
+          const existingMessage = container.querySelector('.no-files');
+          if (existingMessage && existingMessage.textContent.includes('No matching files')) {
+            container.removeChild(existingMessage);
+          }
+        }
+      });
+    }
     
     // Update timestamp
     function updateTimestamp() {
       document.getElementById('update-time').textContent = new Date().toLocaleString();
     }
     
-    updateTimestamp();
+    // Initialize the page
+    function initPage() {
+      // Set up event listeners
+      document.getElementById('refresh-stats').addEventListener('click', function() {
+        fetchDirectoryListing();
+        updateTimestamp();
+      });
+      
+      document.getElementById('search-input').addEventListener('input', applyFilters);
+      document.getElementById('html-only-toggle').addEventListener('change', applyFilters);
+      
+      // Set up section toggle buttons
+      document.getElementById('toggle-test-reports').addEventListener('click', function() {
+        const container = document.getElementById('test-reports-container');
+        const button = document.getElementById('toggle-test-reports');
+        if (container.style.display === 'none') {
+          container.style.display = 'grid';
+          button.textContent = 'Hide';
+        } else {
+          container.style.display = 'none';
+          button.textContent = 'Show';
+        }
+      });
+      
+      document.getElementById('toggle-api-traces').addEventListener('click', function() {
+        const container = document.getElementById('api-traces-container');
+        const button = document.getElementById('toggle-api-traces');
+        if (container.style.display === 'none') {
+          container.style.display = 'grid';
+          button.textContent = 'Hide';
+        } else {
+          container.style.display = 'none';
+          button.textContent = 'Show';
+        }
+      });
+      
+      document.getElementById('toggle-xml-reports').addEventListener('click', function() {
+        const container = document.getElementById('xml-reports-container');
+        const button = document.getElementById('toggle-xml-reports');
+        if (container.style.display === 'none') {
+          container.style.display = 'grid';
+          button.textContent = 'Hide';
+        } else {
+          container.style.display = 'none';
+          button.textContent = 'Show';
+        }
+      });
+      
+      // Load initial data
+      fetchDirectoryListing();
+      updateTimestamp();
+    }
     
-    // Set up refresh button
-    document.getElementById('refresh-stats').addEventListener('click', function() {
-      window.location.reload();
-    });
+    // When the page is loaded, initialize everything
+    window.addEventListener('DOMContentLoaded', initPage);
   </script>
 </body>
 </html>
