@@ -60,6 +60,22 @@ echo ""
 echo "🔄 Running auth helper tests..."
 npx jest tests/api/auth-helper.test.cjs --config jest.config.cjs
 
+echo ""
+echo "🔄 Running circle-follower integration tests..."
+npx jest tests/api/circle-follower-api.test.cjs --config jest.config.cjs
+
+echo ""
+echo "🔄 Running follower collectives tests..."
+npx jest tests/api/follower-collectives-api.test.cjs --config jest.config.cjs
+
+echo ""
+echo "🔄 Running tools API tests..."
+npx jest tests/api/tools-api.test.cjs --config jest.config.cjs
+
+echo ""
+echo "🔄 Running direct chat API tests..."
+npx jest tests/api/direct-chat-api.test.cjs --config jest.config.cjs
+
 # Add a summary section
 echo ""
 echo "=============================================="
