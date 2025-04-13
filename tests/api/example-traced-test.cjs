@@ -19,11 +19,12 @@ describe('API Trace Example', () => {
     
     // Create a test user
     console.log('Creating authenticated test user...');
-    const { userId, agent } = await authHelper.getAuthenticatedAgent();
-    testUserId = userId;
+    const { user, agent } = await authHelper.getAuthenticatedAgent();
+    testUserId = user.id;
     
-    // Wrap the authenticated agent with tracing
-    tracedAgent = apiTraceHelper.traceAgent(agent);
+    // The agent is already traced by the auth helper, but we'll keep this line
+    // for clarity and to show that we're specifically using tracing in this test
+    tracedAgent = agent;
   });
   
   test('Trace GET /api/user endpoint', async () => {
