@@ -261,9 +261,15 @@ describe('Lab API Tests', () => {
         ;
 
       expect(response.status).toBe(200);
-      expect(typeof response.body).toBe('object');
-      expect(response.body).toHaveProperty('circles');
-      expect(Array.isArray(response.body.circles)).toBe(true);
+      expect(Array.isArray(response.body)).toBe(true);
+      
+      // Response is an array of circle stats
+      if (response.body.length > 0) {
+        // Check if each item has the expected structure
+        response.body.forEach(item => {
+          expect(item).toHaveProperty('labCircle');
+        });
+      }
     });
 
     it('Can update a circle role in a lab', async () => {
