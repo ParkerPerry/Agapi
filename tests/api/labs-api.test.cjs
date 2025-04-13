@@ -1,25 +1,29 @@
+const path = require('path');
+const authHelper = require(path.resolve(__dirname, './auth-helper.test.cjs'));
 const request = require('supertest');
-const { expect } = require('chai');
-const { authenticate } = require('./auth-helper');
 
-// Base URL for the API
-const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+let baseUrl;
+let authenticatedAgent;
+let testUserId;
+let testLabId = null;
+let testCircleId = null;
 
-// Test suite for labs API endpoints
-describe('Labs API', () => {
-  let authCookie = null;
-  let testLabId = null;
-  let testCircleId = null;
-
-  // Authentication before all tests
-  before(async () => {
-    try {
-      authCookie = await authenticate();
-    } catch (error) {
-      console.error('Authentication failed:', error.message);
-      throw error;
-    }
-  });
+// Find a working base URL for the API
+beforeAll(async () => {
+  // Try to use environment variable if set, otherwise default to localhost
+  baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+  
+  try {
+    const authResponse = await authHelper.authenticate(baseUrl);
+    authenticatedAgent = authResponse.agent;
+    testUserId = authResponse.userId;
+    
+    console.log(`Authenticated with user ID: ${testUserId}`);
+  } catch (error) {
+    console.error('Authentication error:', error.message);
+    throw error;
+  }
+});
 
   // Test creating a new lab
   describe('Lab Creation', () => {
@@ -45,11 +49,11 @@ describe('Labs API', () => {
         .set('Cookie', authCookie)
         .send(labData);
 
-      expect(response.status).to.equal(201);
-      expect(response.body).to.have.property('id');
-      expect(response.body.name).to.equal(labData.name);
-      expect(response.body.experimentType).to.equal(labData.experimentType);
-      expect(response.body.status).to.equal('draft'); // Default status
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('id');
+      expect(response.body.name).toBe(labData.name);
+      expect(response.body.experimentType).toBe(labData.experimentType);
+      expect(response.body.status).toBe('draft'); // Default status
 
       // Save the lab ID for later tests
       testLabId = response.body.id;
@@ -65,9 +69,9 @@ describe('Labs API', () => {
           description: 'An invalid lab that should fail'
         });
 
-      expect(response.status).to.be.oneOf([400, 422]);
+      expect([400, 422]).toContain(response.status);
       // Expect some kind of validation error message
-      expect(response.body).to.have.property('message');
+      expect(response.body).toHaveProperty('message');
     });
   });
 
@@ -78,10 +82,10 @@ describe('Labs API', () => {
         .get('/api/labs')
         .set('Cookie', authCookie);
 
-      expect(response.status).to.equal(200);
-      expect(response.body).to.be.an('array');
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
       // Should have at least the one we created
-      expect(response.body.length).to.be.at.least(1);
+      expect(response.body.length).toBeGreaterThanOrEqual(1);
     });
 
     it('Can get a specific lab by ID', async () => {
