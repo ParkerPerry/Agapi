@@ -37,29 +37,79 @@ class ApiTraceReporter {
   }
 
   onRunComplete() {
-    const apiCalls = apiTraceLogger.getApiCalls();
-    
-    // If no API calls, no need to generate reports
-    if (apiCalls.length === 0) {
-      console.log('\nNo API calls were traced during test execution.');
-      return;
-    }
-    
-    // Ensure the output directory exists
-    if (!fs.existsSync(this.outputDir)) {
-      fs.mkdirSync(this.outputDir, { recursive: true });
-    }
-    
-    // Write the API calls to a JSON file
-    const outputPath = path.join(this.outputDir, this.outputFile);
-    fs.writeFileSync(outputPath, JSON.stringify(apiCalls, null, 2));
-    
-    // Generate an HTML report for easier viewing
-    this.generateHtmlReport(apiCalls);
-    
-    console.log(`\nAPI Trace Report generated: ${outputPath}`);
-    console.log(`HTML Report generated: ${path.join(this.outputDir, this.htmlReport)}`);
-    console.log(`Total API calls traced: ${apiCalls.length}`);
+    // Use setTimeout to ensure all API calls are processed
+    // by allowing the event loop to complete first
+    setTimeout(() => {
+      const apiCalls = apiTraceLogger.getApiCalls();
+      console.log(`\n[API Trace Reporter] Processing ${apiCalls.length} API calls`);
+      
+      // If no API calls, no need to generate reports
+      if (apiCalls.length === 0) {
+        console.log('\n[API Trace Reporter] No API calls were traced during test execution.');
+        console.log('[API Trace Reporter] This could be because:');
+        console.log('  1. The tests did not make any API calls');
+        console.log('  2. The tracedAgent was not properly used in the tests');
+        console.log('  3. The API calls are being made asynchronously and completing after the reporter runs');
+        console.log('\nPossible solution: Make sure to await all API calls in your tests and use the tracedAgent for all requests.');
+        return;
+      }
+      
+      // Ensure the output directory exists
+      if (!fs.existsSync(this.outputDir)) {
+        fs.mkdirSync(this.outputDir, { recursive: true });
+      }
+      
+      // Write the API calls to a JSON file
+      const outputPath = path.join(this.outputDir, this.outputFile);
+      fs.writeFileSync(outputPath, JSON.stringify(apiCalls, null, 2));
+      
+      // Generate an HTML report for easier viewing
+      this.generateHtmlReport(apiCalls);
+      
+      console.log(`\n[API Trace Reporter] API Trace Report generated: ${outputPath}`);
+      console.log(`[API Trace Reporter] HTML Report generated: ${path.join(this.outputDir, this.htmlReport)}`);
+      console.log(`[API Trace Reporter] Total API calls traced: ${apiCalls.length}`);
+      
+      // Stats
+      const methodCounts = apiCalls.reduce((counts, call) => {
+        const method = call.request?.method || 'UNKNOWN';
+        counts[method] = (counts[method] || 0) + 1;
+        return counts;
+      }, {});
+      
+      console.log('\n[API Trace Reporter] API Call Statistics:');
+      Object.entries(methodCounts).forEach(([method, count]) => {
+        console.log(`  ${method}: ${count} calls`);
+      });
+      
+      // Status code summary
+      const statusCounts = apiCalls.reduce((counts, call) => {
+        if (call.response) {
+          const statusGroup = Math.floor(call.response.status / 100) * 100;
+          const label = {
+            200: '2xx (Success)',
+            300: '3xx (Redirect)',
+            400: '4xx (Client Error)',
+            500: '5xx (Server Error)'
+          }[statusGroup] || `${statusGroup}xx`;
+          
+          counts[label] = (counts[label] || 0) + 1;
+        } else {
+          counts['Error/No Response'] = (counts['Error/No Response'] || 0) + 1;
+        }
+        return counts;
+      }, {});
+      
+      console.log('\n[API Trace Reporter] Status Code Summary:');
+      Object.entries(statusCounts).forEach(([status, count]) => {
+        console.log(`  ${status}: ${count} calls`);
+      });
+      
+      // Average response time
+      const totalTime = apiCalls.reduce((sum, call) => sum + (call.duration || 0), 0);
+      const avgTime = Math.round(totalTime / apiCalls.length);
+      console.log(`\n[API Trace Reporter] Average response time: ${avgTime}ms`);
+    }, 1000); // Wait 1 second to ensure all async operations complete
   }
 
   generateHtmlReport(apiCalls) {
