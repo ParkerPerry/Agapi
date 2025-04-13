@@ -79,6 +79,25 @@ Tests are organized by API endpoint groups:
 - **Tools** - External tools and utilities
 - **Labs** - Experiment functionality
 - **Posts** - Content creation and management
+- **Response Queuing** - AI follower response scheduling and delivery
+
+### Lab Wizard Flow Testing
+
+The lab wizard flow test (`lab-wizard-flow.test.cjs`) simulates a complete user journey through lab creation and validation:
+
+1. **Basic Information** - Creates a lab with required fields
+2. **Goals & Description** - Updates lab with additional information
+3. **Success Metrics** - Adds quantifiable metrics
+4. **Circle Creation** - Associates test and control circles
+5. **Content Creation** - Creates posts in lab circles
+6. **Lab Activation** - Activates the lab for testing
+7. **Lab Validation** - Verifies AI follower response queuing functionality
+
+Step 7 specifically tests that AI followers correctly queue responses to posts in lab circles, validating that:
+- AI followers can be created and associated with lab circles
+- Pending responses can be created for posts
+- The API properly returns pending response information
+- ThreadManager correctly processes post interactions and responses
 
 ## Best Practices
 

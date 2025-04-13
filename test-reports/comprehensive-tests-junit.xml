@@ -1,31 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="13" failures="0" errors="0" time="5.644">
-  <testsuite name="Auth Helper" errors="0" failures="0" skipped="0" timestamp="2025-04-13T04:11:45" time="5.606" tests="13">
-    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.002">
+<testsuites name="jest tests" tests="16" failures="2" errors="0" time="6.885">
+  <testsuite name="Auth Helper" errors="0" failures="2" skipped="0" timestamp="2025-04-13T04:21:01" time="6.836" tests="16">
+    <testcase classname="Auth Helper is a helper module, not a test suite" name="Auth Helper is a helper module, not a test suite" time="0.003">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" name="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" time="0.163">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" name="Lab Creation Wizard Flow Tests Step 1: Basic Information Can create a new lab with basic information" time="0.169">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" name="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" time="0.229">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" name="Lab Creation Wizard Flow Tests Step 2: Goals &amp; Description Can update lab with goals and description" time="0.242">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" name="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" time="0.234">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" name="Lab Creation Wizard Flow Tests Step 3: Success Metrics Can update lab with success metrics" time="0.237">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" time="0.6">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add control circle to lab" time="0.63">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" time="0.605">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can add treatment circle to lab" time="0.624">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" time="0.538">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" name="Lab Creation Wizard Flow Tests Step 4: Circle Selection Can verify both circles were added to lab" time="0.553">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" time="0.236">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in control circle" time="0.234">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" time="0.225">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can create test content post in treatment circle" time="0.234">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" time="0.991">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" name="Lab Creation Wizard Flow Tests Step 5: Content Creation Can verify posts are retrievable from lab circles" time="0.985">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" time="0.228">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can activate the lab" time="0.23">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" time="0.156">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" name="Lab Creation Wizard Flow Tests Step 6: Lab Activation Can verify lab activation was successful" time="0.154">
     </testcase>
-    <testcase classname="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" name="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" time="0.386">
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can create test pending responses for control circle post" time="0.001">
+      <failure>ReferenceError: controlCirclePostId is not defined
+    at Object.&lt;anonymous&gt; (/home/runner/workspace/tests/api/lab-wizard-flow.test.cjs:484:7)
+    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify pending responses are retrievable via get post API" time="0">
+      <failure>ReferenceError: controlCirclePostId is not defined
+    at Object.&lt;anonymous&gt; (/home/runner/workspace/tests/api/lab-wizard-flow.test.cjs:530:7)
+    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" name="Lab Creation Wizard Flow Tests Step 7: Lab Validation Can verify lab posts are properly processed by ThreadManager" time="1.008">
+    </testcase>
+    <testcase classname="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" name="Lab Creation Wizard Flow Tests Cleanup Can complete the lab after testing" time="0.388">
     </testcase>
   </testsuite>
 </testsuites>

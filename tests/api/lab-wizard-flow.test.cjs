@@ -477,6 +477,130 @@ describe('Lab Creation Wizard Flow Tests', () => {
     });
   });
 
+  // Step 7: Lab Validation - Test AI follower response queuing
+  describe('Step 7: Lab Validation', () => {
+    it('Can create test pending responses for control circle post', async () => {
+      // Skip if post wasn't created
+      if (!controlCirclePostId) {
+        console.warn('Control circle post ID not available. Skipping this test.');
+        return;
+      }
+
+      // Create a test AI follower for the control circle
+      const followerData = {
+        name: 'Test AI Assistant',
+        personality: 'friendly, helpful',
+        circleId: testCircleId
+      };
+
+      const followerResponse = await authenticatedAgent
+        .post('/api/followers')
+        .send(followerData);
+
+      console.log(`Create AI follower response status: ${followerResponse.status}`);
+      
+      expect(followerResponse.status).toBe(201);
+      expect(followerResponse.body).toHaveProperty('id');
+      
+      const testFollowerId = followerResponse.body.id;
+      console.log(`Created test AI follower with ID: ${testFollowerId}`);
+
+      // Create a pending response using the test endpoint
+      const pendingData = {
+        postId: controlCirclePostId,
+        followerId: testFollowerId,
+        delayMinutes: 1 // Short delay for testing
+      };
+
+      const pendingResponse = await authenticatedAgent
+        .post('/api/posts/test-pending-response')
+        .send(pendingData);
+
+      console.log(`Create pending response status: ${pendingResponse.status}`);
+      
+      expect(pendingResponse.status).toBe(200);
+      expect(pendingResponse.body).toHaveProperty('pendingResponse');
+      expect(pendingResponse.body.pendingResponse).toHaveProperty('id');
+      
+      console.log(`Created pending response with ID: ${pendingResponse.body.pendingResponse.id}`);
+    });
+
+    it('Can verify pending responses are retrievable via get post API', async () => {
+      // Skip if post wasn't created
+      if (!controlCirclePostId) {
+        console.warn('Control circle post ID not available. Skipping this test.');
+        return;
+      }
+
+      // Wait briefly to ensure the pending response is properly stored
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Get the post with its pending responses
+      const response = await authenticatedAgent
+        .get(`/api/posts/${controlCirclePostId}`);
+
+      console.log(`Get post with pending responses status: ${response.status}`);
+
+      expect(response.status).toBe(200);
+      
+      // The API should include pendingResponses array
+      expect(response.body).toHaveProperty('pendingResponses');
+      
+      // Log the pending responses
+      if (response.body.pendingResponses && response.body.pendingResponses.length > 0) {
+        console.log(`Found ${response.body.pendingResponses.length} pending responses for post`);
+        console.log(`First pending response scheduled for: ${new Date(response.body.pendingResponses[0].scheduledFor).toISOString()}`);
+      } else {
+        console.log('No pending responses found in the response');
+      }
+      
+      // Even if no pending responses are found, the property should exist
+      expect(Array.isArray(response.body.pendingResponses)).toBe(true);
+    });
+
+    it('Can verify lab posts are properly processed by ThreadManager', async () => {
+      // Skip if lab wasn't created
+      if (!testLabId) {
+        console.warn('Test lab ID not available. Skipping this test.');
+        return;
+      }
+
+      const response = await authenticatedAgent
+        .get(`/api/labs/${testLabId}/posts`);
+
+      console.log(`Get lab posts with threads status: ${response.status}`);
+
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      
+      if (response.body.length > 0) {
+        // Each post should have a threads property
+        const firstPost = response.body[0];
+        console.log(`Checking thread structure for post ID: ${firstPost.id}`);
+        
+        // Posts should have interactions and/or pending responses
+        expect(firstPost).toHaveProperty('interactions');
+        // If there are interactions, they should be an array
+        expect(Array.isArray(firstPost.interactions)).toBe(true);
+        
+        console.log(`Post has ${firstPost.interactions.length} interactions`);
+        
+        // Post should also have pending responses (could be empty array)
+        if (firstPost.pendingResponses) {
+          console.log(`Post has ${firstPost.pendingResponses.length} pending responses`);
+          
+          if (firstPost.pendingResponses.length > 0) {
+            // Validate the structure of pending responses
+            const pendingResponse = firstPost.pendingResponses[0];
+            expect(pendingResponse).toHaveProperty('id');
+            expect(pendingResponse).toHaveProperty('scheduledFor');
+            console.log(`Pending response scheduled for: ${new Date(pendingResponse.scheduledFor).toISOString()}`);
+          }
+        }
+      }
+    });
+  });
+  
   // Optional: Cleanup - set lab status to completed
   describe('Cleanup', () => {
     it('Can complete the lab after testing', async () => {
