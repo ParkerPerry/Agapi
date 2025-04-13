@@ -34,6 +34,16 @@ echo "🔄 Running essential workflow test..."
 npx jest tests/api/workflow.test.cjs -t "Update profile" --config jest.config.cjs
 
 echo ""
+echo "🔄 Running tools API tests..."
+npx jest tests/api/tools-api.test.cjs --config jest.config.cjs
+
+echo ""
+echo "🔄 Running circle-follower integration tests..."
+npx jest tests/api/circle-follower-api.test.cjs --config jest.config.cjs
+
+echo ""
 echo "✅ Essential tests completed."
 echo "For more comprehensive testing, run individual test files directly:"
 echo "npx jest tests/api/posts-api.test.cjs --config jest.config.cjs"
+echo "Or run the comprehensive test suite:"
+echo "./tests/run-comprehensive-tests.sh"
