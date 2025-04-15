@@ -4,7 +4,7 @@
 - [x] Create feature tracker
 - [x] Update terminology (personas → collectives) in Results tab
 - [x] Define data schema for lab templates
-- [ ] Create predefined templates data structure
+- [x] Create predefined templates data structure
 - [ ] Implement template selection UI component
 - [ ] Add template application functionality
 - [ ] Update lab creation flow to incorporate templates
@@ -25,4 +25,7 @@
 
 ## Current Progress
 - Created feature tracker ✓
-- Starting with template system implementation...
+- Updated "Audience Persona Analysis" terminology to "Collective Analysis" ✓
+- Defined schema for lab templates in shared/schema.ts ✓
+- Created predefined templates for different experiment categories ✓
+- Next: Implementing template selection UI component
