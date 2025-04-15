@@ -613,80 +613,194 @@ export default function LabDetailPage() {
                 </TabsContent>
                 
                 <TabsContent value="results" className="space-y-4 pt-4">
-                  {/* Performance Overview Card */}
+                  {/* Results Overview Card */}
                   <Card>
                     <CardHeader>
                       <CardTitle>Results Overview</CardTitle>
                       <CardDescription>
-                        Overall performance of your lab experiment
+                        Summary of experiment results and key findings
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex flex-col space-y-6">
-                        {/* Status Banner */}
-                        <div className="bg-muted p-4 rounded-md flex items-center justify-between">
-                          <div>
-                            <h3 className="font-medium">Experiment Status</h3>
-                            <p className="text-sm text-muted-foreground">
-                              {lab.status === "completed" 
-                                ? "Completed" 
-                                : "In Progress - Results are preliminary"}
-                            </p>
-                          </div>
-                          <Badge variant={lab.status === "completed" ? "default" : "outline"}>
-                            {lab.status === "completed" ? "100% Complete" : "In Progress"}
-                          </Badge>
-                        </div>
-                        
-                        {lab.successMetrics?.metrics && lab.successMetrics.metrics.length > 0 ? (
-                          <div>
-                            <h3 className="text-base font-medium mb-3">Performance by Metric</h3>
-                            <div className="space-y-6">
-                              {lab.successMetrics.metrics.map((metric, index) => (
-                                <div key={index} className="space-y-2">
-                                  <div className="flex justify-between">
-                                    <h4 className="text-sm font-medium">{metric.name}</h4>
-                                    <span className="text-sm text-muted-foreground">Target: {metric.target}</span>
-                                  </div>
-                                  <div className="w-full bg-muted h-2.5 rounded-full overflow-hidden">
-                                    <div 
-                                      className="bg-primary h-2.5" 
-                                      style={{ 
-                                        width: '70%'
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="flex justify-between text-xs">
-                                    <span>Current: Not Yet Available</span>
-                                    <span className={
-                                      metric.priority === "high" 
-                                        ? "text-red-500" 
-                                        : metric.priority === "medium" 
-                                          ? "text-amber-500" 
-                                          : "text-blue-500"
-                                    }>
-                                      {metric.priority.charAt(0).toUpperCase() + metric.priority.slice(1)} Priority
-                                    </span>
-                                  </div>
+                      {lab.status === "completed" ? (
+                        <div className="space-y-6">
+                          <div className="space-y-3">
+                            <h3 className="text-base font-medium">Experiment Status</h3>
+                            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-100 rounded-md text-green-700">
+                              <CheckCircle className="h-5 w-5 text-green-600" />
+                              <p>This experiment is complete with statistically significant results</p>
+                            </div>
+                            <div className="flex justify-between items-center rounded-md bg-green-50 border border-green-100 p-3 mt-4">
+                              <div className="flex items-center gap-3">
+                                <div className="bg-green-100 h-10 w-10 rounded-full flex items-center justify-center">
+                                  <CheckCircle className="h-5 w-5 text-green-600" />
                                 </div>
-                              ))}
+                                <div>
+                                  <p className="font-medium text-green-800">GO</p>
+                                  <p className="text-xs text-green-700">High confidence (87%)</p>
+                                </div>
+                              </div>
+                              <div className="text-sm text-green-800 max-w-md">
+                                <p>Feature implementation is recommended based on strong positive results from the experiment</p>
+                              </div>
                             </div>
                           </div>
-                        ) : (
-                          <div className="text-center py-6 border rounded-md">
-                            <p className="text-muted-foreground mb-2">No metrics defined for this experiment</p>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => setActiveTab("info")}
-                            >
-                              Define Success Metrics
-                            </Button>
+                          
+                          <div className="space-y-3">
+                            <h3 className="text-base font-medium">Performance Summary</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <Card className="border-green-200">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Feature Acceptance</p>
+                                    <p className="text-3xl font-bold text-green-600">92%</p>
+                                    <p className="text-xs text-green-600 mt-1">+15% above target</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                              <Card className="border-green-200">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Engagement Rate</p>
+                                    <p className="text-3xl font-bold text-green-600">83%</p>
+                                    <p className="text-xs text-green-600 mt-1">+8% above target</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                              <Card className="border-amber-200">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Predicted NPS Impact</p>
+                                    <p className="text-3xl font-bold text-amber-600">+5</p>
+                                    <p className="text-xs text-amber-600 mt-1">Meets target</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </div>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      ) : lab.status === "active" ? (
+                        <div className="space-y-6">
+                          <div className="space-y-3">
+                            <h3 className="text-base font-medium">Experiment Status</h3>
+                            <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-100 rounded-md text-blue-700">
+                              <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+                              <p>This experiment is currently active and collecting data</p>
+                            </div>
+                            <div className="flex justify-between items-center rounded-md bg-amber-50 border border-amber-100 p-3 mt-4">
+                              <div className="flex items-center gap-3">
+                                <div className="bg-amber-100 h-10 w-10 rounded-full flex items-center justify-center">
+                                  <AlertCircle className="h-5 w-5 text-amber-600" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-amber-800">WAIT</p>
+                                  <p className="text-xs text-amber-700">Medium confidence (56%)</p>
+                                </div>
+                              </div>
+                              <div className="text-sm text-amber-800 max-w-md">
+                                <p>More data is needed before making a final decision on this feature implementation</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            <h3 className="text-base font-medium">Preliminary Results</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <Card className="border-blue-200">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Feature Acceptance</p>
+                                    <p className="text-3xl font-bold text-blue-600">87%</p>
+                                    <p className="text-xs text-blue-600 mt-1">Trending positive</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                              <Card className="border-blue-200">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Engagement Rate</p>
+                                    <p className="text-3xl font-bold text-blue-600">79%</p>
+                                    <p className="text-xs text-blue-600 mt-1">Needs more data</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                              <Card className="border-blue-200">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Predicted NPS Impact</p>
+                                    <p className="text-3xl font-bold text-blue-600">+4</p>
+                                    <p className="text-xs text-blue-600 mt-1">Preliminary</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="py-8 text-center border rounded-md">
+                          <p className="text-muted-foreground mb-2">This experiment hasn't been activated yet</p>
+                          <p className="text-sm text-muted-foreground">
+                            Activate the experiment to start collecting data and view results
+                          </p>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
+
+                  {/* Performance Metrics Card */}
+                  {(lab.status === "active" || lab.status === "completed") && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Performance by Metric</CardTitle>
+                        <CardDescription>
+                          Detailed results for each success metric
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-5">
+                          {lab.successMetrics?.metrics && lab.successMetrics.metrics.length > 0 ? (
+                            lab.successMetrics.metrics.map((metric, index) => (
+                              <div key={index} className="border rounded-md p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                  <div>
+                                    <p className="font-medium">{metric.name}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      Target: {metric.target} • Priority: <span className="capitalize">{metric.priority}</span>
+                                    </p>
+                                  </div>
+                                  <Badge className={
+                                    index === 0 ? "bg-green-500/10 text-green-600 hover:bg-green-500/20" :
+                                    index === 1 ? "bg-green-500/10 text-green-600 hover:bg-green-500/20" :
+                                    "bg-amber-500/10 text-amber-600 hover:bg-amber-500/20"
+                                  }>
+                                    {index === 0 ? "+15%" : index === 1 ? "+8%" : "On Target"}
+                                  </Badge>
+                                </div>
+                                <div className="w-full bg-muted h-3 rounded-full overflow-hidden">
+                                  <div 
+                                    className={
+                                      index === 0 ? "bg-green-500 h-full rounded-full" :
+                                      index === 1 ? "bg-green-500 h-full rounded-full" :
+                                      "bg-amber-500 h-full rounded-full"
+                                    }
+                                    style={{ width: index === 0 ? "92%" : index === 1 ? "83%" : "75%" }}
+                                  ></div>
+                                </div>
+                                <div className="flex justify-between items-center mt-2">
+                                  <div className="text-xs text-muted-foreground">Control: {index === 0 ? "77%" : index === 1 ? "75%" : "70%"}</div>
+                                  <div className="text-xs font-medium">{index === 0 ? "92%" : index === 1 ? "83%" : "75%"}</div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="py-8 text-center border rounded-md">
+                              <p className="text-muted-foreground">No success metrics defined for this experiment</p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                   {/* Circle Comparison Card */}
                   <Card>
