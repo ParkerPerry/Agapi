@@ -1,5 +1,13 @@
 import React, { useState } from "react";
 import { Lab, InsertLabTemplate } from "@shared/schema";
+
+// Define a type for metrics to avoid casting issues
+type MetricItem = {
+  name: string;
+  target: string | number;
+  priority: "high" | "medium" | "low";
+};
+
 import {
   Dialog,
   DialogContent,
@@ -102,11 +110,7 @@ const LabGoalsEditor: React.FC<LabGoalsEditorProps> = ({ lab, onUpdate }) => {
     // Clear existing metrics and add new ones from template
     remove();
     if (template.successMetrics && template.successMetrics.metrics) {
-      template.successMetrics.metrics.forEach((metricItem: { 
-        name: string; 
-        target: string | number; 
-        priority: "high" | "medium" | "low" 
-      }) => {
+      (template.successMetrics.metrics as MetricItem[]).forEach((metricItem) => {
         append({
           name: metricItem.name,
           target: typeof metricItem.target === 'number' ? String(metricItem.target) : metricItem.target,
@@ -331,7 +335,7 @@ const LabGoalsEditor: React.FC<LabGoalsEditorProps> = ({ lab, onUpdate }) => {
             </DialogDescription>
           </DialogHeader>
           
-          <LabTemplateSelector onSelectTemplate={handleTemplateSelect} />
+          <LabTemplateSelector onSelectTemplate={handleTemplateSelect} isWizardMode={false} />
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsTemplateDialogOpen(false)}>

@@ -630,7 +630,7 @@ const LabCreateWizard = ({
                     <p className="text-sm text-muted-foreground mb-4">
                       Save time by selecting a pre-defined template for common experiment types. Templates include recommended goals and metrics.
                     </p>
-                    <LabTemplateSelector onSelectTemplate={applyTemplate} />
+                    <LabTemplateSelector onSelectTemplate={applyTemplate} isWizardMode={true} />
                   </div>
 
                   <FormField
