@@ -65,7 +65,7 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect })
       <CardContent className="pb-2">
         <p className="text-xs text-muted-foreground mb-2">Key metrics:</p>
         <div className="flex flex-wrap gap-1">
-          {template.successMetrics.metrics.slice(0, 2).map((metric, idx) => (
+          {template.successMetrics.metrics.slice(0, 2).map((metric: { name: string; target: string | number; priority: string }, idx) => (
             <Badge key={idx} variant="secondary" className="text-xs">
               {metric.name}
             </Badge>

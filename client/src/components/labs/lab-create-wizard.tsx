@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import type { Circle, LabTemplate } from "@shared/schema";
+import type { Circle, InsertLabTemplate } from "@shared/schema";
+import { LabTemplateData } from "./lab-template-selector";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -167,14 +168,14 @@ const LabCreateWizard = ({
 
   const { watch, setValue, getValues } = form;
   
-  const applyTemplate = (template: Omit<InsertLabTemplate, "isDefault">) => {
+  const applyTemplate = (template: LabTemplateData) => {
     // Apply the template values to the form
     setValue("goals", template.goals);
     
     // Convert template metrics (if any) to the form format
     if (template.successMetrics && template.successMetrics.metrics) {
       setValue("successMetrics.metrics", 
-        template.successMetrics.metrics.map(metric => ({
+        template.successMetrics.metrics.map((metric: { name: string; target: string | number; priority: "high" | "medium" | "low" }) => ({
           name: metric.name,
           target: typeof metric.target === 'number' ? metric.target : parseFloat(metric.target) || 0,
           priority: metric.priority
