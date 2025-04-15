@@ -153,9 +153,13 @@ export default function HomePage() {
                   <Skeleton className="h-24 w-full" />
                 </div>
               ))
-            ) : posts?.map((post) => (
+            ) : Array.isArray(posts) ? posts.map((post) => (
               <PostCard key={post.id} post={post} />
-            ))}
+            )) : (
+              <div className="text-center py-6 text-muted-foreground">
+                No posts available for this circle
+              </div>
+            )}
           </div>
         </main>
       </div>
