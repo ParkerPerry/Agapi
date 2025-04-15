@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Lab } from "@shared/schema";
@@ -22,7 +23,6 @@ import {
   Info,
 } from "lucide-react";
 import LabDeleteDialog from "./lab-delete-dialog";
-import LabDetailDialog from "./lab-detail-dialog";
 import LabStatusChangeDialog from "./lab-status-change-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -62,8 +62,8 @@ const formatDate = (date: Date | string | null | undefined) => {
 
 const LabCard = ({ lab, onUpdate }: LabCardProps) => {
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [targetStatus, setTargetStatus] = useState<"active" | "draft" | "completed" | "archived" | null>(null);
 
@@ -162,7 +162,7 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => setIsDetailDialogOpen(true)}
+            onClick={() => navigate(`/labs/${lab.id}`)}
           >
             <Info className="mr-2 h-4 w-4" />
             Details
@@ -178,7 +178,7 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
             <DropdownMenuContent align="end">
               {getStatusActions()}
               
-              <DropdownMenuItem onClick={() => setIsDetailDialogOpen(true)}>
+              <DropdownMenuItem onClick={() => navigate(`/labs/${lab.id}`)}>
                 <Info className="mr-2 h-4 w-4" />
                 View Details
               </DropdownMenuItem>
@@ -198,15 +198,6 @@ const LabCard = ({ lab, onUpdate }: LabCardProps) => {
           open={isDeleteDialogOpen}
           onOpenChange={setIsDeleteDialogOpen}
           onDelete={handleDelete}
-        />
-      )}
-      
-      {lab && lab.id && (
-        <LabDetailDialog
-          labId={lab.id}
-          open={isDetailDialogOpen}
-          onOpenChange={setIsDetailDialogOpen}
-          onUpdate={onUpdate}
         />
       )}
       

@@ -655,18 +655,23 @@ export default function LabDetailPage() {
           labId={labId}
           open={isAddCircleOpen}
           onOpenChange={setIsAddCircleOpen}
-          onUpdate={handleCircleUpdate}
+          onSuccess={handleCircleUpdate}
+          existingCircleIds={(circlesWithStats?.map(c => c.labCircle?.circleId || 0).filter(id => id !== 0)) || 
+            (circles?.map(c => c.id).filter(id => id !== undefined) as number[]) || 
+            []}
         />
       )}
 
       {/* Circle role dialog */}
-      {labId && selectedCircle && (
+      {labId && selectedCircle && selectedCircle.id && (
         <LabCircleRoleDialog
           labId={labId}
-          circle={selectedCircle}
+          circleId={selectedCircle.id}
+          circleName={selectedCircle.name || "Unknown Circle"}
+          currentRole={selectedCircle.role || "observation"}
           open={isRoleDialogOpen}
           onOpenChange={setIsRoleDialogOpen}
-          onUpdate={handleCircleUpdate}
+          onSuccess={handleCircleUpdate}
         />
       )}
     </TourProvider>
