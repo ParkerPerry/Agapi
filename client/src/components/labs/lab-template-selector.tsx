@@ -85,8 +85,16 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect })
         <Button variant="outline" size="sm" className="w-full" onClick={(e) => {
           e.stopPropagation();
           onSelect(template);
+          
+          // Scroll to the goals section
+          const goalsElement = document.querySelector('[name="goals"]');
+          if (goalsElement) {
+            setTimeout(() => {
+              goalsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+          }
         }}>
-          Use Template
+          Apply Template
         </Button>
       </CardFooter>
     </Card>

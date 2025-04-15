@@ -589,17 +589,6 @@ const LabCreateWizard = ({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="border rounded-md p-4 bg-muted/20 mb-6">
-                    <h3 className="text-sm font-medium flex items-center gap-2 mb-3">
-                      <Sparkles className="h-4 w-4 text-primary" />
-                      Lab Templates
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Save time by selecting a pre-defined template for common experiment types. Templates include recommended goals and metrics.
-                    </p>
-                    <LabTemplateSelector onSelectTemplate={applyTemplate} />
-                  </div>
-                
                   <FormField
                     control={form.control}
                     name="description"
@@ -620,6 +609,17 @@ const LabCreateWizard = ({
                       </FormItem>
                     )}
                   />
+                  
+                  <div className="border rounded-md p-4 bg-muted/20 mb-6">
+                    <h3 className="text-sm font-medium flex items-center gap-2 mb-3">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      Lab Templates
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Save time by selecting a pre-defined template for common experiment types. Templates include recommended goals and metrics.
+                    </p>
+                    <LabTemplateSelector onSelectTemplate={applyTemplate} />
+                  </div>
 
                   <FormField
                     control={form.control}
