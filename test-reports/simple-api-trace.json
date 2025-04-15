@@ -1794,18 +1794,14 @@
             "code": "invalid_type",
             "expected": "string",
             "received": "undefined",
-            "path": [
-              "name"
-            ],
+            "path": ["name"],
             "message": "Required"
           },
           {
             "expected": "'a_b_test' | 'multivariate' | 'exploration'",
             "received": "undefined",
             "code": "invalid_type",
-            "path": [
-              "experimentType"
-            ],
+            "path": ["experimentType"],
             "message": "Required"
           }
         ]
@@ -1844,18 +1840,14 @@
             "code": "invalid_type",
             "expected": "string",
             "received": "undefined",
-            "path": [
-              "name"
-            ],
+            "path": ["name"],
             "message": "Required"
           },
           {
             "expected": "'a_b_test' | 'multivariate' | 'exploration'",
             "received": "undefined",
             "code": "invalid_type",
-            "path": [
-              "experimentType"
-            ],
+            "path": ["experimentType"],
             "message": "Required"
           }
         ]
