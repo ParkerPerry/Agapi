@@ -9,6 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+// Define a type for metrics to avoid casting issues
+type MetricItem = {
+  name: string;
+  target: string | number;
+  priority: "high" | "medium" | "low";
+};
 import {
   Card,
   CardContent,
@@ -34,6 +41,9 @@ interface LabTemplateCardProps {
 
 /**
  * Card display for an individual lab template
+ * @param isWizardMode When true, this component is being used in the lab creation wizard
+ *                     and should only apply the template without saving changes.
+ *                     When false (default), it applies template and triggers a save.
  */
 const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect, isWizardMode = false }) => {
   const getCategoryIcon = (category: InsertLabTemplate["category"]) => {
@@ -55,14 +65,17 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect, i
     <Card 
       className="h-full hover:border-primary/50 cursor-pointer transition-all" 
       onClick={(e) => {
+        // Apply the template
         onSelect(template);
         
-        // Scroll to the goals section
-        const goalsElement = document.querySelector('[name="goals"]');
-        if (goalsElement) {
-          setTimeout(() => {
-            goalsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 100);
+        // Only scroll to the goals section in wizard mode
+        if (isWizardMode) {
+          const goalsElement = document.querySelector('[name="goals"]');
+          if (goalsElement) {
+            setTimeout(() => {
+              goalsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+          }
         }
       }}
     >
@@ -79,11 +92,7 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect, i
       <CardContent className="pb-2">
         <p className="text-xs text-muted-foreground mb-2">Key metrics:</p>
         <div className="flex flex-wrap gap-1">
-          {template.successMetrics.metrics.slice(0, 2).map((metric: { 
-            name: string; 
-            target: string | number; 
-            priority: "high" | "medium" | "low" 
-          }, idx) => (
+          {(template.successMetrics.metrics as MetricItem[]).slice(0, 2).map((metric, idx) => (
             <Badge key={idx} variant="secondary" className="text-xs">
               {metric.name}
             </Badge>
@@ -104,19 +113,21 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect, i
             // Prevent the card's onClick from firing too
             e.stopPropagation();
             
-            // Only apply the template without saving the lab
+            // Apply the template
             onSelect(template);
             
-            // Scroll to the goals section
-            const goalsElement = document.querySelector('[name="goals"]');
-            if (goalsElement) {
-              setTimeout(() => {
-                goalsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }, 100);
+            // Only scroll to the goals section in wizard mode
+            if (isWizardMode) {
+              const goalsElement = document.querySelector('[name="goals"]');
+              if (goalsElement) {
+                setTimeout(() => {
+                  goalsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+              }
             }
           }}
         >
-          Apply Template
+          {isWizardMode ? "Apply Template" : "Apply & Save Changes"}
         </Button>
       </CardFooter>
     </Card>
