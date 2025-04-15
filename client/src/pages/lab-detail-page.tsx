@@ -762,34 +762,99 @@ export default function LabDetailPage() {
                           <div className="space-y-3">
                             <h3 className="text-base font-medium">Performance Summary</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <Card className="border-green-200">
-                                <CardContent className="pt-6">
-                                  <div className="text-center">
-                                    <p className="text-sm font-medium text-muted-foreground mb-1">Feature Acceptance</p>
-                                    <p className="text-3xl font-bold text-green-600">92%</p>
-                                    <p className="text-xs text-green-600 mt-1">+15% above target</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                              <Card className="border-green-200">
-                                <CardContent className="pt-6">
-                                  <div className="text-center">
-                                    <p className="text-sm font-medium text-muted-foreground mb-1">Engagement Rate</p>
-                                    <p className="text-3xl font-bold text-green-600">83%</p>
-                                    <p className="text-xs text-green-600 mt-1">+8% above target</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                              <Card className="border-amber-200">
-                                <CardContent className="pt-6">
-                                  <div className="text-center">
-                                    <p className="text-sm font-medium text-muted-foreground mb-1">Predicted NPS Impact</p>
-                                    <p className="text-3xl font-bold text-amber-600">+5</p>
-                                    <p className="text-xs text-amber-600 mt-1">Meets target</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
+                              {lab.successMetrics?.metrics && lab.successMetrics.metrics.length > 0 ? (
+                                lab.successMetrics.metrics.slice(0, 3).map((metric, index) => {
+                                  // Determine status colors based on priority
+                                  let borderColor = "border-green-200";
+                                  let textColor = "text-green-600";
+                                  let statusText = "+15% above target";
+                                  let metricValue = index === 0 ? "92%" : index === 1 ? "83%" : "+5";
+                                  
+                                  // For demo purposes, we'll vary the status based on the index position
+                                  if (index === 2) {
+                                    borderColor = "border-amber-200";
+                                    textColor = "text-amber-600";
+                                    statusText = "Meets target";
+                                  } else if (index === 1) {
+                                    statusText = "+8% above target";
+                                  }
+                                  
+                                  const isHighPriority = metric.priority === "high";
+                                  const isMediumPriority = metric.priority === "medium";
+                                  
+                                  return (
+                                    <Card key={index} className={borderColor}>
+                                      <CardContent className="pt-6">
+                                        <div className="text-center">
+                                          <p className="text-sm font-medium text-muted-foreground mb-1">{metric.name}</p>
+                                          <p className={`text-3xl font-bold ${textColor}`}>{metricValue}</p>
+                                          <p className={`text-xs ${textColor} mt-1`}>{statusText}</p>
+                                          <div className="mt-2">
+                                            <Badge variant={isHighPriority ? "default" : (isMediumPriority ? "secondary" : "outline")}>
+                                              {metric.priority} priority
+                                            </Badge>
+                                          </div>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+                                  );
+                                })
+                              ) : (
+                                <div className="col-span-3 text-center py-4">
+                                  <p className="text-muted-foreground">No metrics have been defined for this experiment</p>
+                                </div>
+                              )}
                             </div>
+                            
+                            {lab.successMetrics?.metrics && lab.successMetrics.metrics.length > 3 && (
+                              <div className="mt-4">
+                                <Accordion type="single" collapsible>
+                                  <AccordionItem value="additional-metrics">
+                                    <AccordionTrigger>
+                                      View {lab.successMetrics.metrics.length - 3} additional metrics
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <Table>
+                                        <TableHeader>
+                                          <TableRow>
+                                            <TableHead>Metric</TableHead>
+                                            <TableHead>Target</TableHead>
+                                            <TableHead>Result</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead>Priority</TableHead>
+                                          </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                          {lab.successMetrics.metrics.slice(3).map((metric, index) => {
+                                            const isHighPriority = metric.priority === "high";
+                                            const isMediumPriority = metric.priority === "medium";
+                                            
+                                            // Mock data for demonstration
+                                            const result = index % 2 === 0 ? "Exceeds target" : "Meets target";
+                                            const resultColor = index % 2 === 0 ? "text-green-600" : "text-amber-600";
+                                            const resultValue = index % 2 === 0 ? "+12%" : "On target";
+                                            
+                                            return (
+                                              <TableRow key={index}>
+                                                <TableCell className="font-medium">{metric.name}</TableCell>
+                                                <TableCell>{metric.target}</TableCell>
+                                                <TableCell>{resultValue}</TableCell>
+                                                <TableCell className={resultColor}>{result}</TableCell>
+                                                <TableCell>
+                                                  <Badge variant={isHighPriority ? "default" : (isMediumPriority ? "secondary" : "outline")}>
+                                                    {metric.priority}
+                                                  </Badge>
+                                                </TableCell>
+                                              </TableRow>
+                                            );
+                                          })}
+                                        </TableBody>
+                                      </Table>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                </Accordion>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ) : lab.status === "active" ? (
@@ -819,34 +884,97 @@ export default function LabDetailPage() {
                           <div className="space-y-3">
                             <h3 className="text-base font-medium">Preliminary Results</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <Card className="border-blue-200">
-                                <CardContent className="pt-6">
-                                  <div className="text-center">
-                                    <p className="text-sm font-medium text-muted-foreground mb-1">Feature Acceptance</p>
-                                    <p className="text-3xl font-bold text-blue-600">87%</p>
-                                    <p className="text-xs text-blue-600 mt-1">Trending positive</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                              <Card className="border-blue-200">
-                                <CardContent className="pt-6">
-                                  <div className="text-center">
-                                    <p className="text-sm font-medium text-muted-foreground mb-1">Engagement Rate</p>
-                                    <p className="text-3xl font-bold text-blue-600">79%</p>
-                                    <p className="text-xs text-blue-600 mt-1">Needs more data</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                              <Card className="border-blue-200">
-                                <CardContent className="pt-6">
-                                  <div className="text-center">
-                                    <p className="text-sm font-medium text-muted-foreground mb-1">Predicted NPS Impact</p>
-                                    <p className="text-3xl font-bold text-blue-600">+4</p>
-                                    <p className="text-xs text-blue-600 mt-1">Preliminary</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
+                              {lab.successMetrics?.metrics && lab.successMetrics.metrics.length > 0 ? (
+                                lab.successMetrics.metrics.slice(0, 3).map((metric, index) => {
+                                  // For active labs, use blue for "in progress" indicators
+                                  let borderColor = "border-blue-200";
+                                  let textColor = "text-blue-600";
+                                  let statusText = "Trending positive";
+                                  let metricValue = index === 0 ? "87%" : index === 1 ? "79%" : "+4";
+                                  
+                                  // For the second metric, show a different status
+                                  if (index === 1) {
+                                    statusText = "Needs more data";
+                                  } else if (index === 2) {
+                                    statusText = "Preliminary";
+                                  }
+                                  
+                                  const isHighPriority = metric.priority === "high";
+                                  const isMediumPriority = metric.priority === "medium";
+                                  
+                                  return (
+                                    <Card key={index} className={borderColor}>
+                                      <CardContent className="pt-6">
+                                        <div className="text-center">
+                                          <p className="text-sm font-medium text-muted-foreground mb-1">{metric.name}</p>
+                                          <p className={`text-3xl font-bold ${textColor}`}>{metricValue}</p>
+                                          <p className={`text-xs ${textColor} mt-1`}>{statusText}</p>
+                                          <div className="mt-2">
+                                            <Badge variant={isHighPriority ? "default" : (isMediumPriority ? "secondary" : "outline")}>
+                                              {metric.priority} priority
+                                            </Badge>
+                                          </div>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+                                  );
+                                })
+                              ) : (
+                                <div className="col-span-3 text-center py-4">
+                                  <p className="text-muted-foreground">No metrics have been defined for this experiment</p>
+                                </div>
+                              )}
                             </div>
+                            
+                            {lab.successMetrics?.metrics && lab.successMetrics.metrics.length > 3 && (
+                              <div className="mt-4">
+                                <Accordion type="single" collapsible>
+                                  <AccordionItem value="additional-metrics">
+                                    <AccordionTrigger>
+                                      View {lab.successMetrics.metrics.length - 3} additional metrics
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <Table>
+                                        <TableHeader>
+                                          <TableRow>
+                                            <TableHead>Metric</TableHead>
+                                            <TableHead>Target</TableHead>
+                                            <TableHead>Current</TableHead>
+                                            <TableHead>Trend</TableHead>
+                                            <TableHead>Priority</TableHead>
+                                          </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                          {lab.successMetrics.metrics.slice(3).map((metric, index) => {
+                                            const isHighPriority = metric.priority === "high";
+                                            const isMediumPriority = metric.priority === "medium";
+                                            
+                                            // For demo purposes, alternate between positive and neutral trends
+                                            const trend = index % 2 === 0 ? "Trending positive" : "Neutral";
+                                            const trendColor = index % 2 === 0 ? "text-blue-600" : "text-amber-600";
+                                            const currentValue = index % 2 === 0 ? "73%" : "52%";
+                                            
+                                            return (
+                                              <TableRow key={index}>
+                                                <TableCell className="font-medium">{metric.name}</TableCell>
+                                                <TableCell>{metric.target}</TableCell>
+                                                <TableCell>{currentValue}</TableCell>
+                                                <TableCell className={trendColor}>{trend}</TableCell>
+                                                <TableCell>
+                                                  <Badge variant={isHighPriority ? "default" : (isMediumPriority ? "secondary" : "outline")}>
+                                                    {metric.priority}
+                                                  </Badge>
+                                                </TableCell>
+                                              </TableRow>
+                                            );
+                                          })}
+                                        </TableBody>
+                                      </Table>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                </Accordion>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ) : (
