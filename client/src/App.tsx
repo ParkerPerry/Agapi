@@ -8,6 +8,7 @@ import AuthPage from "@/pages/auth-page";
 import AiFollowersPage from "@/pages/ai-followers-page";
 import CirclesPage from "@/pages/circles-page";
 import LabsPage from "@/pages/labs-page";
+import LabDetailPage from "@/pages/lab-detail-page";
 import FollowerConfigPage from "@/pages/follower-config-page";
 import UserProfilePage from "@/pages/user-profile-page";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
@@ -23,6 +24,7 @@ function Router() {
       <ProtectedRoute path="/ai-followers" component={AiFollowersPage} />
       <ProtectedRoute path="/circles" component={CirclesPage} />
       <ProtectedRoute path="/labs" component={LabsPage} />
+      <ProtectedRoute path="/labs/:id" component={LabDetailPage} />
       <ProtectedRoute path="/ai-followers/config/:id" component={FollowerConfigPage} />
       <ProtectedRoute path="/profile" component={UserProfilePage} />
       <Route path="/auth" component={AuthPage} />
