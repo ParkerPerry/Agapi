@@ -137,27 +137,8 @@ const LabCreateWizard = ({
   ];
 
   // Set up form with default values
-  // Fetch user's circles
-  const { data: circlesData, isLoading: isLoadingCircles } = useQuery({
-    queryKey: ['/api/circles'],
-    refetchOnWindowFocus: false,
-  });
-  
-  // Extract all circles from response (API returns object with 'private' and 'shared' properties)
-  const circles = React.useMemo(() => {
-    if (!circlesData) return [];
-    
-    const allCircles: Circle[] = [];
-    if (circlesData && typeof circlesData === 'object') {
-      if ('private' in circlesData && Array.isArray(circlesData.private)) {
-        allCircles.push(...circlesData.private);
-      }
-      if ('shared' in circlesData && Array.isArray(circlesData.shared)) {
-        allCircles.push(...circlesData.shared);
-      }
-    }
-    return allCircles;
-  }, [circlesData]);
+  // We'll use the Lab Circle Selector component instead of fetching circles here
+  // The component itself handles data fetching
 
   const form = useForm<LabFormValues>({
     resolver: zodResolver(labSchema),
@@ -312,8 +293,7 @@ const LabCreateWizard = ({
           try {
             // Add each additional circle to the lab with its role
             const promises = circles.slice(1).map(circleObj => 
-              apiRequest("/api/labs/circles", "POST", {
-                labId: createdLab.id,
+              apiRequest(`/api/labs/${createdLab.id}/circles`, "POST", {
                 circleId: circleObj.id,
                 role: circleObj.role
               })
