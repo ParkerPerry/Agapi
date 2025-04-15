@@ -65,6 +65,11 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect, i
     <Card 
       className="h-full hover:border-primary/50 cursor-pointer transition-all" 
       onClick={(e) => {
+        // Prevent default behavior to avoid form submission in wizard mode
+        if (isWizardMode) {
+          e.preventDefault();
+        }
+        
         // Apply the template
         onSelect(template);
         
@@ -109,9 +114,13 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect, i
           variant="outline" 
           size="sm" 
           className="w-full" 
+          type="button" // Explicitly set type to button to prevent form submission
           onClick={(e) => {
             // Prevent the card's onClick from firing too
             e.stopPropagation();
+            
+            // Prevent default to avoid form submission
+            e.preventDefault();
             
             // Apply the template
             onSelect(template);

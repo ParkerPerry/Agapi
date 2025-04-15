@@ -372,12 +372,15 @@ const LabCreateWizard = ({
       // Reset form
       form.reset();
       setCurrentStep(0);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating lab:", error);
       
-      // Check if we have a lab ID even though there was an error
-      // This indicates the lab was created but something else failed
-      if (createdLab && createdLab.id) {
+      // Check if we have a successful lab creation response despite the error
+      // This can happen if the main lab creation succeeds but adding circles or content fails
+      const errorResponseData = error?.response?.data;
+      const hasLabId = typeof error?.labId === 'number' || (errorResponseData && typeof errorResponseData.id === 'number');
+      
+      if (hasLabId) {
         toast({
           title: "Lab created with issues",
           description: "Your lab was created, but some secondary operations may have failed. You can still use the lab.",
