@@ -51,7 +51,20 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect })
   };
   
   return (
-    <Card className="h-full hover:border-primary/50 cursor-pointer transition-all" onClick={() => onSelect(template)}>
+    <Card 
+      className="h-full hover:border-primary/50 cursor-pointer transition-all" 
+      onClick={(e) => {
+        onSelect(template);
+        
+        // Scroll to the goals section
+        const goalsElement = document.querySelector('[name="goals"]');
+        if (goalsElement) {
+          setTimeout(() => {
+            goalsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
+      }}
+    >
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-base">{template.name}</CardTitle>
@@ -82,18 +95,26 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect })
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" size="sm" className="w-full" onClick={(e) => {
-          e.stopPropagation();
-          onSelect(template);
-          
-          // Scroll to the goals section
-          const goalsElement = document.querySelector('[name="goals"]');
-          if (goalsElement) {
-            setTimeout(() => {
-              goalsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-          }
-        }}>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-full" 
+          onClick={(e) => {
+            // Prevent the card's onClick from firing too
+            e.stopPropagation();
+            
+            // Only apply the template without saving the lab
+            onSelect(template);
+            
+            // Scroll to the goals section
+            const goalsElement = document.querySelector('[name="goals"]');
+            if (goalsElement) {
+              setTimeout(() => {
+                goalsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 100);
+            }
+          }}
+        >
           Apply Template
         </Button>
       </CardFooter>
