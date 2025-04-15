@@ -237,7 +237,12 @@ const LabCreateWizard = ({
     );
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e?: React.MouseEvent) => {
+    // If an event is passed, prevent default behavior
+    if (e) {
+      e.preventDefault();
+    }
+    
     const currentValues = getValues();
     let isValid = false;
 
@@ -245,7 +250,7 @@ const LabCreateWizard = ({
       const { name, experimentType, circles } = currentValues;
       isValid = !!(name && name.length >= 3 && experimentType && circles && circles.length > 0);
     } else if (currentStep === 1) {
-      // Description and goals are optional, so we can always proceed
+      // Goals are optional, so we can always proceed
       isValid = true;
     } else if (currentStep === 2) {
       // Metrics are optional
@@ -257,9 +262,10 @@ const LabCreateWizard = ({
 
     if (isValid) {
       if (currentStep < steps.length - 1) {
+        // Move to the next step
         setCurrentStep((prev) => prev + 1);
       } else {
-        // Submit the form
+        // This is the last step, submit the form manually
         await onSubmit(currentValues);
       }
     } else {
@@ -410,7 +416,13 @@ const LabCreateWizard = ({
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Use onSubmit={e => { e.preventDefault(); form.handleSubmit(onSubmit)(e); }} 
+              instead of directly passing form.handleSubmit(onSubmit)
+              to prevent template application from triggering form submission */}
+          <form onSubmit={(e) => { 
+            e.preventDefault(); 
+            form.handleSubmit(onSubmit)(e); 
+          }} className="space-y-4">
             {/* Step 1: Basic Information */}
             {currentStep === 0 && (
               <Card>
@@ -907,7 +919,7 @@ const LabCreateWizard = ({
             </Button>
             <Button
               type="button"
-              onClick={handleNext}
+              onClick={(e) => handleNext(e)}
               disabled={isSubmitting}
             >
               {currentStep < steps.length - 1
