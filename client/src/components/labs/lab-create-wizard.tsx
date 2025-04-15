@@ -5,6 +5,13 @@ import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 import type { Circle, InsertLabTemplate } from "@shared/schema";
 import { LabTemplateData } from "./lab-template-selector";
+
+// Define a type for metrics to avoid casting issues
+type MetricItem = {
+  name: string;
+  target: string | number;
+  priority: "high" | "medium" | "low";
+};
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -175,11 +182,7 @@ const LabCreateWizard = ({
     // Convert template metrics (if any) to the form format
     if (template.successMetrics && template.successMetrics.metrics) {
       // Convert metrics with proper typing to avoid type issues
-      const typedMetrics = template.successMetrics.metrics.map((metric: { 
-        name: string; 
-        target: string | number; 
-        priority: "high" | "medium" | "low" 
-      }) => ({
+      const typedMetrics = (template.successMetrics.metrics as MetricItem[]).map(metric => ({
         name: metric.name,
         target: typeof metric.target === 'number' ? metric.target : parseFloat(metric.target) || 0,
         priority: metric.priority
@@ -286,7 +289,8 @@ const LabCreateWizard = ({
       // Extract the circles data from the form
       const { circles, labContent, ...labData } = data;
       
-      let createdLab;
+      // Define type for the created lab
+      let createdLab: { id: number; [key: string]: any };
       
       // Check if we have circles selected
       if (circles && circles.length > 0) {
