@@ -29,12 +29,13 @@ export type LabTemplateData = Omit<InsertLabTemplate, "isDefault">;
 interface LabTemplateCardProps {
   template: Omit<InsertLabTemplate, "isDefault">;
   onSelect: (template: Omit<InsertLabTemplate, "isDefault">) => void;
+  isWizardMode?: boolean; // Add flag to differentiate between wizard mode and edit mode
 }
 
 /**
  * Card display for an individual lab template
  */
-const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect }) => {
+const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect, isWizardMode = false }) => {
   const getCategoryIcon = (category: InsertLabTemplate["category"]) => {
     switch(category) {
       case "product":
@@ -124,13 +125,17 @@ const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect })
 
 interface LabTemplateSelectorProps {
   onSelectTemplate: (template: Omit<InsertLabTemplate, "isDefault">) => void;
+  isWizardMode?: boolean; // Flag to indicate if we're in wizard mode or edit mode
 }
 
 /**
  * Component for selecting a lab template from predefined options
  * or using a custom template
  */
-const LabTemplateSelector: React.FC<LabTemplateSelectorProps> = ({ onSelectTemplate }) => {
+const LabTemplateSelector: React.FC<LabTemplateSelectorProps> = ({ 
+  onSelectTemplate,
+  isWizardMode = false // Default to edit mode, which assumes direct save
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<InsertLabTemplate["category"] | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   
@@ -174,7 +179,8 @@ const LabTemplateSelector: React.FC<LabTemplateSelectorProps> = ({ onSelectTempl
           <LabTemplateCard 
             key={idx} 
             template={template} 
-            onSelect={onSelectTemplate} 
+            onSelect={onSelectTemplate}
+            isWizardMode={isWizardMode}
           />
         ))}
       </div>
