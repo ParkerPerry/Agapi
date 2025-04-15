@@ -550,6 +550,46 @@ export const insertLabSchema = createInsertSchema(labs)
     circleId: true, // Added circleId to allow direct association with a circle (optional)
   });
 
+// Lab Templates for quick setup of experiments
+export const labTemplates = pgTable("lab_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  category: text("category", { 
+    enum: ["product", "marketing", "content", "engagement"] 
+  }).notNull(),
+  experimentType: text("experiment_type", { 
+    enum: ["a_b_test", "multivariate", "exploration"] 
+  }).notNull(),
+  goals: text("goals").notNull(),
+  successMetrics: json("success_metrics").$type<{
+    metrics: Array<{
+      name: string;
+      target: string;
+      priority: "high" | "medium" | "low";
+    }>;
+  }>().notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  isDefault: boolean("is_default").default(false),
+});
+
+// Insert schema for lab templates
+export const insertLabTemplateSchema = createInsertSchema(labTemplates)
+  .pick({
+    name: true,
+    description: true,
+    category: true,
+    experimentType: true,
+    goals: true,
+    successMetrics: true,
+    isDefault: true,
+  });
+
+// Select type for lab templates
+export type LabTemplate = typeof labTemplates.$inferSelect;
+export type InsertLabTemplate = z.infer<typeof insertLabTemplateSchema>;
+
 export const insertLabCircleSchema = createInsertSchema(labCircles)
   .pick({
     labId: true,

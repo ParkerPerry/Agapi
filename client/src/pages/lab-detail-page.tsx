@@ -607,13 +607,13 @@ export default function LabDetailPage() {
                     </CardContent>
                   </Card>
                   
-                  {/* Persona Segments Card */}
+                  {/* Collective Analysis Card */}
                   {(lab.status === "active" || lab.status === "completed") && (
                     <Card>
                       <CardHeader>
-                        <CardTitle>Audience Persona Analysis</CardTitle>
+                        <CardTitle>Collective Analysis</CardTitle>
                         <CardDescription>
-                          How different user segments reacted to your experiment
+                          How different collectives reacted to your experiment
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -665,7 +665,7 @@ export default function LabDetailPage() {
                         <div className="flex items-start space-x-2 w-full">
                           <InfoIcon className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                           <p className="text-xs text-muted-foreground">
-                            Persona segmentation helps identify which user groups benefit most from your feature.
+                            Collective analysis helps identify which user groups benefit most from your feature.
                           </p>
                         </div>
                       </CardFooter>
