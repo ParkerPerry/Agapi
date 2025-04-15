@@ -135,13 +135,7 @@ export default function LabDetailPage() {
     refetch: refetchLab,
   } = useQuery<Lab>({
     queryKey: [`/api/labs/${labId}`],
-    enabled: !!labId,
-    onSuccess: (data) => {
-      console.log('Successfully fetched lab data:', data);
-    },
-    onError: (err) => {
-      console.error('Error fetching lab data:', err);
-    }
+    enabled: !!labId
   });
 
   // Fetch lab circles
