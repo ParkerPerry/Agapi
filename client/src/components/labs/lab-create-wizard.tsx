@@ -308,23 +308,33 @@ const LabCreateWizard = ({
         
         // If there are additional circles beyond the first one, add them separately
         if (circles.length > 1) {
-          // Add each additional circle to the lab with its role
-          const promises = circles.slice(1).map(circleObj => 
-            apiRequest("/api/labs/circles", "POST", {
-              labId: createdLab.id,
-              circleId: circleObj.id,
-              role: circleObj.role
-            })
-          );
-          
-          await Promise.all(promises);
+          try {
+            // Add each additional circle to the lab with its role
+            const promises = circles.slice(1).map(circleObj => 
+              apiRequest("/api/labs/circles", "POST", {
+                labId: createdLab.id,
+                circleId: circleObj.id,
+                role: circleObj.role
+              })
+            );
+            
+            await Promise.all(promises);
+          } catch (circleError) {
+            console.warn("Some circles may not have been added to the lab:", circleError);
+            // Continue with lab creation even if some circles failed to be added
+          }
         }
         
         // Also update the role of the first circle if it's not the default
         if (firstCircle.role !== "treatment") {
-          await apiRequest(`/api/labs/${createdLab.id}/circles/${firstCircle.id}`, "PATCH", {
-            role: firstCircle.role
-          });
+          try {
+            await apiRequest(`/api/labs/${createdLab.id}/circles/${firstCircle.id}`, "PATCH", {
+              role: firstCircle.role
+            });
+          } catch (roleError) {
+            console.warn("Could not update circle role:", roleError);
+            // Continue with lab creation even if role update fails
+          }
         }
       } else {
         // No circles selected, create lab without circle association
@@ -333,17 +343,22 @@ const LabCreateWizard = ({
       
       // If lab content was created, create posts for the lab
       if (labContent && labContent.length > 0 && createdLab) {
-        // Create each piece of content as a post associated with the lab
-        const postPromises = labContent.map(content => 
-          apiRequest("/api/posts", "POST", {
-            content: content.content,
-            labId: createdLab.id,
-            labExperiment: true,
-            targetRole: content.targetRole
-          })
-        );
-        
-        await Promise.all(postPromises);
+        try {
+          // Create each piece of content as a post associated with the lab
+          const postPromises = labContent.map(content => 
+            apiRequest("/api/posts", "POST", {
+              content: content.content,
+              labId: createdLab.id,
+              labExperiment: true,
+              targetRole: content.targetRole
+            })
+          );
+          
+          await Promise.all(postPromises);
+        } catch (contentError) {
+          console.warn("Some lab content posts could not be created:", contentError);
+          // Continue with lab creation even if content creation fails
+        }
       }
       
       toast({
@@ -359,11 +374,31 @@ const LabCreateWizard = ({
       setCurrentStep(0);
     } catch (error) {
       console.error("Error creating lab:", error);
-      toast({
-        title: "Failed to create lab",
-        description: "There was an error creating the lab. Please try again.",
-        variant: "destructive",
-      });
+      
+      // Check if we have a lab ID even though there was an error
+      // This indicates the lab was created but something else failed
+      if (createdLab && createdLab.id) {
+        toast({
+          title: "Lab created with issues",
+          description: "Your lab was created, but some secondary operations may have failed. You can still use the lab.",
+          variant: "default",
+        });
+        
+        // Close the wizard and refresh the labs list
+        onOpenChange(false);
+        onCreateSuccess();
+        
+        // Reset form
+        form.reset();
+        setCurrentStep(0);
+      } else {
+        // Complete failure - lab wasn't created
+        toast({
+          title: "Failed to create lab",
+          description: "There was an error creating the lab. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
