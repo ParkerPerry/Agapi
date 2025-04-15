@@ -73,6 +73,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import LabTemplateSelector from "@/components/labs/lab-template-selector";
+import LabCircleSelector from "@/components/labs/lab-circle-selector";
 
 interface LabCreateWizardProps {
   open: boolean;
