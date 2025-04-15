@@ -141,6 +141,7 @@ export interface IStorage {
     addedAt: Date
   })[]>;
   getCircleLabs(circleId: number): Promise<(Lab & { role: "control" | "treatment" | "observation" })[]>;
+  getLabsForCircle(circleId: number): Promise<Lab[]>; // Alias for getCircleLabs for API compatibility
   removeCircleFromLab(labId: number, circleId: number): Promise<void>;
   updateLabCircleRole(labId: number, circleId: number, role: "control" | "treatment" | "observation"): Promise<LabCircle>;
   
@@ -2103,6 +2104,18 @@ export class DatabaseStorage implements IStorage {
       return circleLabs;
     } catch (error) {
       console.error("[Storage] Error getting circle labs:", error);
+      throw error;
+    }
+  }
+  
+  async getLabsForCircle(circleId: number): Promise<Lab[]> {
+    try {
+      console.log("[Storage] Getting labs for circle (alias method):", circleId);
+      // This is just an alias for getCircleLabs for API compatibility
+      const labsWithRoles = await this.getCircleLabs(circleId);
+      return labsWithRoles;
+    } catch (error) {
+      console.error("[Storage] Error getting labs for circle:", error);
       throw error;
     }
   }
