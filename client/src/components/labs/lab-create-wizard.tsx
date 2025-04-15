@@ -174,13 +174,18 @@ const LabCreateWizard = ({
     
     // Convert template metrics (if any) to the form format
     if (template.successMetrics && template.successMetrics.metrics) {
-      setValue("successMetrics.metrics", 
-        template.successMetrics.metrics.map((metric: { name: string; target: string | number; priority: "high" | "medium" | "low" }) => ({
-          name: metric.name,
-          target: typeof metric.target === 'number' ? metric.target : parseFloat(metric.target) || 0,
-          priority: metric.priority
-        }))
-      );
+      // Convert metrics with proper typing to avoid type issues
+      const typedMetrics = template.successMetrics.metrics.map((metric: { 
+        name: string; 
+        target: string | number; 
+        priority: "high" | "medium" | "low" 
+      }) => ({
+        name: metric.name,
+        target: typeof metric.target === 'number' ? metric.target : parseFloat(metric.target) || 0,
+        priority: metric.priority
+      }));
+      
+      setValue("successMetrics.metrics", typedMetrics);
     }
     
     // Also update experiment type if it matches one of our valid types

@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TrashIcon, PlusCircle, SparklesIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LabTemplateSelector from "./lab-template-selector";
@@ -74,23 +74,47 @@ const LabGoalsEditor: React.FC<LabGoalsEditorProps> = ({ lab, onUpdate }) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
+  // Convert any numeric targets to strings for form
+  const initialMetrics = lab.successMetrics?.metrics?.map(metric => ({
+    name: metric.name,
+    target: typeof metric.target === 'number' ? String(metric.target) : metric.target,
+    priority: metric.priority
+  })) || [];
+
   // Initialize form with current lab data
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       goals: lab.goals || "",
-      metrics: lab.successMetrics?.metrics || [],
+      metrics: initialMetrics,
     },
   });
 
-  const { fields, append, remove } = form.useFieldArray({
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
     name: "metrics",
   });
 
   // Handle template selection
   const handleTemplateSelect = (template: Omit<InsertLabTemplate, "isDefault">) => {
     form.setValue("goals", template.goals);
-    form.setValue("metrics", template.successMetrics.metrics);
+    
+    // Clear existing metrics and add new ones from template
+    remove();
+    if (template.successMetrics && template.successMetrics.metrics) {
+      template.successMetrics.metrics.forEach((metricItem: { 
+        name: string; 
+        target: string | number; 
+        priority: "high" | "medium" | "low" 
+      }) => {
+        append({
+          name: metricItem.name,
+          target: typeof metricItem.target === 'number' ? String(metricItem.target) : metricItem.target,
+          priority: metricItem.priority
+        });
+      });
+    }
+    
     setIsTemplateDialogOpen(false);
     
     toast({
