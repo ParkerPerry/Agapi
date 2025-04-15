@@ -3041,5 +3041,529 @@
     "duration": 152,
     "timestamp": "2025-04-15T00:25:32.630Z",
     "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 1634,
+    "timestamp": "2025-04-15T00:25:34.266Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/followers",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "socket hang up",
+      "stack": "Error: socket hang up\n    at Socket.socketOnEnd (node:_http_client:528:25)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21)"
+    },
+    "duration": 1637,
+    "timestamp": "2025-04-15T00:25:34.270Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 70,
+    "timestamp": "2025-04-15T00:25:34.435Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 6,
+    "timestamp": "2025-04-15T00:25:34.445Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 52,
+    "timestamp": "2025-04-15T00:25:34.492Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 14,
+    "timestamp": "2025-04-15T00:25:34.513Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 17,
+    "timestamp": "2025-04-15T00:25:34.515Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 3,
+    "timestamp": "2025-04-15T00:25:34.608Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 3,
+    "timestamp": "2025-04-15T00:25:34.613Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 5,
+    "timestamp": "2025-04-15T00:25:34.615Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 3,
+    "timestamp": "2025-04-15T00:25:34.625Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 40,
+    "timestamp": "2025-04-15T00:25:34.663Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:34.731Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 3,
+    "timestamp": "2025-04-15T00:25:34.738Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 5,
+    "timestamp": "2025-04-15T00:25:34.740Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:34.745Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 4,
+    "timestamp": "2025-04-15T00:25:34.748Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:34.810Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:34.815Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 3,
+    "timestamp": "2025-04-15T00:25:34.817Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 4,
+    "timestamp": "2025-04-15T00:25:34.827Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 11,
+    "timestamp": "2025-04-15T00:25:34.833Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:34.926Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:34.931Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 4,
+    "timestamp": "2025-04-15T00:25:34.932Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:34.943Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/login",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 5,
+    "timestamp": "2025-04-15T00:25:34.946Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:35.088Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 4,
+    "timestamp": "2025-04-15T00:25:35.098Z",
+    "test": {
+      "name": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "fullName": "Authentication Endpoints Registration endpoint exists and accepts requests",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "POST",
+      "url": "/api/register",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 2,
+    "timestamp": "2025-04-15T00:25:35.103Z",
+    "test": {
+      "name": "Authentication Endpoints Login endpoint returns successful response",
+      "fullName": "Authentication Endpoints Login endpoint returns successful response",
+      "path": "/home/runner/workspace/tests/api/auth-endpoints.test.cjs"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 3,
+    "timestamp": "2025-04-15T00:25:35.163Z",
+    "test": null
+  },
+  {
+    "request": {
+      "method": "GET",
+      "url": "/api/user",
+      "headers": {},
+      "body": {}
+    },
+    "response": null,
+    "error": {
+      "message": "connect ECONNREFUSED 127.0.0.1:5000",
+      "stack": "Error: connect ECONNREFUSED 127.0.0.1:5000\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)"
+    },
+    "duration": 3,
+    "timestamp": "2025-04-15T00:25:35.289Z",
+    "test": {
+      "name": "Auth Helper is a helper module, not a test suite",
+      "fullName": "Auth Helper is a helper module, not a test suite",
+      "path": "/home/runner/workspace/tests/api/server-api.test.cjs"
+    }
   }
 ]
