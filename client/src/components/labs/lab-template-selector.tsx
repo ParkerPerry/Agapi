@@ -42,8 +42,14 @@ interface LabTemplateCardProps {
 /**
  * Card display for an individual lab template
  * @param isWizardMode When true, this component is being used in the lab creation wizard
- *                     and should only apply the template without saving changes.
- *                     When false (default), it applies template and triggers a save.
+ *                     and should only apply the template without saving changes or closing the wizard.
+ *                     When false (default), it applies template and triggers an immediate save.
+ * 
+ * IMPORTANT: In wizard mode, we must prevent default form submission behavior to avoid
+ * the wizard form from being submitted prematurely. This is done by:
+ * 1. Adding type="button" to all buttons
+ * 2. Using e.preventDefault() in click handlers
+ * 3. Stopping event propagation to prevent parent handlers from firing
  */
 const LabTemplateCard: React.FC<LabTemplateCardProps> = ({ template, onSelect, isWizardMode = false }) => {
   const getCategoryIcon = (category: InsertLabTemplate["category"]) => {

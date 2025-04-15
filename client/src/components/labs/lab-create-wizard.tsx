@@ -458,9 +458,15 @@ const LabCreateWizard = ({
         </div>
 
         <Form {...form}>
-          {/* Use onSubmit={e => { e.preventDefault(); form.handleSubmit(onSubmit)(e); }} 
-              instead of directly passing form.handleSubmit(onSubmit)
-              to prevent template application from triggering form submission */}
+          {/* 
+  IMPORTANT: We must use the expanded form with e.preventDefault() instead of 
+  simply passing form.handleSubmit(onSubmit) directly.
+
+  This prevents events from template application (Apply Template button)
+  or other buttons from accidentally triggering form submission.
+  
+  Without this, applying a template in the wizard would immediately submit the form.
+*/}
           <form onSubmit={(e) => { 
             e.preventDefault(); 
             form.handleSubmit(onSubmit)(e); 
@@ -519,101 +525,12 @@ const LabCreateWizard = ({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Circle Selection</FormLabel>
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap gap-2 p-2 border rounded-md">
-                            {field.value && field.value.length > 0 ? (
-                              field.value.map((circleObj) => {
-                                const selectedCircle = circles.find(c => c.id === circleObj.id);
-                                return (
-                                  <div 
-                                    key={circleObj.id} 
-                                    className="flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-sm"
-                                  >
-                                    <span>{selectedCircle?.name || `Circle ${circleObj.id}`}</span>
-                                    <Badge variant="secondary" className="ml-1 text-xs">
-                                      {circleObj.role === 'control' ? 'Control' : 
-                                       circleObj.role === 'treatment' ? 'Treatment' : 'Observation'}
-                                    </Badge>
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-4 w-4 rounded-full ml-1"
-                                      onClick={() => {
-                                        const newCircles = field.value.filter(
-                                          (item) => item.id !== circleObj.id
-                                        );
-                                        field.onChange(newCircles);
-                                      }}
-                                    >
-                                      <X className="h-3 w-3" />
-                                    </Button>
-                                  </div>
-                                );
-                              })
-                            ) : (
-                              <div className="text-sm text-muted-foreground py-2 text-center w-full">
-                                No circles selected yet
-                              </div>
-                            )}
-                          </div>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button 
-                                type="button" 
-                                variant="outline" 
-                                size="sm" 
-                                className="w-full"
-                                disabled={isLoadingCircles || circles.length === 0}
-                              >
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add Circle
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[250px] p-0" align="start">
-                              <Command>
-                                <CommandInput placeholder="Search circles..." />
-                                <CommandEmpty>No circles found.</CommandEmpty>
-                                <CommandGroup heading="Available Circles">
-                                  {Array.isArray(circles) && circles.map((circle) => {
-                                    const isSelected = field.value?.some(
-                                      (c) => c.id === circle.id
-                                    );
-                                    return (
-                                      <CommandItem
-                                        key={circle.id}
-                                        onSelect={() => {
-                                          if (isSelected) {
-                                            // Remove if already selected
-                                            const newCircles = field.value.filter(
-                                              (item) => item.id !== circle.id
-                                            );
-                                            field.onChange(newCircles);
-                                          } else {
-                                            // Add with default role 'treatment'
-                                            const newCircles = [
-                                              ...(field.value || []),
-                                              { id: circle.id, role: "treatment" as const },
-                                            ];
-                                            field.onChange(newCircles);
-                                          }
-                                        }}
-                                      >
-                                        <Check
-                                          className={cn(
-                                            "mr-2 h-4 w-4",
-                                            isSelected ? "opacity-100" : "opacity-0"
-                                          )}
-                                        />
-                                        <span>{circle.name}</span>
-                                      </CommandItem>
-                                    );
-                                  })}
-                                </CommandGroup>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
-                        </div>
+                        <FormControl>
+                          <LabCircleSelector 
+                            selectedCircles={field.value || []} 
+                            onCirclesChange={field.onChange}
+                          />
+                        </FormControl>
                         <FormDescription>
                           Select one or more circles to include in this lab experiment.
                         </FormDescription>
