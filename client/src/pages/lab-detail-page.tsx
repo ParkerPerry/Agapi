@@ -254,6 +254,41 @@ export default function LabDetailPage() {
       });
     }
   };
+  
+  /**
+   * Handle updating lab goals and metrics
+   */
+  const handleGoalsUpdate = async (goals: string, successMetrics: { metrics: Array<{name: string, target: string, priority: "high" | "medium" | "low"}> }) => {
+    if (!labId) {
+      toast({
+        title: "Invalid lab",
+        description: "Cannot update goals due to an invalid lab ID.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      await apiRequest(`/api/labs/${labId}`, "PATCH", {
+        goals,
+        successMetrics
+      });
+      
+      toast({
+        title: "Goals updated",
+        description: "Lab goals and metrics have been updated successfully.",
+      });
+      
+      refetchLab();
+    } catch (error) {
+      toast({
+        title: "Failed to update goals",
+        description: "There was an error updating the lab goals and metrics.",
+        variant: "destructive",
+      });
+      throw error; // Re-throw to allow the calling component to handle it
+    }
+  };
 
   const getStatusActions = () => {
     if (!lab || !lab.status) return null;

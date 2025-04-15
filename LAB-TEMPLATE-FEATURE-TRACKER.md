@@ -5,8 +5,8 @@
 - [x] Update terminology (personas → collectives) in Results tab
 - [x] Define data schema for lab templates
 - [x] Create predefined templates data structure
-- [ ] Implement template selection UI component
-- [ ] Add template application functionality
+- [x] Implement template selection UI component
+- [x] Add template application functionality
 - [ ] Update lab creation flow to incorporate templates
 
 ## Phase 2: LLM Integration
@@ -28,4 +28,6 @@
 - Updated "Audience Persona Analysis" terminology to "Collective Analysis" ✓
 - Defined schema for lab templates in shared/schema.ts ✓
 - Created predefined templates for different experiment categories ✓
-- Next: Implementing template selection UI component
+- Created template selection UI component with category filtering ✓
+- Implemented goals editor with template application functionality ✓
+- Next: Update lab creation flow to incorporate templates

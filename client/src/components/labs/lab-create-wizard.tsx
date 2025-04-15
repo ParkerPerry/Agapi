@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import type { Circle } from "@shared/schema";
+import type { Circle, LabTemplate } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -50,7 +50,7 @@ import {
 } from "@/components/ui/table";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Beaker, Plus, Trash, Check, X } from "lucide-react";
+import { Beaker, Plus, Trash, Check, X, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -64,6 +64,7 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
+import LabTemplateSelector from "@/components/labs/lab-template-selector";
 
 interface LabCreateWizardProps {
   open: boolean;
@@ -165,6 +166,27 @@ const LabCreateWizard = ({
   });
 
   const { watch, setValue, getValues } = form;
+  
+  const applyTemplate = (template: Omit<LabTemplate, "isDefault">) => {
+    // Apply the template values to the form
+    setValue("goals", template.goals);
+    
+    // Convert template metrics (if any) to the form format
+    if (template.successMetrics && template.successMetrics.metrics) {
+      setValue("successMetrics.metrics", 
+        template.successMetrics.metrics.map(metric => ({
+          name: metric.name,
+          target: typeof metric.target === 'number' ? metric.target : parseFloat(metric.target) || 0,
+          priority: metric.priority
+        }))
+      );
+    }
+    
+    toast({
+      title: "Template applied",
+      description: `The "${template.name}" template has been applied.`,
+    });
+  };
   const metrics = watch("successMetrics.metrics") || [];
   const labContent = watch("labContent") || [];
 
