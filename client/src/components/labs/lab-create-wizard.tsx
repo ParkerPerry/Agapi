@@ -123,7 +123,7 @@ const LabCreateWizard = ({
   
   const steps = [
     { title: "Basic Information", description: "Enter lab name and type" },
-    { title: "Goals & Description", description: "Define lab purpose and goals" },
+    { title: "Goals", description: "Define lab purpose and goals" },
     { title: "Success Metrics", description: "Set metrics to measure success" },
     { title: "Content", description: "Create content for testing" },
   ];
@@ -440,6 +440,27 @@ const LabCreateWizard = ({
 
                   <FormField
                     control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Describe the purpose and context of this experiment..."
+                            className="min-h-[120px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Provide context for other team members.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="circles"
                     render={({ field }) => (
                       <FormItem>
@@ -579,37 +600,16 @@ const LabCreateWizard = ({
               </Card>
             )}
 
-            {/* Step 2: Goals & Description */}
+            {/* Step 2: Goals */}
             {currentStep === 1 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Goals & Description</CardTitle>
+                  <CardTitle>Goals</CardTitle>
                   <CardDescription>
                     Define what you want to achieve with this experiment.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Describe the purpose and context of this experiment..."
-                            className="min-h-[120px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Provide context for other team members.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
                   <div className="border rounded-md p-4 bg-muted/20 mb-6">
                     <h3 className="text-sm font-medium flex items-center gap-2 mb-3">
                       <Sparkles className="h-4 w-4 text-primary" />
