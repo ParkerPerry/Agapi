@@ -361,6 +361,30 @@ router.post('/:id/members/:userId/reactivate', requireAuth, async (req, res) => 
 });
 
 /**
+ * GET /api/circles/:id/labs - Get labs where a circle is a member
+ */
+router.get('/:id/labs', requireAuth, async (req, res) => {
+  const circleId = parseInt(req.params.id);
+  
+  try {
+    // Check if user has access to this circle
+    const hasPermission = await hasCirclePermission(circleId, req.user!.id, storage);
+    if (!hasPermission) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Get labs where this circle is a member
+    const labs = await storage.getLabsForCircle(circleId);
+    
+    // Return the labs
+    res.json(labs);
+  } catch (error) {
+    console.error("Error getting circle labs:", error);
+    res.status(500).json({ message: "Failed to get circle labs" });
+  }
+});
+
+/**
  * GET /api/circles/:id/posts - Get posts for a circle
  * This is a compatibility route that forwards requests to the posts module
  */
