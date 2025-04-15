@@ -66,7 +66,7 @@ export function PendingResponses({
                         className="h-full w-full object-cover"
                       />
                     )}
-                    <AvatarFallback>{follower.name[0]}</AvatarFallback>
+                    <AvatarFallback>{follower.name && follower.name.length > 0 ? follower.name[0] : '?'}</AvatarFallback>
                   </Avatar>
                   {/* Status indicator overlay */}
                   <div
@@ -86,7 +86,7 @@ export function PendingResponses({
                         className="h-full w-full object-cover"
                       />
                     )}
-                    <AvatarFallback>{follower.name[0]}</AvatarFallback>
+                    <AvatarFallback>{follower.name && follower.name.length > 0 ? follower.name[0] : '?'}</AvatarFallback>
                   </Avatar>
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold">{follower.name}</h4>
