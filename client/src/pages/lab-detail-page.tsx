@@ -606,6 +606,71 @@ export default function LabDetailPage() {
                       )}
                     </CardContent>
                   </Card>
+                  
+                  {/* Persona Segments Card */}
+                  {(lab.status === "active" || lab.status === "completed") && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Audience Persona Analysis</CardTitle>
+                        <CardDescription>
+                          How different user segments reacted to your experiment
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-5">
+                          <div className="flex items-center gap-3 p-3 rounded-md border bg-green-50">
+                            <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                              <User className="h-6 w-6 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium">Power Users</p>
+                              <p className="text-sm text-green-700">Strongly Positive (92%)</p>
+                            </div>
+                            <div className="ml-auto">
+                              <p className="text-sm font-medium">Key Feedback:</p>
+                              <p className="text-xs text-muted-foreground">"Feature adds significant value to workflow"</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-3 p-3 rounded-md border bg-blue-50">
+                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                              <User className="h-6 w-6 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium">New Users</p>
+                              <p className="text-sm text-blue-700">Positive (78%)</p>
+                            </div>
+                            <div className="ml-auto">
+                              <p className="text-sm font-medium">Key Feedback:</p>
+                              <p className="text-xs text-muted-foreground">"Feature is intuitive and helpful"</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-3 p-3 rounded-md border bg-amber-50">
+                            <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
+                              <User className="h-6 w-6 text-amber-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium">Casual Users</p>
+                              <p className="text-sm text-amber-700">Neutral (65%)</p>
+                            </div>
+                            <div className="ml-auto">
+                              <p className="text-sm font-medium">Key Feedback:</p>
+                              <p className="text-xs text-muted-foreground">"Useful but not essential for my needs"</p>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                      <CardFooter className="bg-muted/20">
+                        <div className="flex items-start space-x-2 w-full">
+                          <InfoIcon className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                          <p className="text-xs text-muted-foreground">
+                            Persona segmentation helps identify which user groups benefit most from your feature.
+                          </p>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  )}
                 </TabsContent>
                 
                 <TabsContent value="content" className="space-y-4 pt-4">
