@@ -5,6 +5,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Lab, Circle } from "@shared/schema";
 import { NavBar } from "@/components/nav-bar";
+import LabGoalsEditor from "@/components/labs/lab-goals-editor";
 import {
   Tabs,
   TabsContent,
@@ -483,9 +484,15 @@ export default function LabDetailPage() {
                         </div>
                       )}
                     </CardContent>
-                    <CardFooter className="flex-col items-start">
-                      <h4 className="text-sm font-semibold mb-2">Lab Management</h4>
-                      {getStatusActions()}
+                    <CardFooter className="flex-col items-start space-y-4">
+                      <div className="w-full">
+                        <h4 className="text-sm font-semibold mb-2">Goals & Metrics</h4>
+                        <LabGoalsEditor lab={lab} onUpdate={handleGoalsUpdate} />
+                      </div>
+                      <div className="w-full">
+                        <h4 className="text-sm font-semibold mb-2">Lab Management</h4>
+                        {getStatusActions()}
+                      </div>
                     </CardFooter>
                   </Card>
                 </TabsContent>
