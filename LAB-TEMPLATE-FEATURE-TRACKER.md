@@ -7,7 +7,7 @@
 - [x] Create predefined templates data structure
 - [x] Implement template selection UI component
 - [x] Add template application functionality
-- [ ] Update lab creation flow to incorporate templates
+- [x] Update lab creation flow to incorporate templates
 
 ## Phase 2: LLM Integration
 - [ ] Create OpenAI prompt for goals/metrics generation
@@ -30,4 +30,5 @@
 - Created predefined templates for different experiment categories ✓
 - Created template selection UI component with category filtering ✓
 - Implemented goals editor with template application functionality ✓
-- Next: Update lab creation flow to incorporate templates
+- Updated lab creation wizard to include template selection ✓
+- Next: Begin LLM integration for custom goal generation

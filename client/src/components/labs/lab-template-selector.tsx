@@ -23,6 +23,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Beaker, BookOpen, BarChart4, Users } from "lucide-react";
 import predefinedLabTemplates, { getTemplatesByCategory } from "@/data/lab-templates";
 
+// Define type for our simplified template data structure
+export type LabTemplateData = Omit<InsertLabTemplate, "isDefault">;
+
 interface LabTemplateCardProps {
   template: Omit<InsertLabTemplate, "isDefault">;
   onSelect: (template: Omit<InsertLabTemplate, "isDefault">) => void;
