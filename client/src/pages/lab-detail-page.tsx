@@ -47,6 +47,7 @@ import {
   Clipboard,
   FileText,
   Globe,
+  Info as InfoIcon,
   Lock,
   PlayCircle,
   Plus,
@@ -408,10 +409,11 @@ export default function LabDetailPage() {
             {/* Main content */}
             <div>
               <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="info">Information</TabsTrigger>
                   <TabsTrigger value="circles">Circles</TabsTrigger>
                   <TabsTrigger value="content">Content</TabsTrigger>
+                  <TabsTrigger value="results">Results</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="info" className="space-y-4 pt-4">
@@ -608,6 +610,192 @@ export default function LabDetailPage() {
                 
                 <TabsContent value="content" className="space-y-4 pt-4">
                   <LabContentView labId={labId || 0} />
+                </TabsContent>
+                
+                <TabsContent value="results" className="space-y-4 pt-4">
+                  {/* Performance Overview Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Results Overview</CardTitle>
+                      <CardDescription>
+                        Overall performance of your lab experiment
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-col space-y-6">
+                        {/* Status Banner */}
+                        <div className="bg-muted p-4 rounded-md flex items-center justify-between">
+                          <div>
+                            <h3 className="font-medium">Experiment Status</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {lab.status === "completed" 
+                                ? "Completed" 
+                                : "In Progress - Results are preliminary"}
+                            </p>
+                          </div>
+                          <Badge variant={lab.status === "completed" ? "default" : "outline"}>
+                            {lab.status === "completed" ? "100% Complete" : "In Progress"}
+                          </Badge>
+                        </div>
+                        
+                        {lab.successMetrics?.metrics && lab.successMetrics.metrics.length > 0 ? (
+                          <div>
+                            <h3 className="text-base font-medium mb-3">Performance by Metric</h3>
+                            <div className="space-y-6">
+                              {lab.successMetrics.metrics.map((metric, index) => (
+                                <div key={index} className="space-y-2">
+                                  <div className="flex justify-between">
+                                    <h4 className="text-sm font-medium">{metric.name}</h4>
+                                    <span className="text-sm text-muted-foreground">Target: {metric.target}</span>
+                                  </div>
+                                  <div className="w-full bg-muted h-2.5 rounded-full overflow-hidden">
+                                    <div 
+                                      className="bg-primary h-2.5" 
+                                      style={{ 
+                                        width: '70%'
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="flex justify-between text-xs">
+                                    <span>Current: Not Yet Available</span>
+                                    <span className={
+                                      metric.priority === "high" 
+                                        ? "text-red-500" 
+                                        : metric.priority === "medium" 
+                                          ? "text-amber-500" 
+                                          : "text-blue-500"
+                                    }>
+                                      {metric.priority.charAt(0).toUpperCase() + metric.priority.slice(1)} Priority
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-6 border rounded-md">
+                            <p className="text-muted-foreground mb-2">No metrics defined for this experiment</p>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setActiveTab("info")}
+                            >
+                              Define Success Metrics
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Circle Comparison Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Circle Group Performance</CardTitle>
+                      <CardDescription>
+                        Compare performance between control and treatment groups
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {circles && circles.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {/* Control Group Column */}
+                          {circles.filter(c => c.role === "control").length > 0 ? (
+                            <Card className="border-blue-500/20">
+                              <CardHeader className="bg-blue-500/5 pb-2">
+                                <CardTitle className="text-base text-blue-600">Control Group</CardTitle>
+                              </CardHeader>
+                              <CardContent className="pt-4">
+                                <div className="text-center py-8">
+                                  <p className="text-muted-foreground">Performance data not yet available</p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ) : (
+                            <Card>
+                              <CardContent className="py-8 text-center">
+                                <p className="text-muted-foreground mb-2">No control group assigned</p>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => setActiveTab("circles")}
+                                >
+                                  Assign Control Group
+                                </Button>
+                              </CardContent>
+                            </Card>
+                          )}
+
+                          {/* Treatment Group Column */}
+                          {circles.filter(c => c.role === "treatment").length > 0 ? (
+                            <Card className="border-purple-500/20">
+                              <CardHeader className="bg-purple-500/5 pb-2">
+                                <CardTitle className="text-base text-purple-600">Treatment Group</CardTitle>
+                              </CardHeader>
+                              <CardContent className="pt-4">
+                                <div className="text-center py-8">
+                                  <p className="text-muted-foreground">Performance data not yet available</p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ) : (
+                            <Card>
+                              <CardContent className="py-8 text-center">
+                                <p className="text-muted-foreground mb-2">No treatment group assigned</p>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => setActiveTab("circles")}
+                                >
+                                  Assign Treatment Group
+                                </Button>
+                              </CardContent>
+                            </Card>
+                          )}
+
+                          {/* Difference Column */}
+                          <Card className="border-gray-200">
+                            <CardHeader className="bg-gray-50 pb-2">
+                              <CardTitle className="text-base text-gray-600">Performance Difference</CardTitle>
+                            </CardHeader>
+                            <CardContent className="pt-4">
+                              <div className="text-center py-8">
+                                <p className="text-muted-foreground">Comparative data not yet available</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ) : (
+                        <div className="text-center py-6 border rounded-md">
+                          <p className="text-muted-foreground mb-2">No circles assigned to this experiment</p>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setActiveTab("circles")}
+                          >
+                            Assign Circles
+                          </Button>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Future Iterations Message */}
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="mt-0.5">
+                          <InfoIcon className="h-5 w-5 text-blue-500" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium mb-1">Coming Soon</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Detailed insights and recommendations will be available in future updates to help you make data-driven decisions based on your experiment results.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </TabsContent>
               </Tabs>
             </div>
