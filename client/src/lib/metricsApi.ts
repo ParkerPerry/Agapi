@@ -44,7 +44,13 @@ interface GenerateRecommendationRequest {
  */
 export async function analyzeMetric(request: AnalyzeMetricRequest): Promise<MetricResult> {
   try {
+    console.log("Calling analyze-metric API with metric:", request.metric.name);
+    
+    // Log info about circles
+    console.log(`Circles data: Control (${request.controlCircles.length}), Treatment (${request.treatmentCircles.length}), Observation (${request.observationCircles?.length || 0})`);
+    
     const result = await apiRequest('/analyze-metric', 'POST', request);
+    console.log("Received analyze-metric API response:", result);
     
     return {
       name: request.metric.name,
@@ -73,10 +79,14 @@ export async function generateRecommendation(
   labStatus: string
 ): Promise<Recommendation> {
   try {
+    console.log("Calling analyze-recommendation API with", metrics.length, "metrics and lab status:", labStatus);
+    
     const result = await apiRequest('/analyze-recommendation', 'POST', {
       metrics,
       labStatus
     });
+    
+    console.log("Received analyze-recommendation API response:", result);
     
     return {
       decision: result.decision,
@@ -97,6 +107,7 @@ export function groupPostsByCircleRole(
   posts: Post[] | undefined
 ) {
   if (!circles || !posts) {
+    console.log("Missing circles or posts for groupPostsByCircleRole", !!circles, !!posts);
     return {
       controlCircles: [],
       treatmentCircles: [],
@@ -109,10 +120,17 @@ export function groupPostsByCircleRole(
   const treatmentCircles = circles.filter(c => c.role === 'treatment');
   const observationCircles = circles.filter(c => c.role === 'observation');
   
+  console.log("Circle role counts:", {
+    control: controlCircles.length,
+    treatment: treatmentCircles.length,
+    observation: observationCircles.length
+  });
+  
   // Map posts to their respective circles
   const getCirclePosts = (circleList: LabCircle[]) => {
     return circleList.map(circle => {
       const circlePosts = posts.filter(post => post.circleId === circle.id);
+      console.log(`Circle ${circle.id} (${circle.name}, role: ${circle.role}) has ${circlePosts.length} posts`);
       return {
         id: circle.id,
         name: circle.name,
@@ -121,9 +139,17 @@ export function groupPostsByCircleRole(
     });
   };
   
-  return {
+  const result = {
     controlCircles: getCirclePosts(controlCircles),
     treatmentCircles: getCirclePosts(treatmentCircles),
     observationCircles: getCirclePosts(observationCircles)
   };
+  
+  console.log("Grouped posts by role:", {
+    controlPosts: result.controlCircles.reduce((sum, c) => sum + c.posts.length, 0),
+    treatmentPosts: result.treatmentCircles.reduce((sum, c) => sum + c.posts.length, 0),
+    observationPosts: result.observationCircles.reduce((sum, c) => sum + c.posts.length, 0)
+  });
+  
+  return result;
 }

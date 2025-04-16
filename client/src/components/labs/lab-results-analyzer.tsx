@@ -70,6 +70,7 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   // Main analysis function
   const analyzeLabMetrics = async () => {
     if (!lab?.successMetrics?.metrics || lab.successMetrics.metrics.length === 0) {
+      console.log("No success metrics found for lab:", lab.id);
       setMetricResults([]);
       setRecommendation(null);
       return;
@@ -77,9 +78,11 @@ export const useLabResultsAnalysis = (lab: Lab) => {
 
     // Don't proceed if we're missing circle or post data
     if (!labCircles || !circlePosts) {
+      console.log("Missing circle or post data for lab:", lab.id, "circles:", !!labCircles, "posts:", !!circlePosts);
       return;
     }
     
+    console.log("Starting analysis for lab:", lab.id, "with", labCircles.length, "circles and", circlePosts.length, "posts");
     setIsAnalyzing(true);
     setAnalyzeError(null);
     
