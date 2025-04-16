@@ -190,7 +190,7 @@ export async function generateRecommendationWithCache(
   labStatus: string,
   labId?: number,
   forceRefresh: boolean = false
-): Promise<Recommendation> {
+): Promise<Recommendation & { fromCache?: boolean; updatedAt?: string }> {
   try {
     // Using the correct API endpoint path that matches server routes
     const result = await apiRequest('/api/analyze-recommendation', 'POST', {
@@ -200,11 +200,23 @@ export async function generateRecommendationWithCache(
       forceRefresh
     });
     
-    return {
+    // Create base recommendation object
+    const recommendation: Recommendation & { fromCache?: boolean; updatedAt?: string } = {
       decision: result.decision,
       confidence: result.confidence,
       reasoning: result.reasoning
     };
+    
+    // Add cache metadata if present
+    if (result.fromCache !== undefined) {
+      recommendation.fromCache = result.fromCache;
+    }
+    
+    if (result.updatedAt) {
+      recommendation.updatedAt = result.updatedAt;
+    }
+    
+    return recommendation;
   } catch (error) {
     console.error('Error generating recommendation:', error);
     throw error;

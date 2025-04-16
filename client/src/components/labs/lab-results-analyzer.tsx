@@ -247,14 +247,18 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     if (!lab?.id) return false;
     
     try {
+      console.log(`Checking for cached analysis results for lab ${lab.id}`);
       const cachedResults = await getLabAnalysisResults(lab.id);
       
-      if (cachedResults) {
+      if (cachedResults && cachedResults.exists) {
+        console.log(`Found cached analysis results for lab ${lab.id}`, cachedResults);
         setMetricResults(cachedResults.metricResults);
         setRecommendation(cachedResults.recommendation);
         setFromCache(true);
         setLastAnalysisTime(cachedResults.updatedAt);
         return true;
+      } else {
+        console.log(`No cached analysis results found for lab ${lab.id}`);
       }
       
       return false;

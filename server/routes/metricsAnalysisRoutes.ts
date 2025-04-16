@@ -256,12 +256,19 @@ router.get('/lab-analysis/:labId', requireAuth, async (req, res) => {
       });
     }
     
-    // Return the cached results
+    // Return the cached results with fromCache flag and updatedAt timestamp
     return res.json({
       exists: true,
-      metricResults: analysisResult.metricResults,
-      recommendation: analysisResult.recommendation,
-      updatedAt: analysisResult.updatedAt
+      metricResults: analysisResult.metricResults.map(metric => ({
+        ...metric,
+        fromCache: true
+      })),
+      recommendation: {
+        ...analysisResult.recommendation,
+        fromCache: true
+      },
+      updatedAt: analysisResult.updatedAt,
+      fromCache: true
     });
   } catch (error: any) {
     console.error("Error getting lab analysis results:", error);
@@ -388,13 +395,21 @@ FORMAT YOUR RESPONSE AS JSON:
       
       // If labId is provided, save the results to the database
       if (labId) {
-        await storage.saveLabAnalysisResult(labId, metrics, recommendation);
+        const savedResult = await storage.saveLabAnalysisResult(labId, metrics, recommendation);
         console.log(`[MetricsAnalysis] Saved analysis results for lab ${labId}`);
+        
+        // Return with the updatedAt timestamp from the database
+        return res.json({
+          ...recommendation,
+          fromCache: false,
+          updatedAt: savedResult.updatedAt
+        });
       }
       
       return res.json({
         ...recommendation,
-        fromCache: false
+        fromCache: false,
+        updatedAt: new Date().toISOString()
       });
     } catch (error) {
       console.error("Failed to parse LLM response:", error);
