@@ -44,29 +44,7 @@ interface GenerateRecommendationRequest {
  */
 export async function analyzeMetric(request: AnalyzeMetricRequest): Promise<MetricResult> {
   try {
-    console.log("Calling analyze-metric API with metric:", request.metric.name);
-    
-    // More detailed debugging
-    console.log("Full request data:", {
-      metricName: request.metric.name,
-      metricTarget: request.metric.target,
-      metricPriority: request.metric.priority,
-      labGoals: request.labGoals,
-      controlCircles: request.controlCircles.map(c => ({ id: c.id, name: c.name, postCount: c.posts.length })),
-      treatmentCircles: request.treatmentCircles.map(c => ({ id: c.id, name: c.name, postCount: c.posts.length })),
-      observationCircles: request.observationCircles?.map(c => ({ id: c.id, name: c.name, postCount: c.posts.length }))
-    });
-    
-    // Sample a post from each type to verify content
-    if (request.controlCircles.length > 0 && request.controlCircles[0].posts.length > 0) {
-      console.log("Sample control post:", request.controlCircles[0].posts[0].content?.substring(0, 100));
-    }
-    if (request.treatmentCircles.length > 0 && request.treatmentCircles[0].posts.length > 0) {
-      console.log("Sample treatment post:", request.treatmentCircles[0].posts[0].content?.substring(0, 100));
-    }
-    
     const result = await apiRequest('/analyze-metric', 'POST', request);
-    console.log("Received analyze-metric API response:", result);
     
     return {
       name: request.metric.name,
@@ -80,12 +58,6 @@ export async function analyzeMetric(request: AnalyzeMetricRequest): Promise<Metr
     };
   } catch (error) {
     console.error('Error analyzing metric:', error);
-    // Create a detailed error object
-    console.error('Analysis failure details:', { 
-      metric: request.metric.name,
-      controlCirclesCount: request.controlCircles.length,
-      treatmentCirclesCount: request.treatmentCircles.length
-    });
     throw error;
   }
 }
@@ -101,14 +73,10 @@ export async function generateRecommendation(
   labStatus: string
 ): Promise<Recommendation> {
   try {
-    console.log("Calling analyze-recommendation API with", metrics.length, "metrics and lab status:", labStatus);
-    
     const result = await apiRequest('/analyze-recommendation', 'POST', {
       metrics,
       labStatus
     });
-    
-    console.log("Received analyze-recommendation API response:", result);
     
     return {
       decision: result.decision,
@@ -123,13 +91,13 @@ export async function generateRecommendation(
 
 /**
  * Helper function to group posts by circle role
+ * IMPORTANT: All console.log statements removed to prevent infinite logs
  */
 export function groupPostsByCircleRole(
   circles: LabCircle[] | undefined,
   posts: Post[] | undefined
 ) {
   if (!circles || !posts) {
-    console.log("Missing circles or posts for groupPostsByCircleRole", !!circles, !!posts);
     return {
       controlCircles: [],
       treatmentCircles: [],
@@ -137,46 +105,30 @@ export function groupPostsByCircleRole(
     };
   }
   
-  // Limited debug for circles (only log count to avoid infinite loops)
-  console.log(`Processing ${circles.length} circles for role grouping`);
+  // Ensure we're working with arrays
+  const safeCircles = Array.isArray(circles) ? circles : [];
+  const safePosts = Array.isArray(posts) ? posts : [];
   
   // Group circles by role
-  const controlCircles = circles.filter(c => c.role === 'control');
-  const treatmentCircles = circles.filter(c => c.role === 'treatment');
-  const observationCircles = circles.filter(c => c.role === 'observation');
-  
-  console.log("Circle role counts:", {
-    control: controlCircles.length,
-    treatment: treatmentCircles.length,
-    observation: observationCircles.length
-  });
+  const controlCircles = safeCircles.filter(c => c && c.role === 'control');
+  const treatmentCircles = safeCircles.filter(c => c && c.role === 'treatment');
+  const observationCircles = safeCircles.filter(c => c && c.role === 'observation');
   
   // Add default circles if none exist for required roles (control and treatment)
-  if (controlCircles.length === 0 && circles.length > 0) {
-    console.log("No control circles found, using the first circle as default control");
-    controlCircles.push({...circles[0], role: 'control'});
+  if (controlCircles.length === 0 && safeCircles.length > 0) {
+    controlCircles.push({...safeCircles[0], role: 'control'});
   }
   
-  if (treatmentCircles.length === 0 && circles.length > 1) {
-    console.log("No treatment circles found, using the second circle as default treatment");
-    treatmentCircles.push({...circles[1], role: 'treatment'});
-  } else if (treatmentCircles.length === 0 && controlCircles.length === 0 && circles.length > 0) {
-    console.log("No treatment circles found, using the first circle as default treatment");
-    treatmentCircles.push({...circles[0], role: 'treatment'});
+  if (treatmentCircles.length === 0 && safeCircles.length > 1) {
+    treatmentCircles.push({...safeCircles[1], role: 'treatment'});
+  } else if (treatmentCircles.length === 0 && controlCircles.length === 0 && safeCircles.length > 0) {
+    treatmentCircles.push({...safeCircles[0], role: 'treatment'});
   }
-  
-  // Limited debug for posts (only log count to avoid infinite loops)
-  console.log(`Processing ${posts.length} total posts for role grouping`);
   
   // Map posts to their respective circles
   const getCirclePosts = (circleList: LabCircle[]) => {
     return circleList.map(circle => {
-      const circlePosts = posts.filter(post => post.circleId === circle.id);
-      
-      // Only log counts to prevent excessive console output
-      if (circlePosts.length > 0) {
-        console.log(`Circle ${circle.id} has ${circlePosts.length} posts`);
-      }
+      const circlePosts = safePosts.filter(post => post && post.circleId === circle.id);
       
       return {
         id: circle.id,
@@ -186,17 +138,9 @@ export function groupPostsByCircleRole(
     });
   };
   
-  const result = {
+  return {
     controlCircles: getCirclePosts(controlCircles),
     treatmentCircles: getCirclePosts(treatmentCircles),
     observationCircles: getCirclePosts(observationCircles)
   };
-  
-  console.log("Grouped posts by role:", {
-    controlPosts: result.controlCircles.reduce((sum, c) => sum + c.posts.length, 0),
-    treatmentPosts: result.treatmentCircles.reduce((sum, c) => sum + c.posts.length, 0),
-    observationPosts: result.observationCircles.reduce((sum, c) => sum + c.posts.length, 0)
-  });
-  
-  return result;
 }
