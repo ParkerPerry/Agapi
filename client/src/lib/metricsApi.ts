@@ -46,8 +46,24 @@ export async function analyzeMetric(request: AnalyzeMetricRequest): Promise<Metr
   try {
     console.log("Calling analyze-metric API with metric:", request.metric.name);
     
-    // Log info about circles
-    console.log(`Circles data: Control (${request.controlCircles.length}), Treatment (${request.treatmentCircles.length}), Observation (${request.observationCircles?.length || 0})`);
+    // More detailed debugging
+    console.log("Full request data:", {
+      metricName: request.metric.name,
+      metricTarget: request.metric.target,
+      metricPriority: request.metric.priority,
+      labGoals: request.labGoals,
+      controlCircles: request.controlCircles.map(c => ({ id: c.id, name: c.name, postCount: c.posts.length })),
+      treatmentCircles: request.treatmentCircles.map(c => ({ id: c.id, name: c.name, postCount: c.posts.length })),
+      observationCircles: request.observationCircles?.map(c => ({ id: c.id, name: c.name, postCount: c.posts.length }))
+    });
+    
+    // Sample a post from each type to verify content
+    if (request.controlCircles.length > 0 && request.controlCircles[0].posts.length > 0) {
+      console.log("Sample control post:", request.controlCircles[0].posts[0].content?.substring(0, 100));
+    }
+    if (request.treatmentCircles.length > 0 && request.treatmentCircles[0].posts.length > 0) {
+      console.log("Sample treatment post:", request.treatmentCircles[0].posts[0].content?.substring(0, 100));
+    }
     
     const result = await apiRequest('/analyze-metric', 'POST', request);
     console.log("Received analyze-metric API response:", result);
@@ -64,6 +80,12 @@ export async function analyzeMetric(request: AnalyzeMetricRequest): Promise<Metr
     };
   } catch (error) {
     console.error('Error analyzing metric:', error);
+    // Create a detailed error object
+    console.error('Analysis failure details:', { 
+      metric: request.metric.name,
+      controlCirclesCount: request.controlCircles.length,
+      treatmentCirclesCount: request.treatmentCircles.length
+    });
     throw error;
   }
 }

@@ -164,12 +164,28 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   // Trigger analysis when lab, circles, or posts data changes
   useEffect(() => {
     if (circlesError || postsError) {
+      console.error("Circle or post errors:", { circlesError, postsError });
       setAnalyzeError(
         circlesError instanceof Error ? circlesError : 
         postsError instanceof Error ? postsError : 
         new Error('Failed to load lab data')
       );
       return;
+    }
+    
+    // Debug lab metrics and structure
+    console.log("Lab data for analysis:", {
+      labId: lab?.id,
+      status: lab?.status,
+      hasGoals: !!lab?.goals,
+      hasMetrics: !!lab?.successMetrics?.metrics,
+      metricsCount: lab?.successMetrics?.metrics?.length,
+      circlesCount: labCircles?.length,
+      postsCount: circlePosts?.length
+    });
+    
+    if (lab?.successMetrics?.metrics) {
+      console.log("Lab metrics:", lab.successMetrics.metrics);
     }
     
     if (!isCirclesLoading && !isPostsLoading) {
