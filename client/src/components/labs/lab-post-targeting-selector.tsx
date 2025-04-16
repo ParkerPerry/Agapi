@@ -158,7 +158,7 @@ export function LabPostTargetingSelector({
   const circleCounts = React.useMemo(() => {
     if (!labCircles) return { control: 0, treatment: 0, observation: 0 };
     
-    return labCircles.reduce((counts, circle) => {
+    return labCircles.reduce((counts: Record<string, number>, circle: { role: string }) => {
       counts[circle.role as keyof typeof counts]++;
       return counts;
     }, { control: 0, treatment: 0, observation: 0 });

@@ -31,7 +31,7 @@ import { Loader2, PlusCircle, X, Plus } from "lucide-react";
 
 interface CircleRole {
   id: number;
-  role: "control" | "treatment" | "observation";
+  role: "control" | "treatment";
 }
 
 interface LabCircleSelectorProps {
@@ -53,7 +53,7 @@ const LabCircleSelector: React.FC<LabCircleSelectorProps> = ({
   const [isAddCircleOpen, setIsAddCircleOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCircleId, setSelectedCircleId] = useState<number | null>(null);
-  const [selectedRole, setSelectedRole] = useState<"control" | "treatment" | "observation">("treatment");
+  const [selectedRole, setSelectedRole] = useState<"control" | "treatment">("treatment");
 
   // Reset selection state when dialog opens
   useEffect(() => {
@@ -142,14 +142,12 @@ const LabCircleSelector: React.FC<LabCircleSelectorProps> = ({
       };
     });
 
-  const getRoleBadgeStyles = (role: "control" | "treatment" | "observation") => {
+  const getRoleBadgeStyles = (role: "control" | "treatment") => {
     switch (role) {
       case "control":
         return "bg-blue-100 text-blue-800 border-blue-300";
       case "treatment":
         return "bg-amber-100 text-amber-800 border-amber-300";
-      case "observation":
-        return "bg-purple-100 text-purple-800 border-purple-300";
       default:
         return "";
     }
@@ -166,9 +164,8 @@ const LabCircleSelector: React.FC<LabCircleSelectorProps> = ({
               className="flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-sm"
             >
               <span>{circle.name}</span>
-              <Badge variant="secondary" className={`ml-1 text-xs ${getRoleBadgeStyles(circle.role)}`}>
-                {circle.role === 'control' ? 'Control' : 
-                 circle.role === 'treatment' ? 'Treatment' : 'Observation'}
+              <Badge variant="secondary" className={`ml-1 text-xs ${getRoleBadgeStyles(circle.role as "control" | "treatment")}`}>
+                {circle.role === 'control' ? 'Control' : 'Treatment'}
               </Badge>
               <Button
                 type="button"
@@ -321,7 +318,7 @@ const LabCircleSelector: React.FC<LabCircleSelectorProps> = ({
               <Select
                 value={selectedRole}
                 onValueChange={(value) =>
-                  setSelectedRole(value as "control" | "treatment" | "observation")
+                  setSelectedRole(value as "control" | "treatment")
                 }
                 disabled={!selectedCircleId}
               >
