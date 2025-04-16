@@ -1,6 +1,6 @@
 
 // Script to create product manager posts for Polygon's DeFi chain launch
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 // Array of product manager posts for Polygon DeFi chain
 const polygonPosts = [
