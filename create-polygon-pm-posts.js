@@ -50,7 +50,7 @@ const polygonPosts = [
 // Function to create a post in Circle 59
 async function createPost(content) {
   try {
-    const response = await fetch('http://localhost:5000/api/posts', {
+    const response = await fetch('/api/posts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
