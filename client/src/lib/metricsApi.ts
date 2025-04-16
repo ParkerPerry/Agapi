@@ -4,12 +4,16 @@ import { Post } from "@shared/schema";
 
 /**
  * Interface for cached lab analysis results
+ * 
+ * Includes metadata about when the analysis was last updated along with
+ * the full set of metric results and recommendation data.
  */
 export interface LabAnalysisResult {
   exists: boolean;
   metricResults: MetricResult[];
   recommendation: Recommendation;
-  updatedAt: string;
+  updatedAt: string;  // ISO timestamp of when the analysis was last performed
+  fromCache?: boolean; // Indicates if this result was retrieved from cache
 }
 
 /**
@@ -102,9 +106,20 @@ export async function generateRecommendation(
 }
 
 /**
- * Get cached lab analysis results
+ * Get cached lab analysis results from the database
+ * 
+ * This function retrieves the complete set of cached analysis results for a specific lab,
+ * including all metric analyses and the overall recommendation with timestamps.
+ * 
+ * The returned data includes:
+ * - metricResults: Array of analyzed metrics with status and insights
+ * - recommendation: Overall recommendation based on all metrics
+ * - updatedAt: ISO timestamp of when the analysis was last performed
+ * - fromCache: Always true for results from this endpoint
+ * - exists: Always true for successful results
+ * 
  * @param labId The lab ID to get cached results for
- * @returns Cached analysis results or null if not found
+ * @returns Complete cached analysis results or null if not found
  */
 export async function getLabAnalysisResults(labId: number): Promise<LabAnalysisResult | null> {
   try {
@@ -121,9 +136,19 @@ export async function getLabAnalysisResults(labId: number): Promise<LabAnalysisR
 }
 
 /**
- * Delete cached lab analysis results to force a refresh
+ * Delete cached lab analysis results from the database
+ * 
+ * This function removes all cached analysis data for a specific lab,
+ * including metric analyses and recommendations. Use this function
+ * when you want to force a complete refresh of all analysis results,
+ * such as when the lab data has been significantly updated.
+ * 
+ * After deletion, the next call to analyzeMetricWithCache or
+ * generateRecommendationWithCache will generate fresh analysis
+ * regardless of the forceRefresh parameter value.
+ * 
  * @param labId The lab ID to delete cached results for
- * @returns Success status
+ * @returns Success status boolean - true if deletion was successful
  */
 export async function deleteLabAnalysisResults(labId: number): Promise<boolean> {
   try {
@@ -137,18 +162,24 @@ export async function deleteLabAnalysisResults(labId: number): Promise<boolean> 
 
 /**
  * Analyze a metric with the API using caching
- * @param request The request data
- * @param labId Optional lab ID for caching
- * @param metricIndex Optional metric index for caching
- * @param forceRefresh Force a refresh of cached results
- * @returns MetricResult with analysis data
+ * 
+ * This enhanced version of analyzeMetric supports caching results in the database.
+ * It returns additional metadata about the cache status including:
+ * - fromCache: boolean indicating if the result was served from cache
+ * - updatedAt: ISO timestamp of when the analysis was last performed
+ * 
+ * @param request The request data containing metric details and circle posts
+ * @param labId Optional lab ID for caching (required for caching to work)
+ * @param metricIndex Optional metric index for caching multiple metrics per lab
+ * @param forceRefresh If true, ignores cached results and generates fresh analysis
+ * @returns MetricResult with analysis data and cache metadata
  */
 export async function analyzeMetricWithCache(
   request: AnalyzeMetricRequest,
   labId?: number,
   metricIndex?: number,
   forceRefresh: boolean = false
-): Promise<MetricResult> {
+): Promise<MetricResult & { fromCache?: boolean; updatedAt?: string }> {
   try {
     // Create a request with caching parameters
     const requestWithCache = {
@@ -191,11 +222,20 @@ export async function analyzeMetricWithCache(
 
 /**
  * Generate a recommendation with the API using caching
- * @param metrics The metric results
- * @param labStatus The lab status
- * @param labId Optional lab ID for caching
- * @param forceRefresh Force a refresh of cached results
- * @returns Recommendation data
+ * 
+ * This enhanced version of generateRecommendation supports caching results in the database.
+ * It returns additional metadata about the cache status including:
+ * - fromCache: boolean indicating if the result was served from cache
+ * - updatedAt: ISO timestamp of when the recommendation was last generated
+ * 
+ * The recommendation is generated based on the analysis of all metrics
+ * and considers the current lab status (active/complete).
+ * 
+ * @param metrics The metric results to base recommendation on
+ * @param labStatus The lab status ("active" or "completed")
+ * @param labId Optional lab ID for caching (required for caching to work)
+ * @param forceRefresh If true, ignores cached results and generates fresh recommendation
+ * @returns Recommendation data with cache metadata
  */
 export async function generateRecommendationWithCache(
   metrics: MetricResult[],
