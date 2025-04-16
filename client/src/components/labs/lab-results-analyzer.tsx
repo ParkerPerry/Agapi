@@ -162,6 +162,13 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       const { controlCircles, treatmentCircles, observationCircles } = 
         groupPostsByCircleRole(preparedCircles, preparedPosts);
       
+      // Update analysis state to show we're done with data processing and starting AI analysis
+      setAnalysisState(prev => ({ 
+        ...prev, 
+        processingData: false,
+        generatingAnalysis: true
+      }));
+      
       // Analyze each metric using the API
       const analyzedMetrics = [];
       
@@ -252,7 +259,13 @@ export const useLabResultsAnalysis = (lab: Lab) => {
         variant: "destructive",
       });
     } finally {
+      // Reset all analysis states when we're done
       setIsAnalyzing(false);
+      setAnalysisState({
+        checkingCache: false,
+        processingData: false,
+        generatingAnalysis: false
+      });
     }
   };
 
@@ -362,6 +375,7 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     retryAnalysis,
     refreshAnalysis,
     fromCache,
-    lastAnalysisTime
+    lastAnalysisTime,
+    analysisState  // Include the analysis stage state
   };
 };

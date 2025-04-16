@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { useLabResultsAnalysis } from "./lab-results-analyzer";
 import { MetricAnalysisCard } from "./metric-analysis-card";
 import { ResultsSummaryCard } from "./results-summary-card";
@@ -38,7 +38,8 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                 retryAnalysis,
                 refreshAnalysis,
                 fromCache,
-                lastAnalysisTime
+                lastAnalysisTime,
+                analysisState
               } = useLabResultsAnalysis(lab);
               
               // Show loading state during analysis
@@ -53,19 +54,46 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                       <div className="flex flex-col gap-2 max-w-md">
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary animate-pulse rounded-full"></div>
+                            <div 
+                              className={`h-full ${analysisState.checkingCache ? 'bg-primary animate-pulse' : analysisState.checkingCache === false ? 'bg-green-500' : 'bg-muted-foreground/10'} rounded-full`}
+                              style={{ 
+                                width: analysisState.checkingCache ? '100%' : analysisState.checkingCache === false ? '100%' : '0%' 
+                              }}
+                            ></div>
                           </div>
-                          <span>Checking cache for existing analysis</span>
+                          <div className="flex items-center">
+                            <span>Checking cache for existing analysis</span>
+                            {analysisState.checkingCache === false && !analysisState.processingData && !analysisState.generatingAnalysis && (
+                              <CheckCircle className="h-3 w-3 text-green-500 ml-1.5"/>
+                            )}
+                          </div>
                         </div>
+
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary animate-pulse rounded-full"></div>
+                            <div 
+                              className={`h-full ${analysisState.processingData ? 'bg-primary animate-pulse' : analysisState.processingData === false ? 'bg-green-500' : 'bg-muted-foreground/10'} rounded-full`}
+                              style={{ 
+                                width: analysisState.processingData ? '100%' : analysisState.processingData === false ? '100%' : '0%' 
+                              }}
+                            ></div>
                           </div>
-                          <span>Processing metrics data</span>
+                          <div className="flex items-center">
+                            <span>Processing metrics data</span>
+                            {analysisState.processingData === false && !analysisState.generatingAnalysis && (
+                              <CheckCircle className="h-3 w-3 text-green-500 ml-1.5"/>
+                            )}
+                          </div>
                         </div>
+
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary animate-pulse rounded-full"></div>
+                            <div 
+                              className={`h-full ${analysisState.generatingAnalysis ? 'bg-primary animate-pulse' : 'bg-muted-foreground/10'} rounded-full`}
+                              style={{ 
+                                width: analysisState.generatingAnalysis ? '100%' : '0%' 
+                              }}
+                            ></div>
                           </div>
                           <span>Generating insight with AI</span>
                         </div>
