@@ -217,6 +217,12 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       // Generate an overall recommendation based on the results
       if (analyzedMetrics.length > 0) {
         try {
+          // Update state to show AI generation is complete
+          setAnalysisState(prev => ({ 
+            ...prev, 
+            generatingAnalysis: true 
+          }));
+          
           const recommendation = await generateRecommendationWithCache(
             analyzedMetrics,
             lab.status,
@@ -224,6 +230,13 @@ export const useLabResultsAnalysis = (lab: Lab) => {
             forceRefresh
           );
           setRecommendation(recommendation);
+          
+          // Mark all analysis steps as complete
+          setAnalysisState({
+            checkingCache: false,
+            processingData: false,
+            generatingAnalysis: false
+          });
           
           // If we got results, mark as not from cache (freshly generated)
           // unless it explicitly returned fromCache=true

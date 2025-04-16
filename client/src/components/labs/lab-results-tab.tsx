@@ -52,50 +52,61 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                         Analyzing lab metrics with AI...
                       </p>
                       <div className="flex flex-col gap-2 max-w-md">
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full ${analysisState.checkingCache ? 'bg-primary animate-pulse' : analysisState.checkingCache === false ? 'bg-green-500' : 'bg-muted-foreground/10'} rounded-full`}
-                              style={{ 
-                                width: analysisState.checkingCache ? '100%' : analysisState.checkingCache === false ? '100%' : '0%' 
-                              }}
-                            ></div>
+                        {/* Cache checking step */}
+                        <div className={`flex items-center gap-2 text-xs ${analysisState.checkingCache ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                          <div className="relative w-7 h-7 flex items-center justify-center">
+                            {analysisState.checkingCache ? (
+                              <Loader2 className="w-4 h-4 animate-spin absolute" />
+                            ) : analysisState.checkingCache === false ? (
+                              <CheckCircle className="w-4 h-4 text-green-500 absolute" />
+                            ) : (
+                              <div className="w-2 h-2 bg-muted-foreground/40 rounded-full absolute"></div>
+                            )}
                           </div>
-                          <div className="flex items-center">
+                          <div className="flex-1">
                             <span>Checking cache for existing analysis</span>
-                            {analysisState.checkingCache === false && !analysisState.processingData && !analysisState.generatingAnalysis && (
-                              <CheckCircle className="h-3 w-3 text-green-500 ml-1.5"/>
-                            )}
+                            <div className="w-full h-1 bg-muted-foreground/20 rounded-full mt-1.5 overflow-hidden">
+                              <div className={`h-full transition-all ${analysisState.checkingCache ? 'w-full animate-pulse bg-primary' : analysisState.checkingCache === false ? 'w-full bg-green-500' : 'w-0'}`}></div>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full ${analysisState.processingData ? 'bg-primary animate-pulse' : analysisState.processingData === false ? 'bg-green-500' : 'bg-muted-foreground/10'} rounded-full`}
-                              style={{ 
-                                width: analysisState.processingData ? '100%' : analysisState.processingData === false ? '100%' : '0%' 
-                              }}
-                            ></div>
+                        {/* Data processing step */}
+                        <div className={`flex items-center gap-2 text-xs ${analysisState.processingData ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                          <div className="relative w-7 h-7 flex items-center justify-center">
+                            {analysisState.processingData ? (
+                              <Loader2 className="w-4 h-4 animate-spin absolute" />
+                            ) : analysisState.processingData === false ? (
+                              <CheckCircle className="w-4 h-4 text-green-500 absolute" />
+                            ) : (
+                              <div className="w-2 h-2 bg-muted-foreground/40 rounded-full absolute"></div>
+                            )}
                           </div>
-                          <div className="flex items-center">
+                          <div className="flex-1">
                             <span>Processing metrics data</span>
-                            {analysisState.processingData === false && !analysisState.generatingAnalysis && (
-                              <CheckCircle className="h-3 w-3 text-green-500 ml-1.5"/>
-                            )}
+                            <div className="w-full h-1 bg-muted-foreground/20 rounded-full mt-1.5 overflow-hidden">
+                              <div className={`h-full transition-all ${analysisState.processingData ? 'w-full animate-pulse bg-primary' : analysisState.processingData === false ? 'w-full bg-green-500' : 'w-0'}`}></div>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full ${analysisState.generatingAnalysis ? 'bg-primary animate-pulse' : 'bg-muted-foreground/10'} rounded-full`}
-                              style={{ 
-                                width: analysisState.generatingAnalysis ? '100%' : '0%' 
-                              }}
-                            ></div>
+                        {/* AI insight generation step */}
+                        <div className={`flex items-center gap-2 text-xs ${analysisState.generatingAnalysis ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                          <div className="relative w-7 h-7 flex items-center justify-center">
+                            {analysisState.generatingAnalysis ? (
+                              <Loader2 className="w-4 h-4 animate-spin absolute" />
+                            ) : analysisState.generatingAnalysis === false ? (
+                              <CheckCircle className="w-4 h-4 text-green-500 absolute" />
+                            ) : (
+                              <div className="w-2 h-2 bg-muted-foreground/40 rounded-full absolute"></div>
+                            )}
                           </div>
-                          <span>Generating insight with AI</span>
+                          <div className="flex-1">
+                            <span>Generating insight with AI</span>
+                            <div className="w-full h-1 bg-muted-foreground/20 rounded-full mt-1.5 overflow-hidden">
+                              <div className={`h-full transition-all ${analysisState.generatingAnalysis ? 'w-full animate-pulse bg-primary' : analysisState.generatingAnalysis === false ? 'w-full bg-green-500' : 'w-0'}`}></div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <p className="text-xs text-muted-foreground mt-3">
