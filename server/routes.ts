@@ -18,6 +18,7 @@ import directChatRoutes from "./routes/directChatRoutes";
 import toolRoutes from "./routes/toolRoutes";
 import labRoutes from "./routes/labRoutes";
 import healthRoutes from "./routes/healthRoutes";
+import metricsAnalysisRoutes from "./routes/metricsAnalysisRoutes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
@@ -294,6 +295,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/labs', labRoutes);
   app.use('/api/nft', nftRoutes);
   app.use('/api/health', healthRoutes);
+  app.use('/api', metricsAnalysisRoutes);
   
   // Register circle-related routes
   app.use('/api/circles', circleRoutes);

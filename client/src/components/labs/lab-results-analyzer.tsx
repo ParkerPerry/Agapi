@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Lab, Circle, Post } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { analyzeMetric, generateRecommendation as apiGenerateRecommendation, groupPostsByCircleRole } from "@/lib/metricsApi";
 
 // Type definitions for metric results
 export interface MetricResult {
@@ -89,134 +90,6 @@ export function useLabResultsAnalysis(lab: Lab) {
     enabled: !!lab?.id && (lab.status === "active" || lab.status === "completed") && !!labCircles && labCircles.length > 0
   });
 
-  // Use temporary simulation function while we implement the LLM endpoint
-  const simulateMetricAnalysis = async (metric: any, controlCircles: LabCircle[], treatmentCircles: LabCircle[], posts: Post[]) => {
-    // This will be replaced with real LLM call
-    // For now, simulate based on the metric name and target
-    const isCompleted = lab.status === "completed";
-    
-    // Determine status randomly but weighted by lab status
-    const statuses: ("success" | "warning" | "fail")[] = ["success", "warning", "fail"];
-    const weights = isCompleted 
-      ? [0.7, 0.2, 0.1]  // Completed labs favor success
-      : [0.4, 0.4, 0.2]; // Active labs are more mixed
-    
-    const randomIndex = Math.random();
-    let statusIndex = 0;
-    let cumulativeWeight = 0;
-    
-    for (let i = 0; i < weights.length; i++) {
-      cumulativeWeight += weights[i];
-      if (randomIndex <= cumulativeWeight) {
-        statusIndex = i;
-        break;
-      }
-    }
-    
-    const status = statuses[statusIndex];
-    const confidence = isCompleted 
-      ? 75 + Math.floor(Math.random() * 20) 
-      : 65 + Math.floor(Math.random() * 20);
-    
-    // Helper functions for formatting
-    const getTargetAsString = (target: string | number): string => {
-      return typeof target === 'string' ? target : String(target);
-    };
-    
-    const targetContains = (target: string | number, pattern: string): boolean => {
-      const targetStr = getTargetAsString(target);
-      return targetStr.includes(pattern);
-    };
-    
-    const targetMatches = (target: string | number, regex: RegExp): boolean => {
-      const targetStr = getTargetAsString(target);
-      return regex.test(targetStr);
-    };
-    
-    const getTargetNumericValue = (target: string | number): number => {
-      if (typeof target === 'number') return target;
-      return parseInt(target, 10);
-    };
-    
-    // Generate actual value and difference based on status
-    let actual = "";
-    let difference = "";
-    
-    if (status === "success") {
-      if (targetContains(metric.target, "%")) {
-        const targetValue = getTargetNumericValue(metric.target);
-        const actualValue = targetValue + 5 + Math.floor(Math.random() * 10);
-        actual = `${actualValue}%`;
-        difference = `+${actualValue - targetValue}%`;
-      } else if (targetMatches(metric.target, /^\d+$/)) {
-        const targetValue = getTargetNumericValue(metric.target);
-        const actualValue = targetValue + 5 + Math.floor(Math.random() * 10);
-        actual = actualValue.toString();
-        difference = `+${actualValue - targetValue}`;
-      } else {
-        actual = "Above target";
-        difference = "Positive";
-      }
-    } else if (status === "warning") {
-      if (targetContains(metric.target, "%")) {
-        const targetValue = getTargetNumericValue(metric.target);
-        const actualValue = Math.max(1, targetValue - 2 + Math.floor(Math.random() * 4));
-        actual = `${actualValue}%`;
-        difference = (actualValue >= targetValue) ? 
-          `+${actualValue - targetValue}%` : 
-          `-${targetValue - actualValue}%`;
-      } else if (targetMatches(metric.target, /^\d+$/)) {
-        const targetValue = getTargetNumericValue(metric.target);
-        const actualValue = Math.max(1, targetValue - 2 + Math.floor(Math.random() * 4));
-        actual = actualValue.toString();
-        difference = (actualValue >= targetValue) ? 
-          `+${actualValue - targetValue}` : 
-          `-${targetValue - actualValue}`;
-      } else {
-        actual = "Near target";
-        difference = "Neutral";
-      }
-    } else {
-      if (targetContains(metric.target, "%")) {
-        const targetValue = getTargetNumericValue(metric.target);
-        const actualValue = Math.max(1, targetValue - 10 - Math.floor(Math.random() * 5));
-        actual = `${actualValue}%`;
-        difference = `-${targetValue - actualValue}%`;
-      } else if (targetMatches(metric.target, /^\d+$/)) {
-        const targetValue = getTargetNumericValue(metric.target);
-        const actualValue = Math.max(1, targetValue - 10 - Math.floor(Math.random() * 5));
-        actual = actualValue.toString();
-        difference = `-${targetValue - actualValue}`;
-      } else {
-        actual = "Below target";
-        difference = "Negative";
-      }
-    }
-    
-    // Generate a simple analysis based on control vs treatment
-    const treatmentCount = treatmentCircles.length;
-    const controlCount = controlCircles.length;
-    
-    const analysis = `Analysis based on ${controlCount} control circle${controlCount !== 1 ? 's' : ''} and ${treatmentCount} treatment circle${treatmentCount !== 1 ? 's' : ''}. ${
-      status === "success" 
-        ? "Treatment groups significantly outperformed control groups."
-        : status === "warning"
-        ? "Treatment groups showed some improvement over control groups, but results are not conclusive."
-        : "Treatment groups did not show significant improvement over control groups."
-    }`;
-    
-    return {
-      name: metric.name,
-      target: metric.target,
-      priority: metric.priority,
-      actual,
-      status,
-      confidence,
-      difference,
-      analysis
-    };
-  };
-
   // Main analysis function
   const analyzeLabMetrics = async () => {
     if (!lab?.successMetrics?.metrics || lab.successMetrics.metrics.length === 0) {
@@ -234,24 +107,29 @@ export function useLabResultsAnalysis(lab: Lab) {
     setAnalyzeError(null);
     
     try {
-      // Group circles by role
-      const controlCircles = labCircles.filter(c => c.role === "control");
-      const treatmentCircles = labCircles.filter(c => c.role === "treatment");
-      const observationCircles = labCircles.filter(c => c.role === "observation");
+      // Group the circles and posts by role
+      const { controlCircles, treatmentCircles, observationCircles } = groupPostsByCircleRole(labCircles, circlePosts);
       
-      // Analyze each metric
+      // Analyze each metric using the API
       const analyzedMetrics = [];
       
       for (const metric of lab.successMetrics.metrics) {
         try {
-          // In future, this will call the LLM API endpoint
-          const result = await simulateMetricAnalysis(
-            metric,
+          // Prepare the request data
+          const requestData = {
+            metric: {
+              name: metric.name,
+              target: metric.target,
+              priority: metric.priority
+            },
+            labGoals: lab.goals || '',
             controlCircles,
             treatmentCircles,
-            circlePosts
-          );
+            observationCircles
+          };
           
+          // Call the API endpoint for analysis
+          const result = await analyzeMetric(requestData);
           analyzedMetrics.push(result);
         } catch (error) {
           console.error(`Error analyzing metric ${metric.name}:`, error);
@@ -273,7 +151,23 @@ export function useLabResultsAnalysis(lab: Lab) {
       setMetricResults(analyzedMetrics);
       
       // Generate an overall recommendation based on the results
-      generateRecommendation(analyzedMetrics, lab.status === "completed");
+      if (analyzedMetrics.length > 0) {
+        try {
+          const recommendation = await apiGenerateRecommendation(
+            analyzedMetrics,
+            lab.status
+          );
+          setRecommendation(recommendation);
+        } catch (error) {
+          console.error("Error generating recommendation:", error);
+          // Use fallback if API call fails
+          setRecommendation({
+            decision: "wait",
+            confidence: 65,
+            reasoning: "Recommendation analysis failed. Based on available metrics, it's suggested to wait for more data to make a final decision."
+          });
+        }
+      }
     } catch (error) {
       console.error("Error analyzing lab metrics:", error);
       setAnalyzeError(error instanceof Error ? error : new Error('Unknown error during analysis'));
@@ -303,7 +197,7 @@ export function useLabResultsAnalysis(lab: Lab) {
     }
   }, [lab, labCircles, circlePosts, isCirclesLoading, isPostsLoading, circlesError, postsError]);
   
-  const generateRecommendation = (results: MetricResult[], isCompleted: boolean) => {
+  const generateFallbackRecommendation = (results: MetricResult[]) => {
     if (!results || results.length === 0) {
       setRecommendation(null);
       return;
@@ -333,14 +227,14 @@ export function useLabResultsAnalysis(lab: Lab) {
     const mediumPrioritySuccessRate = counts.medium.total > 0 ? 
       (counts.medium.success + counts.medium.warning * 0.5) / counts.medium.total : 1;
     
-    // Force more "GO" decisions for completed labs for demo purposes
-    if (isCompleted && Math.random() > 0.2) {
+    // Determine decision based on success rates
+    const isCompleted = lab.status === "completed";
+    
+    if (isCompleted && highPrioritySuccessRate > 0.6) {
       decision = "go";
       confidence = 75 + Math.floor(Math.random() * 20);
-      reasoning = "Feature implementation is recommended based on strong positive results from the experiment.";
-    }
-    // High-priority metrics determine most of the decision
-    else if (highPrioritySuccessRate > 0.8) {
+      reasoning = "Feature implementation is recommended based on positive results from the experiment.";
+    } else if (highPrioritySuccessRate > 0.8) {
       decision = "go";
       confidence = 70 + Math.floor(Math.random() * 25);
       reasoning = "High-priority metrics show strong positive results, supporting implementation of the tested changes.";
@@ -350,7 +244,7 @@ export function useLabResultsAnalysis(lab: Lab) {
       reasoning = "Some high-priority metrics show positive results, but more data is needed for a confident decision.";
     } else {
       decision = "rethink";
-      confidence = 65 + Math.floor(Math.random() * 30);
+      confidence = 65 + Math.floor(Math.random() * 25);
       reasoning = "High-priority metrics failed to meet targets. Consider revising the approach or testing new alternatives.";
     }
     
