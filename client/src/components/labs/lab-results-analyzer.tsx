@@ -56,6 +56,7 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   const [analyzeError, setAnalyzeError] = useState<Error | null>(null);
   const [fromCache, setFromCache] = useState<boolean>(false);
   const [lastAnalysisTime, setLastAnalysisTime] = useState<string | null>(null);
+  const [loadStartTime, setLoadStartTime] = useState<number | null>(null);
   
   // State to track the last analysis signature to prevent infinite loops
   const [lastAnalysisSignature, setLastAnalysisSignature] = useState<string>("");
@@ -75,23 +76,30 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     if (!lab?.id) return false;
     
     try {
+      // Record start time for performance measurement
+      const cacheCheckStartTime = performance.now();
+      
       // Update the analysis state to indicate we're checking cache
       setAnalysisState(prev => ({ ...prev, checkingCache: true }));
-      console.log(`Checking for cached analysis results for lab ${lab.id}`);
+      console.log(`[PERFORMANCE] Checking for cached analysis results for lab ${lab.id}`);
       const cachedResults = await getLabAnalysisResults(lab.id);
+      
+      // Record end time and log duration
+      const cacheCheckEndTime = performance.now();
+      console.log(`[PERFORMANCE] Cache check completed in ${(cacheCheckEndTime - cacheCheckStartTime).toFixed(2)}ms`);
       
       // Mark cache checking as complete
       setAnalysisState(prev => ({ ...prev, checkingCache: false }));
       
       if (cachedResults && cachedResults.exists) {
-        console.log(`Found cached analysis results for lab ${lab.id}`, cachedResults);
+        console.log(`[PERFORMANCE] Found cached analysis results for lab ${lab.id}`, cachedResults);
         setMetricResults(cachedResults.metricResults);
         setRecommendation(cachedResults.recommendation);
         setFromCache(true);
         setLastAnalysisTime(cachedResults.updatedAt);
         return true;
       } else {
-        console.log(`No cached analysis results found for lab ${lab.id}`);
+        console.log(`[PERFORMANCE] No cached analysis results found for lab ${lab.id}`);
         // Since we'll need to generate a fresh analysis, update the processing state
         setAnalysisState(prev => ({ ...prev, processingData: true }));
       }
@@ -133,6 +141,15 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       checkInitialCache();
     }
   }, [lab?.id, lab?.status]);
+
+  // Set up the load timing when shouldLoadData changes
+  useEffect(() => {
+    if (shouldLoadData && !loadStartTime) {
+      const startTime = performance.now();
+      setLoadStartTime(startTime);
+      console.log(`[PERFORMANCE] Starting to load lab data at ${startTime.toFixed(2)}ms`);
+    }
+  }, [shouldLoadData, loadStartTime]);
 
   // Only fetch lab circles data if we need to generate a fresh analysis
   const { 
@@ -177,6 +194,10 @@ export const useLabResultsAnalysis = (lab: Lab) => {
 
   // Main analysis function
   const analyzeLabMetrics = async (forceRefresh: boolean = false) => {
+    // Start timing the analysis process
+    const analysisStartTime = performance.now();
+    console.log(`[PERFORMANCE] Starting full analysis process at ${analysisStartTime.toFixed(2)}ms`);
+    
     // Early return checks
     if (!lab?.successMetrics?.metrics || lab.successMetrics.metrics.length === 0) {
       console.log("No success metrics defined for this lab");
@@ -339,6 +360,11 @@ export const useLabResultsAnalysis = (lab: Lab) => {
         variant: "destructive",
       });
     } finally {
+      // Record completion time and log the total duration
+      const analysisEndTime = performance.now();
+      const totalDuration = analysisEndTime - analysisStartTime;
+      console.log(`[PERFORMANCE] Full analysis process completed in ${totalDuration.toFixed(2)}ms`);
+      
       // Reset all analysis states when we're done
       setIsAnalyzing(false);
       setAnalysisState({
@@ -390,6 +416,14 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     
     // Only run analysis when data is fully loaded and we've determined we need a fresh analysis
     if (shouldLoadData && !isCirclesLoading && !isPostsLoading && labCirclesData && circlePostsData && !isAnalyzing) {
+      // Log performance data when posts load completes
+      if (loadStartTime) {
+        const loadEndTime = performance.now();
+        const loadDuration = loadEndTime - loadStartTime;
+        console.log(`[PERFORMANCE] Lab data loaded in ${loadDuration.toFixed(2)}ms (Posts: ${circlePostsData.length}, Circles: ${labCirclesData.length})`);
+        setLoadStartTime(null); // Reset for next time
+      }
+      
       // Use a stable string representation to avoid reference issues
       const dataSignature = `${lab?.id}-${labCirclesData.length}-${circlePostsData.length}`;
       
@@ -402,7 +436,7 @@ export const useLabResultsAnalysis = (lab: Lab) => {
         analyzeLabMetrics(false);
       }
     }
-  }, [lab?.id, shouldLoadData, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing, lastAnalysisSignature]);
+  }, [lab?.id, shouldLoadData, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing, lastAnalysisSignature, loadStartTime]);
   
   // Function to retry analysis if it fails
   const retryAnalysis = () => {
