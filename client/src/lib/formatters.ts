@@ -13,7 +13,7 @@ export const formatMetricValue = (value: any) => {
   const strValue = String(value);
   
   // Handle percentages
-  if (strValue.endsWith('%')) {
+  if (typeof strValue === 'string' && strValue.endsWith && strValue.endsWith('%')) {
     return strValue;
   }
   
