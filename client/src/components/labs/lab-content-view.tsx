@@ -113,10 +113,6 @@ export function LabContentView({ labId }: LabContentViewProps) {
               {roleInfo.treatment.icon}
               <span>Treatment ({postCounts.treatment})</span>
             </TabsTrigger>
-            <TabsTrigger value="observation" className="flex gap-1 items-center">
-              {roleInfo.observation.icon}
-              <span>Observation ({postCounts.observation})</span>
-            </TabsTrigger>
           </TabsList>
         </div>
 

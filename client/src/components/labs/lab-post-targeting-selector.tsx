@@ -390,13 +390,6 @@ export function LabPostTargetingSelector({
                                   <span className="ml-2">Treatment only</span>
                                 </div>
                               </SelectItem>
-                              
-                              <SelectItem value="observation" className="flex items-center">
-                                <div className="flex items-center">
-                                  {roleInfo.observation.icon}
-                                  <span className="ml-2">Observation only</span>
-                                </div>
-                              </SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
