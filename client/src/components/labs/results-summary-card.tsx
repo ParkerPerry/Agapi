@@ -1,147 +1,147 @@
-import { LabRecommendation, MetricAnalysisResult, formatMetricValue } from "./lab-results-analyzer";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Clock, AlertTriangle, XCircle } from "lucide-react";
+import { 
+  AlertCircle, 
+  CheckCircle, 
+  Clock 
+} from "lucide-react";
+import { Recommendation, MetricResult } from "./lab-results-analyzer";
 
 interface ResultsSummaryCardProps {
-  recommendation: LabRecommendation;
-  metricResults: MetricAnalysisResult[];
+  recommendation: Recommendation;
+  metricResults: MetricResult[];
 }
 
-export function ResultsSummaryCard({ 
-  recommendation,
-  metricResults
-}: ResultsSummaryCardProps) {
-  const { decision, confidence, reasoning, color } = recommendation;
+export function ResultsSummaryCard({ recommendation, metricResults }: ResultsSummaryCardProps) {
+  const { decision, confidence, reasoning } = recommendation;
   
-  // Calculate metrics met stats
-  const totalMetrics = metricResults.length;
-  const metricsMet = metricResults.filter(r => r.goalAchieved).length;
-  const percentMet = totalMetrics > 0 ? (metricsMet / totalMetrics) * 100 : 0;
+  // Count metrics by status
+  const statusCounts = metricResults.reduce((acc, metric) => {
+    acc[metric.status] = (acc[metric.status] || 0) + 1;
+    return acc;
+  }, { success: 0, warning: 0, fail: 0 } as Record<string, number>);
   
-  // Get decision icon
-  const getDecisionIcon = () => {
-    switch(decision) {
-      case "GO": 
-        return <CheckCircle className="h-6 w-6 text-green-600" />;
-      case "WAIT": 
-        return <Clock className="h-6 w-6 text-amber-600" />;
-      case "RETHINK": 
-        return <AlertTriangle className="h-6 w-6 text-red-600" />;
+  // Get recommendation styling based on decision
+  const getDecisionStyles = () => {
+    switch (decision) {
+      case "go":
+        return {
+          bgColor: "bg-green-50",
+          borderColor: "border-green-100",
+          iconBgColor: "bg-green-100",
+          icon: <CheckCircle className="h-5 w-5 text-green-600" />,
+          textColor: "text-green-800",
+          progressColor: "bg-green-600",
+          title: "GO",
+          subtitle: "High confidence",
+        };
+      case "wait":
+        return {
+          bgColor: "bg-amber-50",
+          borderColor: "border-amber-100",
+          iconBgColor: "bg-amber-100",
+          icon: <Clock className="h-5 w-5 text-amber-600" />,
+          textColor: "text-amber-800",
+          progressColor: "bg-amber-600",
+          title: "WAIT",
+          subtitle: "More data needed",
+        };
+      case "rethink":
+        return {
+          bgColor: "bg-red-50",
+          borderColor: "border-red-100",
+          iconBgColor: "bg-red-100",
+          icon: <AlertCircle className="h-5 w-5 text-red-600" />,
+          textColor: "text-red-800",
+          progressColor: "bg-red-600",
+          title: "RETHINK",
+          subtitle: "Results below targets",
+        };
+      default:
+        return {
+          bgColor: "bg-gray-50",
+          borderColor: "border-gray-100",
+          iconBgColor: "bg-gray-100",
+          icon: <Clock className="h-5 w-5 text-gray-600" />,
+          textColor: "text-gray-800",
+          progressColor: "bg-gray-600",
+          title: "INCONCLUSIVE",
+          subtitle: "Insufficient data",
+        };
     }
   };
   
-  // Get color classes based on decision
-  const getColorClasses = () => {
-    switch(color) {
-      case "green":
-        return {
-          border: "border-green-200",
-          bg: "bg-green-50",
-          text: "text-green-800",
-          muted: "text-green-700",
-          icon: "text-green-600",
-          progress: "bg-green-500"
-        };
-      case "red":
-        return {
-          border: "border-red-200",
-          bg: "bg-red-50",
-          text: "text-red-800",
-          muted: "text-red-700",
-          icon: "text-red-600",
-          progress: "bg-red-500"
-        };
-      default: // amber
-        return {
-          border: "border-amber-200",
-          bg: "bg-amber-50",
-          text: "text-amber-800",
-          muted: "text-amber-700",
-          icon: "text-amber-600",
-          progress: "bg-amber-500"
-        };
-    }
-  };
-  
-  const colors = getColorClasses();
+  const styles = getDecisionStyles();
   
   return (
-    <Card className={`border-l-4 ${colors.border}`}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <div className={`${colors.bg} p-2 rounded-full`}>
-            {getDecisionIcon()}
-          </div>
-          <span>Recommendation: {decision}</span>
-        </CardTitle>
-      </CardHeader>
+    <div className="space-y-4">
+      <h3 className="text-base font-medium">Recommendation</h3>
       
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div 
-                className={`${colors.progress} h-2.5 rounded-full`} 
-                style={{ width: `${percentMet}%` }}
-              ></div>
+      <Card className="overflow-hidden border-0">
+        <CardContent className="p-0">
+          <div className={`flex justify-between items-center rounded-md ${styles.bgColor} border ${styles.borderColor} p-4`}>
+            <div className="flex items-center gap-3">
+              <div className={`${styles.iconBgColor} h-10 w-10 rounded-full flex items-center justify-center`}>
+                {styles.icon}
+              </div>
+              <div>
+                <p className={`font-medium ${styles.textColor}`}>{styles.title}</p>
+                <div className="flex items-center gap-1">
+                  <p className={`text-xs ${styles.textColor}`}>{styles.subtitle}</p>
+                  <p className={`text-xs ${styles.textColor}`}>({confidence}%)</p>
+                </div>
+              </div>
             </div>
-            <span className="text-sm font-medium">{percentMet.toFixed(0)}% goals met</span>
+            <div className={`text-sm ${styles.textColor} max-w-md`}>
+              <p>{reasoning}</p>
+            </div>
           </div>
           
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Confidence:</span>
-            <Badge variant="outline" className={colors.text}>
-              {confidence}%
-            </Badge>
-          </div>
-          
-          <p className={`text-sm ${colors.muted}`}>{reasoning}</p>
-          
-          <div className="pt-4 border-t">
-            <h4 className="font-medium mb-2">Key Metrics</h4>
-            <ul className="space-y-1 text-sm">
-              {metricResults
-                .sort((a, b) => {
-                  // Sort high priority first, then by goal achievement
-                  if (a.priority === "high" && b.priority !== "high") return -1;
-                  if (a.priority !== "high" && b.priority === "high") return 1;
-                  return a.goalAchieved === b.goalAchieved ? 0 : a.goalAchieved ? -1 : 1;
-                })
-                .slice(0, 5) // Show top 5 metrics
-                .map((result, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    {result.goalAchieved 
-                      ? <CheckCircle className="h-4 w-4 text-green-500" /> 
-                      : <XCircle className="h-4 w-4 text-red-500" />}
-                    <span>
-                      {result.name}: {formatMetricValue(result.treatmentValue, result.name)}
-                      {result.goalAchieved 
-                        ? " (Goal met)" 
-                        : ` (Goal: ${result.target})`}
-                    </span>
-                    <Badge variant={result.priority === "high" ? "default" : "outline"} className="ml-auto">
-                      {result.priority}
-                    </Badge>
-                  </li>
-                ))
-              }
-            </ul>
+          <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-sm font-medium">Metrics Summary</h4>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span>Success ({statusCounts.success})</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                  <span>Warning ({statusCounts.warning})</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <span>Failed ({statusCounts.fail})</span>
+                </div>
+              </div>
+            </div>
             
-            {metricResults.length > 5 && (
-              <p className="text-xs text-muted-foreground mt-2">
-                Showing top 5 of {metricResults.length} metrics...
-              </p>
-            )}
+            <div className="h-2 flex rounded-full overflow-hidden">
+              {statusCounts.success > 0 && (
+                <div 
+                  className="bg-green-500 h-full" 
+                  style={{ width: `${(statusCounts.success / metricResults.length) * 100}%` }}
+                ></div>
+              )}
+              {statusCounts.warning > 0 && (
+                <div 
+                  className="bg-amber-500 h-full" 
+                  style={{ width: `${(statusCounts.warning / metricResults.length) * 100}%` }}
+                ></div>
+              )}
+              {statusCounts.fail > 0 && (
+                <div 
+                  className="bg-red-500 h-full" 
+                  style={{ width: `${(statusCounts.fail / metricResults.length) * 100}%` }}
+                ></div>
+              )}
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

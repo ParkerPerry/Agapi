@@ -1,156 +1,96 @@
-import { MetricAnalysisResult, formatMetricValue } from "./lab-results-analyzer";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { 
+  AlertCircle, 
+  CheckCircle, 
+  AlertTriangle 
+} from "lucide-react";
+import { formatMetricValue, MetricResult } from "./lab-results-analyzer";
 
 interface MetricAnalysisCardProps {
-  metric: MetricAnalysisResult;
-  isCompact?: boolean;
+  metric: MetricResult;
 }
 
-export function MetricAnalysisCard({ 
-  metric,
-  isCompact = false
-}: MetricAnalysisCardProps) {
-  const { 
-    name, 
-    controlValue, 
-    treatmentValue,
-    percentChange,
-    goalAchieved,
-    confidence,
-    priority
-  } = metric;
+export function MetricAnalysisCard({ metric }: MetricAnalysisCardProps) {
+  const { name, target, actual, status, priority, confidence, difference } = metric;
   
-  // Determine colors based on goal achievement
-  const borderColor = goalAchieved 
-    ? "border-green-200" 
-    : confidence > 60 
-      ? "border-red-200" 
-      : "border-amber-200";
-      
-  const textColor = goalAchieved 
-    ? "text-green-600" 
-    : confidence > 60 
-      ? "text-red-600" 
-      : "text-amber-600";
-      
-  const progressValue = 50 + (percentChange * 0.5);
-  const progressColor = percentChange >= 0 ? "bg-green-500" : "bg-red-500";
-  
-  // Determine confidence indicator
-  const getConfidenceIndicator = () => {
-    if (confidence >= 70) return <CheckCircle className="h-4 w-4 text-green-500" />;
-    if (confidence <= 30) return <XCircle className="h-4 w-4 text-red-500" />;
-    return <AlertTriangle className="h-4 w-4 text-amber-500" />;
-  };
-  
-  // Get priority badge
-  const getPriorityBadge = () => {
-    let variant: "default" | "secondary" | "outline" = "outline";
-    if (priority === "high") variant = "default";
-    if (priority === "medium") variant = "secondary";
-    
-    return (
-      <Badge variant={variant} className="ml-2">
-        {priority}
-      </Badge>
-    );
-  };
-  
-  // Generate status text
-  const getStatusText = () => {
-    if (goalAchieved) {
-      return percentChange > 0 
-        ? `+${percentChange.toFixed(1)}% above target` 
-        : "Meets target";
+  // Determine card styling based on status
+  const getStatusStyles = () => {
+    switch (status) {
+      case "success":
+        return {
+          borderColor: "border-green-200",
+          icon: <CheckCircle className="h-5 w-5 text-green-600" />,
+          textColor: "text-green-600",
+          progressColor: "bg-green-600",
+        };
+      case "warning":
+        return {
+          borderColor: "border-amber-200",
+          icon: <AlertTriangle className="h-5 w-5 text-amber-600" />,
+          textColor: "text-amber-600",
+          progressColor: "bg-amber-600",
+        };
+      case "fail":
+        return {
+          borderColor: "border-red-200",
+          icon: <AlertCircle className="h-5 w-5 text-red-600" />,
+          textColor: "text-red-600",
+          progressColor: "bg-red-600",
+        };
+      default:
+        return {
+          borderColor: "border-gray-200",
+          icon: <AlertCircle className="h-5 w-5 text-gray-500" />,
+          textColor: "text-gray-500",
+          progressColor: "bg-gray-500",
+        };
     }
-    
-    return percentChange > 0 
-      ? "Improved but below target" 
-      : "Below target";
   };
+  
+  const styles = getStatusStyles();
   
   return (
-    <Card className={`${borderColor} ${isCompact ? "h-full" : ""}`}>
-      <CardHeader className={isCompact ? "pb-2" : ""}>
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-base flex items-center">
-            {name}
-            {!isCompact && getPriorityBadge()}
-          </CardTitle>
-          {!isCompact && (
-            <Badge variant="outline" className={textColor}>
-              {goalAchieved ? "Goal Met" : "Goal Not Met"}
-            </Badge>
-          )}
-        </div>
-        {!isCompact && (
-          <CardDescription>
-            Target: {metric.target}
-          </CardDescription>
-        )}
-      </CardHeader>
-      
-      <CardContent className={isCompact ? "pt-0" : ""}>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="text-center">
-            <div className="text-sm font-medium text-muted-foreground">Control</div>
-            <div className="text-xl font-bold">{formatMetricValue(controlValue, name)}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm font-medium text-muted-foreground">Treatment</div>
-            <div className={`text-xl font-bold ${textColor}`}>{formatMetricValue(treatmentValue, name)}</div>
-          </div>
-        </div>
-        
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm">Difference</span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Badge 
-                    variant={percentChange > 0 ? "outline" : "outline"} 
-                    className={percentChange > 0 ? "text-green-600" : "text-red-600"}
-                  >
-                    {percentChange > 0 ? "+" : ""}{percentChange.toFixed(1)}%
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Percentage change from control to treatment</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <Progress 
-            value={progressValue} 
-            max={100}
-            className={`h-2 ${progressColor}`} 
-          />
-        </div>
-        
-        {!isCompact && (
-          <div className="pt-3 border-t">
-            <div className="flex justify-between items-center">
-              <div className="text-sm">
-                <span className="font-medium">Confidence:</span> {confidence}%
-              </div>
-              <div className="flex items-center">
-                {getConfidenceIndicator()}
-                <span className={`ml-1 text-sm ${textColor}`}>{getStatusText()}</span>
-              </div>
+    <Card className={`overflow-hidden border ${styles.borderColor}`}>
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-3">
+          <div>
+            <h4 className="text-sm font-medium mb-1">{name}</h4>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">Target: {formatMetricValue(target)}</p>
+              <Badge variant={priority === "high" ? "default" : (priority === "medium" ? "secondary" : "outline")}>
+                {priority}
+              </Badge>
             </div>
           </div>
-        )}
+          <div className="flex items-center gap-1">
+            {styles.icon}
+            <span className={`text-sm font-medium ${styles.textColor}`}>
+              {status === "success" ? "Success" : status === "warning" ? "Near Target" : "Below Target"}
+            </span>
+          </div>
+        </div>
+        
+        <div className="space-y-3">
+          <div className="flex justify-between items-baseline">
+            <span className={`text-2xl font-bold ${styles.textColor}`}>{formatMetricValue(actual)}</span>
+            {difference && (
+              <span className={`text-sm font-medium ${styles.textColor}`}>{difference}</span>
+            )}
+          </div>
+          
+          <div className="space-y-1">
+            <div className="flex justify-between items-center text-xs">
+              <span>Confidence</span>
+              <span>{confidence}%</span>
+            </div>
+            <Progress value={confidence} className={`h-2 ${styles.progressColor}`} />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
