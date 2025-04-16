@@ -56,13 +56,53 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   const [analyzeError, setAnalyzeError] = useState<Error | null>(null);
   const [fromCache, setFromCache] = useState<boolean>(false);
   const [lastAnalysisTime, setLastAnalysisTime] = useState<string | null>(null);
-  const [needsFreshAnalysis, setNeedsFreshAnalysis] = useState<boolean>(false);
   
   // State to track the last analysis signature to prevent infinite loops
   const [lastAnalysisSignature, setLastAnalysisSignature] = useState<string>("");
 
   // Flag to indicate if we need to load data for analysis
   const [shouldLoadData, setShouldLoadData] = useState<boolean>(false);
+
+  // State to track which steps of the analysis process are complete
+  const [analysisState, setAnalysisState] = useState({
+    checkingCache: false,
+    processingData: false,
+    generatingAnalysis: false
+  });
+
+  // Check for cached analysis results
+  const checkCachedResults = async () => {
+    if (!lab?.id) return false;
+    
+    try {
+      // Update the analysis state to indicate we're checking cache
+      setAnalysisState(prev => ({ ...prev, checkingCache: true }));
+      console.log(`Checking for cached analysis results for lab ${lab.id}`);
+      const cachedResults = await getLabAnalysisResults(lab.id);
+      
+      // Mark cache checking as complete
+      setAnalysisState(prev => ({ ...prev, checkingCache: false }));
+      
+      if (cachedResults && cachedResults.exists) {
+        console.log(`Found cached analysis results for lab ${lab.id}`, cachedResults);
+        setMetricResults(cachedResults.metricResults);
+        setRecommendation(cachedResults.recommendation);
+        setFromCache(true);
+        setLastAnalysisTime(cachedResults.updatedAt);
+        return true;
+      } else {
+        console.log(`No cached analysis results found for lab ${lab.id}`);
+        // Since we'll need to generate a fresh analysis, update the processing state
+        setAnalysisState(prev => ({ ...prev, processingData: true }));
+      }
+      
+      return false;
+    } catch (error) {
+      console.error("Error checking cached results:", error);
+      setAnalysisState(prev => ({ ...prev, checkingCache: false }));
+      return false;
+    }
+  };
 
   // Immediate check for cached results
   useEffect(() => {
@@ -133,13 +173,6 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       createdAt: post.createdAt,
       // Add any other needed fields
     } as Post;
-  });
-
-  // State to track which steps of the analysis process are complete
-  const [analysisState, setAnalysisState] = useState({
-    checkingCache: false,
-    processingData: false,
-    generatingAnalysis: false
   });
 
   // Main analysis function
@@ -313,40 +346,6 @@ export const useLabResultsAnalysis = (lab: Lab) => {
         processingData: false,
         generatingAnalysis: false
       });
-    }
-  };
-
-  // Check for cached analysis results
-  const checkCachedResults = async () => {
-    if (!lab?.id) return false;
-    
-    try {
-      // Update the analysis state to indicate we're checking cache
-      setAnalysisState(prev => ({ ...prev, checkingCache: true }));
-      console.log(`Checking for cached analysis results for lab ${lab.id}`);
-      const cachedResults = await getLabAnalysisResults(lab.id);
-      
-      // Mark cache checking as complete
-      setAnalysisState(prev => ({ ...prev, checkingCache: false }));
-      
-      if (cachedResults && cachedResults.exists) {
-        console.log(`Found cached analysis results for lab ${lab.id}`, cachedResults);
-        setMetricResults(cachedResults.metricResults);
-        setRecommendation(cachedResults.recommendation);
-        setFromCache(true);
-        setLastAnalysisTime(cachedResults.updatedAt);
-        return true;
-      } else {
-        console.log(`No cached analysis results found for lab ${lab.id}`);
-        // Since we'll need to generate a fresh analysis, update the processing state
-        setAnalysisState(prev => ({ ...prev, processingData: true }));
-      }
-      
-      return false;
-    } catch (error) {
-      console.error("Error checking cached results:", error);
-      setAnalysisState(prev => ({ ...prev, checkingCache: false }));
-      return false;
     }
   };
   
