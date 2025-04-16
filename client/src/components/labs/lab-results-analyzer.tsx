@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Lab, Circle, Post } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -46,6 +46,9 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzeError, setAnalyzeError] = useState<Error | null>(null);
+  
+  // State to track the last analysis signature to prevent infinite loops
+  const [lastAnalysisSignature, setLastAnalysisSignature] = useState<string>("");
 
   // Fetch lab circles data
   const { 
@@ -219,17 +222,20 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       return;
     }
     
-    // Only log minimal metrics info to avoid console flooding
-    if (!isCirclesLoading && !isPostsLoading && labCirclesData && circlePostsData) {
-      console.log(`Lab ${lab?.id} data loaded: ${labCirclesData.length} circles, ${circlePostsData.length} posts`);
+    // Only run analysis when data is fully loaded and not already analyzing
+    if (!isCirclesLoading && !isPostsLoading && labCirclesData && circlePostsData && !isAnalyzing) {
+      // Use a stable string representation to avoid reference issues
+      const dataSignature = `${lab?.id}-${labCirclesData.length}-${circlePostsData.length}`;
       
-      // Only run analysis when data is ready and not already analyzing
-      if (!isAnalyzing) {
+      // Use state to avoid re-running unnecessarily
+      if (lastAnalysisSignature !== dataSignature) {
+        // Update the signature state
+        setLastAnalysisSignature(dataSignature);
         analyzeLabMetrics();
       }
     }
-  // Importantly, we only depend on the raw data sources and loading states, not derived objects
-  }, [lab?.id, labCirclesData, circlePostsData, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing]);
+  // Include lastAnalysisSignature in dependencies
+  }, [lab?.id, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing, lastAnalysisSignature]);
   
   // Function to retry analysis if it fails
   const retryAnalysis = () => {
