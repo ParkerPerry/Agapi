@@ -61,7 +61,7 @@ interface LabContentViewProps {
 }
 
 export function LabContentView({ labId }: LabContentViewProps) {
-  const [activeRole, setActiveRole] = useState<"all" | "control" | "treatment" | "observation">("all");
+  const [activeRole, setActiveRole] = useState<"all" | "control" | "treatment">("all");
   
   // Fetch lab posts with the selected role filter
   const {
@@ -85,8 +85,7 @@ export function LabContentView({ labId }: LabContentViewProps) {
   const postCounts = {
     all: posts?.length || 0,
     control: posts?.filter(post => post.targetRole === "control").length || 0,
-    treatment: posts?.filter(post => post.targetRole === "treatment").length || 0,
-    observation: posts?.filter(post => post.targetRole === "observation").length || 0,
+    treatment: posts?.filter(post => post.targetRole === "treatment").length || 0
   };
 
   return (
@@ -100,7 +99,7 @@ export function LabContentView({ labId }: LabContentViewProps) {
       
       <Tabs defaultValue={activeRole} value={activeRole} onValueChange={(value) => setActiveRole(value as any)}>
         <div className="px-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="all" className="flex gap-1 items-center">
               {roleInfo.all.icon}
               <span>All ({postCounts.all})</span>
@@ -173,7 +172,7 @@ export function LabContentView({ labId }: LabContentViewProps) {
             ) : (
               // Display posts
               <div className="space-y-4">
-                {posts.map((post) => (
+                {posts?.map((post) => (
                   <div key={post.id} className="relative">
                     {/* Role indicator */}
                     <div className="absolute top-0 right-0 z-10 mt-2 mr-2">
