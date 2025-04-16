@@ -90,26 +90,50 @@ export const useLabResultsAnalysis = (lab: Lab) => {
 
   // Main analysis function
   const analyzeLabMetrics = async () => {
+    // Early return checks
     if (!lab?.successMetrics?.metrics || lab.successMetrics.metrics.length === 0) {
-      console.log("No success metrics found for lab:", lab.id);
+      console.log("No success metrics defined for this lab");
       setMetricResults([]);
       setRecommendation(null);
       return;
     }
 
-    // Don't proceed if we're missing circle or post data
-    if (!labCircles || !circlePosts) {
-      console.log("Missing circle or post data for lab:", lab.id, "circles:", !!labCircles, "posts:", !!circlePosts);
+    // Make sure we have the data we need
+    if (!labCirclesData || !circlePostsData || labCirclesData.length === 0) {
+      console.log("Missing or empty circle or post data for analysis");
       return;
     }
-    
-    console.log("Starting analysis for lab:", lab.id, "with", labCircles.length, "circles and", circlePosts.length, "posts");
+
+    // Set analyzing state
     setIsAnalyzing(true);
     setAnalyzeError(null);
     
     try {
-      // Group the circles and posts by role
-      const { controlCircles, treatmentCircles, observationCircles } = groupPostsByCircleRole(labCircles, circlePosts);
+      // Prepare the circle data from the API response
+      const preparedCircles = labCirclesData.map(item => {
+        return {
+          id: item.circle?.id,
+          name: item.circle?.name || 'Unknown Circle',
+          role: item.role || 'observation',
+          createdAt: item.circle?.createdAt
+        } as LabCircle;
+      });
+      
+      // Prepare the post data from the API response
+      const preparedPosts = circlePostsData.map(post => {
+        return {
+          id: post.id,
+          circleId: post.circleId,
+          content: post.content || "",
+          createdAt: post.createdAt
+        } as Post;
+      });
+
+      console.log(`Analysis preparation complete: ${preparedCircles.length} circles, ${preparedPosts.length} posts`);
+      
+      // Group posts by circle role using our utility
+      const { controlCircles, treatmentCircles, observationCircles } = 
+        groupPostsByCircleRole(preparedCircles, preparedPosts);
       
       // Analyze each metric using the API
       const analyzedMetrics = [];
@@ -183,6 +207,7 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   };
 
   // Trigger analysis when lab, circles, or posts data changes
+  // We deliberately don't include labCircles or circlePosts in dependencies to avoid infinite loops
   useEffect(() => {
     if (circlesError || postsError) {
       console.error("Circle or post errors:", { circlesError, postsError });
@@ -194,25 +219,17 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       return;
     }
     
-    // Debug lab metrics and structure
-    console.log("Lab data for analysis:", {
-      labId: lab?.id,
-      status: lab?.status,
-      hasGoals: !!lab?.goals,
-      hasMetrics: !!lab?.successMetrics?.metrics,
-      metricsCount: lab?.successMetrics?.metrics?.length,
-      circlesCount: labCircles?.length,
-      postsCount: circlePosts?.length
-    });
-    
-    if (lab?.successMetrics?.metrics) {
-      console.log("Lab metrics:", lab.successMetrics.metrics);
+    // Only log minimal metrics info to avoid console flooding
+    if (!isCirclesLoading && !isPostsLoading && labCirclesData && circlePostsData) {
+      console.log(`Lab ${lab?.id} data loaded: ${labCirclesData.length} circles, ${circlePostsData.length} posts`);
+      
+      // Only run analysis when data is ready and not already analyzing
+      if (!isAnalyzing) {
+        analyzeLabMetrics();
+      }
     }
-    
-    if (!isCirclesLoading && !isPostsLoading) {
-      analyzeLabMetrics();
-    }
-  }, [lab, labCircles, circlePosts, isCirclesLoading, isPostsLoading, circlesError, postsError]);
+  // Importantly, we only depend on the raw data sources and loading states, not derived objects
+  }, [lab?.id, labCirclesData, circlePostsData, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing]);
   
   // Function to retry analysis if it fails
   const retryAnalysis = () => {

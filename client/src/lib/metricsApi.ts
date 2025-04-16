@@ -137,8 +137,8 @@ export function groupPostsByCircleRole(
     };
   }
   
-  // Log circles data for debugging
-  console.log("Raw circles data:", circles.map(c => ({ id: c.id, name: c.name, role: c.role })));
+  // Limited debug for circles (only log count to avoid infinite loops)
+  console.log(`Processing ${circles.length} circles for role grouping`);
   
   // Group circles by role
   const controlCircles = circles.filter(c => c.role === 'control');
@@ -165,25 +165,17 @@ export function groupPostsByCircleRole(
     treatmentCircles.push({...circles[0], role: 'treatment'});
   }
   
-  // Log raw posts data for debugging
-  console.log("Raw posts sample:", posts.slice(0, 2).map(p => ({ 
-    id: p.id, 
-    circleId: p.circleId, 
-    content: p.content?.substring(0, 50)
-  })));
+  // Limited debug for posts (only log count to avoid infinite loops)
+  console.log(`Processing ${posts.length} total posts for role grouping`);
   
   // Map posts to their respective circles
   const getCirclePosts = (circleList: LabCircle[]) => {
     return circleList.map(circle => {
       const circlePosts = posts.filter(post => post.circleId === circle.id);
-      console.log(`Circle ${circle.id} (${circle.name}, role: ${circle.role}) has ${circlePosts.length} posts`);
       
-      // Sample a post to verify content
+      // Only log counts to prevent excessive console output
       if (circlePosts.length > 0) {
-        console.log(`Sample post from circle ${circle.id}:`, {
-          id: circlePosts[0].id,
-          content: circlePosts[0].content?.substring(0, 50)
-        });
+        console.log(`Circle ${circle.id} has ${circlePosts.length} posts`);
       }
       
       return {
