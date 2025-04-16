@@ -6,9 +6,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Lab, Circle } from "@shared/schema";
 import { NavBar } from "@/components/nav-bar";
 import LabGoalsEditor from "@/components/labs/lab-goals-editor";
-import { useLabResultsAnalysis, MetricAnalysisResult, LabRecommendation, formatMetricValue } from "@/components/labs/lab-results-analyzer";
-import { MetricAnalysisCard } from "@/components/labs/metric-analysis-card";
-import { ResultsSummaryCard } from "@/components/labs/results-summary-card";
 import {
   Tabs,
   TabsContent,
@@ -665,13 +662,30 @@ export default function LabDetailPage() {
                 </TabsContent>
                 
                 <TabsContent value="results" className="space-y-4 pt-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Results Analysis</CardTitle>
-                      <CardDescription>
-                        Analysis of experiment performance against defined goals and metrics
-                      </CardDescription>
-                    </CardHeader>
+                  {/* Import the new components at the top of the file */}
+                  {(() => {
+                    // Using an IIFE to import and use the new components
+                    
+                    // Import from lab-results-analyzer.tsx
+                    const { useLabResultsAnalysis } = require("@/components/labs/lab-results-analyzer");
+                    
+                    // Import the MetricAnalysisCard component
+                    const { MetricAnalysisCard } = require("@/components/labs/metric-analysis-card");
+                    
+                    // Import the ResultsSummaryCard component
+                    const { ResultsSummaryCard } = require("@/components/labs/results-summary-card");
+                    
+                    // Get the analysis results
+                    const { metricResults, recommendation } = useLabResultsAnalysis(lab);
+                    
+                    return (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Results Analysis</CardTitle>
+                          <CardDescription>
+                            Analysis of experiment performance against defined goals and metrics
+                          </CardDescription>
+                        </CardHeader>
                     <CardContent>
                       {lab.status === "completed" ? (
                         <div className="space-y-6">
