@@ -9,7 +9,8 @@ import {
   CheckCircle, 
   AlertTriangle 
 } from "lucide-react";
-import { formatMetricValue, MetricResult } from "./lab-results-analyzer";
+import { MetricResult } from "./lab-results-analyzer";
+import { formatMetricValue } from "@/lib/formatters";
 
 interface MetricAnalysisCardProps {
   metric: MetricResult;

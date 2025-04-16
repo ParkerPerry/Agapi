@@ -27,32 +27,6 @@ export interface CirclePosts {
   posts: Post[];
 }
 
-// Format metric values for display
-export function formatMetricValue(value: any) {
-  // Handle null, undefined or non-string values
-  if (value === null || value === undefined) {
-    return 'N/A';
-  }
-  
-  // Convert to string if not already a string
-  const strValue = String(value);
-  
-  // Handle percentages
-  if (strValue.endsWith('%')) {
-    return strValue;
-  }
-  
-  // Handle numbers
-  const num = parseFloat(strValue);
-  if (!isNaN(num)) {
-    // Format large numbers with commas
-    return num.toLocaleString();
-  }
-  
-  // Return as-is for non-numeric values
-  return strValue;
-}
-
 // Type for recommendation
 export interface Recommendation {
   decision: "go" | "wait" | "rethink";
@@ -60,10 +34,13 @@ export interface Recommendation {
   reasoning: string;
 }
 
+// Import formatMetricValue from formatters utility
+export { formatMetricValue } from "@/lib/formatters";
+
 /**
  * Hook that analyzes lab metrics and generates results and recommendations
  */
-export function useLabResultsAnalysis(lab: Lab) {
+export const useLabResultsAnalysis = (lab: Lab) => {
   const { toast } = useToast();
   const [metricResults, setMetricResults] = useState<MetricResult[]>([]);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
@@ -197,73 +174,6 @@ export function useLabResultsAnalysis(lab: Lab) {
     }
   }, [lab, labCircles, circlePosts, isCirclesLoading, isPostsLoading, circlesError, postsError]);
   
-  const generateFallbackRecommendation = (results: MetricResult[]) => {
-    if (!results || results.length === 0) {
-      setRecommendation(null);
-      return;
-    }
-    
-    // Count success, warning, and fail metrics by priority
-    const counts = {
-      high: { success: 0, warning: 0, fail: 0, total: 0 },
-      medium: { success: 0, warning: 0, fail: 0, total: 0 },
-      low: { success: 0, warning: 0, fail: 0, total: 0 }
-    };
-    
-    results.forEach(result => {
-      counts[result.priority][result.status]++;
-      counts[result.priority].total++;
-    });
-    
-    // Decision logic based on priority success rates
-    let decision: "go" | "wait" | "rethink";
-    let confidence = 0;
-    let reasoning = "";
-    
-    // Calculate overall success percentage
-    const highPrioritySuccessRate = counts.high.total > 0 ? 
-      (counts.high.success + counts.high.warning * 0.5) / counts.high.total : 1;
-    
-    const mediumPrioritySuccessRate = counts.medium.total > 0 ? 
-      (counts.medium.success + counts.medium.warning * 0.5) / counts.medium.total : 1;
-    
-    // Determine decision based on success rates
-    const isCompleted = lab.status === "completed";
-    
-    if (isCompleted && highPrioritySuccessRate > 0.6) {
-      decision = "go";
-      confidence = 75 + Math.floor(Math.random() * 20);
-      reasoning = "Feature implementation is recommended based on positive results from the experiment.";
-    } else if (highPrioritySuccessRate > 0.8) {
-      decision = "go";
-      confidence = 70 + Math.floor(Math.random() * 25);
-      reasoning = "High-priority metrics show strong positive results, supporting implementation of the tested changes.";
-    } else if (highPrioritySuccessRate > 0.5) {
-      decision = "wait";
-      confidence = 60 + Math.floor(Math.random() * 20);
-      reasoning = "Some high-priority metrics show positive results, but more data is needed for a confident decision.";
-    } else {
-      decision = "rethink";
-      confidence = 65 + Math.floor(Math.random() * 25);
-      reasoning = "High-priority metrics failed to meet targets. Consider revising the approach or testing new alternatives.";
-    }
-    
-    // Adjust confidence based on medium priority metrics
-    if (counts.medium.total > 0 && mediumPrioritySuccessRate > 0.7) {
-      confidence = Math.min(95, confidence + 5);
-      reasoning += " Medium-priority metrics also show promising results.";
-    } else if (counts.medium.total > 0 && mediumPrioritySuccessRate < 0.3) {
-      confidence = Math.max(60, confidence - 5);
-      reasoning += " However, medium-priority metrics underperformed.";
-    }
-    
-    setRecommendation({
-      decision,
-      confidence,
-      reasoning: reasoning.trim()
-    });
-  };
-  
   // Function to retry analysis if it fails
   const retryAnalysis = () => {
     setAnalyzeError(null);
@@ -277,4 +187,4 @@ export function useLabResultsAnalysis(lab: Lab) {
     analyzeError, 
     retryAnalysis 
   };
-}
+};

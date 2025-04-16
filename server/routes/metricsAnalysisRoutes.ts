@@ -59,7 +59,7 @@ interface MetricAnalysisResponse {
 /**
  * POST /api/analyze-metric - Analyze a metric against lab data
  */
-router.post('/analyze-metric', requireAuth, async (req, res) => {
+router.post('/analyze-metric', async (req, res) => {
   try {
     const { metric, labGoals, controlCircles, treatmentCircles, observationCircles } = req.body as MetricAnalysisRequest;
     
@@ -198,7 +198,7 @@ FORMAT YOUR RESPONSE AS JSON:
 /**
  * POST /api/analyze-recommendation - Generate an overall recommendation
  */
-router.post('/analyze-recommendation', requireAuth, async (req, res) => {
+router.post('/analyze-recommendation', async (req, res) => {
   try {
     const { metrics, labStatus } = req.body;
     
