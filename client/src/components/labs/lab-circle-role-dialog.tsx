@@ -98,13 +98,18 @@ const LabCircleRoleDialog = ({
               <SelectContent>
                 <SelectItem value="control">Control</SelectItem>
                 <SelectItem value="treatment">Treatment</SelectItem>
-                <SelectItem value="observation">Observation</SelectItem>
+                {/* Observation option removed but keeping support for circles that already use this role */}
+                {currentRole === "observation" && (
+                  <SelectItem value="observation">Observation</SelectItem>
+                )}
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground mt-2">
               <span className="font-medium">Control:</span> Baseline group with standard content<br />
               <span className="font-medium">Treatment:</span> Experimental group with modified content<br />
-              <span className="font-medium">Observation:</span> Circle members can view but not participate
+              {currentRole === "observation" && (
+                <><span className="font-medium">Observation:</span> Circle members can view but not participate<br /></>
+              )}
             </p>
           </div>
         </div>
