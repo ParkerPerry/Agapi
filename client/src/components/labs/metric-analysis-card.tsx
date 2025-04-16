@@ -17,7 +17,16 @@ interface MetricAnalysisCardProps {
 }
 
 export function MetricAnalysisCard({ metric }: MetricAnalysisCardProps) {
-  const { name, target, actual, status, priority, confidence, difference } = metric;
+  // Extract values with default fallbacks for null/undefined values
+  const { 
+    name = 'Unknown Metric', 
+    target = 'N/A', 
+    actual = 'N/A', 
+    status = 'fail', 
+    priority = 'medium', 
+    confidence = 0, 
+    difference = 'N/A' 
+  } = metric || {};
   
   // Determine card styling based on status
   const getStatusStyles = () => {

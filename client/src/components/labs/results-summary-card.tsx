@@ -16,11 +16,21 @@ interface ResultsSummaryCardProps {
 }
 
 export function ResultsSummaryCard({ recommendation, metricResults }: ResultsSummaryCardProps) {
-  const { decision, confidence, reasoning } = recommendation;
+  // Extract values with default fallbacks for null/undefined values
+  const { 
+    decision = 'wait', 
+    confidence = 50, 
+    reasoning = 'No reasoning provided' 
+  } = recommendation || {};
+  
+  // Ensure metricResults is an array before processing
+  const safeMetricResults = Array.isArray(metricResults) ? metricResults : [];
   
   // Count metrics by status
-  const statusCounts = metricResults.reduce((acc, metric) => {
-    acc[metric.status] = (acc[metric.status] || 0) + 1;
+  const statusCounts = safeMetricResults.reduce((acc, metric) => {
+    // Ensure metric exists and has a valid status
+    const status = metric?.status || 'fail';
+    acc[status] = (acc[status] || 0) + 1;
     return acc;
   }, { success: 0, warning: 0, fail: 0 } as Record<string, number>);
   
@@ -123,19 +133,19 @@ export function ResultsSummaryCard({ recommendation, metricResults }: ResultsSum
               {statusCounts.success > 0 && (
                 <div 
                   className="bg-green-500 h-full" 
-                  style={{ width: `${(statusCounts.success / metricResults.length) * 100}%` }}
+                  style={{ width: `${(statusCounts.success / safeMetricResults.length) * 100}%` }}
                 ></div>
               )}
               {statusCounts.warning > 0 && (
                 <div 
                   className="bg-amber-500 h-full" 
-                  style={{ width: `${(statusCounts.warning / metricResults.length) * 100}%` }}
+                  style={{ width: `${(statusCounts.warning / safeMetricResults.length) * 100}%` }}
                 ></div>
               )}
               {statusCounts.fail > 0 && (
                 <div 
                   className="bg-red-500 h-full" 
-                  style={{ width: `${(statusCounts.fail / metricResults.length) * 100}%` }}
+                  style={{ width: `${(statusCounts.fail / safeMetricResults.length) * 100}%` }}
                 ></div>
               )}
             </div>

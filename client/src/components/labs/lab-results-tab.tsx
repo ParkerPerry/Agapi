@@ -69,12 +69,12 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
               return (
                 <>
                   {/* Recommendation summary */}
-                  {metricResults && metricResults.length > 0 && recommendation && (
+                  {metricResults && metricResults.length > 0 && recommendation ? (
                     <ResultsSummaryCard 
                       recommendation={recommendation} 
                       metricResults={metricResults} 
                     />
-                  )}
+                  ) : null}
                   
                   {/* Individual metrics analysis */}
                   <div className="space-y-3">
