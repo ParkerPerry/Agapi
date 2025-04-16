@@ -47,20 +47,56 @@ const polygonPosts = [
   "Curious about your experience with DeFi governance - have you actively participated in voting for changes in other protocols? What would encourage more engagement?"
 ];
 
-// Function to create a post in Circle 59
-async function createPost(content) {
+// Login credentials - replace with your actual user credentials
+const username = "admin";  // replace with your username
+const password = "password";  // replace with your password
+
+// Function to login and get session cookie
+async function login() {
   try {
-    const response = await fetch('http://localhost:5000/api/posts', {
+    const response = await fetch('http://localhost:5000/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        username,
+        password
+      }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Login failed with status: ${response.status}`);
+    }
+    
+    // Extract cookies from response
+    const cookies = response.headers.raw()['set-cookie'];
+    return cookies;
+  } catch (error) {
+    console.error('Error during login:', error);
+    throw error;
+  }
+}
+
+// Function to create a post in Circle 59
+async function createPost(content, cookies) {
+  try {
+    const response = await fetch('http://localhost:5000/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookies.join('; ')
+      },
+      body: JSON.stringify({
         content: content,
         circleId: 59
-      }),
-      credentials: 'include'
+      })
     });
+    
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`Failed with status ${response.status}: ${text}`);
+    }
     
     const data = await response.json();
     console.log(`Created post with ID: ${data.id}`);
@@ -75,21 +111,29 @@ async function createPost(content) {
 async function createAllPosts() {
   console.log(`Starting to create ${polygonPosts.length} Polygon PM posts in Circle 59...`);
   
-  for (let i = 0; i < polygonPosts.length; i++) {
-    try {
-      await createPost(polygonPosts[i]);
-      console.log(`Created post ${i+1}/${polygonPosts.length}`);
-      
-      // Add a small delay between posts to avoid overwhelming the server
-      if (i < polygonPosts.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+  try {
+    // Login first to get session cookies
+    const cookies = await login();
+    console.log("Successfully logged in");
+    
+    for (let i = 0; i < polygonPosts.length; i++) {
+      try {
+        await createPost(polygonPosts[i], cookies);
+        console.log(`Created post ${i+1}/${polygonPosts.length}`);
+        
+        // Add a small delay between posts to avoid overwhelming the server
+        if (i < polygonPosts.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      } catch (error) {
+        console.error(`Failed to create post ${i+1}:`, error);
       }
-    } catch (error) {
-      console.error(`Failed to create post ${i+1}:`, error);
     }
+    
+    console.log('Finished creating Polygon PM posts!');
+  } catch (error) {
+    console.error('Error in post creation process:', error);
   }
-  
-  console.log('Finished creating Polygon PM posts!');
 }
 
 // Execute the function
