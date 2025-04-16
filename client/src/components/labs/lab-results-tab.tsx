@@ -6,6 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { useLabResultsAnalysis } from "./lab-results-analyzer";
 import { MetricAnalysisCard } from "./metric-analysis-card";
 import { ResultsSummaryCard } from "./results-summary-card";
@@ -28,7 +30,41 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
           <div className="space-y-6">
             {(() => {
               // Use IIFE to safely call the hook
-              const { metricResults, recommendation } = useLabResultsAnalysis(lab);
+              const { 
+                metricResults, 
+                recommendation, 
+                isAnalyzing, 
+                analyzeError, 
+                retryAnalysis 
+              } = useLabResultsAnalysis(lab);
+              
+              // Show loading state during analysis
+              if (isAnalyzing) {
+                return (
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-4" />
+                    <p className="text-sm text-muted-foreground">
+                      Analyzing lab metrics with AI. This may take a moment...
+                    </p>
+                  </div>
+                );
+              }
+              
+              // Show error state if analysis failed
+              if (analyzeError) {
+                return (
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <AlertCircle className="h-8 w-8 text-destructive mb-4" />
+                    <p className="text-sm text-muted-foreground mb-4 max-w-md text-center">
+                      There was an error analyzing the lab metrics: {" "}
+                      {analyzeError.message || "Unknown error"}
+                    </p>
+                    <Button onClick={retryAnalysis} variant="outline">
+                      Retry Analysis
+                    </Button>
+                  </div>
+                );
+              }
               
               return (
                 <>

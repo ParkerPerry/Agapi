@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Lab } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import { Lab, Circle, Post } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
 
 // Type definitions for metric results
 export interface MetricResult {
@@ -10,6 +12,18 @@ export interface MetricResult {
   status: "success" | "warning" | "fail";
   confidence: number;
   difference: string;
+  analysis?: string; // Optional detailed analysis from LLM
+}
+
+// Type for a lab circle with role information
+export interface LabCircle extends Circle {
+  role: "control" | "treatment" | "observation";
+}
+
+// Type for circle posts data
+export interface CirclePosts {
+  circleId: number;
+  posts: Post[];
 }
 
 // Format metric values for display
@@ -49,131 +63,245 @@ export interface Recommendation {
  * Hook that analyzes lab metrics and generates results and recommendations
  */
 export function useLabResultsAnalysis(lab: Lab) {
+  const { toast } = useToast();
   const [metricResults, setMetricResults] = useState<MetricResult[]>([]);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
-  
-  useEffect(() => {
-    // Skip analysis if lab does not have success metrics
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState<Error | null>(null);
+
+  // Fetch lab circles data
+  const { 
+    data: labCircles, 
+    isLoading: isCirclesLoading,
+    error: circlesError
+  } = useQuery<LabCircle[]>({
+    queryKey: [`/api/labs/${lab?.id}/circles`],
+    enabled: !!lab?.id && (lab.status === "active" || lab.status === "completed")
+  });
+
+  // Fetch circle posts data for all circles in the lab
+  const {
+    data: circlePosts,
+    isLoading: isPostsLoading,
+    error: postsError
+  } = useQuery<Post[]>({
+    queryKey: [`/api/labs/${lab?.id}/posts`],
+    enabled: !!lab?.id && (lab.status === "active" || lab.status === "completed") && !!labCircles && labCircles.length > 0
+  });
+
+  // Use temporary simulation function while we implement the LLM endpoint
+  const simulateMetricAnalysis = async (metric: any, controlCircles: LabCircle[], treatmentCircles: LabCircle[], posts: Post[]) => {
+    // This will be replaced with real LLM call
+    // For now, simulate based on the metric name and target
+    const isCompleted = lab.status === "completed";
+    
+    // Determine status randomly but weighted by lab status
+    const statuses: ("success" | "warning" | "fail")[] = ["success", "warning", "fail"];
+    const weights = isCompleted 
+      ? [0.7, 0.2, 0.1]  // Completed labs favor success
+      : [0.4, 0.4, 0.2]; // Active labs are more mixed
+    
+    const randomIndex = Math.random();
+    let statusIndex = 0;
+    let cumulativeWeight = 0;
+    
+    for (let i = 0; i < weights.length; i++) {
+      cumulativeWeight += weights[i];
+      if (randomIndex <= cumulativeWeight) {
+        statusIndex = i;
+        break;
+      }
+    }
+    
+    const status = statuses[statusIndex];
+    const confidence = isCompleted 
+      ? 75 + Math.floor(Math.random() * 20) 
+      : 65 + Math.floor(Math.random() * 20);
+    
+    // Helper functions for formatting
+    const getTargetAsString = (target: string | number): string => {
+      return typeof target === 'string' ? target : String(target);
+    };
+    
+    const targetContains = (target: string | number, pattern: string): boolean => {
+      const targetStr = getTargetAsString(target);
+      return targetStr.includes(pattern);
+    };
+    
+    const targetMatches = (target: string | number, regex: RegExp): boolean => {
+      const targetStr = getTargetAsString(target);
+      return regex.test(targetStr);
+    };
+    
+    const getTargetNumericValue = (target: string | number): number => {
+      if (typeof target === 'number') return target;
+      return parseInt(target, 10);
+    };
+    
+    // Generate actual value and difference based on status
+    let actual = "";
+    let difference = "";
+    
+    if (status === "success") {
+      if (targetContains(metric.target, "%")) {
+        const targetValue = getTargetNumericValue(metric.target);
+        const actualValue = targetValue + 5 + Math.floor(Math.random() * 10);
+        actual = `${actualValue}%`;
+        difference = `+${actualValue - targetValue}%`;
+      } else if (targetMatches(metric.target, /^\d+$/)) {
+        const targetValue = getTargetNumericValue(metric.target);
+        const actualValue = targetValue + 5 + Math.floor(Math.random() * 10);
+        actual = actualValue.toString();
+        difference = `+${actualValue - targetValue}`;
+      } else {
+        actual = "Above target";
+        difference = "Positive";
+      }
+    } else if (status === "warning") {
+      if (targetContains(metric.target, "%")) {
+        const targetValue = getTargetNumericValue(metric.target);
+        const actualValue = Math.max(1, targetValue - 2 + Math.floor(Math.random() * 4));
+        actual = `${actualValue}%`;
+        difference = (actualValue >= targetValue) ? 
+          `+${actualValue - targetValue}%` : 
+          `-${targetValue - actualValue}%`;
+      } else if (targetMatches(metric.target, /^\d+$/)) {
+        const targetValue = getTargetNumericValue(metric.target);
+        const actualValue = Math.max(1, targetValue - 2 + Math.floor(Math.random() * 4));
+        actual = actualValue.toString();
+        difference = (actualValue >= targetValue) ? 
+          `+${actualValue - targetValue}` : 
+          `-${targetValue - actualValue}`;
+      } else {
+        actual = "Near target";
+        difference = "Neutral";
+      }
+    } else {
+      if (targetContains(metric.target, "%")) {
+        const targetValue = getTargetNumericValue(metric.target);
+        const actualValue = Math.max(1, targetValue - 10 - Math.floor(Math.random() * 5));
+        actual = `${actualValue}%`;
+        difference = `-${targetValue - actualValue}%`;
+      } else if (targetMatches(metric.target, /^\d+$/)) {
+        const targetValue = getTargetNumericValue(metric.target);
+        const actualValue = Math.max(1, targetValue - 10 - Math.floor(Math.random() * 5));
+        actual = actualValue.toString();
+        difference = `-${targetValue - actualValue}`;
+      } else {
+        actual = "Below target";
+        difference = "Negative";
+      }
+    }
+    
+    // Generate a simple analysis based on control vs treatment
+    const treatmentCount = treatmentCircles.length;
+    const controlCount = controlCircles.length;
+    
+    const analysis = `Analysis based on ${controlCount} control circle${controlCount !== 1 ? 's' : ''} and ${treatmentCount} treatment circle${treatmentCount !== 1 ? 's' : ''}. ${
+      status === "success" 
+        ? "Treatment groups significantly outperformed control groups."
+        : status === "warning"
+        ? "Treatment groups showed some improvement over control groups, but results are not conclusive."
+        : "Treatment groups did not show significant improvement over control groups."
+    }`;
+    
+    return {
+      name: metric.name,
+      target: metric.target,
+      priority: metric.priority,
+      actual,
+      status,
+      confidence,
+      difference,
+      analysis
+    };
+  };
+
+  // Main analysis function
+  const analyzeLabMetrics = async () => {
     if (!lab?.successMetrics?.metrics || lab.successMetrics.metrics.length === 0) {
       setMetricResults([]);
       setRecommendation(null);
       return;
     }
+
+    // Don't proceed if we're missing circle or post data
+    if (!labCircles || !circlePosts) {
+      return;
+    }
     
-    // For demonstration, generate synthetic results based on lab status
-    // In a real implementation, this would be replaced with actual data from backend API
-    const isCompleted = lab.status === "completed";
-    const simulatedResults: MetricResult[] = lab.successMetrics.metrics.map((metric, index) => {
-      // Generate different results based on the metric and lab status
-      const statuses: ("success" | "warning" | "fail")[] = ["success", "warning", "fail"];
-      const randomStatus = isCompleted 
-        ? (index % 3 === 0 ? "warning" : "success") // Completed labs mostly show success
-        : statuses[Math.floor(Math.random() * statuses.length)]; // Random for active labs
+    setIsAnalyzing(true);
+    setAnalyzeError(null);
+    
+    try {
+      // Group circles by role
+      const controlCircles = labCircles.filter(c => c.role === "control");
+      const treatmentCircles = labCircles.filter(c => c.role === "treatment");
+      const observationCircles = labCircles.filter(c => c.role === "observation");
       
-      // Generate a confidence level between 65% and 95%
-      const confidence = isCompleted 
-        ? 75 + Math.floor(Math.random() * 20) // Higher confidence for completed
-        : 65 + Math.floor(Math.random() * 20); // Lower confidence for active
-        
-      // Simulate different results based on the status
-      let actual = "";
-      let difference = "";
+      // Analyze each metric
+      const analyzedMetrics = [];
       
-      // Helper function to safely get target value
-      const getTargetAsString = (target: string | number): string => {
-        return typeof target === 'string' ? target : String(target);
-      };
-      
-      // Helper function to check if target contains a pattern
-      const targetContains = (target: string | number, pattern: string): boolean => {
-        const targetStr = getTargetAsString(target);
-        return targetStr.includes(pattern);
-      };
-      
-      // Helper function to check if target matches a pattern
-      const targetMatches = (target: string | number, regex: RegExp): boolean => {
-        const targetStr = getTargetAsString(target);
-        return regex.test(targetStr);
-      };
-      
-      // Helper function to get numeric value from target
-      const getTargetNumericValue = (target: string | number): number => {
-        if (typeof target === 'number') return target;
-        return parseInt(target, 10);
-      };
-      
-      if (randomStatus === "success") {
-        // Example: if target is "10% increase", actual might be "15% increase"
-        if (targetContains(metric.target, "%")) {
-          const targetValue = getTargetNumericValue(metric.target);
-          const actualValue = targetValue + 5 + Math.floor(Math.random() * 10);
-          actual = `${actualValue}%`;
-          difference = `+${actualValue - targetValue}%`;
-        } else if (targetMatches(metric.target, /^\d+$/)) {
-          // For numeric targets
-          const targetValue = getTargetNumericValue(metric.target);
-          const actualValue = targetValue + 5 + Math.floor(Math.random() * 10);
-          actual = actualValue.toString();
-          difference = `+${actualValue - targetValue}`;
-        } else {
-          // For other targets
-          actual = "Above target";
-          difference = "Positive";
-        }
-      } else if (randomStatus === "warning") {
-        // Close to target but not quite there
-        if (targetContains(metric.target, "%")) {
-          const targetValue = getTargetNumericValue(metric.target);
-          const actualValue = Math.max(1, targetValue - 2 + Math.floor(Math.random() * 4));
-          actual = `${actualValue}%`;
-          difference = (actualValue >= targetValue) ? 
-            `+${actualValue - targetValue}%` : 
-            `-${targetValue - actualValue}%`;
-        } else if (targetMatches(metric.target, /^\d+$/)) {
-          const targetValue = getTargetNumericValue(metric.target);
-          const actualValue = Math.max(1, targetValue - 2 + Math.floor(Math.random() * 4));
-          actual = actualValue.toString();
-          difference = (actualValue >= targetValue) ? 
-            `+${actualValue - targetValue}` : 
-            `-${targetValue - actualValue}`;
-        } else {
-          actual = "Near target";
-          difference = "Neutral";
-        }
-      } else {
-        // Failed to meet target
-        if (targetContains(metric.target, "%")) {
-          const targetValue = getTargetNumericValue(metric.target);
-          const actualValue = Math.max(1, targetValue - 10 - Math.floor(Math.random() * 5));
-          actual = `${actualValue}%`;
-          difference = `-${targetValue - actualValue}%`;
-        } else if (targetMatches(metric.target, /^\d+$/)) {
-          const targetValue = getTargetNumericValue(metric.target);
-          const actualValue = Math.max(1, targetValue - 10 - Math.floor(Math.random() * 5));
-          actual = actualValue.toString();
-          difference = `-${targetValue - actualValue}`;
-        } else {
-          actual = "Below target";
-          difference = "Negative";
+      for (const metric of lab.successMetrics.metrics) {
+        try {
+          // In future, this will call the LLM API endpoint
+          const result = await simulateMetricAnalysis(
+            metric,
+            controlCircles,
+            treatmentCircles,
+            circlePosts
+          );
+          
+          analyzedMetrics.push(result);
+        } catch (error) {
+          console.error(`Error analyzing metric ${metric.name}:`, error);
+          
+          // Add a placeholder for failed metrics
+          analyzedMetrics.push({
+            name: metric.name,
+            target: metric.target,
+            priority: metric.priority,
+            actual: 'Analysis failed',
+            status: 'fail' as const,
+            confidence: 0,
+            difference: 'N/A',
+            analysis: 'Failed to analyze this metric.'
+          });
         }
       }
       
-      return {
-        name: metric.name,
-        target: metric.target,
-        priority: metric.priority,
-        actual,
-        status: randomStatus,
-        confidence,
-        difference
-      };
-    });
+      setMetricResults(analyzedMetrics);
+      
+      // Generate an overall recommendation based on the results
+      generateRecommendation(analyzedMetrics, lab.status === "completed");
+    } catch (error) {
+      console.error("Error analyzing lab metrics:", error);
+      setAnalyzeError(error instanceof Error ? error : new Error('Unknown error during analysis'));
+      toast({
+        title: "Analysis Error",
+        description: "Failed to analyze lab metrics. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  // Trigger analysis when lab, circles, or posts data changes
+  useEffect(() => {
+    if (circlesError || postsError) {
+      setAnalyzeError(
+        circlesError instanceof Error ? circlesError : 
+        postsError instanceof Error ? postsError : 
+        new Error('Failed to load lab data')
+      );
+      return;
+    }
     
-    setMetricResults(simulatedResults);
-    
-    // Generate an overall recommendation based on the results
-    generateRecommendation(simulatedResults, isCompleted);
-  }, [lab]);
+    if (!isCirclesLoading && !isPostsLoading) {
+      analyzeLabMetrics();
+    }
+  }, [lab, labCircles, circlePosts, isCirclesLoading, isPostsLoading, circlesError, postsError]);
   
   const generateRecommendation = (results: MetricResult[], isCompleted: boolean) => {
     if (!results || results.length === 0) {
@@ -242,5 +370,17 @@ export function useLabResultsAnalysis(lab: Lab) {
     });
   };
   
-  return { metricResults, recommendation };
+  // Function to retry analysis if it fails
+  const retryAnalysis = () => {
+    setAnalyzeError(null);
+    analyzeLabMetrics();
+  };
+
+  return { 
+    metricResults, 
+    recommendation, 
+    isAnalyzing, 
+    analyzeError, 
+    retryAnalysis 
+  };
 }
