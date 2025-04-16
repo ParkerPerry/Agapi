@@ -137,6 +137,9 @@ export function groupPostsByCircleRole(
     };
   }
   
+  // Log circles data for debugging
+  console.log("Raw circles data:", circles.map(c => ({ id: c.id, name: c.name, role: c.role })));
+  
   // Group circles by role
   const controlCircles = circles.filter(c => c.role === 'control');
   const treatmentCircles = circles.filter(c => c.role === 'treatment');
@@ -148,11 +151,41 @@ export function groupPostsByCircleRole(
     observation: observationCircles.length
   });
   
+  // Add default circles if none exist for required roles (control and treatment)
+  if (controlCircles.length === 0 && circles.length > 0) {
+    console.log("No control circles found, using the first circle as default control");
+    controlCircles.push({...circles[0], role: 'control'});
+  }
+  
+  if (treatmentCircles.length === 0 && circles.length > 1) {
+    console.log("No treatment circles found, using the second circle as default treatment");
+    treatmentCircles.push({...circles[1], role: 'treatment'});
+  } else if (treatmentCircles.length === 0 && controlCircles.length === 0 && circles.length > 0) {
+    console.log("No treatment circles found, using the first circle as default treatment");
+    treatmentCircles.push({...circles[0], role: 'treatment'});
+  }
+  
+  // Log raw posts data for debugging
+  console.log("Raw posts sample:", posts.slice(0, 2).map(p => ({ 
+    id: p.id, 
+    circleId: p.circleId, 
+    content: p.content?.substring(0, 50)
+  })));
+  
   // Map posts to their respective circles
   const getCirclePosts = (circleList: LabCircle[]) => {
     return circleList.map(circle => {
       const circlePosts = posts.filter(post => post.circleId === circle.id);
       console.log(`Circle ${circle.id} (${circle.name}, role: ${circle.role}) has ${circlePosts.length} posts`);
+      
+      // Sample a post to verify content
+      if (circlePosts.length > 0) {
+        console.log(`Sample post from circle ${circle.id}:`, {
+          id: circlePosts[0].id,
+          content: circlePosts[0].content?.substring(0, 50)
+        });
+      }
+      
       return {
         id: circle.id,
         name: circle.name,

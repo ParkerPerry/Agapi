@@ -49,22 +49,43 @@ export const useLabResultsAnalysis = (lab: Lab) => {
 
   // Fetch lab circles data
   const { 
-    data: labCircles, 
+    data: labCirclesData, 
     isLoading: isCirclesLoading,
     error: circlesError
-  } = useQuery<LabCircle[]>({
+  } = useQuery<any[]>({
     queryKey: [`/api/labs/${lab?.id}/circles`],
     enabled: !!lab?.id && (lab.status === "active" || lab.status === "completed")
+  });
+  
+  // Transform the lab circles data to include role information
+  const labCircles = labCirclesData?.map(item => {
+    // The server returns data with the role at the top level and circle data in a nested object
+    return {
+      ...item.circle,
+      role: item.role
+    } as LabCircle;
   });
 
   // Fetch circle posts data for all circles in the lab
   const {
-    data: circlePosts,
+    data: circlePostsData,
     isLoading: isPostsLoading,
     error: postsError
-  } = useQuery<Post[]>({
+  } = useQuery<any[]>({
     queryKey: [`/api/labs/${lab?.id}/posts`],
     enabled: !!lab?.id && (lab.status === "active" || lab.status === "completed") && !!labCircles && labCircles.length > 0
+  });
+  
+  // Transform the posts data to the format expected by the analyzer
+  const circlePosts = circlePostsData?.map(post => {
+    // Return a simplified post object with just the required fields
+    return {
+      id: post.id,
+      circleId: post.circleId,
+      content: post.content,
+      createdAt: post.createdAt,
+      // Add any other needed fields
+    } as Post;
   });
 
   // Main analysis function
