@@ -1,0 +1,59 @@
+[Storage] Retrieved lab: { id: 205, name: 'BNB/USD11', status: 'draft' }
+[Storage] Getting circles for lab: 205
+[Storage] Retrieved lab circles count: 1
+[Permissions] Checking permissions: { circleId: 438, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 438
+[ResponseScheduler] Processing 0 pending responses
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 438
+12:14:59 PM [express] GET /api/labs/205/posts 200 in 484ms :: []
+[Storage] Getting lab by ID: NaN
+[Storage] Error getting lab: error: invalid input syntax for type integer: "NaN"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getLab (/home/runner/workspace/server/storage.ts:1787:21)
+    at async <anonymous> (/home/runner/workspace/server/routes/labRoutes.ts:185:17) {
+  length: 146,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $1 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+Error updating lab status: error: invalid input syntax for type integer: "NaN"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getLab (/home/runner/workspace/server/storage.ts:1787:21)
+    at async <anonymous> (/home/runner/workspace/server/routes/labRoutes.ts:185:17) {
+  length: 146,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $1 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+12:15:04 PM [express] PATCH /api/labs/undefined/status 500 in 169ms :: {"message":"Failed to update l…

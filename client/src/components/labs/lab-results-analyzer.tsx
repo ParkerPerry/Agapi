@@ -4,7 +4,7 @@ import { Lab } from "@shared/schema";
 // Type definitions for metric results
 export interface MetricResult {
   name: string;
-  target: string;
+  target: string | number;  // Allow both string and number types for target
   priority: "high" | "medium" | "low";
   actual: string;
   status: "success" | "warning" | "fail";
@@ -79,16 +79,39 @@ export function useLabResultsAnalysis(lab: Lab) {
       let actual = "";
       let difference = "";
       
+      // Helper function to safely get target value
+      const getTargetAsString = (target: string | number): string => {
+        return typeof target === 'string' ? target : String(target);
+      };
+      
+      // Helper function to check if target contains a pattern
+      const targetContains = (target: string | number, pattern: string): boolean => {
+        const targetStr = getTargetAsString(target);
+        return targetStr.includes(pattern);
+      };
+      
+      // Helper function to check if target matches a pattern
+      const targetMatches = (target: string | number, regex: RegExp): boolean => {
+        const targetStr = getTargetAsString(target);
+        return regex.test(targetStr);
+      };
+      
+      // Helper function to get numeric value from target
+      const getTargetNumericValue = (target: string | number): number => {
+        if (typeof target === 'number') return target;
+        return parseInt(target, 10);
+      };
+      
       if (randomStatus === "success") {
         // Example: if target is "10% increase", actual might be "15% increase"
-        if (metric.target.includes && metric.target.includes("%")) {
-          const targetValue = parseInt(metric.target, 10);
+        if (targetContains(metric.target, "%")) {
+          const targetValue = getTargetNumericValue(metric.target);
           const actualValue = targetValue + 5 + Math.floor(Math.random() * 10);
           actual = `${actualValue}%`;
           difference = `+${actualValue - targetValue}%`;
-        } else if (metric.target.match && metric.target.match(/^\d+$/)) {
+        } else if (targetMatches(metric.target, /^\d+$/)) {
           // For numeric targets
-          const targetValue = parseInt(metric.target, 10);
+          const targetValue = getTargetNumericValue(metric.target);
           const actualValue = targetValue + 5 + Math.floor(Math.random() * 10);
           actual = actualValue.toString();
           difference = `+${actualValue - targetValue}`;
@@ -99,15 +122,15 @@ export function useLabResultsAnalysis(lab: Lab) {
         }
       } else if (randomStatus === "warning") {
         // Close to target but not quite there
-        if (metric.target.includes && metric.target.includes("%")) {
-          const targetValue = parseInt(metric.target, 10);
+        if (targetContains(metric.target, "%")) {
+          const targetValue = getTargetNumericValue(metric.target);
           const actualValue = Math.max(1, targetValue - 2 + Math.floor(Math.random() * 4));
           actual = `${actualValue}%`;
           difference = (actualValue >= targetValue) ? 
             `+${actualValue - targetValue}%` : 
             `-${targetValue - actualValue}%`;
-        } else if (metric.target.match && metric.target.match(/^\d+$/)) {
-          const targetValue = parseInt(metric.target, 10);
+        } else if (targetMatches(metric.target, /^\d+$/)) {
+          const targetValue = getTargetNumericValue(metric.target);
           const actualValue = Math.max(1, targetValue - 2 + Math.floor(Math.random() * 4));
           actual = actualValue.toString();
           difference = (actualValue >= targetValue) ? 
@@ -119,13 +142,13 @@ export function useLabResultsAnalysis(lab: Lab) {
         }
       } else {
         // Failed to meet target
-        if (metric.target.includes && metric.target.includes("%")) {
-          const targetValue = parseInt(metric.target, 10);
+        if (targetContains(metric.target, "%")) {
+          const targetValue = getTargetNumericValue(metric.target);
           const actualValue = Math.max(1, targetValue - 10 - Math.floor(Math.random() * 5));
           actual = `${actualValue}%`;
           difference = `-${targetValue - actualValue}%`;
-        } else if (metric.target.match && metric.target.match(/^\d+$/)) {
-          const targetValue = parseInt(metric.target, 10);
+        } else if (targetMatches(metric.target, /^\d+$/)) {
+          const targetValue = getTargetNumericValue(metric.target);
           const actualValue = Math.max(1, targetValue - 10 - Math.floor(Math.random() * 5));
           actual = actualValue.toString();
           difference = `-${targetValue - actualValue}`;

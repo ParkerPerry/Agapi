@@ -692,17 +692,17 @@ export default function LabDetailPage() {
       </div>
 
       {/* Status change dialog */}
-      {targetStatus && (
+      {targetStatus && lab && (
         <LabStatusChangeDialog
+          labId={labId || 0}
+          currentStatus={lab.status}
+          newStatus={targetStatus}
           open={!!targetStatus}
           onOpenChange={() => setTargetStatus(null)}
-          onConfirm={() => {
-            if (targetStatus) {
-              handleStatusChange(targetStatus);
-            }
+          onSuccess={() => {
+            refetchLab();
             setTargetStatus(null);
           }}
-          status={targetStatus}
         />
       )}
       
@@ -733,7 +733,7 @@ export default function LabDetailPage() {
         open={isAddCircleOpen}
         onOpenChange={setIsAddCircleOpen}
         labId={labId || 0}
-        onAddSuccess={handleCircleUpdate}
+        onSuccess={handleCircleUpdate}
       />
       
       {/* Circle Role Dialog */}
@@ -745,7 +745,7 @@ export default function LabDetailPage() {
           circleId={selectedCircle.id}
           circleName={selectedCircle.name}
           currentRole={selectedCircle.role}
-          onUpdateSuccess={handleCircleUpdate}
+          onSuccess={handleCircleUpdate}
         />
       )}
     </TourProvider>
