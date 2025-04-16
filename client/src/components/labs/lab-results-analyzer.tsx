@@ -101,6 +101,13 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     } as Post;
   });
 
+  // State to track which steps of the analysis process are complete
+  const [analysisState, setAnalysisState] = useState({
+    checkingCache: false,
+    processingData: false,
+    generatingAnalysis: false
+  });
+
   // Main analysis function
   const analyzeLabMetrics = async (forceRefresh: boolean = false) => {
     // Early return checks
@@ -120,6 +127,13 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     // Set analyzing state
     setIsAnalyzing(true);
     setAnalyzeError(null);
+    
+    // Reset analysis state tracking
+    setAnalysisState({
+      checkingCache: forceRefresh ? false : true,
+      processingData: false,
+      generatingAnalysis: false
+    });
     
     try {
       // Prepare the circle data from the API response
@@ -247,8 +261,13 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     if (!lab?.id) return false;
     
     try {
+      // Update the analysis state to indicate we're checking cache
+      setAnalysisState(prev => ({ ...prev, checkingCache: true }));
       console.log(`Checking for cached analysis results for lab ${lab.id}`);
       const cachedResults = await getLabAnalysisResults(lab.id);
+      
+      // Mark cache checking as complete
+      setAnalysisState(prev => ({ ...prev, checkingCache: false }));
       
       if (cachedResults && cachedResults.exists) {
         console.log(`Found cached analysis results for lab ${lab.id}`, cachedResults);
@@ -259,11 +278,14 @@ export const useLabResultsAnalysis = (lab: Lab) => {
         return true;
       } else {
         console.log(`No cached analysis results found for lab ${lab.id}`);
+        // Since we'll need to generate a fresh analysis, update the processing state
+        setAnalysisState(prev => ({ ...prev, processingData: true }));
       }
       
       return false;
     } catch (error) {
       console.error("Error checking cached results:", error);
+      setAnalysisState(prev => ({ ...prev, checkingCache: false }));
       return false;
     }
   };

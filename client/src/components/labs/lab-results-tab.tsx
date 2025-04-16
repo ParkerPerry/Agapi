@@ -46,9 +46,34 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                 return (
                   <div className="flex flex-col items-center justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-4" />
-                    <p className="text-sm text-muted-foreground">
-                      Analyzing lab metrics with AI. This may take a moment...
-                    </p>
+                    <div className="text-center space-y-2">
+                      <p className="text-sm font-medium">
+                        Analyzing lab metrics with AI...
+                      </p>
+                      <div className="flex flex-col gap-2 max-w-md">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary animate-pulse rounded-full"></div>
+                          </div>
+                          <span>Checking cache for existing analysis</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary animate-pulse rounded-full"></div>
+                          </div>
+                          <span>Processing metrics data</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <div className="w-6 h-1 bg-muted-foreground/30 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary animate-pulse rounded-full"></div>
+                          </div>
+                          <span>Generating insight with AI</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-3">
+                        This may take 15-30 seconds for fresh analysis
+                      </p>
+                    </div>
                   </div>
                 );
               }
@@ -99,45 +124,76 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                     
                     {/* Cache status and refresh button */}
                     {metricResults && metricResults.length > 0 && (
-                      <div className="flex justify-between items-center text-sm pt-4 mt-2 border-t">
-                        <div className="text-muted-foreground">
-                          {fromCache ? (
-                            <span>
-                              <span className="inline-block h-2 w-2 rounded-full bg-amber-500 mr-2"></span>
-                              Analysis from cache
-                              {lastAnalysisTime && (
-                                <span className="ml-2">
-                                  (Generated: {new Date(lastAnalysisTime).toLocaleString()})
-                                </span>
+                      <div className="pt-4 mt-2 border-t space-y-2">
+                        <div className="flex justify-between items-center flex-wrap gap-2">
+                          <div className="bg-muted p-2 rounded-md flex items-center text-sm">
+                            {fromCache ? (
+                              <>
+                                <div className="flex items-center mr-2 bg-amber-100 text-amber-700 px-2 py-1 rounded">
+                                  <span className="inline-block h-2 w-2 rounded-full bg-amber-500 mr-1.5"></span>
+                                  <span className="font-medium text-xs">CACHED</span>
+                                </div>
+                                <div className="text-muted-foreground text-xs">
+                                  <span className="font-medium">Analysis retrieved from cache</span>
+                                  {lastAnalysisTime && (
+                                    <span className="block text-muted-foreground/70">
+                                      Generated: {new Date(lastAnalysisTime).toLocaleString()}
+                                    </span>
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div className="flex items-center mr-2 bg-green-100 text-green-700 px-2 py-1 rounded">
+                                  <span className="inline-block h-2 w-2 rounded-full bg-green-500 mr-1.5"></span>
+                                  <span className="font-medium text-xs">FRESH</span>
+                                </div>
+                                <div className="text-muted-foreground text-xs">
+                                  <span className="font-medium">Fresh analysis just generated</span>
+                                  {lastAnalysisTime && (
+                                    <span className="block text-muted-foreground/70">
+                                      Generated: {new Date(lastAnalysisTime).toLocaleString()}
+                                    </span>
+                                  )}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-xs text-muted-foreground">
+                              {fromCache && "Results served from cache to reduce AI calls"}
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={refreshAnalysis}
+                              disabled={isAnalyzing}
+                              className="shrink-0"
+                            >
+                              {isAnalyzing ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 animate-spin mr-2" />
+                                  Refreshing...
+                                </>
+                              ) : (
+                                <>
+                                  {fromCache ? 'Generate Fresh Analysis' : 'Refresh Analysis'}
+                                </>
                               )}
-                            </span>
-                          ) : (
-                            <span>
-                              <span className="inline-block h-2 w-2 rounded-full bg-green-500 mr-2"></span>
-                              Fresh analysis
-                              {lastAnalysisTime && (
-                                <span className="ml-2">
-                                  (Generated: {new Date(lastAnalysisTime).toLocaleString()})
-                                </span>
-                              )}
-                            </span>
-                          )}
+                            </Button>
+                          </div>
                         </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={refreshAnalysis}
-                          disabled={isAnalyzing}
-                        >
-                          {isAnalyzing ? (
-                            <>
-                              <Loader2 className="h-3 w-3 animate-spin mr-2" />
-                              Refreshing...
-                            </>
-                          ) : (
-                            'Refresh Analysis'
-                          )}
-                        </Button>
+                        
+                        {/* Tooltip about cache usage */}
+                        <div className="text-xs text-muted-foreground/70 flex items-center gap-1.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-3.5 w-3.5">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 16v-4M12 8h.01" />
+                          </svg>
+                          <span>
+                            Analysis is cached to reduce AI usage. Click "Generate Fresh Analysis" for updated insights.
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>
