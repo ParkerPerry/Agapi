@@ -161,7 +161,8 @@ export async function analyzeMetricWithCache(
     // Using the correct API endpoint path that matches server routes
     const result = await apiRequest('/api/analyze-metric', 'POST', requestWithCache);
     
-    return {
+    // Create base metric result
+    const metricResult: MetricResult & { fromCache?: boolean; updatedAt?: string } = {
       name: request.metric.name,
       target: request.metric.target,
       priority: request.metric.priority,
@@ -171,6 +172,17 @@ export async function analyzeMetricWithCache(
       difference: result.difference,
       analysis: result.analysis
     };
+    
+    // Add cache metadata if present
+    if (result.fromCache !== undefined) {
+      metricResult.fromCache = result.fromCache;
+    }
+    
+    if (result.updatedAt) {
+      metricResult.updatedAt = result.updatedAt;
+    }
+    
+    return metricResult;
   } catch (error) {
     console.error('Error analyzing metric:', error);
     throw error;

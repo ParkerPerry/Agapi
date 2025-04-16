@@ -97,7 +97,8 @@ router.post('/analyze-metric', requireAuth, async (req, res) => {
         
         return res.json({
           ...cachedResults.metricResults[metricIndex],
-          fromCache: true
+          fromCache: true,
+          updatedAt: cachedResults.updatedAt
         });
       }
     }
@@ -217,9 +218,11 @@ FORMAT YOUR RESPONSE AS JSON:
       // Note: Individual metric results are cached as part of the full analysis
       // when saveLabAnalysisResult is called from the recommendation endpoint
       
+      // Include timestamp for non-cached results too
       return res.json({
         ...analysis,
-        fromCache: false
+        fromCache: false,
+        updatedAt: new Date().toISOString()
       });
     } catch (error) {
       console.error("Failed to parse LLM response:", error);
@@ -321,7 +324,8 @@ router.post('/analyze-recommendation', requireAuth, async (req, res) => {
         console.log(`[MetricsAnalysis] Using cached analysis results for lab ${labId}`);
         return res.json({
           ...cachedResults.recommendation,
-          fromCache: true
+          fromCache: true,
+          updatedAt: cachedResults.updatedAt
         });
       }
     }
