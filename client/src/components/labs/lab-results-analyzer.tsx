@@ -56,18 +56,52 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   const [analyzeError, setAnalyzeError] = useState<Error | null>(null);
   const [fromCache, setFromCache] = useState<boolean>(false);
   const [lastAnalysisTime, setLastAnalysisTime] = useState<string | null>(null);
+  const [needsFreshAnalysis, setNeedsFreshAnalysis] = useState<boolean>(false);
   
   // State to track the last analysis signature to prevent infinite loops
   const [lastAnalysisSignature, setLastAnalysisSignature] = useState<string>("");
 
-  // Fetch lab circles data
+  // Flag to indicate if we need to load data for analysis
+  const [shouldLoadData, setShouldLoadData] = useState<boolean>(false);
+
+  // Immediate check for cached results
+  useEffect(() => {
+    if (lab?.id && (lab.status === "active" || lab.status === "completed") && !isAnalyzing) {
+      const checkInitialCache = async () => {
+        setIsAnalyzing(true);
+        setAnalysisState({
+          checkingCache: true,
+          processingData: false,
+          generatingAnalysis: false
+        });
+
+        try {
+          const foundCache = await checkCachedResults();
+          if (!foundCache) {
+            // If no cache found, set flag to load data for analysis
+            setShouldLoadData(true);
+          } else {
+            setIsAnalyzing(false);
+          }
+        } catch (error) {
+          console.error("Error checking initial cache:", error);
+          setShouldLoadData(true);
+          setIsAnalyzing(false);
+        }
+      };
+      
+      checkInitialCache();
+    }
+  }, [lab?.id, lab?.status]);
+
+  // Only fetch lab circles data if we need to generate a fresh analysis
   const { 
     data: labCirclesData, 
     isLoading: isCirclesLoading,
     error: circlesError
   } = useQuery<any[]>({
     queryKey: [`/api/labs/${lab?.id}/circles`],
-    enabled: !!lab?.id && (lab.status === "active" || lab.status === "completed")
+    enabled: !!lab?.id && shouldLoadData
   });
   
   // Transform the lab circles data to include role information
@@ -79,14 +113,14 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     } as LabCircle;
   });
 
-  // Fetch circle posts data for all circles in the lab
+  // Fetch circle posts data for all circles in the lab - only when needed and circles are loaded
   const {
     data: circlePostsData,
     isLoading: isPostsLoading,
     error: postsError
   } = useQuery<any[]>({
     queryKey: [`/api/labs/${lab?.id}/posts`],
-    enabled: !!lab?.id && (lab.status === "active" || lab.status === "completed") && !!labCircles && labCircles.length > 0
+    enabled: !!lab?.id && shouldLoadData && !!labCircles && labCircles.length > 0
   });
   
   // Transform the posts data to the format expected by the analyzer
@@ -324,8 +358,15 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     try {
       await deleteLabAnalysisResults(lab.id);
       setFromCache(false);
-      // Run full analysis again with forceRefresh=true
-      analyzeLabMetrics(true);
+      
+      // Ensure data is loaded before analysis
+      if (!labCirclesData || !circlePostsData) {
+        // We need to load data first
+        setShouldLoadData(true);
+      } else {
+        // We already have the data loaded, just run analysis
+        analyzeLabMetrics(true);
+      }
     } catch (error) {
       console.error("Error refreshing analysis:", error);
       toast({
@@ -336,8 +377,7 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     }
   };
   
-  // Trigger analysis when lab, circles, or posts data changes
-  // We deliberately don't include labCircles or circlePosts in dependencies to avoid infinite loops
+  // Trigger analysis when data loading completes (only if shouldLoadData is true)
   useEffect(() => {
     if (circlesError || postsError) {
       console.error("Circle or post errors:", { circlesError, postsError });
@@ -349,8 +389,8 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       return;
     }
     
-    // Only run analysis when data is fully loaded and not already analyzing
-    if (!isCirclesLoading && !isPostsLoading && labCirclesData && circlePostsData && !isAnalyzing) {
+    // Only run analysis when data is fully loaded and we've determined we need a fresh analysis
+    if (shouldLoadData && !isCirclesLoading && !isPostsLoading && labCirclesData && circlePostsData && !isAnalyzing) {
       // Use a stable string representation to avoid reference issues
       const dataSignature = `${lab?.id}-${labCirclesData.length}-${circlePostsData.length}`;
       
@@ -359,20 +399,11 @@ export const useLabResultsAnalysis = (lab: Lab) => {
         // Update the signature state
         setLastAnalysisSignature(dataSignature);
         
-        // First check if we have cached results
-        const checkCache = async () => {
-          const foundCachedResults = await checkCachedResults();
-          if (!foundCachedResults) {
-            // No cached results, run full analysis
-            analyzeLabMetrics(false);
-          }
-        };
-        
-        checkCache();
+        // Run the analysis - we already know we need fresh results because shouldLoadData is true
+        analyzeLabMetrics(false);
       }
     }
-  // Include lastAnalysisSignature in dependencies
-  }, [lab?.id, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing, lastAnalysisSignature]);
+  }, [lab?.id, shouldLoadData, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing, lastAnalysisSignature]);
   
   // Function to retry analysis if it fails
   const retryAnalysis = () => {
