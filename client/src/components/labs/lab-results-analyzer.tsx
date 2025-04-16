@@ -2,7 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Lab, Circle, Post } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import { analyzeMetric, generateRecommendation as apiGenerateRecommendation, groupPostsByCircleRole } from "@/lib/metricsApi";
+import { 
+  analyzeMetric, 
+  generateRecommendation as apiGenerateRecommendation, 
+  groupPostsByCircleRole,
+  getLabAnalysisResults,
+  deleteLabAnalysisResults,
+  analyzeMetricWithCache,
+  generateRecommendationWithCache
+} from "@/lib/metricsApi";
 
 // Type definitions for metric results
 export interface MetricResult {
@@ -46,6 +54,8 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzeError, setAnalyzeError] = useState<Error | null>(null);
+  const [fromCache, setFromCache] = useState<boolean>(false);
+  const [lastAnalysisTime, setLastAnalysisTime] = useState<string | null>(null);
   
   // State to track the last analysis signature to prevent infinite loops
   const [lastAnalysisSignature, setLastAnalysisSignature] = useState<string>("");
@@ -92,7 +102,7 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   });
 
   // Main analysis function
-  const analyzeLabMetrics = async () => {
+  const analyzeLabMetrics = async (forceRefresh: boolean = false) => {
     // Early return checks
     if (!lab?.successMetrics?.metrics || lab.successMetrics.metrics.length === 0) {
       console.log("No success metrics defined for this lab");
@@ -156,8 +166,13 @@ export const useLabResultsAnalysis = (lab: Lab) => {
             observationCircles
           };
           
-          // Call the API endpoint for analysis
-          const result = await analyzeMetric(requestData);
+          // Call the API endpoint for analysis with caching
+          const result = await analyzeMetricWithCache(
+            requestData,
+            lab.id,
+            lab.successMetrics.metrics.indexOf(metric),
+            forceRefresh
+          );
           analyzedMetrics.push(result);
         } catch (error) {
           console.error(`Error analyzing metric ${metric.name}:`, error);
@@ -181,11 +196,29 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       // Generate an overall recommendation based on the results
       if (analyzedMetrics.length > 0) {
         try {
-          const recommendation = await apiGenerateRecommendation(
+          const recommendation = await generateRecommendationWithCache(
             analyzedMetrics,
-            lab.status
+            lab.status,
+            lab.id,
+            forceRefresh
           );
           setRecommendation(recommendation);
+          
+          // If we got results, mark as not from cache (freshly generated)
+          // unless it explicitly returned fromCache=true
+          if (recommendation && !('fromCache' in recommendation)) {
+            setFromCache(false);
+            setLastAnalysisTime(new Date().toISOString());
+          } else if (recommendation && 'fromCache' in recommendation) {
+            // Cast to any since our interface doesn't have fromCache
+            const resultWithCache = recommendation as any;
+            setFromCache(resultWithCache.fromCache);
+            if (resultWithCache.updatedAt) {
+              setLastAnalysisTime(resultWithCache.updatedAt);
+            } else {
+              setLastAnalysisTime(new Date().toISOString());
+            }
+          }
         } catch (error) {
           console.error("Error generating recommendation:", error);
           // Use fallback if API call fails
@@ -209,6 +242,48 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     }
   };
 
+  // Check for cached analysis results
+  const checkCachedResults = async () => {
+    if (!lab?.id) return false;
+    
+    try {
+      const cachedResults = await getLabAnalysisResults(lab.id);
+      
+      if (cachedResults) {
+        setMetricResults(cachedResults.metricResults);
+        setRecommendation(cachedResults.recommendation);
+        setFromCache(true);
+        setLastAnalysisTime(cachedResults.updatedAt);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error("Error checking cached results:", error);
+      return false;
+    }
+  };
+  
+  // Refreshes analysis by forcing new generation (skips cache)
+  const refreshAnalysis = async () => {
+    if (!lab?.id) return;
+    
+    // Delete cached results first
+    try {
+      await deleteLabAnalysisResults(lab.id);
+      setFromCache(false);
+      // Run full analysis again with forceRefresh=true
+      analyzeLabMetrics(true);
+    } catch (error) {
+      console.error("Error refreshing analysis:", error);
+      toast({
+        title: "Refresh Error",
+        description: "Failed to refresh lab analysis. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+  
   // Trigger analysis when lab, circles, or posts data changes
   // We deliberately don't include labCircles or circlePosts in dependencies to avoid infinite loops
   useEffect(() => {
@@ -231,7 +306,17 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       if (lastAnalysisSignature !== dataSignature) {
         // Update the signature state
         setLastAnalysisSignature(dataSignature);
-        analyzeLabMetrics();
+        
+        // First check if we have cached results
+        const checkCache = async () => {
+          const foundCachedResults = await checkCachedResults();
+          if (!foundCachedResults) {
+            // No cached results, run full analysis
+            analyzeLabMetrics(false);
+          }
+        };
+        
+        checkCache();
       }
     }
   // Include lastAnalysisSignature in dependencies
@@ -240,7 +325,7 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   // Function to retry analysis if it fails
   const retryAnalysis = () => {
     setAnalyzeError(null);
-    analyzeLabMetrics();
+    analyzeLabMetrics(false);
   };
 
   return { 
@@ -248,6 +333,9 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     recommendation, 
     isAnalyzing, 
     analyzeError, 
-    retryAnalysis 
+    retryAnalysis,
+    refreshAnalysis,
+    fromCache,
+    lastAnalysisTime
   };
 };

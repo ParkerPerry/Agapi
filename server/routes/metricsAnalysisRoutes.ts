@@ -61,7 +61,20 @@ interface MetricAnalysisResponse {
  */
 router.post('/analyze-metric', requireAuth, async (req, res) => {
   try {
-    const { metric, labGoals, controlCircles, treatmentCircles, observationCircles } = req.body as MetricAnalysisRequest;
+    const { 
+      metric, 
+      labGoals, 
+      controlCircles, 
+      treatmentCircles, 
+      observationCircles, 
+      labId, 
+      metricIndex, 
+      forceRefresh = false 
+    } = req.body as MetricAnalysisRequest & { 
+      labId?: number; 
+      metricIndex?: number; 
+      forceRefresh?: boolean;
+    };
     
     if (!metric || !metric.name || metric.target === undefined) {
       return res.status(400).json({ error: "Invalid metric data" });
@@ -70,6 +83,27 @@ router.post('/analyze-metric', requireAuth, async (req, res) => {
     if (!controlCircles || !treatmentCircles) {
       return res.status(400).json({ error: "Missing circle data" });
     }
+
+    // If labId and metricIndex are provided and forceRefresh is false, check for cached results
+    if (labId && metricIndex !== undefined && !forceRefresh) {
+      const cachedResults = await storage.getLabAnalysisResult(labId);
+      
+      if (cachedResults && 
+          cachedResults.metricResults && 
+          Array.isArray(cachedResults.metricResults) && 
+          metricIndex < cachedResults.metricResults.length) {
+        
+        console.log(`[MetricsAnalysis] Using cached analysis for lab ${labId}, metric index ${metricIndex}`);
+        
+        return res.json({
+          ...cachedResults.metricResults[metricIndex],
+          fromCache: true
+        });
+      }
+    }
+
+    // If no cached results or forceRefresh is true, generate new analysis
+    console.log(`[MetricsAnalysis] Generating new analysis for metric "${metric.name}"`);
 
     // Check if OpenAI API key is configured
     if (!process.env.OPENAI_API_KEY) {
@@ -180,7 +214,13 @@ FORMAT YOUR RESPONSE AS JSON:
       // Ensure confidence is within 0-100 range
       analysis.confidence = Math.max(0, Math.min(100, analysis.confidence));
       
-      return res.json(analysis);
+      // Note: Individual metric results are cached as part of the full analysis
+      // when saveLabAnalysisResult is called from the recommendation endpoint
+      
+      return res.json({
+        ...analysis,
+        fromCache: false
+      });
     } catch (error) {
       console.error("Failed to parse LLM response:", error);
       console.error("Raw response:", responseText);
@@ -196,16 +236,91 @@ FORMAT YOUR RESPONSE AS JSON:
 });
 
 /**
+ * GET /api/lab-analysis/:labId - Get cached lab analysis results
+ */
+router.get('/lab-analysis/:labId', requireAuth, async (req, res) => {
+  try {
+    const labId = parseInt(req.params.labId);
+    
+    if (isNaN(labId)) {
+      return res.status(400).json({ error: "Invalid lab ID" });
+    }
+    
+    // Get cached analysis results
+    const analysisResult = await storage.getLabAnalysisResult(labId);
+    
+    if (!analysisResult) {
+      return res.status(404).json({ 
+        message: "No analysis results found for this lab",
+        exists: false
+      });
+    }
+    
+    // Return the cached results
+    return res.json({
+      exists: true,
+      metricResults: analysisResult.metricResults,
+      recommendation: analysisResult.recommendation,
+      updatedAt: analysisResult.updatedAt
+    });
+  } catch (error: any) {
+    console.error("Error getting lab analysis results:", error);
+    return res.status(500).json({ 
+      error: "Failed to get lab analysis results", 
+      message: error.message || "Unknown error"
+    });
+  }
+});
+
+/**
+ * DELETE /api/lab-analysis/:labId - Delete cached lab analysis results
+ */
+router.delete('/lab-analysis/:labId', requireAuth, async (req, res) => {
+  try {
+    const labId = parseInt(req.params.labId);
+    
+    if (isNaN(labId)) {
+      return res.status(400).json({ error: "Invalid lab ID" });
+    }
+    
+    // Delete cached analysis results
+    await storage.deleteLabAnalysisResult(labId);
+    
+    return res.json({ message: "Analysis results deleted successfully" });
+  } catch (error: any) {
+    console.error("Error deleting lab analysis results:", error);
+    return res.status(500).json({ 
+      error: "Failed to delete lab analysis results", 
+      message: error.message || "Unknown error"
+    });
+  }
+});
+
+/**
  * POST /api/analyze-recommendation - Generate an overall recommendation
  */
 router.post('/analyze-recommendation', requireAuth, async (req, res) => {
   try {
-    const { metrics, labStatus } = req.body;
+    const { metrics, labStatus, labId, forceRefresh = false } = req.body;
     
     if (!metrics || !Array.isArray(metrics) || metrics.length === 0) {
       return res.status(400).json({ error: "Invalid metrics data" });
     }
 
+    // If labId is provided and forceRefresh is false, check for cached results
+    if (labId && !forceRefresh) {
+      const cachedResults = await storage.getLabAnalysisResult(labId);
+      if (cachedResults) {
+        console.log(`[MetricsAnalysis] Using cached analysis results for lab ${labId}`);
+        return res.json({
+          ...cachedResults.recommendation,
+          fromCache: true
+        });
+      }
+    }
+
+    // If no cached results or force refresh requested, generate new analysis
+    
     // Check if OpenAI API key is configured
     if (!process.env.OPENAI_API_KEY) {
       console.warn("[MetricsAnalysis] Missing OpenAI API key");
@@ -246,6 +361,8 @@ FORMAT YOUR RESPONSE AS JSON:
 }
 `;
 
+    console.log(`[MetricsAnalysis] Generating new recommendation for ${labId ? 'lab ' + labId : 'analysis'}`);
+
     // Call OpenAI API
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -269,7 +386,16 @@ FORMAT YOUR RESPONSE AS JSON:
       // Ensure confidence is within the specified range
       recommendation.confidence = Math.max(60, Math.min(95, recommendation.confidence));
       
-      return res.json(recommendation);
+      // If labId is provided, save the results to the database
+      if (labId) {
+        await storage.saveLabAnalysisResult(labId, metrics, recommendation);
+        console.log(`[MetricsAnalysis] Saved analysis results for lab ${labId}`);
+      }
+      
+      return res.json({
+        ...recommendation,
+        fromCache: false
+      });
     } catch (error) {
       console.error("Failed to parse LLM response:", error);
       console.error("Raw response:", responseText);

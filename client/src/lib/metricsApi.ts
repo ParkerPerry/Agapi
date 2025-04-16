@@ -3,6 +3,16 @@ import { MetricResult, Recommendation, LabCircle } from '@/components/labs/lab-r
 import { Post } from "@shared/schema";
 
 /**
+ * Interface for cached lab analysis results
+ */
+export interface LabAnalysisResult {
+  exists: boolean;
+  metricResults: MetricResult[];
+  recommendation: Recommendation;
+  updatedAt: string;
+}
+
+/**
  * Interface for analyzing a metric with the API
  */
 interface AnalyzeMetricRequest {
@@ -92,9 +102,115 @@ export async function generateRecommendation(
 }
 
 /**
- * Helper function to group posts by circle role
- * IMPORTANT: All console.log statements removed to prevent infinite logs
+ * Get cached lab analysis results
+ * @param labId The lab ID to get cached results for
+ * @returns Cached analysis results or null if not found
  */
+export async function getLabAnalysisResults(labId: number): Promise<LabAnalysisResult | null> {
+  try {
+    const response = await apiRequest(`/api/lab-analysis/${labId}`, 'GET');
+    
+    if (response.exists) {
+      return response;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting cached lab analysis results:', error);
+    return null;
+  }
+}
+
+/**
+ * Delete cached lab analysis results to force a refresh
+ * @param labId The lab ID to delete cached results for
+ * @returns Success status
+ */
+export async function deleteLabAnalysisResults(labId: number): Promise<boolean> {
+  try {
+    await apiRequest(`/api/lab-analysis/${labId}`, 'DELETE');
+    return true;
+  } catch (error) {
+    console.error('Error deleting cached lab analysis results:', error);
+    return false;
+  }
+}
+
+/**
+ * Analyze a metric with the API using caching
+ * @param request The request data
+ * @param labId Optional lab ID for caching
+ * @param metricIndex Optional metric index for caching
+ * @param forceRefresh Force a refresh of cached results
+ * @returns MetricResult with analysis data
+ */
+export async function analyzeMetricWithCache(
+  request: AnalyzeMetricRequest,
+  labId?: number,
+  metricIndex?: number,
+  forceRefresh: boolean = false
+): Promise<MetricResult> {
+  try {
+    // Create a request with caching parameters
+    const requestWithCache = {
+      ...request,
+      labId,
+      metricIndex,
+      forceRefresh
+    };
+    
+    // Using the correct API endpoint path that matches server routes
+    const result = await apiRequest('/api/analyze-metric', 'POST', requestWithCache);
+    
+    return {
+      name: request.metric.name,
+      target: request.metric.target,
+      priority: request.metric.priority,
+      actual: result.actual,
+      status: result.status,
+      confidence: result.confidence,
+      difference: result.difference,
+      analysis: result.analysis
+    };
+  } catch (error) {
+    console.error('Error analyzing metric:', error);
+    throw error;
+  }
+}
+
+/**
+ * Generate a recommendation with the API using caching
+ * @param metrics The metric results
+ * @param labStatus The lab status
+ * @param labId Optional lab ID for caching
+ * @param forceRefresh Force a refresh of cached results
+ * @returns Recommendation data
+ */
+export async function generateRecommendationWithCache(
+  metrics: MetricResult[],
+  labStatus: string,
+  labId?: number,
+  forceRefresh: boolean = false
+): Promise<Recommendation> {
+  try {
+    // Using the correct API endpoint path that matches server routes
+    const result = await apiRequest('/api/analyze-recommendation', 'POST', {
+      metrics,
+      labStatus,
+      labId,
+      forceRefresh
+    });
+    
+    return {
+      decision: result.decision,
+      confidence: result.confidence,
+      reasoning: result.reasoning
+    };
+  } catch (error) {
+    console.error('Error generating recommendation:', error);
+    throw error;
+  }
+}
+
 export function groupPostsByCircleRole(
   circles: LabCircle[] | undefined,
   posts: Post[] | undefined

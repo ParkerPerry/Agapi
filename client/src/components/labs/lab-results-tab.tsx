@@ -35,7 +35,10 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                 recommendation, 
                 isAnalyzing, 
                 analyzeError, 
-                retryAnalysis 
+                retryAnalysis,
+                refreshAnalysis,
+                fromCache,
+                lastAnalysisTime
               } = useLabResultsAnalysis(lab);
               
               // Show loading state during analysis
@@ -93,6 +96,50 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                         </div>
                       )}
                     </div>
+                    
+                    {/* Cache status and refresh button */}
+                    {metricResults && metricResults.length > 0 && (
+                      <div className="flex justify-between items-center text-sm pt-4 mt-2 border-t">
+                        <div className="text-muted-foreground">
+                          {fromCache ? (
+                            <span>
+                              <span className="inline-block h-2 w-2 rounded-full bg-amber-500 mr-2"></span>
+                              Analysis from cache
+                              {lastAnalysisTime && (
+                                <span className="ml-2">
+                                  (Generated: {new Date(lastAnalysisTime).toLocaleString()})
+                                </span>
+                              )}
+                            </span>
+                          ) : (
+                            <span>
+                              <span className="inline-block h-2 w-2 rounded-full bg-green-500 mr-2"></span>
+                              Fresh analysis
+                              {lastAnalysisTime && (
+                                <span className="ml-2">
+                                  (Generated: {new Date(lastAnalysisTime).toLocaleString()})
+                                </span>
+                              )}
+                            </span>
+                          )}
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={refreshAnalysis}
+                          disabled={isAnalyzing}
+                        >
+                          {isAnalyzing ? (
+                            <>
+                              <Loader2 className="h-3 w-3 animate-spin mr-2" />
+                              Refreshing...
+                            </>
+                          ) : (
+                            'Refresh Analysis'
+                          )}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </>
               );
