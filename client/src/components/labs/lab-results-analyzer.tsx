@@ -13,21 +13,29 @@ export interface MetricResult {
 }
 
 // Format metric values for display
-export function formatMetricValue(value: string) {
+export function formatMetricValue(value: any) {
+  // Handle null, undefined or non-string values
+  if (value === null || value === undefined) {
+    return 'N/A';
+  }
+  
+  // Convert to string if not already a string
+  const strValue = String(value);
+  
   // Handle percentages
-  if (value.endsWith('%')) {
-    return value;
+  if (strValue.endsWith('%')) {
+    return strValue;
   }
   
   // Handle numbers
-  const num = parseFloat(value);
+  const num = parseFloat(strValue);
   if (!isNaN(num)) {
     // Format large numbers with commas
     return num.toLocaleString();
   }
   
   // Return as-is for non-numeric values
-  return value;
+  return strValue;
 }
 
 // Type for recommendation
