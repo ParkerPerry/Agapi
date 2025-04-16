@@ -13,30 +13,33 @@ export function Comment({ comment, postId, level = 0 }: CommentProps) {
   const [showReplies, setShowReplies] = useState(true);
   const { user } = useAuth();
 
-  const isAIComment = !!comment.aiFollowerId;
-  const isUserComment = !!comment.userId;
+  const isAIComment = !!comment.aiFollowerId || comment.userType === "ai";
+  const isUserComment = !!comment.userId || comment.userType === "human";
   const hasReplies = comment.replies && comment.replies.length > 0;
   const pendingResponses = comment.pendingResponses || [];
+  
+  // Support both data formats (aiFollower and author)
+  const follower = comment.aiFollower || comment.author;
 
   return (
     <div className={`space-y-4 ${level > 0 ? "ml-8 border-l-2 pl-4" : ""}`}>
       <div className="flex items-start space-x-4">
         <Avatar className="h-8 w-8">
-          {isAIComment && comment.aiFollower?.avatarUrl && (
+          {isAIComment && follower?.avatarUrl && (
             <img
-              src={comment.aiFollower.avatarUrl}
-              alt={comment.aiFollower.name}
+              src={follower.avatarUrl}
+              alt={follower.name}
               className="h-full w-full object-cover"
             />
           )}
           <AvatarFallback>
-            {isAIComment ? comment.aiFollower?.name[0] || 'AI' : 'U'}
+            {isAIComment ? follower?.name?.[0] || 'AI' : 'U'}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium">
-              {isAIComment ? comment.aiFollower?.name || 'AI' : 'You'}
+              {isAIComment ? follower?.name || 'AI' : 'You'}
             </p>
             <span className="text-xs text-muted-foreground">
               {formatRelativeTime(comment.createdAt)}
@@ -86,7 +89,7 @@ export function Comment({ comment, postId, level = 0 }: CommentProps) {
           <ReplyForm
             postId={postId}
             commentId={comment.id}
-            aiFollowerName={comment.aiFollower?.name || "AI"}
+            aiFollowerName={follower?.name || "AI"}
             onReply={() => setIsReplying(false)}
           />
         </div>
