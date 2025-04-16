@@ -44,7 +44,8 @@ interface GenerateRecommendationRequest {
  */
 export async function analyzeMetric(request: AnalyzeMetricRequest): Promise<MetricResult> {
   try {
-    const result = await apiRequest('/analyze-metric', 'POST', request);
+    // Using the correct API endpoint path that matches server routes
+    const result = await apiRequest('/api/analyze-metric', 'POST', request);
     
     return {
       name: request.metric.name,
@@ -73,7 +74,8 @@ export async function generateRecommendation(
   labStatus: string
 ): Promise<Recommendation> {
   try {
-    const result = await apiRequest('/analyze-recommendation', 'POST', {
+    // Using the correct API endpoint path that matches server routes
+    const result = await apiRequest('/api/analyze-recommendation', 'POST', {
       metrics,
       labStatus
     });
