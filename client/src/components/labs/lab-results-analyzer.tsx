@@ -307,17 +307,78 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       for (const metric of lab.successMetrics.metrics) {
         try {
           // Prepare the request data
-          const requestData = {
-            metric: {
-              name: metric.name,
-              target: metric.target,
-              priority: metric.priority
-            },
-            labGoals: lab.goals || '',
-            controlCircles,
-            treatmentCircles,
-            observationCircles
-          };
+          let requestData;
+          
+          // Special handling for Lab 205 - implement content size limits
+          if (lab?.id === 205) {
+            console.log(`[Lab205Debug] Preparing request data for metric: ${metric.name}`);
+            
+            // Helper function to limit content size
+            const limitCircleContent = (circles, maxPostsPerCircle = 10, maxContentLength = 1000) => {
+              return circles.map(circle => {
+                // Sort posts by interactions (if available) or most recent first
+                const sortedPosts = [...circle.posts].sort((a, b) => {
+                  const aInteractions = a.metrics?.interactions || 0;
+                  const bInteractions = b.metrics?.interactions || 0;
+                  
+                  // First sort by interactions if available
+                  if (aInteractions !== bInteractions) {
+                    return bInteractions - aInteractions; // Higher interactions first
+                  }
+                  
+                  // Then by date if interactions are equal
+                  const aDate = new Date(a.createdAt || 0);
+                  const bDate = new Date(b.createdAt || 0);
+                  return bDate.getTime() - aDate.getTime(); // Most recent first
+                });
+                
+                // Take only limited number of posts
+                const limitedPosts = sortedPosts.slice(0, maxPostsPerCircle).map(post => ({
+                  ...post,
+                  // Trim content to max length if needed
+                  content: post.content && post.content.length > maxContentLength 
+                    ? post.content.substring(0, maxContentLength) + "..." 
+                    : post.content
+                }));
+                
+                return {
+                  id: circle.id,
+                  name: circle.name,
+                  posts: limitedPosts
+                };
+              });
+            };
+            
+            // Create size-limited request data for Lab 205
+            requestData = {
+              metric: {
+                name: metric.name,
+                target: metric.target,
+                priority: metric.priority
+              },
+              labGoals: (lab.goals || '').substring(0, 500), // Limit goals length
+              controlCircles: limitCircleContent(controlCircles, 15),
+              treatmentCircles: limitCircleContent(treatmentCircles, 15),
+              observationCircles: observationCircles ? limitCircleContent(observationCircles, 10) : undefined
+            };
+            
+            // Log the reduced data size
+            console.log(`[Lab205Debug] Reduced request data: ${controlCircles.length} control circles with max 15 posts each`);
+            console.log(`[Lab205Debug] Content limited to max 1000 chars per post`);
+          } else {
+            // Normal request data for other labs
+            requestData = {
+              metric: {
+                name: metric.name,
+                target: metric.target,
+                priority: metric.priority
+              },
+              labGoals: lab.goals || '',
+              controlCircles,
+              treatmentCircles,
+              observationCircles
+            };
+          }
           
           // Call the API endpoint for analysis with caching
           const result = await analyzeMetricWithCache(
