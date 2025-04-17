@@ -24,15 +24,14 @@ export function setWebSocketAuthToken(token: string | null) {
 }
 
 function getWebSocketUrl(): string {
+  // Determine protocol based on page protocol
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const hostname = window.location.hostname;
-  const port = window.location.port;
+  const port = window.location.port ? `:${window.location.port}` : '';
   
-  // For Replit, we need to ensure the URL structure is correct
-  // When running in the Replit environment, use the current hostname without specifying port
-  const wsUrl = port ? 
-    `${protocol}//${hostname}:${port}/ws` : 
-    `${protocol}//${hostname}/ws`;
+  // Create WebSocket URL with proper encoding
+  // Make sure it has both hostname and ws path
+  let wsUrl = `${protocol}//${hostname}${port}/ws`;
   
   console.log('Constructing WebSocket URL:', {
     protocol,

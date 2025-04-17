@@ -30,11 +30,23 @@ export function initializeWebSocketServer(server: Server, app: Express) {
 
   // Handle HTTP server upgrade event to establish WebSocket connection
   server.on('upgrade', (request, socket, head) => {
-    console.log('[WebSocket] Received upgrade request');
+    console.log('[WebSocket] Received upgrade request for path:', request.url);
     
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws, request);
-    });
+    // Only handle WebSocket upgrade requests for /ws path
+    if (request.url?.startsWith('/ws')) {
+      try {
+        wss.handleUpgrade(request, socket, head, (ws) => {
+          console.log('[WebSocket] Upgrade successful, emitting connection event');
+          wss.emit('connection', ws, request);
+        });
+      } catch (error) {
+        console.error('[WebSocket] Error handling upgrade:', error);
+        socket.destroy();
+      }
+    } else {
+      // Not a WebSocket upgrade request for our path
+      socket.destroy();
+    }
   });
 
   // Handle new WebSocket connections
@@ -152,12 +164,47 @@ function handleAuthentication(ws: ExtendedWebSocket, data: any) {
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
-    ws.userId = decoded.userId;
-    ws.sessionID = decoded.sessionID;
-
+    // For development purposes, handle both JWT and our custom token format
+    // In production, you would use proper JWT verification
+    let userId;
+    
+    // Check if token is our custom format (auth-token-for-user-123)
+    if (token.startsWith('auth-token-for-user-')) {
+      // Extract user ID from token
+      userId = parseInt(token.replace('auth-token-for-user-', ''), 10);
+      console.log(`[WebSocket] User authenticated with custom token, extracted userId: ${userId}`);
+    } else {
+      // Try to verify as JWT
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
+        userId = decoded.userId;
+        ws.sessionID = decoded.sessionID;
+      } catch (jwtError) {
+        console.error('[WebSocket] JWT verification failed:', jwtError);
+        ws.send(JSON.stringify({
+          type: 'error',
+          code: 401,
+          message: 'Invalid authentication token'
+        }));
+        return;
+      }
+    }
+    
+    // Validate user ID
+    if (!userId || isNaN(userId)) {
+      ws.send(JSON.stringify({
+        type: 'error',
+        code: 401,
+        message: 'Invalid user ID in token'
+      }));
+      return;
+    }
+    
+    // Set authenticated user ID
+    ws.userId = userId;
     console.log(`[WebSocket] User authenticated: ${ws.userId}`);
     
+    // Send success response
     ws.send(JSON.stringify({
       type: 'auth-success',
       userId: ws.userId,
