@@ -259,7 +259,7 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
           existingResults.updatedAt = new Date().toISOString();
           
           // Save updated results
-          await storage.saveLabAnalysisResult(labId, existingResults);
+          await storage.saveLabAnalysisResult(labId, existingResults.metricResults, existingResults.recommendation);
           console.log(`[MetricsAnalysis] Cached results for lab ${labId}, metric index ${metricIndex}`);
         } catch (cacheError) {
           console.error("Error caching analysis results:", cacheError);
@@ -490,7 +490,7 @@ Difference: ${metric.difference}`;
           existingResults.updatedAt = new Date().toISOString();
           
           // Save updated results
-          await storage.saveLabAnalysisResult(labId, existingResults);
+          await storage.saveLabAnalysisResult(labId, existingResults.metricResults, existingResults.recommendation);
           console.log(`[MetricsAnalysis] Cached recommendation for lab ${labId}`);
         } catch (cacheError) {
           console.error("Error caching recommendation:", cacheError);
