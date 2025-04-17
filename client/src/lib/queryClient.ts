@@ -41,6 +41,7 @@ export async function apiRequest(
       method: method,
       headers: data ? { "Content-Type": "application/json" } : {},
       body: data ? JSON.stringify(data) : undefined,
+      credentials: "include", // Add credentials inclusion to match the queryFn approach
     });
     
     const endTime = performance.now();
