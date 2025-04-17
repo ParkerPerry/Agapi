@@ -211,16 +211,24 @@ FORMAT YOUR RESPONSE AS JSON:
     try {
       console.log(`[MetricsAnalysis] Sending request to OpenAI API with model gpt-4.1-2025-04-14`);
       
-      completion = await openai.chat.completions.create({
+      // Create a promise that will reject after 3 minutes (as a fallback timeout)
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("OpenAI API request timed out after 3 minutes")), 180000);
+      });
+      
+      // Create the OpenAI API request
+      const apiRequestPromise = openai.chat.completions.create({
         model: "gpt-4.1-2025-04-14",
         messages: [
           { role: "system", content: "You are a lab metrics analyst evaluating social media experiment data." },
           { role: "user", content: prompt }
         ],
         temperature: 0.4,
-        response_format: { type: "json_object" },
-        timeout: 180000 // 3 minute timeout to handle large requests
+        response_format: { type: "json_object" }
       });
+      
+      // Race the API request against the timeout
+      completion = await Promise.race([apiRequestPromise, timeoutPromise]) as any;
       
       const duration = Date.now() - startTime;
       console.log(`[MetricsAnalysis] OpenAI API request completed in ${duration}ms`);
@@ -416,16 +424,35 @@ FORMAT YOUR RESPONSE AS JSON:
 
     console.log(`[MetricsAnalysis] Generating new recommendation for ${labId ? 'lab ' + labId : 'analysis'}`);
 
-    // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: "You are an experiment advisor evaluating lab metrics to generate recommendations." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.3,
-      response_format: { type: "json_object" }
-    });
+    // Call OpenAI API with timeout handling
+    let completion;
+    const startTime = Date.now();
+    try {
+      // Create a promise that will reject after 2 minutes (recommendation is less complex, so shorter timeout)
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("OpenAI API request timed out after 2 minutes")), 120000);
+      });
+      
+      // Create the OpenAI API request
+      const apiRequestPromise = openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: "You are an experiment advisor evaluating lab metrics to generate recommendations." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.3,
+        response_format: { type: "json_object" }
+      });
+      
+      // Race the API request against the timeout
+      completion = await Promise.race([apiRequestPromise, timeoutPromise]) as any;
+      
+      const duration = Date.now() - startTime;
+      console.log(`[MetricsAnalysis] OpenAI recommendation completed in ${duration}ms`);
+    } catch (apiError) {
+      console.error("[MetricsAnalysis] Error generating recommendation:", apiError);
+      throw apiError; // Re-throw to be caught by the outer catch block
+    }
     
     // Parse and validate the LLM response
     const responseText = completion.choices[0].message.content;
