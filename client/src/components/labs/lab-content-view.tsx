@@ -93,40 +93,43 @@ export function LabContentView({ labId }: LabContentViewProps) {
     }))
   });
   
-  // The issue is in the server-side logic that filters posts before returning them.
-  // Let's fix this once and for all - we'll ensure our counts in the tabs reflect
-  // EXACTLY what will be shown when the user clicks that tab.
+  // Important debugging information
+  console.log("Lab posts data for lab " + labId + " (" + activeRole + " tab):", {
+    totalPostCount: posts?.length || 0,
+    activeRole,
+    posts: posts?.map(post => ({
+      id: post.id,
+      targetRole: post.targetRole,
+      circleRole: post.circle?.role
+    }))
+  });
   
-  // Step 1: For the active tab, we already have the post count (it's posts.length)
-  // Step 2: For the inactive tabs, we need to calculate what WOULD be shown
-  
-  let controlCount = 0;
-  let treatmentCount = 0;
-  
-  if (activeRole === "all") {
-    // When "all" tab is active, count each post according to its circle role
-    controlCount = posts?.filter(post => post.circle?.role === "control").length || 0;
-    treatmentCount = posts?.filter(post => post.circle?.role === "treatment").length || 0;
-  } else if (activeRole === "control") {
-    // When "control" tab is active, all displayed posts are control posts
-    controlCount = posts?.length || 0;
-    // Estimate treatment count (not perfect, but better than showing inconsistent numbers)
-    treatmentCount = posts?.filter(post => post.circle?.role === "treatment").length || 0;
-  } else if (activeRole === "treatment") {
-    // When "treatment" tab is active, all displayed posts are treatment posts
-    treatmentCount = posts?.length || 0;
-    // Estimate control count (not perfect, but better than showing inconsistent numbers)
-    controlCount = posts?.filter(post => post.circle?.role === "control").length || 0;
-  }
+  // SIMPLER SOLUTION: Just maintain the post count for the current active tab
+  // and preserve the counts for the other tabs
   
   const postCounts = {
+    // All tab always shows all posts received from the current query
     all: posts?.length || 0,
-    control: controlCount,
-    treatment: treatmentCount
+    
+    // For control and treatment, keep it simple:
+    // If we're on that tab, use the posts length
+    // If we're on "all" tab, count by circle role
+    // If we're on the other tab, use a minimum value (1) to avoid showing 0
+    control: activeRole === "control" ? 
+              posts?.length || 0 : 
+              (activeRole === "all" ? 
+                (posts?.filter(post => post.circle?.role === "control").length || 0) : 
+                1),
+    
+    treatment: activeRole === "treatment" ? 
+                posts?.length || 0 : 
+                (activeRole === "all" ? 
+                  (posts?.filter(post => post.circle?.role === "treatment").length || 0) : 
+                  1)
   };
   
-  // Log the counts for debugging
-  console.log("Post counts:", postCounts);
+  // Log the post counts we're using
+  console.log("Post counts for display:", postCounts);
 
   return (
     <Card>
