@@ -65,6 +65,8 @@ export function FollowerNftMint({ follower }: FollowerNftMintProps) {
     }
   };
 
+
+  
   const handleMint = async () => {
     if (!ownerAddress || !ownerAddress.startsWith('0x')) {
       toast({
