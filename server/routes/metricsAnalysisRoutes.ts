@@ -326,13 +326,36 @@ FORMAT YOUR RESPONSE AS JSON:
     }
 
     // Parse and validate the LLM response
+    console.log(`[MetricsAnalysis] Processing OpenAI response at ${new Date().toISOString()}`);
+    
+    // Debug log the full response structure
+    console.log(`[MetricsAnalysis] OpenAI response structure:`, JSON.stringify({
+      id: completion.id,
+      model: completion.model,
+      object: completion.object,
+      usage: completion.usage,
+      choicesCount: completion.choices?.length
+    }));
+    
+    // Check for valid response structure
+    if (!completion.choices || !Array.isArray(completion.choices) || completion.choices.length === 0) {
+      console.error(`[MetricsAnalysis] Invalid response structure - missing choices array:`, completion);
+      throw new Error("Invalid response structure from OpenAI API");
+    }
+    
     const responseText = completion.choices[0].message.content;
+    console.log(`[MetricsAnalysis] Raw response content length: ${responseText?.length || 0} characters`);
+    
     if (!responseText) {
+      console.error(`[MetricsAnalysis] Empty response content from OpenAI API`);
       throw new Error("Empty response from LLM");
     }
 
     try {
+      console.log(`[MetricsAnalysis] Attempting to parse JSON response at ${new Date().toISOString()}`);
       const analysis = JSON.parse(responseText) as MetricAnalysisResponse;
+      console.log(`[MetricsAnalysis] Successfully parsed JSON response`);
+    
 
       // Ensure confidence is within 0-100 range
       analysis.confidence = Math.max(0, Math.min(100, analysis.confidence));
@@ -505,22 +528,35 @@ FORMAT YOUR RESPONSE AS JSON:
       `[MetricsAnalysis] Generating new recommendation for ${labId ? "lab " + labId : "analysis"}`,
     );
 
+    // Enhanced logging for debugging
+    console.log(`[MetricsAnalysis] DEBUG RECOMMENDATION - Starting preparation for API call`);
+    console.log(`[MetricsAnalysis] Lab ID: ${labId || 'unknown'}`);
+    console.log(`[MetricsAnalysis] Metrics count: ${metrics.length}`);
+    console.log(`[MetricsAnalysis] Lab status: ${labStatus || 'unknown'}`);
+    
+    // Estimate prompt size
+    const promptSize = prompt.length;
+    const estimatedTokens = Math.ceil(promptSize / 4); // Rough estimate: ~4 chars per token
+    console.log(`[MetricsAnalysis] Recommendation prompt size: ${promptSize} characters, ~${estimatedTokens} tokens`);
+    
     // Call OpenAI API with timeout handling
     let completion;
     const startTime = Date.now();
     try {
+      console.log(`[MetricsAnalysis] Sending recommendation request to OpenAI API at ${new Date().toISOString()}`);
+      
       // Create a promise that will reject after 2 minutes (recommendation is less complex, so shorter timeout)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(
-          () =>
-            reject(new Error("OpenAI API request timed out after 2 minutes")),
-          120000,
-        );
+        setTimeout(() => {
+          console.log(`[MetricsAnalysis] RECOMMENDATION TIMEOUT TRIGGERED after 2 minutes at ${new Date().toISOString()}`);
+          reject(new Error("OpenAI API recommendation request timed out after 2 minutes"));
+        }, 120000);
       });
 
       // Create the OpenAI API request
+      console.log(`[MetricsAnalysis] Creating recommendation OpenAI API request at ${new Date().toISOString()}`);
       const apiRequestPromise = openai.chat.completions.create({
-        model: "gpt-4.1-mini-2025-04-14",
+        model: "gpt-4o", // Using gpt-4o for recommendations as it's more than sufficient
         messages: [
           {
             role: "system",
@@ -532,12 +568,17 @@ FORMAT YOUR RESPONSE AS JSON:
         temperature: 0.3,
         response_format: { type: "json_object" },
       });
+      
+      console.log(`[MetricsAnalysis] Recommendation API request created, waiting for Promise.race to resolve at ${new Date().toISOString()}`);
 
       // Race the API request against the timeout
       completion = (await Promise.race([
         apiRequestPromise,
         timeoutPromise,
       ])) as any;
+      
+      console.log(`[MetricsAnalysis] Recommendation Promise.race resolved successfully at ${new Date().toISOString()}`);
+    
 
       const duration = Date.now() - startTime;
       console.log(
@@ -552,13 +593,35 @@ FORMAT YOUR RESPONSE AS JSON:
     }
 
     // Parse and validate the LLM response
+    console.log(`[MetricsAnalysis] Processing recommendation OpenAI response at ${new Date().toISOString()}`);
+    
+    // Debug log the full response structure
+    console.log(`[MetricsAnalysis] Recommendation OpenAI response structure:`, JSON.stringify({
+      id: completion.id,
+      model: completion.model,
+      object: completion.object,
+      usage: completion.usage,
+      choicesCount: completion.choices?.length
+    }));
+    
+    // Check for valid response structure
+    if (!completion.choices || !Array.isArray(completion.choices) || completion.choices.length === 0) {
+      console.error(`[MetricsAnalysis] Invalid recommendation response structure - missing choices array:`, completion);
+      throw new Error("Invalid response structure from OpenAI API");
+    }
+    
     const responseText = completion.choices[0].message.content;
+    console.log(`[MetricsAnalysis] Raw recommendation response content length: ${responseText?.length || 0} characters`);
+    
     if (!responseText) {
+      console.error(`[MetricsAnalysis] Empty recommendation response content from OpenAI API`);
       throw new Error("Empty response from LLM");
     }
 
     try {
+      console.log(`[MetricsAnalysis] Attempting to parse recommendation JSON response at ${new Date().toISOString()}`);
       const recommendation = JSON.parse(responseText);
+      console.log(`[MetricsAnalysis] Successfully parsed recommendation JSON response`);
 
       // Ensure confidence is within the specified range
       recommendation.confidence = Math.max(
