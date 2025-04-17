@@ -81,11 +81,23 @@ export function LabContentView({ labId }: LabContentViewProps) {
     enabled: !!labId,
   });
 
-  // Count posts by target role
+  // Count posts by both target role and circle role 
   const postCounts = {
+    // For "all" tab, count all posts
     all: posts?.length || 0,
-    control: posts?.filter(post => post.targetRole === "control").length || 0,
-    treatment: posts?.filter(post => post.targetRole === "treatment").length || 0
+    
+    // For role-specific tabs, count posts either when:
+    // 1. The post's targetRole explicitly matches that role, or
+    // 2. The post belongs to a circle with that role
+    control: posts?.filter(post => 
+      post.targetRole === "control" || 
+      (post.circle && post.circle.role === "control")
+    ).length || 0,
+    
+    treatment: posts?.filter(post => 
+      post.targetRole === "treatment" || 
+      (post.circle && post.circle.role === "treatment")
+    ).length || 0
   };
 
   return (
