@@ -24,32 +24,22 @@ export function setWebSocketAuthToken(token: string | null) {
 }
 
 function getWebSocketUrl(): string {
-  // Check if we're running in a Replit environment
-  const isReplit = window.location.hostname.includes('replit');
-  
-  // For Replit, force WS protocol and use a direct connection to solve proxy issues
-  if (isReplit) {
-    // Force non-secure WebSocket in development
-    const hostname = window.location.hostname;
+  try {
+    // Use the relative URL approach to bypass potential proxy issues
+    // This is the most compatible approach across all environments
+    // The server will handle the path regardless of the protocol
+    const wsUrl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + 
+                  '//' + window.location.host + '/ws';
     
-    // Use the Replit hostname but with ws:// protocol
-    const wsUrl = `ws://${hostname}/ws`;
-    
-    console.log('Using Replit-specific WebSocket URL:', wsUrl);
+    console.log('Using WebSocket URL:', wsUrl);
     return wsUrl;
+  } catch (error) {
+    // Fallback URL if anything goes wrong
+    console.error('Error constructing WebSocket URL:', error);
+    const fallbackUrl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + 
+                        '//' + window.location.host + '/ws';
+    return fallbackUrl;
   }
-  
-  // For non-Replit environments, use standard protocol matching
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const hostname = window.location.hostname;
-  const wsUrl = `${protocol}//${hostname}/ws`;
-  
-  console.log('Constructing WebSocket URL:', {
-    protocol,
-    hostname,
-    finalUrl: wsUrl
-  });
-  return wsUrl;
 }
 
 export function createWebSocket(): WebSocket | null {
@@ -65,11 +55,27 @@ export function createWebSocket(): WebSocket | null {
   }
 
   try {
-    const socket = new WebSocket(getWebSocketUrl());
-    console.log('Creating new WebSocket connection');
+    // Get the WebSocket URL
+    const wsUrl = getWebSocketUrl();
+    
+    // Setting additional timeout for the connection
+    const timeoutId = setTimeout(() => {
+      // If socket exists but hasn't connected yet, close it
+      if (ws && ws.readyState === WebSocket.CONNECTING) {
+        console.log('WebSocket connection timeout, closing');
+        ws.close();
+        // Clear the state and dispatch event
+        clearWebSocketState();
+        window.dispatchEvent(new CustomEvent('websocket-connection-failed'));
+      }
+    }, 10000); // 10 second timeout
+    
+    const socket = new WebSocket(wsUrl);
+    console.log('Creating new WebSocket connection to', wsUrl);
 
     socket.onopen = () => {
       console.log('WebSocket connection established');
+      clearTimeout(timeoutId); // Clear the timeout
       reconnectAttempts = 0;
 
       // Set up ping to keep connection alive

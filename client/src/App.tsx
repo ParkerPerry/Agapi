@@ -112,7 +112,7 @@ function MainApp() {
       toast({
         title: "Real-time updates unavailable",
         description: "Some features like instant notifications may not work. The app will still function normally.",
-        variant: "warning",
+        variant: "destructive",
         duration: 5000
       });
     }
