@@ -83,6 +83,20 @@ router.post('/analyze-metric', requireAuth, async (req, res) => {
     if (!controlCircles || !treatmentCircles) {
       return res.status(400).json({ error: "Missing circle data" });
     }
+    
+    // Enhanced logging for large datasets
+    const totalPosts = [...controlCircles, ...treatmentCircles].reduce(
+      (count, circle) => count + (circle.posts?.length || 0), 
+      0
+    );
+    
+    console.log(`[MetricsAnalysis] Analyzing metric "${metric.name}" for lab ${labId || 'unknown'}`);
+    console.log(`[MetricsAnalysis] Dataset size: ${totalPosts} posts across ${controlCircles.length + treatmentCircles.length} circles`);
+    
+    // Warn if dataset is unusually large
+    if (totalPosts > 500) {
+      console.warn(`[MetricsAnalysis] Large dataset detected: ${totalPosts} posts`);
+    }
 
     // If labId and metricIndex are provided and forceRefresh is false, check for cached results
     if (labId && metricIndex !== undefined && !forceRefresh) {
@@ -128,17 +142,16 @@ router.post('/analyze-metric', requireAuth, async (req, res) => {
       return `Circle ${c.id} (${c.name}): ${c.posts.length} posts`;
     }).join('\n') : 'None';
 
-    // Create a concise representation of posts for each circle type
+    // Create a comprehensive representation of posts for each circle type
+    // No longer restricting to 10 posts since we're using gpt-4.1-2025-04-14 with 1M token context
     const controlPostsSample = controlCircles
       .flatMap(c => c.posts.map(p => ({ circleId: c.id, circleName: c.name, ...p })))
-      .slice(0, 10) // Limit to first 10 posts to avoid token limits
-      .map(p => `[Circle ${p.circleId}] ${p.content.substring(0, 200)}${p.content.length > 200 ? '...' : ''}`)
+      .map(p => `[Circle ${p.circleId}] ${p.content.substring(0, 500)}${p.content.length > 500 ? '...' : ''}`)
       .join('\n\n');
     
     const treatmentPostsSample = treatmentCircles
       .flatMap(c => c.posts.map(p => ({ circleId: c.id, circleName: c.name, ...p })))
-      .slice(0, 10)
-      .map(p => `[Circle ${p.circleId}] ${p.content.substring(0, 200)}${p.content.length > 200 ? '...' : ''}`)
+      .map(p => `[Circle ${p.circleId}] ${p.content.substring(0, 500)}${p.content.length > 500 ? '...' : ''}`)
       .join('\n\n');
     
     // Construct prompt for LLM
@@ -192,16 +205,45 @@ FORMAT YOUR RESPONSE AS JSON:
 }
 `;
 
-    // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: "You are a lab metrics analyst evaluating social media experiment data." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.4,
-      response_format: { type: "json_object" }
-    });
+    // Call OpenAI API with gpt-4.1-2025-04-14 for larger context window (1M tokens)
+    let completion;
+    const startTime = Date.now();
+    try {
+      console.log(`[MetricsAnalysis] Sending request to OpenAI API with model gpt-4.1-2025-04-14`);
+      
+      completion = await openai.chat.completions.create({
+        model: "gpt-4.1-2025-04-14",
+        messages: [
+          { role: "system", content: "You are a lab metrics analyst evaluating social media experiment data." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.4,
+        response_format: { type: "json_object" },
+        timeout: 180000 // 3 minute timeout to handle large requests
+      });
+      
+      const duration = Date.now() - startTime;
+      console.log(`[MetricsAnalysis] OpenAI API request completed in ${duration}ms`);
+    } catch (apiError: any) {
+      console.error(`[MetricsAnalysis] OpenAI API error:`, apiError);
+      
+      const duration = Date.now() - startTime;
+      
+      // Handle specific error types
+      if (apiError.message?.includes('timeout') || duration > 175000) {
+        console.error(`[MetricsAnalysis] Request likely timed out with large dataset (${totalPosts} posts)`);
+        return res.status(500).json({ 
+          error: "Analysis timed out",
+          message: "The dataset is too large to analyze. Try reducing the number of posts or circles."
+        });
+      }
+      
+      // For other API errors
+      return res.status(500).json({ 
+        error: "OpenAI API error",
+        message: apiError.message || "Failed to communicate with OpenAI API"
+      });
+    }
     
     // Parse and validate the LLM response
     const responseText = completion.choices[0].message.content;
