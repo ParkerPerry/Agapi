@@ -60,7 +60,16 @@ interface MetricAnalysisResponse {
  * POST /api/analyze-metric - Analyze a metric against lab data
  */
 router.post("/analyze-metric", requireAuth, async (req, res) => {
+  // Log the beginning of the endpoint execution
+  console.log(`[MetricsAnalysis] ==== START METRICS ANALYSIS REQUEST at ${new Date().toISOString()} ====`);
+  
   try {
+    console.log(`[MetricsAnalysis] Request body received, processing...`);
+    
+    // Log the raw request body size for debugging
+    const requestBodySize = JSON.stringify(req.body).length;
+    console.log(`[MetricsAnalysis] Request body size: ${requestBodySize} bytes`);
+    
     const {
       metric,
       labGoals,
@@ -75,6 +84,48 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
       metricIndex?: number;
       forceRefresh?: boolean;
     };
+    
+    // More detailed initial validation
+    console.log(`[MetricsAnalysis] Request parsing complete, validating data...`);
+    console.log(`[MetricsAnalysis] Lab ID: ${labId || 'unknown'}, Metric Index: ${metricIndex || 'N/A'}`);
+    console.log(`[MetricsAnalysis] Force refresh: ${forceRefresh}`);
+    
+    // Special debug handling for lab 205
+    if (labId === 205) {
+      console.log(`[MetricsAnalysis] LAB 205 DETECTED - Preparing detailed debug info`);
+      
+      // Calculate content size for diagnosis
+      const controlContentSize = controlCircles?.reduce((total, circle) => 
+        total + circle.posts.reduce((postTotal, post) => postTotal + (post.content?.length || 0), 0), 0) || 0;
+      
+      const treatmentContentSize = treatmentCircles?.reduce((total, circle) => 
+        total + circle.posts.reduce((postTotal, post) => postTotal + (post.content?.length || 0), 0), 0) || 0;
+      
+      // Send back detailed diagnostics instead of performing analysis
+      return res.status(200).json({
+        error: "Diagnostic information for lab 205",
+        diagnostics: {
+          requestBodySize,
+          metricName: metric?.name,
+          labId,
+          controlCirclesCount: controlCircles?.length,
+          treatmentCirclesCount: treatmentCircles?.length,
+          controlPostsCount: controlCircles?.reduce((total, c) => total + c.posts.length, 0),
+          treatmentPostsCount: treatmentCircles?.reduce((total, c) => total + c.posts.length, 0),
+          controlContentSize,
+          treatmentContentSize,
+          totalContentSize: controlContentSize + treatmentContentSize,
+          timestamp: new Date().toISOString()
+        },
+        message: "This is a diagnostic response for lab 205 to debug the issue"
+      });
+    }
+    
+    if (!metric) {
+      console.error(`[MetricsAnalysis] Missing metric data`);
+    } else {
+      console.log(`[MetricsAnalysis] Metric name: ${metric.name || 'undefined'}`);
+    }
 
     if (!metric || !metric.name || metric.target === undefined) {
       return res.status(400).json({ error: "Invalid metric data" });

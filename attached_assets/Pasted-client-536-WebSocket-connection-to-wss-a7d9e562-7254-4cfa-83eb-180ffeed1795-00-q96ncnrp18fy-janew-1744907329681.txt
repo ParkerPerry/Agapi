@@ -1,0 +1,1167 @@
+client:536 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev/?token=k3DWJRchfd5Q' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=k3DWJRchfd5Q' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+/?circle=19:1 Error in event handler: TypeError: Cannot read properties of null (reading 'tagName')
+    at Readability._grabArticle (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/js/plugins/readability.js:1140:37)
+    at Readability.parse (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/js/plugins/readability.js:2248:31)
+    at Object.original_article (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:94:61)
+    at Object.article (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:148:44)
+    at Object.article (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:198:23)
+    at Object.init (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:570:19)
+    at chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:514:23
+websocket.ts:160 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+overrideMethod @ hook.js:608
+socket.onerror @ websocket.ts:160
+hook.js:608 Warning: Encountered two children with the same key, `26`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14290
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+onSubscribe @ @tanstack_react-query.js?v=8b0859b7:1898
+subscribe @ @tanstack_react-query.js?v=8b0859b7:24
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=8b0859b7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14290
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+onSubscribe @ @tanstack_react-query.js?v=8b0859b7:1898
+subscribe @ @tanstack_react-query.js?v=8b0859b7:24
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=8b0859b7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14290
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+onSubscribe @ @tanstack_react-query.js?v=8b0859b7:1898
+subscribe @ @tanstack_react-query.js?v=8b0859b7:24
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=8b0859b7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14290
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+onSubscribe @ @tanstack_react-query.js?v=8b0859b7:1898
+subscribe @ @tanstack_react-query.js?v=8b0859b7:24
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=8b0859b7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14290
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+onSubscribe @ @tanstack_react-query.js?v=8b0859b7:1898
+subscribe @ @tanstack_react-query.js?v=8b0859b7:24
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=8b0859b7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14290
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+onSubscribe @ @tanstack_react-query.js?v=8b0859b7:1898
+subscribe @ @tanstack_react-query.js?v=8b0859b7:24
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=8b0859b7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14290
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+onSubscribe @ @tanstack_react-query.js?v=8b0859b7:1898
+subscribe @ @tanstack_react-query.js?v=8b0859b7:24
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=8b0859b7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `26`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14292
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+setOptions @ @tanstack_react-query.js?v=8b0859b7:1955
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3032
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14292
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+setOptions @ @tanstack_react-query.js?v=8b0859b7:1955
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3032
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14292
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+setOptions @ @tanstack_react-query.js?v=8b0859b7:1955
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3032
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14292
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+setOptions @ @tanstack_react-query.js?v=8b0859b7:1955
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3032
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14292
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+setOptions @ @tanstack_react-query.js?v=8b0859b7:1955
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3032
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14292
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+setOptions @ @tanstack_react-query.js?v=8b0859b7:1955
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3032
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+hook.js:608 Warning: Encountered two children with the same key, `27`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:114:13
+    at div (<anonymous>)
+    at chunk-CPFL7ZFD.js?v=8b0859b7:41:13
+    at Provider (chunk-JJS7DLG7.js?v=8b0859b7:38:15)
+    at @radix-ui_react-scroll-area.js?v=8b0859b7:52:7
+    at _c (scroll-area.tsx:9:6)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at CirclePanel (circle-panel.tsx:30:31)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at HomePage (home-page.tsx:13:20)
+    at Route (wouter.js?v=8b0859b7:191:16)
+    at ProtectedRoute (protected-route.tsx:6:3)
+    at Switch (wouter.js?v=8b0859b7:247:17)
+    at Router (<anonymous>)
+    at MainApp (App.tsx:38:27)
+    at TourProvider (tour-context.tsx:14:32)
+    at AuthProvider (use-auth.tsx:25:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=8b0859b7:2805:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-RPCDYKBN.js?v=8b0859b7:521
+error @ chunk-RPCDYKBN.js?v=8b0859b7:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=8b0859b7:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=8b0859b7:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=8b0859b7:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=8b0859b7:14292
+updateFragment @ chunk-RPCDYKBN.js?v=8b0859b7:14522
+beginWork @ chunk-RPCDYKBN.js?v=8b0859b7:15949
+beginWork$1 @ chunk-RPCDYKBN.js?v=8b0859b7:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=8b0859b7:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=8b0859b7:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=8b0859b7:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+setOptions @ @tanstack_react-query.js?v=8b0859b7:1955
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3032
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+205:1 Error in event handler: TypeError: Cannot read properties of null (reading 'tagName')
+    at Readability._grabArticle (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/js/plugins/readability.js:1140:37)
+    at Readability.parse (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/js/plugins/readability.js:2248:31)
+    at Object.original_article (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:94:61)
+    at Object.article (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:148:44)
+    at Object.article (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:198:23)
+    at Object.init (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:570:19)
+    at chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:514:23
+queryClient.ts:15 
+            
+            
+           GET https://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev/api/lab-analysis/205 404 (Not Found)
+apiRequest @ queryClient.ts:15
+getLabAnalysisResults @ metricsApi.ts:126
+checkCachedResults @ lab-results-analyzer.tsx:85
+checkInitialCache @ lab-results-analyzer.tsx:127
+(anonymous) @ lab-results-analyzer.tsx:141
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19416
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+metricsApi.ts:133 Error getting cached lab analysis results: Error: Request failed: 404 Not Found
+    at apiRequest (queryClient.ts:26:13)
+    at async getLabAnalysisResults (metricsApi.ts:126:22)
+    at async checkCachedResults (lab-results-analyzer.tsx:85:29)
+    at async checkInitialCache (lab-results-analyzer.tsx:127:30)
+overrideMethod @ hook.js:608
+getLabAnalysisResults @ metricsApi.ts:133
+await in getLabAnalysisResults
+checkCachedResults @ lab-results-analyzer.tsx:85
+checkInitialCache @ lab-results-analyzer.tsx:127
+(anonymous) @ lab-results-analyzer.tsx:141
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19416
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
