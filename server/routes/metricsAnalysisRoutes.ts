@@ -63,12 +63,23 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
   // Log the beginning of the endpoint execution
   console.log(`[MetricsAnalysis] ==== START METRICS ANALYSIS REQUEST at ${new Date().toISOString()} ====`);
   
+  // Add basic error logging to catch any issues
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection in metrics analysis route:', reason);
+  });
+  
+  // Add more direct console logging
+  console.log(`ENDPOINT HIT: /api/analyze-metric`);
+  
   try {
     console.log(`[MetricsAnalysis] Request body received, processing...`);
     
     // Log the raw request body size for debugging
     const requestBodySize = JSON.stringify(req.body).length;
     console.log(`[MetricsAnalysis] Request body size: ${requestBodySize} bytes`);
+    
+    // Immediate log to stdout for debugging
+    process.stdout.write(`Analyze-metric endpoint hit with request size: ${requestBodySize} bytes\n`);
     
     const {
       metric,
