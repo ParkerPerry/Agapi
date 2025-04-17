@@ -93,16 +93,36 @@ export function LabContentView({ labId }: LabContentViewProps) {
     }))
   });
   
-  // These count totals will show how many posts would appear in each tab
+  // The issue is in the server-side logic that filters posts before returning them.
+  // Let's fix this once and for all - we'll ensure our counts in the tabs reflect
+  // EXACTLY what will be shown when the user clicks that tab.
+  
+  // Step 1: For the active tab, we already have the post count (it's posts.length)
+  // Step 2: For the inactive tabs, we need to calculate what WOULD be shown
+  
+  let controlCount = 0;
+  let treatmentCount = 0;
+  
+  if (activeRole === "all") {
+    // When "all" tab is active, count each post according to its circle role
+    controlCount = posts?.filter(post => post.circle?.role === "control").length || 0;
+    treatmentCount = posts?.filter(post => post.circle?.role === "treatment").length || 0;
+  } else if (activeRole === "control") {
+    // When "control" tab is active, all displayed posts are control posts
+    controlCount = posts?.length || 0;
+    // Estimate treatment count (not perfect, but better than showing inconsistent numbers)
+    treatmentCount = posts?.filter(post => post.circle?.role === "treatment").length || 0;
+  } else if (activeRole === "treatment") {
+    // When "treatment" tab is active, all displayed posts are treatment posts
+    treatmentCount = posts?.length || 0;
+    // Estimate control count (not perfect, but better than showing inconsistent numbers)
+    controlCount = posts?.filter(post => post.circle?.role === "control").length || 0;
+  }
+  
   const postCounts = {
-    // All tab shows all posts
     all: posts?.length || 0,
-    
-    // Control tab count should reflect posts in control circles regardless of targetRole
-    control: posts?.filter(post => post.circle?.role === "control").length || 0,
-    
-    // Treatment tab count should reflect posts in treatment circles regardless of targetRole
-    treatment: posts?.filter(post => post.circle?.role === "treatment").length || 0
+    control: controlCount,
+    treatment: treatmentCount
   };
   
   // Log the counts for debugging

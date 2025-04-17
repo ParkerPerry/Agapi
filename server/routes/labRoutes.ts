@@ -376,8 +376,19 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
       return dateB - dateA;
     });
     
-    // We've already filtered at the circle level by role on line 332
-    // The client expects tab counts to be consistent, so we won't further filter by post.targetRole
+    // Add detailed debug logging for Lab 5 to trace the issue
+    if (labId === 5) {
+      console.log(`[DEBUG] Lab 5 posts request with targetRole=${targetRole || 'all'}`);
+      console.log(`[DEBUG] Found ${labCircles.length} lab circles in Lab 5`);
+      console.log(`[DEBUG] Found ${allPosts.length} total posts in Lab 5`);
+      
+      // Count posts by circle role to check counts
+      const controlCirclePosts = allPosts.filter(post => post.circle && post.circle.role === 'control').length;
+      const treatmentCirclePosts = allPosts.filter(post => post.circle && post.circle.role === 'treatment').length;
+      
+      console.log(`[DEBUG] Lab 5 posts by circle role: control=${controlCirclePosts}, treatment=${treatmentCirclePosts}`);
+    }
+    
     res.json(allPosts);
   } catch (error) {
     console.error("Error getting lab posts:", error);
