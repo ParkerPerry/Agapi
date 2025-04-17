@@ -32,9 +32,16 @@ export function initializeWebSocketServer(server: Server, app: Express) {
   server.on('upgrade', (request, socket, head) => {
     console.log('[WebSocket] Received upgrade request for path:', request.url);
     
+    // Parse the URL to handle just the path portion, ignoring query params
+    const requestUrl = new URL(
+      request.url || '', 
+      `http://${request.headers.host}`
+    );
+    
     // Only handle WebSocket upgrade requests for /ws path
-    if (request.url?.startsWith('/ws')) {
+    if (requestUrl.pathname === '/ws') {
       try {
+        console.log('[WebSocket] Processing WebSocket upgrade for /ws path');
         wss.handleUpgrade(request, socket, head, (ws) => {
           console.log('[WebSocket] Upgrade successful, emitting connection event');
           wss.emit('connection', ws, request);
@@ -45,6 +52,7 @@ export function initializeWebSocketServer(server: Server, app: Express) {
       }
     } else {
       // Not a WebSocket upgrade request for our path
+      console.log('[WebSocket] Ignoring non-WebSocket path:', requestUrl.pathname);
       socket.destroy();
     }
   });

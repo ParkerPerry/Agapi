@@ -24,19 +24,29 @@ export function setWebSocketAuthToken(token: string | null) {
 }
 
 function getWebSocketUrl(): string {
-  // Determine protocol based on page protocol
+  // Check if we're running in a Replit environment
+  const isReplit = window.location.hostname.includes('replit');
+  
+  // For Replit, force WS protocol and use a direct connection to solve proxy issues
+  if (isReplit) {
+    // Force non-secure WebSocket in development
+    const hostname = window.location.hostname;
+    
+    // Use the Replit hostname but with ws:// protocol
+    const wsUrl = `ws://${hostname}/ws`;
+    
+    console.log('Using Replit-specific WebSocket URL:', wsUrl);
+    return wsUrl;
+  }
+  
+  // For non-Replit environments, use standard protocol matching
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const hostname = window.location.hostname;
-  const port = window.location.port ? `:${window.location.port}` : '';
-  
-  // Create WebSocket URL with proper encoding
-  // Make sure it has both hostname and ws path
-  let wsUrl = `${protocol}//${hostname}${port}/ws`;
+  const wsUrl = `${protocol}//${hostname}/ws`;
   
   console.log('Constructing WebSocket URL:', {
     protocol,
     hostname,
-    port,
     finalUrl: wsUrl
   });
   return wsUrl;
@@ -134,6 +144,9 @@ export function createWebSocket(): WebSocket | null {
       } else {
         console.log('Maximum reconnection attempts reached');
         clearWebSocketState();
+        
+        // Dispatch a custom event to notify the app about the connection failure
+        window.dispatchEvent(new CustomEvent('websocket-connection-failed'));
       }
     };
 
