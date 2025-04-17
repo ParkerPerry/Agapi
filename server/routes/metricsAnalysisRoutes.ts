@@ -500,7 +500,7 @@ FORMAT YOUR RESPONSE AS JSON:
 /**
  * GET /api/lab-analysis/:labId - Get cached lab analysis results
  */
-router.get("/lab-analysis/:labId", async (req, res) => {
+router.get("/lab-analysis/:labId", requireAuth, async (req, res) => {
   try {
     const labId = parseInt(req.params.labId);
 
