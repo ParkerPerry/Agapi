@@ -1,10 +1,13 @@
 import { Router } from "express";
 import { requireAuth } from "./middleware";
-import OpenAI from "openai";
 import { storage } from "../storage";
+import OpenAI from "openai";
+import { openai } from "../openai";
 
 const router = Router();
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// Log that we're using the imported OpenAI instance
+console.log("[MetricsAnalysis] Using imported OpenAI instance");
 
 /**
  * Interface for metric analysis request

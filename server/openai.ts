@@ -5,6 +5,9 @@ import { AiFollower } from "@shared/schema";
 // OpenAI configuration remains unchanged
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Export the openai instance so it can be reused across modules
+export { openai };
+
 interface AIResponse {
   type: "like" | "comment" | "reply";
   content?: string;
