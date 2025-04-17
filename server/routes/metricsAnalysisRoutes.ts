@@ -243,7 +243,7 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
       : "None";
 
     // Create a comprehensive representation of posts for each circle type
-    // No longer restricting to 10 posts since we're using gpt-4.1-2025-04-14 with 1M token context
+    // No longer restricting to a small number of posts since we're using gpt-4o with large context window
     const controlPostsSample = controlCircles
       .flatMap((c) =>
         c.posts.map((p) => ({ circleId: c.id, circleName: c.name, ...p })),
@@ -315,7 +315,7 @@ FORMAT YOUR RESPONSE AS JSON:
 }
 `;
 
-    // Call OpenAI API with gpt-4.1-2025-04-14 for larger context window (1M tokens)
+    // Call OpenAI API with gpt-4o for larger context window
     let completion;
     const startTime = Date.now();
     
@@ -351,10 +351,18 @@ FORMAT YOUR RESPONSE AS JSON:
         }, 180000);
       });
 
-      // Create the OpenAI API request
+      // Create the OpenAI API request with detailed debugging
       console.log(`[MetricsAnalysis] Creating OpenAI API request at ${new Date().toISOString()}`);
+      console.log(`[MetricsAnalysis] REQUEST DEBUG - OPENAI_API_KEY defined: ${Boolean(process.env.OPENAI_API_KEY)}`);
+      console.log(`[MetricsAnalysis] REQUEST DEBUG - Model: gpt-4.1-2025-04-14`);
+      console.log(`[MetricsAnalysis] REQUEST DEBUG - Message count: 2`);
+      console.log(`[MetricsAnalysis] REQUEST DEBUG - Prompt size: ~${estimatedTokens} tokens`);
+      
+      // Try with console.time for precise timing
+      console.time('[MetricsAnalysis] OpenAI API call duration');
+      
       const apiRequestPromise = openai.chat.completions.create({
-        model: "gpt-4.1-2025-04-14",
+        model: "gpt-4.1-2025-04-14", // Using gpt-4.1-2025-04-14 with 1M token context for complex metrics analysis
         messages: [
           {
             role: "system",
@@ -637,7 +645,7 @@ FORMAT YOUR RESPONSE AS JSON:
       // Create the OpenAI API request
       console.log(`[MetricsAnalysis] Creating recommendation OpenAI API request at ${new Date().toISOString()}`);
       const apiRequestPromise = openai.chat.completions.create({
-        model: "gpt-4o", // Using gpt-4o for recommendations as it's more than sufficient
+        model: "gpt-4.1-mini-2025-04-14", // Using mini model for recommendations as it's simpler
         messages: [
           {
             role: "system",
