@@ -376,14 +376,9 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
       return dateB - dateA;
     });
     
-    // Apply filter by targetRole if present in the post data
-    let filteredPosts = allPosts;
-    if (targetRole && targetRole !== "all") {
-      filteredPosts = allPosts.filter(post => 
-        post.targetRole === targetRole || !post.targetRole);
-    }
-    
-    res.json(filteredPosts);
+    // We've already filtered at the circle level by role on line 332
+    // The client expects tab counts to be consistent, so we won't further filter by post.targetRole
+    res.json(allPosts);
   } catch (error) {
     console.error("Error getting lab posts:", error);
     res.status(500).json({ message: "Failed to get lab posts" });

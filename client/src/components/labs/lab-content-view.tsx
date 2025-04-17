@@ -81,24 +81,32 @@ export function LabContentView({ labId }: LabContentViewProps) {
     enabled: !!labId,
   });
 
-  // Count posts by both target role and circle role 
+  // Add debugging so we can see what's happening
+  console.log("Lab posts data for lab " + labId + " (" + activeRole + " tab):", {
+    postCount: posts?.length || 0,
+    posts: posts?.map(post => ({
+      id: post.id,
+      targetRole: post.targetRole,
+      circleId: post.circleId,
+      circleName: post.circle?.name,
+      circleRole: post.circle?.role
+    }))
+  });
+  
+  // These count totals will show how many posts would appear in each tab
   const postCounts = {
-    // For "all" tab, count all posts
+    // All tab shows all posts
     all: posts?.length || 0,
     
-    // For role-specific tabs, count posts either when:
-    // 1. The post's targetRole explicitly matches that role, or
-    // 2. The post belongs to a circle with that role
-    control: posts?.filter(post => 
-      post.targetRole === "control" || 
-      (post.circle && post.circle.role === "control")
-    ).length || 0,
+    // Control tab count should reflect posts in control circles regardless of targetRole
+    control: posts?.filter(post => post.circle?.role === "control").length || 0,
     
-    treatment: posts?.filter(post => 
-      post.targetRole === "treatment" || 
-      (post.circle && post.circle.role === "treatment")
-    ).length || 0
+    // Treatment tab count should reflect posts in treatment circles regardless of targetRole
+    treatment: posts?.filter(post => post.circle?.role === "treatment").length || 0
   };
+  
+  // Log the counts for debugging
+  console.log("Post counts:", postCounts);
 
   return (
     <Card>
