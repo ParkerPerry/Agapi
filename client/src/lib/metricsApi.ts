@@ -179,8 +179,26 @@ export async function analyzeMetricWithCache(
   labId?: number,
   metricIndex?: number,
   forceRefresh: boolean = false
-): Promise<MetricResult & { fromCache?: boolean; updatedAt?: string }> {
+): Promise<MetricResult & { fromCache?: boolean; updatedAt?: string; diagnostics?: any }> {
   try {
+    // Special handling for Lab 205 to debug the issues
+    if (labId === 205) {
+      console.log(`[Lab205Debug] Starting metric analysis request for Lab 205, metrics[${metricIndex}]`);
+      console.time('lab205-metric-analysis');
+      
+      // Log the data size for debugging
+      const controlPostsCount = request.controlCircles.reduce((sum, c) => sum + c.posts.length, 0);
+      const treatmentPostsCount = request.treatmentCircles.reduce((sum, c) => sum + c.posts.length, 0);
+      const observationPostsCount = request.observationCircles ? 
+        request.observationCircles.reduce((sum, c) => sum + c.posts.length, 0) : 0;
+      
+      const totalPosts = controlPostsCount + treatmentPostsCount + observationPostsCount;
+      console.log(`[Lab205Debug] Request size: ${totalPosts} posts`);
+      console.log(`[Lab205Debug] Control circles: ${request.controlCircles.length}, posts: ${controlPostsCount}`);
+      console.log(`[Lab205Debug] Treatment circles: ${request.treatmentCircles.length}, posts: ${treatmentPostsCount}`);
+      console.log(`[Lab205Debug] Observation circles: ${request.observationCircles?.length || 0}, posts: ${observationPostsCount}`);
+    }
+    
     // Create a request with caching parameters
     const requestWithCache = {
       ...request,
@@ -190,7 +208,32 @@ export async function analyzeMetricWithCache(
     };
     
     // Using the correct API endpoint path that matches server routes
+    console.log(`[MetricsAPI] Sending analysis request to API for lab ${labId || 'unknown'}`);
     const result = await apiRequest('/api/analyze-metric', 'POST', requestWithCache);
+    
+    // For Lab 205, log diagnostic information if available
+    if (labId === 205) {
+      console.timeEnd('lab205-metric-analysis');
+      console.log(`[Lab205Debug] Received response for Lab 205:`, result);
+      
+      // If we received diagnostics instead of a regular result
+      if (result.diagnostics) {
+        console.log(`[Lab205Debug] Received diagnostic information:`, result.diagnostics);
+        
+        // Return a simulated result with the diagnostics data for debugging
+        return {
+          name: request.metric.name,
+          target: request.metric.target,
+          priority: request.metric.priority,
+          actual: "Diagnostic Mode",
+          status: "warning",
+          confidence: 0,
+          difference: "N/A",
+          analysis: "Running in diagnostic mode. See console logs for details.",
+          diagnostics: result.diagnostics
+        };
+      }
+    }
     
     // Create base metric result
     const metricResult: MetricResult & { fromCache?: boolean; updatedAt?: string } = {
@@ -216,6 +259,30 @@ export async function analyzeMetricWithCache(
     return metricResult;
   } catch (error) {
     console.error('Error analyzing metric:', error);
+    
+    // For Lab 205, provide detailed error information
+    if (labId === 205) {
+      console.error(`[Lab205Debug] Error analyzing metric for Lab 205:`, error);
+      console.timeEnd('lab205-metric-analysis');
+      
+      // Return a simulated result with error information
+      return {
+        name: request.metric.name,
+        target: request.metric.target,
+        priority: request.metric.priority,
+        actual: "Error",
+        status: "fail",
+        confidence: 0,
+        difference: "N/A",
+        analysis: `Error: ${error.message || 'Unknown error'}`,
+        diagnostics: {
+          error: error.message,
+          stack: error.stack,
+          timestamp: new Date().toISOString()
+        }
+      };
+    }
+    
     throw error;
   }
 }
@@ -242,15 +309,51 @@ export async function generateRecommendationWithCache(
   labStatus: string,
   labId?: number,
   forceRefresh: boolean = false
-): Promise<Recommendation & { fromCache?: boolean; updatedAt?: string }> {
+): Promise<Recommendation & { fromCache?: boolean; updatedAt?: string; diagnostics?: any }> {
   try {
+    // Special handling for Lab 205 to debug the issues
+    if (labId === 205) {
+      console.log(`[Lab205Debug] Starting recommendation request for Lab 205`);
+      console.time('lab205-recommendation');
+      
+      // Log details about metrics being analyzed
+      console.log(`[Lab205Debug] Analyzing ${metrics.length} metrics for recommendation`);
+      console.log(`[Lab205Debug] Metrics summary:`, 
+        metrics.map(m => ({ 
+          name: m.name, 
+          status: m.status, 
+          confidence: m.confidence 
+        }))
+      );
+    }
+    
     // Using the correct API endpoint path that matches server routes
+    console.log(`[MetricsAPI] Sending recommendation request to API for lab ${labId || 'unknown'}`);
     const result = await apiRequest('/api/analyze-recommendation', 'POST', {
       metrics,
       labStatus,
       labId,
       forceRefresh
     });
+    
+    // For Lab 205, log diagnostic information if available
+    if (labId === 205) {
+      console.timeEnd('lab205-recommendation');
+      console.log(`[Lab205Debug] Received recommendation response for Lab 205:`, result);
+      
+      // If we received diagnostics instead of a regular result
+      if (result.diagnostics) {
+        console.log(`[Lab205Debug] Received diagnostic information:`, result.diagnostics);
+        
+        // Return a simulated recommendation with the diagnostics data for debugging
+        return {
+          decision: "wait",
+          confidence: 0,
+          reasoning: "Running in diagnostic mode. See console logs for details.",
+          diagnostics: result.diagnostics
+        };
+      }
+    }
     
     // Create base recommendation object
     const recommendation: Recommendation & { fromCache?: boolean; updatedAt?: string } = {
@@ -271,6 +374,25 @@ export async function generateRecommendationWithCache(
     return recommendation;
   } catch (error) {
     console.error('Error generating recommendation:', error);
+    
+    // For Lab 205, provide detailed error information
+    if (labId === 205) {
+      console.error(`[Lab205Debug] Error generating recommendation for Lab 205:`, error);
+      console.timeEnd('lab205-recommendation');
+      
+      // Return a simulated recommendation with error information
+      return {
+        decision: "rethink",
+        confidence: 0,
+        reasoning: `Error: ${error.message || 'Unknown error'}`,
+        diagnostics: {
+          error: error.message,
+          stack: error.stack,
+          timestamp: new Date().toISOString()
+        }
+      };
+    }
+    
     throw error;
   }
 }

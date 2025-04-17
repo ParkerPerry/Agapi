@@ -198,6 +198,13 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     const analysisStartTime = performance.now();
     console.log(`[PERFORMANCE] Starting full analysis process at ${analysisStartTime.toFixed(2)}ms`);
     
+    // Special handling for Lab 205
+    if (lab?.id === 205) {
+      console.log(`[Lab205Debug] ====== STARTING LAB 205 DETAILED ANALYSIS ======`);
+      console.log(`[Lab205Debug] Analysis with force refresh: ${forceRefresh}`);
+      console.log(`[Lab205Debug] Data loaded: ${labCirclesData?.length || 0} circles, ${circlePostsData?.length || 0} posts`);
+    }
+    
     // Early return checks
     if (!lab?.successMetrics?.metrics || lab.successMetrics.metrics.length === 0) {
       console.log("No success metrics defined for this lab");
@@ -249,6 +256,43 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       // Group posts by circle role using our utility
       const { controlCircles, treatmentCircles, observationCircles } = 
         groupPostsByCircleRole(preparedCircles, preparedPosts);
+      
+      // Special debugging for Lab 205 to identify circle/post issues
+      if (lab?.id === 205) {
+        console.log(`[Lab205Debug] Posts grouped by role:`);
+        console.log(`[Lab205Debug] Control circles: ${controlCircles.length}, total posts: ${controlCircles.reduce((sum, c) => sum + c.posts.length, 0)}`);
+        console.log(`[Lab205Debug] Treatment circles: ${treatmentCircles.length}, total posts: ${treatmentCircles.reduce((sum, c) => sum + c.posts.length, 0)}`);
+        console.log(`[Lab205Debug] Observation circles: ${observationCircles?.length || 0}, total posts: ${observationCircles?.reduce((sum, c) => sum + c.posts.length, 0) || 0}`);
+        
+        // Check for any content size issues
+        const checkCircleContent = (circles, role) => {
+          let totalContentLength = 0;
+          let maxContentLength = 0;
+          let largeContentPosts = 0;
+          
+          circles.forEach(circle => {
+            circle.posts.forEach(post => {
+              const contentLength = post.content?.length || 0;
+              totalContentLength += contentLength;
+              maxContentLength = Math.max(maxContentLength, contentLength);
+              if (contentLength > 10000) {
+                largeContentPosts++;
+              }
+            });
+          });
+          
+          console.log(`[Lab205Debug] ${role} circles content stats:`);
+          console.log(`[Lab205Debug] - Total content size: ${(totalContentLength / 1024).toFixed(2)} KB`);
+          console.log(`[Lab205Debug] - Max post size: ${(maxContentLength / 1024).toFixed(2)} KB`);
+          console.log(`[Lab205Debug] - Large posts (>10KB): ${largeContentPosts}`);
+        };
+        
+        checkCircleContent(controlCircles, 'Control');
+        checkCircleContent(treatmentCircles, 'Treatment');
+        if (observationCircles?.length) {
+          checkCircleContent(observationCircles, 'Observation');
+        }
+      }
       
       // Update analysis state to show we're done with data processing and starting AI analysis
       setAnalysisState(prev => ({ 
