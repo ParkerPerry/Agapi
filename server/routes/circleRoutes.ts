@@ -413,6 +413,7 @@ router.get('/:id/posts', requireAuth, async (req, res) => {
               return {
                 ...interaction,
                 author: follower,
+                aiFollower: follower, // Add aiFollower property for Comment component compatibility
                 userType: "ai", // Add this for frontend compatibility
                 authorId: interaction.aiFollowerId // Add this for frontend compatibility
               };
