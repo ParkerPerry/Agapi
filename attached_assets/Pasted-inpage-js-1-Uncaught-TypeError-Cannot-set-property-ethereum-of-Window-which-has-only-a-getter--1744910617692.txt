@@ -1,0 +1,86 @@
+inpage.js:1 Uncaught TypeError: Cannot set property ethereum of #<Window> which has only a getter
+    at d (inpage.js:1:43802)
+    at r.initializeProvider (inpage.js:1:43453)
+    at Object.<anonymous> (inpage.js:1:1111)
+    at Object.<anonymous> (inpage.js:1:4932)
+    at 1.../../shared/modules/provider-injection (inpage.js:1:4945)
+    at i (inpage.js:1:254)
+    at e (inpage.js:1:414)
+    at inpage.js:1:431
+d @ inpage.js:1
+r.initializeProvider @ inpage.js:1
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+1.../../shared/modules/provider-injection @ inpage.js:1
+i @ inpage.js:1
+e @ inpage.js:1
+(anonymous) @ inpage.js:1
+lockdown-install.js:1 Removing unpermitted intrinsics
+client:495 [vite] connecting...
+205:1 Error in event handler: TypeError: Cannot read properties of null (reading 'excerpt')
+    at Object.article (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:153:39)
+    at Object.article (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:198:23)
+    at Object.init (chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:570:19)
+    at chrome-extension://llimhhconnjiflfimocjggfjdlmlhblm/content-script.js:514:23
+App.tsx:59 User authenticated, creating WebSocket connection
+websocket.ts:34 Using WebSocket URL: wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev/ws
+websocket.ts:74 Creating new WebSocket connection to wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev/ws
+chunk-RPCDYKBN.js?v=8b0859b7:18625 [Violation] 'setTimeout' handler took 56ms
+websocket.ts:65 WebSocket connection timeout, closing
+websocket.ts:66 WebSocket connection to 'wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev/ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ websocket.ts:66
+setTimeout
+createWebSocket @ websocket.ts:62
+(anonymous) @ App.tsx:68
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19416
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=8b0859b7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8b0859b7:555
+flush @ @tanstack_react-query.js?v=8b0859b7:569
+batch @ @tanstack_react-query.js?v=8b0859b7:587
+dispatch_fn @ @tanstack_react-query.js?v=8b0859b7:996
+setData @ @tanstack_react-query.js?v=8b0859b7:696
+onSuccess @ @tanstack_react-query.js?v=8b0859b7:897
+resolve @ @tanstack_react-query.js?v=8b0859b7:456
+Promise.then
+run @ @tanstack_react-query.js?v=8b0859b7:498
+start @ @tanstack_react-query.js?v=8b0859b7:536
+fetch @ @tanstack_react-query.js?v=8b0859b7:926
+executeFetch_fn @ @tanstack_react-query.js?v=8b0859b7:2211
+onSubscribe @ @tanstack_react-query.js?v=8b0859b7:1898
+subscribe @ @tanstack_react-query.js?v=8b0859b7:24
+(anonymous) @ @tanstack_react-query.js?v=8b0859b7:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=8b0859b7:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8b0859b7:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8b0859b7:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8b0859b7:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8b0859b7:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8b0859b7:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8b0859b7:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8b0859b7:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8b0859b7:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8b0859b7:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8b0859b7:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8b0859b7:18718
+workLoop @ chunk-RPCDYKBN.js?v=8b0859b7:197
+flushWork @ chunk-RPCDYKBN.js?v=8b0859b7:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8b0859b7:384
+websocket.ts:160 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+overrideMethod @ hook.js:608
+socket.onerror @ websocket.ts:160
+websocket.ts:131 WebSocket connection closed: 1006 
+websocket.ts:142 Attempting to reconnect WebSocket (attempt 1)...
+websocket.ts:34 Using WebSocket URL: wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev/ws
+websocket.ts:74 Creating new WebSocket connection to wss://a7d9e562-7254-4cfa-83eb-180ffeed1795-00-q96ncnrp18fy.janeway.replit.dev/ws

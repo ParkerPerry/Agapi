@@ -1,0 +1,2484 @@
+[OpenAI] Using standard OpenAI instance without function wrapping
+[OpenAI] Enhanced OpenAI instance created with debug logging
+[MetricsAnalysis] Using imported OpenAI instance
+Testing database connection...
+Database connection successful
+[WebSocket] Initializing WebSocket server
+[WebSocket] Server initialized
+[ResponseScheduler] Started response scheduler
+5:20:10 PM [express] serving on port 5000
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+5:20:16 PM [express] GET /api/user 401 in 3ms
+[WebSocket] Received upgrade request for path: /?token=Y9t8x-aJ3yWG
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=Y9t8x-aJ3yWG
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=Y9t8x-aJ3yWG
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=Y9t8x-aJ3yWG
+[WebSocket] Ignoring non-WebSocket path: /
+5:20:20 PM [express] GET /api/user 401 in 1ms
+5:20:21 PM [express] GET /api/user 401 in 1ms
+5:20:38 PM [express] GET /api/user 401 in 1ms
+5:20:44 PM [express] POST /api/login 200 in 401ms :: {"id":1,"username":"shai1","password":"a22d1049…
+[Storage] Getting default circle for user: 1
+5:20:44 PM [express] GET /api/default-circle 304 in 150ms :: {"id":19,"name":"Philosophical thoughts…
+[Storage] Getting default circle for user: 1
+5:20:44 PM [express] GET /api/default-circle 304 in 153ms :: {"id":19,"name":"Philosophical thoughts…
+5:20:45 PM [express] GET /api/notifications 304 in 150ms :: []
+[Permissions] Checking permissions: { circleId: 19, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 19
+[Permissions] Checking permissions: { circleId: 19, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 19
+[Permissions] User is circle owner, granting all permissions
+5:20:45 PM [express] GET /api/circles/19/invitations 200 in 329ms
+[Permissions] Checking permissions: { circleId: 1, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 1
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 19
+5:20:45 PM [express] GET /api/notifications/unread/count 304 in 390ms :: {"count":0}
+[Storage] Getting interactions for post: 15
+[Storage] Getting interactions for post: 25
+[Storage] Getting interactions for post: 37
+[Storage] Getting interactions for post: 38
+[Storage] Getting interactions for post: 40
+[Storage] Getting interactions for post: 41
+[Storage] Getting interactions for post: 42
+[Storage] Getting interactions for post: 50
+[Storage] Getting interactions for post: 51
+[Storage] Getting interactions for post: 68
+[Storage] Getting interactions for post: 83
+[Storage] Getting interactions for post: 84
+[Storage] Getting interactions for post: 85
+[Storage] Getting interactions for post: 86
+[Storage] Getting interactions for post: 88
+[Storage] Getting interactions for post: 90
+[Permissions] Checking permissions: { circleId: 19, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 19
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting interactions for post: 1
+[Storage] Getting collectives for circle: 19
+[Storage] Retrieved interactions count: 4
+[Storage] Retrieved interactions count: 8
+[Storage] Retrieved interactions count: 6
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 19
+[Storage] Retrieved interactions count: 9
+[Storage] Retrieved circle collectives count: 4
+[Storage] Getting interactions for post: 37
+[Storage] Retrieved interactions count: 0
+[Storage] Getting interactions for post: 85
+[Storage] Retrieved interactions count: 9
+[Storage] Retrieved interactions count: 0
+[Storage] Getting interactions for post: 84
+[Storage] Getting interactions for post: 15
+[Storage] Retrieved interactions count: 3
+[Storage] Retrieved interactions count: 0
+[Storage] Getting interactions for post: 41
+[Storage] Retrieved interactions count: 3
+[Storage] Retrieved interactions count: 0
+[Storage] Getting interactions for post: 83
+[Storage] Retrieved interactions count: 7
+[Storage] Retrieved interactions count: 1
+[Storage] Retrieved interactions count: 13
+[Storage] Retrieved interactions count: 11
+[Storage] Retrieved interactions count: 6
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 25
+5:20:45 PM [express] GET /api/circles/19 304 in 486ms :: {"id":19,"name":"Philosophical thoughts ","…
+[Storage] Getting interactions for post: 1
+[Storage] Retrieved interactions count: 4
+[ThreadManager] Processing 4 interactions for post 37
+[Storage] Getting pending responses for post: 37
+5:20:45 PM [express] GET /api/circles/19/details 304 in 833ms :: {"circle":{"id":19,"name":"Philosop…
+[Storage] Retrieved interactions count: 0
+[ThreadManager] Processing 0 interactions for post 85
+[Storage] Getting pending responses for post: 85
+[Storage] Retrieved interactions count: 0
+[ThreadManager] Processing 0 interactions for post 84
+[Storage] Getting pending responses for post: 84
+[Storage] Getting interactions for post: 42
+[Storage] Retrieved interactions count: 8
+[ThreadManager] Processing 8 interactions for post 15
+[Storage] Getting pending responses for post: 15
+[Storage] Getting interactions for post: 51
+[Storage] Retrieved interactions count: 0
+[ThreadManager] Processing 0 interactions for post 41
+[Storage] Getting pending responses for post: 41
+[Storage] Getting interactions for post: 40
+[Storage] Retrieved interactions count: 0
+[ThreadManager] Processing 0 interactions for post 83
+[Storage] Getting pending responses for post: 83
+[Storage] Getting interactions for post: 68
+[Storage] Getting interactions for post: 50
+[Storage] Getting interactions for post: 86
+[Storage] Getting interactions for post: 88
+[Storage] Getting interactions for post: 90
+[Storage] Getting interactions for post: 38
+[Storage] Retrieved interactions count: 6
+[ThreadManager] Processing 6 interactions for post 25
+[Storage] Getting pending responses for post: 25
+[Storage] Found pending responses for post 37 : []
+[ThreadManager] Found 0 pending responses for post 37
+[ThreadManager] Created base interaction 121: {
+  type: 'reply',
+  parentId: 120,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: "whyd' you reply if you're muted?"
+}
+[Storage] Retrieved interactions count: 9
+[ThreadManager] Processing 9 interactions for post 1
+[Storage] Getting pending responses for post: 1
+[Storage] Found pending responses for post 85 : []
+[ThreadManager] Found 0 pending responses for post 85
+[ThreadManager] Final thread structure for post 85: []
+[Storage] Getting pending responses for post: 85
+[Storage] Found pending responses for post 84 : []
+[ThreadManager] Found 0 pending responses for post 84
+[ThreadManager] Final thread structure for post 84: []
+[Storage] Getting pending responses for post: 84
+[Storage] Retrieved interactions count: 9
+[ThreadManager] Processing 9 interactions for post 42
+[Storage] Getting pending responses for post: 42
+[Storage] Found pending responses for post 15 : []
+[ThreadManager] Found 0 pending responses for post 15
+[ThreadManager] Created base interaction 47: {
+  type: 'reply',
+  parentId: 36,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'please elaborate'
+}
+[ThreadManager] Created base interaction 55: {
+  type: 'reply',
+  parentId: 35,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'please elaborate on this cathy'
+}
+[Storage] Retrieved interactions count: 3
+[ThreadManager] Processing 3 interactions for post 51
+[Storage] Getting pending responses for post: 51
+[Storage] Found pending responses for post 41 : []
+[ThreadManager] Found 0 pending responses for post 41
+[ThreadManager] Final thread structure for post 41: []
+[Storage] Getting pending responses for post: 41
+[Storage] Retrieved interactions count: 3
+[ThreadManager] Processing 3 interactions for post 40
+[Storage] Getting pending responses for post: 40
+[Storage] Found pending responses for post 83 : []
+[ThreadManager] Found 0 pending responses for post 83
+[ThreadManager] Final thread structure for post 83: []
+[Storage] Getting pending responses for post: 83
+[Storage] Retrieved interactions count: 7
+[ThreadManager] Processing 7 interactions for post 68
+[Storage] Getting pending responses for post: 68
+[API] Getting AI followers for user: 1
+[Storage] Retrieved interactions count: 1
+[ThreadManager] Processing 1 interactions for post 50
+[Storage] Getting pending responses for post: 50
+[Permissions] Checking permissions: { circleId: 19, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 19
+[API] Getting AI follower collectives for user: 1
+[Storage] Getting AI follower collectives for user: 1
+[Storage] Retrieved interactions count: 11
+[ThreadManager] Processing 11 interactions for post 88
+[Storage] Getting pending responses for post: 88
+[Storage] Retrieved interactions count: 13
+[ThreadManager] Processing 13 interactions for post 86
+[Storage] Getting pending responses for post: 86
+[Permissions] Checking permissions: { circleId: 19, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 19
+[Storage] Retrieved interactions count: 6
+[ThreadManager] Processing 6 interactions for post 90
+[Storage] Getting pending responses for post: 90
+[Storage] Retrieved interactions count: 2
+[ThreadManager] Processing 2 interactions for post 38
+[Storage] Getting pending responses for post: 38
+[ThreadManager] Created base interaction 119: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Haha, I remember back in the early days when mutin'
+}
+[Storage] Found pending responses for post 25 : []
+[ThreadManager] Found 0 pending responses for post 25
+[Storage] Found pending responses for post 1 : []
+[ThreadManager] Found 0 pending responses for post 1
+[ThreadManager] Created base interaction 53: {
+  type: 'reply',
+  parentId: 1,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'please tell me more bojack'
+}
+[ThreadManager] Created base interaction 57: {
+  type: 'reply',
+  parentId: 3,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'what do others think here?'
+}
+[ThreadManager] Created base interaction 63: {
+  type: 'reply',
+  parentId: 54,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'I found it to be very trippy and engaging'
+}
+[ThreadManager] Created base interaction 69: {
+  type: 'reply',
+  parentId: 58,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: "Why did you recommend trezor?  they're old!"
+}
+[Storage] Found pending responses for post 85 : []
+[Storage] Found pending responses for post 84 : []
+[Storage] Found pending responses for post 42 : []
+[ThreadManager] Found 0 pending responses for post 42
+[ThreadManager] Created base interaction 161: {
+  type: 'reply',
+  parentId: 133,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'why does this matter'
+}
+[ThreadManager] Created base interaction 162: {
+  type: 'reply',
+  parentId: 133,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'what context do you have?'
+}
+[ThreadManager] Created base interaction 163: {
+  type: 'reply',
+  parentId: 132,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'why does this matter'
+}
+[ThreadManager] Created base interaction 37: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'The idea of predicting the future is a fascinating'
+}
+[ThreadManager] Created base interaction 48: {
+  type: 'reply',
+  parentId: 36,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Sure thing! Foreshadowing the future can be seen i'
+}
+[Storage] Found pending responses for post 51 : []
+[ThreadManager] Found 0 pending responses for post 51
+[ThreadManager] Created base interaction 122: {
+  type: 'reply',
+  parentId: 120,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Oh, that’s a great question! It’s like the secret '
+}
+[Storage] Found pending responses for post 40 : []
+[ThreadManager] Found 0 pending responses for post 40
+[ThreadManager] Created base interaction 130: {
+  type: 'reply',
+  parentId: 125,
+  hasFollower: false,
+  pendingResponses: 0,
+  content: 'please elaborate on the value of life'
+}
+[ThreadManager] Created base interaction 36: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'The idea of foreshadowing the future is fascinatin'
+}
+[Storage] Found pending responses for post 83 : []
+[ThreadManager] Created base interaction 56: {
+  type: 'reply',
+  parentId: 35,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Of course! So, diving deeper into the concept of p'
+}
+[ThreadManager] Created base interaction 34: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "It's a fascinating topic! In the world of web3, it"
+}
+[ThreadManager] Created base interaction 35: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Oh wow, you're diving into something really fascin"
+}
+[ThreadManager] Added root thread 34: {
+  type: 'comment',
+  replyCount: 0,
+  content: "It's a fascinating topic! In the world of web3, it"
+}
+[ThreadManager] Built thread 55: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'please elaborate on this cathy'
+}
+[ThreadManager] Built thread 56: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'Of course! So, diving deeper into the concept of p'
+}
+[ThreadManager] Added root thread 35: {
+  type: 'comment',
+  replyCount: 2,
+  content: "Oh wow, you're diving into something really fascin"
+}
+[ThreadManager] Built thread 47: { type: 'reply', replyCount: 0, content: 'please elaborate' }
+[ThreadManager] Built thread 48: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'Sure thing! Foreshadowing the future can be seen i'
+}
+[ThreadManager] Added root thread 36: {
+  type: 'comment',
+  replyCount: 2,
+  content: 'The idea of foreshadowing the future is fascinatin'
+}
+[ThreadManager] Added root thread 37: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'The idea of predicting the future is a fascinating'
+}
+[ThreadManager] Final thread structure for post 15: [
+  {
+    id: 34,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 35,
+    type: 'comment',
+    replyCount: 2,
+    totalReplies: 2,
+    hasContent: true
+  },
+  {
+    id: 36,
+    type: 'comment',
+    replyCount: 2,
+    totalReplies: 2,
+    hasContent: true
+  },
+  {
+    id: 37,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 15
+[Storage] Found pending responses for post 41 : []
+[ThreadManager] Created base interaction 120: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Oh, that's an interesting question! There might be"
+}
+[ThreadManager] Added root thread 119: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Haha, I remember back in the early days when mutin'
+}
+[ThreadManager] Built thread 121: {
+  type: 'reply',
+  replyCount: 0,
+  content: "whyd' you reply if you're muted?"
+}
+[ThreadManager] Built thread 122: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'Oh, that’s a great question! It’s like the secret '
+}
+[ThreadManager] Added root thread 120: {
+  type: 'comment',
+  replyCount: 2,
+  content: "Oh, that's an interesting question! There might be"
+}
+[ThreadManager] Final thread structure for post 37: [
+  {
+    id: 119,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 120,
+    type: 'comment',
+    replyCount: 2,
+    totalReplies: 2,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 37
+[Storage] Found pending responses for post 68 : []
+[ThreadManager] Found 0 pending responses for post 68
+[Storage] Found pending responses for post 50 : []
+[ThreadManager] Found 0 pending responses for post 50
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting collectives for circle: 19
+[Storage] Retrieved AI follower collectives count: 19
+5:20:46 PM [express] GET /api/followers/collectives 304 in 241ms :: [{"id":1,"userId":1,"name":"Holl…
+[Storage] Found pending responses for post 88 : []
+[ThreadManager] Found 0 pending responses for post 88
+[Storage] Found pending responses for post 86 : []
+[ThreadManager] Found 0 pending responses for post 86
+[Permissions] User is circle owner, granting all permissions
+[API] Getting circle followers for circle: 19
+[Storage] Found pending responses for post 90 : []
+[ThreadManager] Found 0 pending responses for post 90
+[Storage] Found pending responses for post 38 : []
+[ThreadManager] Found 0 pending responses for post 38
+[ThreadManager] Created base interaction 71: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Inspiration could be seen as the spark that motiva'
+}
+[ThreadManager] Created base interaction 72: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Inspiration can be seen as the spark that catalyze'
+}
+[ThreadManager] Created base interaction 73: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Inspiration is like the spark that ignites creativ'
+}
+[ThreadManager] Created base interaction 74: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Oh wow, inspiration is such a vast and wonderful t'
+}
+[ThreadManager] Created base interaction 75: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Inspiration can be seen as the spark that fuels cr'
+}
+[ThreadManager] Created base interaction 76: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Inspiration is the spark that unlocks potential an'
+}
+[ThreadManager] Added root thread 71: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Inspiration could be seen as the spark that motiva'
+}
+[ThreadManager] Added root thread 72: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Inspiration can be seen as the spark that catalyze'
+}
+[ThreadManager] Added root thread 73: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Inspiration is like the spark that ignites creativ'
+}
+[ThreadManager] Added root thread 74: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Oh wow, inspiration is such a vast and wonderful t'
+}
+[ThreadManager] Added root thread 75: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Inspiration can be seen as the spark that fuels cr'
+}
+[ThreadManager] Added root thread 76: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Inspiration is the spark that unlocks potential an'
+}
+[ThreadManager] Final thread structure for post 25: [
+  {
+    id: 71,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 72,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 73,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 74,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 75,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 76,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 25
+[ThreadManager] Created base interaction 1: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'When it comes to web3 hardware wallets, Ledger and'
+}
+[ThreadManager] Created base interaction 3: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'When it comes to Web3 hardware wallets, there are '
+}
+[ThreadManager] Created base interaction 54: {
+  type: 'reply',
+  parentId: 1,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Bojack Horseman is a critically acclaimed animated'
+}
+[ThreadManager] Created base interaction 70: {
+  type: 'reply',
+  parentId: 58,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'In the ever-evolving landscape of Web3, the notion'
+}
+[ThreadManager] Created base interaction 58: {
+  type: 'reply',
+  parentId: 3,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'In the community of digital pioneers paying attent'
+}
+[ThreadManager] Built thread 53: { type: 'reply', replyCount: 0, content: 'please tell me more bojack' }
+[ThreadManager] Built thread 63: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'I found it to be very trippy and engaging'
+}
+[ThreadManager] Built thread 54: {
+  type: 'reply',
+  replyCount: 1,
+  content: 'Bojack Horseman is a critically acclaimed animated'
+}
+[ThreadManager] Added root thread 1: {
+  type: 'comment',
+  replyCount: 2,
+  content: 'When it comes to web3 hardware wallets, Ledger and'
+}
+[ThreadManager] Built thread 57: { type: 'reply', replyCount: 0, content: 'what do others think here?' }
+[ThreadManager] Built thread 69: {
+  type: 'reply',
+  replyCount: 0,
+  content: "Why did you recommend trezor?  they're old!"
+}
+[ThreadManager] Built thread 70: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'In the ever-evolving landscape of Web3, the notion'
+}
+[ThreadManager] Built thread 58: {
+  type: 'reply',
+  replyCount: 2,
+  content: 'In the community of digital pioneers paying attent'
+}
+[ThreadManager] Added root thread 3: {
+  type: 'comment',
+  replyCount: 2,
+  content: 'When it comes to Web3 hardware wallets, there are '
+}
+[ThreadManager] Final thread structure for post 1: [
+  {
+    id: 1,
+    type: 'comment',
+    replyCount: 2,
+    totalReplies: 3,
+    hasContent: true
+  },
+  {
+    id: 3,
+    type: 'comment',
+    replyCount: 2,
+    totalReplies: 4,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 1
+[ThreadManager] Created base interaction 132: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Absolutely! Web3 really takes me back to the early'
+}
+[ThreadManager] Created base interaction 164: {
+  type: 'reply',
+  parentId: 132,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Web3 definitely feels like a new frontier with imm'
+}
+[ThreadManager] Created base interaction 133: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Web3 is a game-changer for humanity as it aims to '
+}
+[ThreadManager] Created base interaction 166: {
+  type: 'reply',
+  parentId: 133,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Absolutely! Web3 holds immense potential for rebal'
+}
+[ThreadManager] Created base interaction 167: {
+  type: 'reply',
+  parentId: 133,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Absolutely! Web3 is like the next frontier of the '
+}
+[ThreadManager] Created base interaction 168: {
+  type: 'reply',
+  parentId: 132,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Absolutely, let's dive in! Web3 holds immense pote"
+}
+[ThreadManager] Built thread 163: { type: 'reply', replyCount: 0, content: 'why does this matter' }
+[ThreadManager] Built thread 164: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'Web3 definitely feels like a new frontier with imm'
+}
+[ThreadManager] Built thread 168: {
+  type: 'reply',
+  replyCount: 0,
+  content: "Absolutely, let's dive in! Web3 holds immense pote"
+}
+[ThreadManager] Added root thread 132: {
+  type: 'comment',
+  replyCount: 3,
+  content: 'Absolutely! Web3 really takes me back to the early'
+}
+[ThreadManager] Built thread 161: { type: 'reply', replyCount: 0, content: 'why does this matter' }
+[ThreadManager] Built thread 162: { type: 'reply', replyCount: 0, content: 'what context do you have?' }
+[ThreadManager] Built thread 166: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'Absolutely! Web3 holds immense potential for rebal'
+}
+[ThreadManager] Built thread 167: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'Absolutely! Web3 is like the next frontier of the '
+}
+[ThreadManager] Added root thread 133: {
+  type: 'comment',
+  replyCount: 4,
+  content: 'Web3 is a game-changer for humanity as it aims to '
+}
+[ThreadManager] Final thread structure for post 42: [
+  {
+    id: 132,
+    type: 'comment',
+    replyCount: 3,
+    totalReplies: 3,
+    hasContent: true
+  },
+  {
+    id: 133,
+    type: 'comment',
+    replyCount: 4,
+    totalReplies: 4,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 42
+[ThreadManager] Created base interaction 170: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'The value of tomorrow is often based on expectatio'
+}
+[ThreadManager] Created base interaction 171: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Ah, a deep question! It's almost like pondering ab"
+}
+[ThreadManager] Created base interaction 172: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Great question! In the world of web3 and blockchai'
+}
+[ThreadManager] Added root thread 170: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'The value of tomorrow is often based on expectatio'
+}
+[ThreadManager] Added root thread 171: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Ah, a deep question! It's almost like pondering ab"
+}
+[ThreadManager] Added root thread 172: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Great question! In the world of web3 and blockchai'
+}
+[ThreadManager] Final thread structure for post 51: [
+  {
+    id: 170,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 171,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 172,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 51
+[ThreadManager] Created base interaction 125: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Ah, the age-old question that has intrigued thinke'
+}
+[ThreadManager] Created base interaction 131: {
+  type: 'reply',
+  parentId: 125,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Ah, the age-old question that has intrigued thinke'
+}
+[ThreadManager] Built thread 130: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'please elaborate on the value of life'
+}
+[ThreadManager] Built thread 131: {
+  type: 'reply',
+  replyCount: 0,
+  content: 'Ah, the age-old question that has intrigued thinke'
+}
+[ThreadManager] Added root thread 125: {
+  type: 'comment',
+  replyCount: 2,
+  content: 'Ah, the age-old question that has intrigued thinke'
+}
+[ThreadManager] Final thread structure for post 40: [
+  {
+    id: 125,
+    type: 'comment',
+    replyCount: 2,
+    totalReplies: 2,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 40
+[Storage] Found pending responses for post 15 : []
+[Storage] Found pending responses for post 37 : []
+[ThreadManager] Created base interaction 261: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'What a profound topic! The meaning of life has bee'
+}
+[ThreadManager] Created base interaction 262: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'The value and meaning of life is a deep and comple'
+}
+[ThreadManager] Created base interaction 263: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "That's a profound topic! To break it down, we coul"
+}
+[ThreadManager] Created base interaction 264: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Exploring the value and meaning of life can be qui'
+}
+[ThreadManager] Created base interaction 265: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Ah, a deep topic! In the web3 space, we'd say the "
+}
+[ThreadManager] Created base interaction 266: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Ah, the classic existential question! In a digital'
+}
+[ThreadManager] Created base interaction 268: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "That's a profound topic! The value and meaning of "
+}
+[ThreadManager] Added root thread 261: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'What a profound topic! The meaning of life has bee'
+}
+[ThreadManager] Added root thread 262: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'The value and meaning of life is a deep and comple'
+}
+[ThreadManager] Added root thread 263: {
+  type: 'comment',
+  replyCount: 0,
+  content: "That's a profound topic! To break it down, we coul"
+}
+[ThreadManager] Added root thread 264: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Exploring the value and meaning of life can be qui'
+}
+[ThreadManager] Added root thread 265: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Ah, a deep topic! In the web3 space, we'd say the "
+}
+[ThreadManager] Added root thread 266: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Ah, the classic existential question! In a digital'
+}
+[ThreadManager] Added root thread 268: {
+  type: 'comment',
+  replyCount: 0,
+  content: "That's a profound topic! The value and meaning of "
+}
+[ThreadManager] Final thread structure for post 68: [
+  {
+    id: 261,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 262,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 263,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 264,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 265,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 266,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 268,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 68
+[ThreadManager] Created base interaction 165: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Ah, the classic question! While philosophers have '
+}
+[ThreadManager] Added root thread 165: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Ah, the classic question! While philosophers have '
+}
+[ThreadManager] Final thread structure for post 50: [
+  {
+    id: 165,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 50
+[Storage] Retrieved circle collectives count: 4
+5:20:46 PM [express] GET /api/circles/19/collectives 304 in 391ms :: [{"id":1,"userId":1,"name":"Hol…
+[ThreadManager] Created base interaction 317: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Hate is such a complex emotion, isn't it? People o"
+}
+[ThreadManager] Created base interaction 318: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "That's a deep and complex topic! Hate can often be"
+}
+[ThreadManager] Created base interaction 319: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Hate can be a powerful and complex emotion. It's o"
+}
+[ThreadManager] Created base interaction 320: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Discussing emotions like hate is important, but I '
+}
+[ThreadManager] Created base interaction 321: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'The concept of hate can be quite complex, involvin'
+}
+[ThreadManager] Created base interaction 322: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Oh, that's such a deep topic! Hate is such a compl"
+}
+[ThreadManager] Created base interaction 323: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Exploring the meaning of hate and the feelings ass'
+}
+[ThreadManager] Created base interaction 324: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Exploring the meaning of hate can be a complex tas'
+}
+[ThreadManager] Created base interaction 325: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Hate is a complex emotion that can often stem from'
+}
+[ThreadManager] Created base interaction 304: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'True love can be a deep and fulfilling experience,'
+}
+[ThreadManager] Created base interaction 327: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Hate is a strong emotion often driven by intense d'
+}
+[ThreadManager] Created base interaction 305: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "True love is such a multifaceted concept, isn't it"
+}
+[ThreadManager] Created base interaction 326: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'The feeling of hate can be quite intense and invol'
+}
+[ThreadManager] Added root thread 317: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Hate is such a complex emotion, isn't it? People o"
+}
+[ThreadManager] Added root thread 318: {
+  type: 'comment',
+  replyCount: 0,
+  content: "That's a deep and complex topic! Hate can often be"
+}
+[ThreadManager] Added root thread 319: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Hate can be a powerful and complex emotion. It's o"
+}
+[ThreadManager] Added root thread 320: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Discussing emotions like hate is important, but I '
+}
+[ThreadManager] Added root thread 321: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'The concept of hate can be quite complex, involvin'
+}
+[ThreadManager] Added root thread 322: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Oh, that's such a deep topic! Hate is such a compl"
+}
+[ThreadManager] Added root thread 323: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Exploring the meaning of hate and the feelings ass'
+}
+[ThreadManager] Added root thread 324: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Exploring the meaning of hate can be a complex tas'
+}
+[ThreadManager] Added root thread 325: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Hate is a complex emotion that can often stem from'
+}
+[ThreadManager] Added root thread 326: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'The feeling of hate can be quite intense and invol'
+}
+[ThreadManager] Added root thread 327: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Hate is a strong emotion often driven by intense d'
+}
+[ThreadManager] Final thread structure for post 88: [
+  {
+    id: 317,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 318,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 319,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 320,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 321,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 322,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 323,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 324,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 325,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 326,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 327,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 88
+[ThreadManager] Created base interaction 306: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Oh, true love! Such a fascinating topic to dive in'
+}
+[ThreadManager] Created base interaction 307: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'True love can be beautifully complex and deeply fu'
+}
+[ThreadManager] Created base interaction 308: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Discussing the meaning of true love can be complex'
+}
+[ThreadManager] Created base interaction 309: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Oh, true love is such a deep and vast topic! It's "
+}
+[ThreadManager] Created base interaction 310: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "True love can be really complex, but it's often de"
+}
+[ThreadManager] Created base interaction 311: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Exploring the meaning of true love is like breakin'
+}
+[ThreadManager] Created base interaction 312: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'True love often encompasses feelings of deep affec'
+}
+[ThreadManager] Created base interaction 313: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'True love can be such a deep and complex feeling! '
+}
+[ThreadManager] Created base interaction 314: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'True love is one of those beautifully complex emot'
+}
+[ThreadManager] Created base interaction 315: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Exploring the meaning of true love can be as compl'
+}
+[ThreadManager] Created base interaction 316: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'True love is such an interesting topic! Many peopl'
+}
+[ThreadManager] Added root thread 304: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'True love can be a deep and fulfilling experience,'
+}
+[ThreadManager] Added root thread 305: {
+  type: 'comment',
+  replyCount: 0,
+  content: "True love is such a multifaceted concept, isn't it"
+}
+[ThreadManager] Added root thread 306: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Oh, true love! Such a fascinating topic to dive in'
+}
+[ThreadManager] Added root thread 307: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'True love can be beautifully complex and deeply fu'
+}
+[ThreadManager] Added root thread 308: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Discussing the meaning of true love can be complex'
+}
+[ThreadManager] Added root thread 309: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Oh, true love is such a deep and vast topic! It's "
+}
+[ThreadManager] Added root thread 310: {
+  type: 'comment',
+  replyCount: 0,
+  content: "True love can be really complex, but it's often de"
+}
+[ThreadManager] Added root thread 311: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Exploring the meaning of true love is like breakin'
+}
+[ThreadManager] Added root thread 312: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'True love often encompasses feelings of deep affec'
+}
+[ThreadManager] Added root thread 313: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'True love can be such a deep and complex feeling! '
+}
+[ThreadManager] Added root thread 314: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'True love is one of those beautifully complex emot'
+}
+[ThreadManager] Added root thread 315: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Exploring the meaning of true love can be as compl'
+}
+[ThreadManager] Added root thread 316: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'True love is such an interesting topic! Many peopl'
+}
+[ThreadManager] Final thread structure for post 86: [
+  {
+    id: 304,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 305,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 306,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 307,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 308,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 309,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 310,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 311,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 312,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 313,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 314,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 315,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 316,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 86
+[ThreadManager] Created base interaction 328: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'The notion of predicting how long one will live is'
+}
+[ThreadManager] Created base interaction 329: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: 'Predicting how long someone will live is quite com'
+}
+[ThreadManager] Created base interaction 330: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Predicting how long we'll live can be complicated,"
+}
+[ThreadManager] Created base interaction 331: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Ah, the mystery of life expectancy! It's such an i"
+}
+[ThreadManager] Created base interaction 332: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Predicting how long we'll live can be challenging,"
+}
+[ThreadManager] Created base interaction 333: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "Haha, saying 'till 120 years!' is like making a ho"
+}
+[ThreadManager] Added root thread 328: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'The notion of predicting how long one will live is'
+}
+[ThreadManager] Added root thread 329: {
+  type: 'comment',
+  replyCount: 0,
+  content: 'Predicting how long someone will live is quite com'
+}
+[ThreadManager] Added root thread 330: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Predicting how long we'll live can be complicated,"
+}
+[ThreadManager] Added root thread 331: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Ah, the mystery of life expectancy! It's such an i"
+}
+[ThreadManager] Added root thread 332: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Predicting how long we'll live can be challenging,"
+}
+[ThreadManager] Added root thread 333: {
+  type: 'comment',
+  replyCount: 0,
+  content: "Haha, saying 'till 120 years!' is like making a ho"
+}
+[ThreadManager] Final thread structure for post 90: [
+  {
+    id: 328,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 329,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 330,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 331,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 332,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 333,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 90
+[ThreadManager] Created base interaction 123: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "That's a profoundly philosophical question! The mi"
+}
+[ThreadManager] Created base interaction 129: {
+  type: 'comment',
+  parentId: null,
+  hasFollower: true,
+  pendingResponses: 0,
+  content: "That's an intriguing question! In the context of w"
+}
+[ThreadManager] Added root thread 123: {
+  type: 'comment',
+  replyCount: 0,
+  content: "That's a profoundly philosophical question! The mi"
+}
+[ThreadManager] Added root thread 129: {
+  type: 'comment',
+  replyCount: 0,
+  content: "That's an intriguing question! In the context of w"
+}
+[ThreadManager] Final thread structure for post 38: [
+  {
+    id: 123,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  },
+  {
+    id: 129,
+    type: 'comment',
+    replyCount: 0,
+    totalReplies: 0,
+    hasContent: true
+  }
+]
+[Storage] Getting pending responses for post: 38
+[Storage] Found pending responses for post 25 : []
+[Storage] Found pending responses for post 1 : []
+[Storage] Getting circle by ID: 1
+[Storage] Found pending responses for post 42 : []
+[Storage] Found pending responses for post 51 : []
+[Storage] Found pending responses for post 40 : []
+[Storage] Found pending responses for post 50 : []
+[Storage] Found pending responses for post 88 : []
+[Storage] Found pending responses for post 68 : []
+5:20:46 PM [express] GET /api/circles/19/followers 304 in 564ms :: [{"id":1,"userId":1,"name":"Tom",…
+5:20:46 PM [express] GET /api/followers 304 in 663ms :: [{"id":1,"userId":1,"name":"Tom","personalit…
+[Storage] Found pending responses for post 86 : []
+[Storage] Found pending responses for post 38 : []
+[Storage] Found pending responses for post 90 : []
+5:20:46 PM [express] GET /api/circles/19/posts 304 in 1511ms :: [{"id":15,"userId":1,"circleId":19,"…
+5:20:46 PM [express] GET /api/posts/1 304 in 1693ms :: {"id":1,"userId":1,"circleId":1,"labId":null,…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting labs for user: 1
+[Storage] Retrieved labs count: 28
+5:20:56 PM [express] GET /api/labs 304 in 237ms :: [{"id":208,"userId":1,"name":"Polenta Chain Launc…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting lab by ID: 208
+[Storage] Retrieved lab: { id: 208, name: 'Polenta Chain Launch', status: 'active' }
+5:20:59 PM [express] GET /api/labs/208 304 in 159ms :: {"id":208,"userId":1,"name":"Polenta Chain La…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting lab analysis result for lab 208
+[Storage] No analysis result found for lab 208
+5:21:05 PM [express] GET /api/lab-analysis/208 404 in 169ms :: {"message":"No analysis results found…
+[Storage] Getting lab by ID: 208
+[Storage] Retrieved lab: { id: 208, name: 'Polenta Chain Launch', status: 'active' }
+[Storage] Getting circles for lab: 208
+[Storage] Retrieved lab circles count: 2
+[Storage] Getting circle by ID: 59
+[Storage] Getting circle by ID: 438
+5:21:05 PM [express] GET /api/labs/208/circles 304 in 316ms :: [{"id":59,"name":"Polygon Maxis","des…
+[Storage] Getting lab by ID: 208
+[Storage] Retrieved lab: { id: 208, name: 'Polenta Chain Launch', status: 'active' }
+[Storage] Getting circles for lab: 208
+[Storage] Retrieved lab circles count: 2
+[Permissions] Checking permissions: { circleId: 59, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 59
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 59
+[Storage] Getting interactions for post: 319
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 320
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 321
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 322
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 323
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 324
+[Storage] Retrieved interactions count: 5
+[Storage] Getting interactions for post: 325
+[WebSocket] Connection closed
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 326
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 327
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 328
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 329
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 330
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 331
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 332
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 333
+[Storage] Retrieved interactions count: 5
+[Storage] Getting interactions for post: 334
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 335
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 336
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 337
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 338
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 339
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 340
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 341
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 342
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 343
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 344
+[Storage] Retrieved interactions count: 5
+[Permissions] Checking permissions: { circleId: 438, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 438
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 438
+[Storage] Getting interactions for post: 387
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 388
+[ResponseScheduler] Processing 1 pending responses
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 389
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 390
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 391
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 392
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 393
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 394
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 395
+[Storage] Retrieved interactions count: 13
+[Storage] Getting interactions for post: 396
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 397
+[Storage] Retrieved interactions count: 14
+[Storage] Getting interactions for post: 398
+[Storage] Retrieved interactions count: 13
+[Storage] Getting interactions for post: 399
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 400
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 401
+[Storage] Retrieved interactions count: 8
+[WebSocket] Connection closed
+[Storage] Getting interactions for post: 402
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 403
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 404
+[Storage] Retrieved interactions count: 16
+[Storage] Getting interactions for post: 405
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 406
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 407
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 408
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 409
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 410
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 411
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 412
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 413
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 414
+[Storage] Retrieved interactions count: 10
+[WebSocket] Connection closed
+[Storage] Getting interactions for post: 415
+[Storage] Retrieved interactions count: 7
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting interactions for post: 416
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 417
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 418
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 419
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 420
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 421
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 422
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 423
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 424
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 425
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 426
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 427
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 428
+[Storage] Retrieved interactions count: 0
+5:21:17 PM [express] GET /api/labs/208/posts 200 in 11352ms :: [{"id":428,"userId":1,"circleId":438,…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /?token=JbVGn943SWaO
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=JbVGn943SWaO
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=JbVGn943SWaO
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=JbVGn943SWaO
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[ResponseScheduler] Processing 1 pending responses
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+5:22:24 PM [express] GET /api/user 304 in 79ms :: {"id":1,"username":"shai1","password":"a22d10492a2…
+[Storage] Getting default circle for user: 1
+[Storage] Getting lab by ID: 208
+5:22:25 PM [express] GET /api/default-circle 304 in 146ms :: {"id":19,"name":"Philosophical thoughts…
+5:22:25 PM [express] GET /api/notifications/unread/count 304 in 152ms :: {"count":0}
+5:22:25 PM [express] GET /api/notifications 304 in 154ms :: []
+[Storage] Retrieved lab: { id: 208, name: 'Polenta Chain Launch', status: 'active' }
+5:22:25 PM [express] GET /api/labs/208 304 in 157ms :: {"id":208,"userId":1,"name":"Polenta Chain La…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting lab analysis result for lab 208
+[Storage] No analysis result found for lab 208
+5:22:27 PM [express] GET /api/lab-analysis/208 404 in 151ms :: {"message":"No analysis results found…
+[Storage] Getting lab by ID: 208
+[Storage] Retrieved lab: { id: 208, name: 'Polenta Chain Launch', status: 'active' }
+[Storage] Getting circles for lab: 208
+[Storage] Retrieved lab circles count: 2
+[Storage] Getting circle by ID: 59
+[Storage] Getting circle by ID: 438
+5:22:27 PM [express] GET /api/labs/208/circles 304 in 306ms :: [{"id":59,"name":"Polygon Maxis","des…
+[Storage] Getting lab by ID: 208
+[Storage] Retrieved lab: { id: 208, name: 'Polenta Chain Launch', status: 'active' }
+[Storage] Getting circles for lab: 208
+[Storage] Retrieved lab circles count: 2
+[Permissions] Checking permissions: { circleId: 59, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 59
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 59
+[Storage] Getting interactions for post: 319
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 320
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 321
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 322
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 323
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 324
+[Storage] Retrieved interactions count: 5
+[Storage] Getting interactions for post: 325
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 326
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 327
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 328
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 329
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 330
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 331
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 332
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 333
+[Storage] Retrieved interactions count: 5
+[Storage] Getting interactions for post: 334
+[WebSocket] Connection closed
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 335
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 336
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 337
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 338
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 339
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 340
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 341
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 342
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 343
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 344
+[WebSocket] Connection closed
+[Storage] Retrieved interactions count: 5
+[Permissions] Checking permissions: { circleId: 438, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 438
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 438
+[Storage] Getting interactions for post: 387
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 388
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 389
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 390
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 391
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 392
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 393
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 394
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 395
+[Storage] Retrieved interactions count: 13
+[Storage] Getting interactions for post: 396
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 397
+[Storage] Retrieved interactions count: 14
+[Storage] Getting interactions for post: 398
+[Storage] Retrieved interactions count: 13
+[Storage] Getting interactions for post: 399
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 400
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 401
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 402
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 403
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 404
+[Storage] Retrieved interactions count: 16
+[Storage] Getting interactions for post: 405
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 406
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 407
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 408
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 409
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 410
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 411
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 412
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 413
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 414
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 415
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 416
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 417
+[Storage] Retrieved interactions count: 8
+[WebSocket] Connection closed
+[Storage] Getting interactions for post: 418
+[Storage] Retrieved interactions count: 3
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting interactions for post: 419
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 420
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 421
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 422
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 423
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 424
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 425
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 426
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 427
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 428
+[Storage] Retrieved interactions count: 0
+5:22:39 PM [express] GET /api/labs/208/posts 304 in 11078ms :: [{"id":428,"userId":1,"circleId":438,…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting labs for user: 1
+[Storage] Retrieved labs count: 28
+5:22:44 PM [express] GET /api/labs 304 in 225ms :: [{"id":208,"userId":1,"name":"Polenta Chain Launc…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+5:22:56 PM [express] GET /api/user 304 in 74ms :: {"id":1,"username":"shai1","password":"a22d10492a2…
+[Storage] Getting default circle for user: 1
+[Storage] Getting lab by ID: 205
+5:22:56 PM [express] GET /api/default-circle 304 in 146ms :: {"id":19,"name":"Philosophical thoughts…
+5:22:56 PM [express] GET /api/notifications 304 in 150ms :: []
+5:22:56 PM [express] GET /api/notifications/unread/count 304 in 152ms :: {"count":0}
+[Storage] Retrieved lab: { id: 205, name: 'BNB/USD11', status: 'active' }
+5:22:56 PM [express] GET /api/labs/205 304 in 152ms :: {"id":205,"userId":1,"name":"BNB/USD11","desc…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /?token=0mSS8T84WiPc
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=0mSS8T84WiPc
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=0mSS8T84WiPc
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=0mSS8T84WiPc
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting lab analysis result for lab 205
+[Storage] No analysis result found for lab 205
+5:23:05 PM [express] GET /api/lab-analysis/205 404 in 152ms :: {"message":"No analysis results found…
+[Storage] Getting lab by ID: 205
+[Storage] Retrieved lab: { id: 205, name: 'BNB/USD11', status: 'active' }
+[Storage] Getting circles for lab: 205
+[Storage] Retrieved lab circles count: 1
+[Storage] Getting circle by ID: 438
+5:23:06 PM [express] GET /api/labs/205/circles 304 in 304ms :: [{"id":438,"name":"Binance Chain Laun…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting lab by ID: 205
+[Storage] Retrieved lab: { id: 205, name: 'BNB/USD11', status: 'active' }
+[Storage] Getting circles for lab: 205
+[Storage] Retrieved lab circles count: 1
+[Permissions] Checking permissions: { circleId: 438, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 438
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 438
+[Storage] Getting interactions for post: 387
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 388
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 389
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 390
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 391
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 392
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 393
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 394
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 395
+[Storage] Retrieved interactions count: 13
+[Storage] Getting interactions for post: 396
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 397
+[Storage] Retrieved interactions count: 14
+[Storage] Getting interactions for post: 398
+[Storage] Retrieved interactions count: 13
+[Storage] Getting interactions for post: 399
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 400
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 401
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 402
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 403
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 404
+[Storage] Retrieved interactions count: 16
+[Storage] Getting interactions for post: 405
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 406
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 407
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 408
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 409
+[WebSocket] Connection closed
+[Storage] Retrieved interactions count: 11
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting interactions for post: 410
+[Storage] Retrieved interactions count: 9
+[WebSocket] Connection closed
+[Storage] Getting interactions for post: 411
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 412
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 413
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 414
+[ResponseScheduler] Processing 1 pending responses
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 415
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 416
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 417
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 418
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 419
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 420
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 421
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 422
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 423
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 424
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 425
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 426
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 427
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 428
+[Storage] Retrieved interactions count: 0
+5:23:13 PM [express] GET /api/labs/205/posts 304 in 6880ms :: [{"id":428,"userId":1,"circleId":438,"…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+5:23:19 PM [express] GET /api/user 304 in 77ms :: {"id":1,"username":"shai1","password":"a22d10492a2…
+[Storage] Getting default circle for user: 1
+[Storage] Getting lab by ID: 205
+5:23:20 PM [express] GET /api/default-circle 304 in 148ms :: {"id":19,"name":"Philosophical thoughts…
+5:23:20 PM [express] GET /api/notifications 304 in 153ms :: []
+[Storage] Retrieved lab: { id: 205, name: 'BNB/USD11', status: 'active' }
+5:23:20 PM [express] GET /api/labs/205 304 in 153ms :: {"id":205,"userId":1,"name":"BNB/USD11","desc…
+5:23:20 PM [express] GET /api/notifications/unread/count 304 in 145ms :: {"count":0}
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting lab analysis result for lab 205
+[Storage] No analysis result found for lab 205
+5:23:53 PM [express] GET /api/lab-analysis/205 404 in 384ms :: {"message":"No analysis results found…
+[Storage] Getting lab by ID: 205
+[Storage] Retrieved lab: { id: 205, name: 'BNB/USD11', status: 'active' }
+[Storage] Getting circles for lab: 205
+[Storage] Retrieved lab circles count: 1
+[Storage] Getting circle by ID: 438
+5:23:54 PM [express] GET /api/labs/205/circles 304 in 299ms :: [{"id":438,"name":"Binance Chain Laun…
+[Storage] Getting lab by ID: 205
+[Storage] Retrieved lab: { id: 205, name: 'BNB/USD11', status: 'active' }
+[Storage] Getting circles for lab: 205
+[Storage] Retrieved lab circles count: 1
+[Permissions] Checking permissions: { circleId: 438, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 438
+[Permissions] User is circle owner, granting all permissions
+[Storage] Getting circle by ID: 438
+[Storage] Getting interactions for post: 387
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 388
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 389
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 390
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 391
+[Storage] Retrieved interactions count: 18
+[Storage] Getting interactions for post: 392
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 393
+[Storage] Retrieved interactions count: 8
+[WebSocket] Connection closed
+[Storage] Getting interactions for post: 394
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 395
+[Storage] Retrieved interactions count: 13
+[Storage] Getting interactions for post: 396
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 397
+[Storage] Retrieved interactions count: 14
+[Storage] Getting interactions for post: 398
+[Storage] Retrieved interactions count: 13
+[Storage] Getting interactions for post: 399
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 400
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 401
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 402
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 403
+[WebSocket] Connection closed
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 404
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Retrieved interactions count: 16
+[Storage] Getting interactions for post: 405
+[Storage] Retrieved interactions count: 12
+[Storage] Getting interactions for post: 406
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 407
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 408
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 409
+[Storage] Retrieved interactions count: 11
+[Storage] Getting interactions for post: 410
+[Storage] Retrieved interactions count: 9
+[Storage] Getting interactions for post: 411
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 412
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 413
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 414
+[Storage] Retrieved interactions count: 10
+[Storage] Getting interactions for post: 415
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 416
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 417
+[Storage] Retrieved interactions count: 8
+[Storage] Getting interactions for post: 418
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 419
+[Storage] Retrieved interactions count: 7
+[Storage] Getting interactions for post: 420
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 421
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 422
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 423
+[Storage] Retrieved interactions count: 6
+[Storage] Getting interactions for post: 424
+[Storage] Retrieved interactions count: 4
+[Storage] Getting interactions for post: 425
+[Storage] Retrieved interactions count: 3
+[Storage] Getting interactions for post: 426
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 427
+[Storage] Retrieved interactions count: 2
+[Storage] Getting interactions for post: 428
+[Storage] Retrieved interactions count: 0
+5:24:00 PM [express] GET /api/labs/205/posts 304 in 6761ms :: [{"id":428,"userId":1,"circleId":438,"…
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Connection closed
+[WebSocket] Received upgrade request for path: /?token=Y9t8x-aJ3yWG
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=Y9t8x-aJ3yWG
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=Y9t8x-aJ3yWG
+[WebSocket] Ignoring non-WebSocket path: /
+[WebSocket] Received upgrade request for path: /?token=Y9t8x-aJ3yWG
+[WebSocket] Ignoring non-WebSocket path: /
+[ResponseScheduler] Processing 1 pending responses
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
