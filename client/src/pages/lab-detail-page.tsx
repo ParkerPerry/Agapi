@@ -734,6 +734,7 @@ export default function LabDetailPage() {
         onOpenChange={setIsAddCircleOpen}
         labId={labId || 0}
         onSuccess={handleCircleUpdate}
+        existingCircleIds={circles?.map(circle => circle.id) || []}
       />
       
       {/* Circle Role Dialog */}
