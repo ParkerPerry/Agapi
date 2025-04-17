@@ -13,7 +13,7 @@ import FollowerConfigPage from "@/pages/follower-config-page";
 import UserProfilePage from "@/pages/user-profile-page";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
-import { createWebSocket, closeWebSocket } from "@/lib/websocket";
+import { createWebSocket, closeWebSocket, setWebSocketAuthToken, sendWebSocketMessage } from "@/lib/websocket";
 import { useEffect } from "react";
 import { TourProvider } from "@/components/tour/tour-context";
 
@@ -34,19 +34,34 @@ function Router() {
 }
 
 function MainApp() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   useEffect(() => {
     // Only create WebSocket connection when user is authenticated
-    if (user) {
+    if (user && token) {
       console.log('User authenticated, creating WebSocket connection');
-      createWebSocket();
+      
+      // Set authentication token for WebSocket
+      setWebSocketAuthToken(token);
+      
+      // Create the WebSocket connection
+      const socket = createWebSocket();
+      
+      // After connection is established, we'll send authentication message
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        sendWebSocketMessage({
+          type: 'authenticate',
+          token
+        });
+      }
+      
       return () => {
         console.log('Cleaning up WebSocket connection');
+        setWebSocketAuthToken(null);
         closeWebSocket();
       };
     }
-  }, [user?.id]); // Only recreate when user ID changes
+  }, [user?.id, token]); // Only recreate when user ID or token changes
 
   return (
     <>

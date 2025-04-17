@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { ResponseScheduler } from "./response-scheduler";
 import { requireAuth, hasCirclePermission } from "./routes/middleware";
 import nftRoutes from "./blockchain/routes";
+import { initializeWebSocketServer } from "./websocket";
 
 // Import modularized routes
 import userRoutes from "./routes/userRoutes";
@@ -23,6 +24,9 @@ import metricsAnalysisRoutes from "./routes/metricsAnalysisRoutes";
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
   const httpServer = createServer(app);
+  
+  // Initialize WebSocket server
+  initializeWebSocketServer(httpServer, app);
 
   // Start the response scheduler
   const scheduler = ResponseScheduler.getInstance();
