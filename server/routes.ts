@@ -20,6 +20,7 @@ import toolRoutes from "./routes/toolRoutes";
 import labRoutes from "./routes/labRoutes";
 import healthRoutes from "./routes/healthRoutes";
 import metricsAnalysisRoutes from "./routes/metricsAnalysisRoutes";
+import openaiTestRoute from "./routes/openaiTestRoute";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
@@ -299,6 +300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/labs', labRoutes);
   app.use('/api/nft', nftRoutes);
   app.use('/api/health', healthRoutes);
+  app.use('/api', openaiTestRoute);  // Register this before metricsAnalysisRoutes
   app.use('/api', metricsAnalysisRoutes);
   
   // Register circle-related routes
