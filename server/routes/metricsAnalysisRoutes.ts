@@ -60,16 +60,22 @@ interface MetricAnalysisResponse {
  * POST /api/analyze-metric - Analyze a metric against lab data
  */
 router.post("/analyze-metric", requireAuth, async (req, res) => {
-  // Log the beginning of the endpoint execution
-  console.log(`[MetricsAnalysis] ==== START METRICS ANALYSIS REQUEST at ${new Date().toISOString()} ====`);
+  // Log the beginning of the endpoint execution with timestamp and user ID
+  const timestamp = new Date().toISOString();
+  console.log(`[MetricsAnalysis] ==== START METRICS ANALYSIS REQUEST at ${timestamp} ====`);
+  console.log(`[MetricsAnalysis] User ID: ${req.user?.id || 'unknown'}`);
   
   // Add basic error logging to catch any issues
   process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection in metrics analysis route:', reason);
+    console.error('[MetricsAnalysis] Unhandled Rejection in metrics analysis route:', reason);
   });
   
-  // Add more direct console logging
-  console.log(`ENDPOINT HIT: /api/analyze-metric`);
+  // Add detailed console logging for debugging
+  console.log(`[SERVER] ENDPOINT HIT: POST /api/analyze-metric at ${timestamp}`);
+  console.error(`[SERVER-ERROR-LOG] Endpoint hit: /api/analyze-metric`); // Use error log for visibility
+  
+  // Force stdout to flush immediately
+  process.stdout.write(`[STDOUT-DIRECT] Metric analysis endpoint hit at ${timestamp}\n`);
   
   try {
     console.log(`[MetricsAnalysis] Request body received, processing...`);
@@ -78,8 +84,16 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
     const requestBodySize = JSON.stringify(req.body).length;
     console.log(`[MetricsAnalysis] Request body size: ${requestBodySize} bytes`);
     
-    // Immediate log to stdout for debugging
-    process.stdout.write(`Analyze-metric endpoint hit with request size: ${requestBodySize} bytes\n`);
+    // Add more debugging information about the request
+    const metricName = req.body.metric?.name || 'unknown';
+    const requestLabId = req.body.labId || 'unknown';
+    
+    // Multiple logging channels to ensure visibility
+    console.log(`[MetricsAnalysis] Processing metric: ${metricName} for lab: ${requestLabId}`);
+    console.error(`[SERVER-ERROR-LOG] Processing metric analysis for ${metricName}, lab ${requestLabId}`);
+    
+    // Direct stdout write for maximum visibility
+    process.stdout.write(`[STDOUT-DIRECT] Analyzing metric ${metricName} for lab ${requestLabId}, size: ${requestBodySize} bytes\n`);
     
     const {
       metric,
@@ -87,7 +101,6 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
       controlCircles,
       treatmentCircles,
       observationCircles,
-      labId,
       metricIndex,
       forceRefresh = false,
     } = req.body as MetricAnalysisRequest & {
@@ -95,6 +108,9 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
       metricIndex?: number;
       forceRefresh?: boolean;
     };
+    
+    // Extract labId from request body
+    const labId = req.body.labId;
     
     // More detailed initial validation
     console.log(`[MetricsAnalysis] Request parsing complete, validating data...`);

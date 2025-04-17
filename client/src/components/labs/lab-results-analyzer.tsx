@@ -313,32 +313,84 @@ export const useLabResultsAnalysis = (lab: Lab) => {
           if (lab?.id === 205) {
             console.log(`[Lab205Debug] Preparing request data for metric: ${metric.name}`);
             
-            // Helper function to limit content size
-            const limitCircleContent = (circles, maxPostsPerCircle = 10, maxContentLength = 1000) => {
+            // Enhanced helper function to intelligently sample and limit content size
+            const limitCircleContent = (circles, maxPostsPerCircle = 15, maxContentLength = 1000) => {
               return circles.map(circle => {
-                // Sort posts by interactions (if available) or most recent first
-                const sortedPosts = [...circle.posts].sort((a, b) => {
-                  const aInteractions = a.metrics?.interactions || 0;
-                  const bInteractions = b.metrics?.interactions || 0;
-                  
-                  // First sort by interactions if available
-                  if (aInteractions !== bInteractions) {
-                    return bInteractions - aInteractions; // Higher interactions first
-                  }
-                  
-                  // Then by date if interactions are equal
-                  const aDate = new Date(a.createdAt || 0);
-                  const bDate = new Date(b.createdAt || 0);
-                  return bDate.getTime() - aDate.getTime(); // Most recent first
-                });
+                // If this circle has few posts, we don't need to sample
+                if (!circle.posts || circle.posts.length <= maxPostsPerCircle) {
+                  // Just limit content length
+                  return {
+                    id: circle.id,
+                    name: circle.name,
+                    posts: (circle.posts || []).map(post => ({
+                      ...post,
+                      content: post.content && post.content.length > maxContentLength 
+                        ? post.content.substring(0, maxContentLength) 
+                        : post.content || ""
+                    }))
+                  };
+                }
                 
-                // Take only limited number of posts
-                const limitedPosts = sortedPosts.slice(0, maxPostsPerCircle).map(post => ({
+                // Log detailed sampling statistics
+                console.log(`[Data Sampling] Circle ${circle.id}: Sampling ${maxPostsPerCircle} posts from ${circle.posts.length} total`);
+                
+                // More sophisticated post scoring and sampling
+                const scorePosts = (posts) => {
+                  return posts.map(post => {
+                    // Base score starts with interactions (if available)
+                    let score = post.metrics?.interactions || 0;
+                    
+                    // Recency bonus (posts from last 7 days get a boost)
+                    const postDate = new Date(post.createdAt || Date.now());
+                    const daysSinceCreation = (Date.now() - postDate.getTime()) / (1000 * 60 * 60 * 24);
+                    if (daysSinceCreation < 7) {
+                      score += 5; // Boost recent posts
+                    }
+                    
+                    // Content length consideration - middle length posts (300-1000 chars) get slight boost
+                    const contentLength = post.content?.length || 0;
+                    if (contentLength >= 300 && contentLength <= 1000) {
+                      score += 2; // Boost medium-length posts
+                    }
+                    
+                    return { ...post, _score: score };
+                  });
+                };
+                
+                // Score and sort posts
+                const scoredPosts = scorePosts(circle.posts);
+                const sortedPosts = [...scoredPosts].sort((a, b) => b._score - a._score);
+                
+                // Take top scored posts but ensure diversity (include some lower scored posts too)
+                const topPosts = sortedPosts.slice(0, Math.floor(maxPostsPerCircle * 0.7)); // 70% top scored
+                const remainingPostsPool = sortedPosts.slice(Math.floor(maxPostsPerCircle * 0.7));
+                
+                // Select random posts from the remaining pool
+                const randomPosts = [];
+                const remainingSlots = maxPostsPerCircle - topPosts.length;
+                
+                if (remainingSlots > 0 && remainingPostsPool.length > 0) {
+                  for (let i = 0; i < remainingSlots && i < remainingPostsPool.length; i++) {
+                    const randomIndex = Math.floor(Math.random() * remainingPostsPool.length);
+                    randomPosts.push(remainingPostsPool[randomIndex]);
+                    remainingPostsPool.splice(randomIndex, 1);
+                  }
+                }
+                
+                // Combine top scored posts with random samples
+                const sampledPosts = [...topPosts, ...randomPosts];
+                
+                // Log sampling completion
+                console.log(`[Data Sampling] Circle ${circle.id}: Selected ${sampledPosts.length} posts (${topPosts.length} by score, ${randomPosts.length} random)`);
+                
+                // Apply content length limits
+                const limitedPosts = sampledPosts.map(post => ({
                   ...post,
-                  // Trim content to max length if needed
                   content: post.content && post.content.length > maxContentLength 
-                    ? post.content.substring(0, maxContentLength) + "..." 
-                    : post.content
+                    ? post.content.substring(0, maxContentLength) 
+                    : post.content || "",
+                  // Remove the temporary scoring property
+                  _score: undefined 
                 }));
                 
                 return {
@@ -366,7 +418,57 @@ export const useLabResultsAnalysis = (lab: Lab) => {
             console.log(`[Lab205Debug] Reduced request data: ${controlCircles.length} control circles with max 15 posts each`);
             console.log(`[Lab205Debug] Content limited to max 1000 chars per post`);
           } else {
-            // Normal request data for other labs
+            // Define the smart sampling and limiting function for all labs
+            const limitCircleContent = (circles, maxPostsPerCircle = 15, maxContentLength = 1000) => {
+              return circles.map(circle => {
+                // If this circle has few posts, just limit content length
+                if (!circle.posts || circle.posts.length <= maxPostsPerCircle) {
+                  return {
+                    id: circle.id,
+                    name: circle.name,
+                    posts: (circle.posts || []).map(post => ({
+                      ...post,
+                      content: post.content && post.content.length > maxContentLength 
+                        ? post.content.substring(0, maxContentLength) 
+                        : post.content || ""
+                    }))
+                  };
+                }
+                
+                // Sort posts by interactions or recency for larger datasets
+                const sortedPosts = [...circle.posts].sort((a, b) => {
+                  const aInteractions = a.metrics?.interactions || 0;
+                  const bInteractions = b.metrics?.interactions || 0;
+                  
+                  // First sort by interactions if available
+                  if (aInteractions !== bInteractions) {
+                    return bInteractions - aInteractions; // Higher interactions first
+                  }
+                  
+                  // Then by date if interactions are equal
+                  const aDate = new Date(a.createdAt || 0);
+                  const bDate = new Date(b.createdAt || 0);
+                  return bDate.getTime() - aDate.getTime(); // Most recent first
+                });
+                
+                // Sample the posts
+                const sampledPosts = sortedPosts.slice(0, maxPostsPerCircle);
+                
+                // Apply content length limits
+                return {
+                  id: circle.id,
+                  name: circle.name,
+                  posts: sampledPosts.map(post => ({
+                    ...post,
+                    content: post.content && post.content.length > maxContentLength 
+                      ? post.content.substring(0, maxContentLength) 
+                      : post.content || ""
+                  }))
+                };
+              });
+            };
+
+            // Use smart sampling for all labs, not just Lab 205
             requestData = {
               metric: {
                 name: metric.name,
@@ -374,10 +476,14 @@ export const useLabResultsAnalysis = (lab: Lab) => {
                 priority: metric.priority
               },
               labGoals: lab.goals || '',
-              controlCircles,
-              treatmentCircles,
-              observationCircles
+              controlCircles: limitCircleContent(controlCircles),
+              treatmentCircles: limitCircleContent(treatmentCircles),
+              observationCircles: observationCircles ? limitCircleContent(observationCircles) : undefined
             };
+            
+            // Log dataset size information
+            console.log(`[MetricsAnalysis] Using smart data sampling for lab ${lab.id}`);
+            console.log(`[MetricsAnalysis] Prepared ${controlCircles.length} control circles and ${treatmentCircles.length} treatment circles`);
           }
           
           // Call the API endpoint for analysis with caching

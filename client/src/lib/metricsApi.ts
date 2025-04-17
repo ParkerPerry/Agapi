@@ -209,54 +209,98 @@ export async function analyzeMetricWithCache(
     
     // Using the correct API endpoint path that matches server routes
     console.log(`[MetricsAPI] Sending analysis request to API for lab ${labId || 'unknown'}`);
-    const result = await apiRequest('/api/analyze-metric', 'POST', requestWithCache);
     
-    // For Lab 205, log diagnostic information if available
+    // Add more detailed debugging for all requests
+    console.log(`[MetricsAPI] Request details: metric=${request.metric.name}, circles=${request.controlCircles.length + request.treatmentCircles.length}`);
+    
+    // Record start time for all labs
+    console.time(`metrics-analysis-lab-${labId}`);
+    
+    // Special handling for Lab 205
     if (labId === 205) {
-      console.timeEnd('lab205-metric-analysis');
-      console.log(`[Lab205Debug] Received response for Lab 205:`, result);
+      console.log(`[Lab205Debug] Starting metric analysis request for Lab 205`);
+      console.time('lab205-metric-analysis');
+    }
+    
+    try {
+      // Make the API request with a timeout
+      const abortController = new AbortController();
+      const timeoutId = setTimeout(() => abortController.abort(), 120000);
       
-      // If we received diagnostics instead of a regular result
-      if (result.diagnostics) {
-        console.log(`[Lab205Debug] Received diagnostic information:`, result.diagnostics);
+      // Enhanced error handling around the API request
+      const result = await apiRequest('/api/analyze-metric', 'POST', requestWithCache);
+      
+      // Clear timeout
+      clearTimeout(timeoutId);
+      
+      // Record end time
+      console.timeEnd(`metrics-analysis-lab-${labId}`);
+      
+      // Log success
+      console.log(`[MetricsAPI] Successfully received response for lab ${labId || 'unknown'}`);
+      
+      // For Lab 205, log diagnostic information if available
+      if (labId === 205) {
+        console.timeEnd('lab205-metric-analysis');
+        console.log(`[Lab205Debug] Received response for Lab 205:`, result);
         
-        // Return a simulated result with the diagnostics data for debugging
-        return {
-          name: request.metric.name,
-          target: request.metric.target,
-          priority: request.metric.priority,
-          actual: "Diagnostic Mode",
-          status: "warning",
-          confidence: 0,
-          difference: "N/A",
-          analysis: "Running in diagnostic mode. See console logs for details.",
-          diagnostics: result.diagnostics
-        };
+        // If we received diagnostics instead of a regular result
+        if (result.diagnostics) {
+          console.log(`[Lab205Debug] Received diagnostic information:`, result.diagnostics);
+          
+          // Return a simulated result with the diagnostics data for debugging
+          return {
+            name: request.metric.name,
+            target: request.metric.target,
+            priority: request.metric.priority,
+            actual: "Diagnostic Mode",
+            status: "warning",
+            confidence: 0,
+            difference: "N/A",
+            analysis: "Running in diagnostic mode. See console logs for details.",
+            diagnostics: result.diagnostics
+          };
+        }
       }
+      
+      // Create base metric result
+      const metricResult: MetricResult & { fromCache?: boolean; updatedAt?: string } = {
+        name: request.metric.name,
+        target: request.metric.target,
+        priority: request.metric.priority,
+        actual: result.actual,
+        status: result.status,
+        confidence: result.confidence,
+        difference: result.difference,
+        analysis: result.analysis
+      };
+      
+      // Add cache metadata if present
+      if (result.fromCache !== undefined) {
+        metricResult.fromCache = result.fromCache;
+      }
+      
+      if (result.updatedAt) {
+        metricResult.updatedAt = result.updatedAt;
+      }
+      
+      return metricResult;
+    } catch (apiError: any) {
+      console.error(`[MetricsAPI] Error in analyze-metric API call:`, apiError);
+      
+      // Special handling based on error type
+      if (apiError.name === 'AbortError') {
+        console.error(`[MetricsAPI] Request timed out after 2 minutes`);
+        throw new Error(`Analysis request timed out after 2 minutes. The dataset may be too large.`);
+      }
+      
+      // Special diagnostics for network errors
+      if (apiError.message && apiError.message.includes('NetworkError')) {
+        console.error(`[MetricsAPI] Network error detected - possible connection issue`);
+      }
+      
+      throw apiError;
     }
-    
-    // Create base metric result
-    const metricResult: MetricResult & { fromCache?: boolean; updatedAt?: string } = {
-      name: request.metric.name,
-      target: request.metric.target,
-      priority: request.metric.priority,
-      actual: result.actual,
-      status: result.status,
-      confidence: result.confidence,
-      difference: result.difference,
-      analysis: result.analysis
-    };
-    
-    // Add cache metadata if present
-    if (result.fromCache !== undefined) {
-      metricResult.fromCache = result.fromCache;
-    }
-    
-    if (result.updatedAt) {
-      metricResult.updatedAt = result.updatedAt;
-    }
-    
-    return metricResult;
   } catch (error) {
     console.error('Error analyzing metric:', error);
     
