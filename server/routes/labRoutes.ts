@@ -316,80 +316,30 @@ router.get('/:id/circles/stats', requireAuth, async (req, res) => {
 router.get('/:id/posts', requireAuth, async (req, res) => {
   const labId = parseInt(req.params.id);
   const targetRole = req.query.role as string | undefined;
-  
+
   try {
     // Verify lab exists
     const lab = await storage.getLab(labId);
     if (!lab) {
       return res.status(404).json({ message: "Lab not found" });
     }
-    
-    // Get lab circles
-    let labCircles = await storage.getLabCircles(labId);
-    
-    // Filter by role if specified
+
+    // Get posts explicitly associated with the lab
+    let labPosts = await storage.getLabPosts(labId);
+
+    // Filter posts by role if specified
     if (targetRole && ["control", "treatment", "observation"].includes(targetRole)) {
-      labCircles = labCircles.filter(lc => lc.role === targetRole);
+      labPosts = labPosts.filter((post: any) => post.circle && post.circle.role === targetRole);
     }
-    
-    // Get posts from all circles
-    const allPosts = [];
-    
-    for (const lc of labCircles) {
-      // Check if user has access to this circle
-      const hasAccess = await hasCirclePermission(lc.circleId, req.user!.id, storage);
-      if (!hasAccess) continue;
-      
-      const circlePosts = await storage.getCirclePosts(lc.circleId);
-      
-      // Add circle info to each post
-      const circle = await storage.getCircle(lc.circleId);
-      
-      // Process each post to include necessary data
-      for (const post of circlePosts) {
-        // Get post interactions
-        const interactions = await storage.getPostInteractions(post.id);
-        
-        // Get pending AI responses if any
-        const pendingResponses = await storage.getPendingResponses(post.id);
-        
-        // Create enhanced post object
-        const enhancedPost = {
-          ...post,
-          circle: {
-            ...circle,
-            role: lc.role // Include the role in the circle object
-          },
-          interactions: interactions || [],
-          pendingResponses: pendingResponses || []
-        };
-        
-        allPosts.push(enhancedPost);
-      }
-    }
-    
+
     // Sort by created date, most recent first
-    allPosts.sort((a, b) => {
-      // Handle potential null dates gracefully
+    labPosts.sort((a: any, b: any) => {
       const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
       const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return dateB - dateA;
     });
-    
-    // Add detailed debug logging for Lab 5 to trace the issue
-    if (labId === 5) {
-      console.log(`[DEBUG] Lab 5 posts request with targetRole=${targetRole || 'all'}`);
-      console.log(`[DEBUG] Found ${labCircles.length} lab circles in Lab 5`);
-      console.log(`[DEBUG] Found ${allPosts.length} total posts in Lab 5`);
-      
-      // Count posts by circle role to check counts
-      const controlCirclePosts = allPosts.filter(post => post.circle && post.circle.role === 'control').length;
-      const treatmentCirclePosts = allPosts.filter(post => post.circle && post.circle.role === 'treatment').length;
-      
-      console.log(`[DEBUG] Lab 5 posts by circle role: control=${controlCirclePosts}, treatment=${treatmentCirclePosts}`);
-    }
-    
-    res.json(allPosts);
+
+    res.json(labPosts);
   } catch (error) {
     console.error("Error getting lab posts:", error);
     res.status(500).json({ message: "Failed to get lab posts" });

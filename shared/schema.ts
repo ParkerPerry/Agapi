@@ -24,6 +24,7 @@ export const circles = pgTable("circles", {
   userId: integer("user_id").references(() => users.id).notNull(),
   isDefault: boolean("is_default").default(false).notNull(),
   visibility: text("visibility", { enum: ["private", "shared"] }).default("private").notNull(),
+  addedAt: timestamp("added_at"),
 });
 
 // Update circleMembers table definition to include status

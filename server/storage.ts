@@ -133,7 +133,7 @@ export interface IStorage {
   
   // Lab-Circle methods
   addCircleToLab(labId: number, circleId: number, role?: "control" | "treatment" | "observation"): Promise<LabCircle>;
-  getLabCircles(labId: number): Promise<(Circle & { role: "control" | "treatment" | "observation" })[]>;
+  getLabCircles(labId: number): Promise<(Circle & LabCircle)[]>;
   getLabCirclesWithStats(labId: number): Promise<(Circle & { 
     role: "control" | "treatment" | "observation",
     memberCount: number,
@@ -2008,22 +2008,23 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
-  async getLabCircles(labId: number): Promise<(Circle & { role: "control" | "treatment" | "observation"; circleId: number })[]> {
+  async getLabCircles(labId: number): Promise<(Circle & LabCircle)[]> {
     try {
       console.log("[Storage] Getting circles for lab:", labId);
-      
+
       const labCirclesData = await db
         .select({
           ...circles,
           role: labCircles.role,
-          circleId: labCircles.circleId  // Explicitly include circleId to ensure it's available
+          circleId: labCircles.circleId,
+          addedAt: labCircles.addedAt
         })
         .from(labCircles)
         .innerJoin(circles, eq(labCircles.circleId, circles.id))
         .where(eq(labCircles.labId, labId));
-      
+
       console.log("[Storage] Retrieved lab circles count:", labCirclesData.length);
-      
+
       return labCirclesData;
     } catch (error) {
       console.error("[Storage] Error getting lab circles:", error);
