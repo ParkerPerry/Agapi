@@ -216,5 +216,11 @@ The [Flow Documentation](docs/flows.md) illustrates:
 ## 🤝 Contributing
 Contributions are welcome! Please read our contributing guidelines for details on our code of conduct and the process for submitting pull requests.
 
+## 🤖 For AI Assistants
+AI coding assistants should refer to [agent_guidelines.md](agent_guidelines.md) for guidance on navigating this codebase. This file provides:
+- Directory priorities and which folders to avoid
+- Documentation hierarchy
+- Special considerations for database operations and API structure
+
 ## 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
