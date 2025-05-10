@@ -158,7 +158,7 @@ export function LabPostTargetingSelector({
   const circleCounts = React.useMemo(() => {
     if (!labCircles) return { control: 0, treatment: 0, observation: 0 };
     
-    return labCircles.reduce((counts, circle) => {
+    return labCircles.reduce((counts: Record<string, number>, circle: { role: string }) => {
       counts[circle.role as keyof typeof counts]++;
       return counts;
     }, { control: 0, treatment: 0, observation: 0 });
@@ -310,7 +310,7 @@ export function LabPostTargetingSelector({
               <>
                 <Separator className="my-2" />
                 <CardContent className="py-3">
-                  <div className="grid grid-cols-3 gap-2 mb-4">
+                  <div className="grid grid-cols-2 gap-2 mb-4">
                     <div className="rounded-md border p-2 text-center">
                       <div className="text-xs text-muted-foreground">Control</div>
                       <Badge variant="outline" className="mt-1 bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
@@ -323,12 +323,6 @@ export function LabPostTargetingSelector({
                         {circleCounts.treatment}
                       </Badge>
                     </div>
-                    <div className="rounded-md border p-2 text-center">
-                      <div className="text-xs text-muted-foreground">Observation</div>
-                      <Badge variant="outline" className="mt-1 bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-400">
-                        {circleCounts.observation}
-                      </Badge>
-                    </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -338,9 +332,7 @@ export function LabPostTargetingSelector({
                         <Badge variant="outline" className={
                           currentCircleRole === "control"
                             ? "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
-                            : currentCircleRole === "treatment"
-                            ? "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400"
-                            : "bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-400"
+                            : "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400"
                         }>
                           {roleInfo[currentCircleRole as keyof typeof roleInfo].icon}
                           <span className="ml-1">
@@ -388,13 +380,6 @@ export function LabPostTargetingSelector({
                                 <div className="flex items-center">
                                   {roleInfo.treatment.icon}
                                   <span className="ml-2">Treatment only</span>
-                                </div>
-                              </SelectItem>
-                              
-                              <SelectItem value="observation" className="flex items-center">
-                                <div className="flex items-center">
-                                  {roleInfo.observation.icon}
-                                  <span className="ml-2">Observation only</span>
                                 </div>
                               </SelectItem>
                             </SelectContent>

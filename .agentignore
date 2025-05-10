@@ -1,0 +1,39 @@
+# .agentignore - Directories and files that AI agents should ignore
+# This file complements .gitignore but may contain additional patterns
+
+# Archive directory - contains outdated examples and test reports
+/archive/
+/archive/**
+
+# Any test reports, regardless of location
+**/*-report.html
+**/*-trace.html
+**/*.test-result.json
+
+# Temporary files
+**/tmp/
+**/temp/
+**/*.temp.*
+**/*.tmp.*
+
+# Legacy code that should not be referenced
+**/*_old.*
+**/*_legacy.*
+**/*_deprecated.*
+**/*.bak
+
+# Documentation drafts
+**/drafts/
+**/*.draft.md
+
+# Local configuration files
+**/.env.local
+**/.env.*.local
+
+# Large binary files
+**/*.zip
+**/*.gz
+**/*.tar
+**/*.rar
+
+# Note: AI assistants should also respect all patterns in .gitignore

@@ -1,0 +1,84 @@
+## Agapi App Bug Log
+
+This document is intended to track and describe bugs encountered in the Agapi application, specifically on the `feature-lab-reporting` branch. Please provide detailed steps to reproduce, observed behavior, and any other relevant notes for each issue.
+
+---
+
+### Bug 1: Content Tab Shows All Circle Content Instead of Lab-Specific Post
+
+**Description:**
+In the Content tab of a lab (e.g., Lab ID 217), instead of displaying only the post(s) associated with that specific lab, it currently displays all content from the associated circle.
+
+**Steps to Reproduce:**
+
+1. Navigate to a lab detail page (e.g., Near Maxi 59).
+2. Click on the `Content` tab.
+3. Observe the listed posts under "Lab Content."
+
+**Expected Behavior:**
+Only posts linked to the current lab should be displayed.
+
+**Observed Behavior:**
+All posts from the related circle are displayed regardless of their lab association.
+
+**Environment:**
+Web app, Lab ID 217
+
+**Notes:**
+Refer to attached screenshot for visual reference.
+
+---
+
+### Bug 2: Inconsistent Refresh Behavior on Content Tab Sub-Filters
+
+**Description:**
+Clicking `All`, `Control`, or `Treatment` in the Content tab causes the content to reload inconsistently, with different results appearing on each click.
+
+**Steps to Reproduce:**
+
+1. Go to the `Content` tab of any lab (e.g., Lab ID 217).
+2. Click on the `All` filter, then toggle between `Control` and `Treatment` multiple times.
+3. Observe the content results change unpredictably.
+
+**Expected Behavior:**
+Content should remain consistent unless the underlying dataset changes.
+
+**Observed Behavior:**
+Each toggle results in a new set of displayed content.
+
+**Environment:**
+Web app, Lab ID 217
+
+**Notes:**
+Suggested fix: Remove the refresh action from the `All`, `Control`, and `Treatment` toggle actions. Instead, only refresh when the main `Content` tab is selected.
+
+---
+
+### Bug 3: Incorrect Data Scope and Premature Analysis Trigger on Results Page
+
+**Description:**
+The Results Analysis logic appears to be ingesting all posts from circles associated with the lab, rather than limiting the scope to only the post(s) explicitly tied to the lab and their respective threads. Additionally, the analysis process runs even when AI-generated responses (ai-followers) are still pending.
+
+**Steps to Reproduce:**
+
+1. Open a lab with an active or recent post (e.g., Near Maxi 59).
+2. Go to the `Results` tab and observe the loading process.
+3. Monitor backend to confirm the scope of content sent to the AI and whether pending responses are present.
+
+**Expected Behavior:**
+
+* Only the lab-specific post and its threads should be sent for analysis.
+* If ai-follower responses are still pending, the system should not proceed without notifying the user.
+
+**Observed Behavior:**
+
+* The system likely pulls all posts from the lab’s associated circles.
+* Analysis continues even if response data is incomplete.
+
+**Environment:**
+Web app, Lab ID 217
+
+**Notes:**
+A new feature is suggested: If ai-follower responses are still pending, the user should receive a clear warning and a completion ratio (e.g., "22 of 38 responses received - 58% complete") before proceeding.
+
+---

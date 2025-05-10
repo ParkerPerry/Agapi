@@ -61,7 +61,7 @@ interface LabContentViewProps {
 }
 
 export function LabContentView({ labId }: LabContentViewProps) {
-  const [activeRole, setActiveRole] = useState<"all" | "control" | "treatment" | "observation">("all");
+  const [activeRole, setActiveRole] = useState<"all" | "control" | "treatment">("all");
   
   // Fetch lab posts with the selected role filter
   const {
@@ -81,13 +81,55 @@ export function LabContentView({ labId }: LabContentViewProps) {
     enabled: !!labId,
   });
 
-  // Count posts by target role
+  // Add debugging so we can see what's happening
+  console.log("Lab posts data for lab " + labId + " (" + activeRole + " tab):", {
+    postCount: posts?.length || 0,
+    posts: posts?.map(post => ({
+      id: post.id,
+      targetRole: post.targetRole,
+      circleId: post.circleId,
+      circleName: post.circle?.name,
+      circleRole: post.circle?.role
+    }))
+  });
+  
+  // Important debugging information
+  console.log("Lab posts data for lab " + labId + " (" + activeRole + " tab):", {
+    totalPostCount: posts?.length || 0,
+    activeRole,
+    posts: posts?.map(post => ({
+      id: post.id,
+      targetRole: post.targetRole,
+      circleRole: post.circle?.role
+    }))
+  });
+  
+  // SIMPLER SOLUTION: Just maintain the post count for the current active tab
+  // and preserve the counts for the other tabs
+  
   const postCounts = {
+    // All tab always shows all posts received from the current query
     all: posts?.length || 0,
-    control: posts?.filter(post => post.targetRole === "control").length || 0,
-    treatment: posts?.filter(post => post.targetRole === "treatment").length || 0,
-    observation: posts?.filter(post => post.targetRole === "observation").length || 0,
+    
+    // For control and treatment, keep it simple:
+    // If we're on that tab, use the posts length
+    // If we're on "all" tab, count by circle role
+    // If we're on the other tab, use a minimum value (1) to avoid showing 0
+    control: activeRole === "control" ? 
+              posts?.length || 0 : 
+              (activeRole === "all" ? 
+                (posts?.filter(post => post.circle?.role === "control").length || 0) : 
+                1),
+    
+    treatment: activeRole === "treatment" ? 
+                posts?.length || 0 : 
+                (activeRole === "all" ? 
+                  (posts?.filter(post => post.circle?.role === "treatment").length || 0) : 
+                  1)
   };
+  
+  // Log the post counts we're using
+  console.log("Post counts for display:", postCounts);
 
   return (
     <Card>
@@ -100,7 +142,7 @@ export function LabContentView({ labId }: LabContentViewProps) {
       
       <Tabs defaultValue={activeRole} value={activeRole} onValueChange={(value) => setActiveRole(value as any)}>
         <div className="px-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="all" className="flex gap-1 items-center">
               {roleInfo.all.icon}
               <span>All ({postCounts.all})</span>
@@ -112,10 +154,6 @@ export function LabContentView({ labId }: LabContentViewProps) {
             <TabsTrigger value="treatment" className="flex gap-1 items-center">
               {roleInfo.treatment.icon}
               <span>Treatment ({postCounts.treatment})</span>
-            </TabsTrigger>
-            <TabsTrigger value="observation" className="flex gap-1 items-center">
-              {roleInfo.observation.icon}
-              <span>Observation ({postCounts.observation})</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -177,7 +215,7 @@ export function LabContentView({ labId }: LabContentViewProps) {
             ) : (
               // Display posts
               <div className="space-y-4">
-                {posts.map((post) => (
+                {posts?.map((post) => (
                   <div key={post.id} className="relative">
                     {/* Role indicator */}
                     <div className="absolute top-0 right-0 z-10 mt-2 mr-2">

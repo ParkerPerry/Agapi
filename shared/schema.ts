@@ -550,6 +550,46 @@ export const insertLabSchema = createInsertSchema(labs)
     circleId: true, // Added circleId to allow direct association with a circle (optional)
   });
 
+// Lab Templates for quick setup of experiments
+export const labTemplates = pgTable("lab_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  category: text("category", { 
+    enum: ["product", "marketing", "content", "engagement"] 
+  }).notNull(),
+  experimentType: text("experiment_type", { 
+    enum: ["a_b_test", "multivariate", "exploration"] 
+  }).notNull(),
+  goals: text("goals").notNull(),
+  successMetrics: json("success_metrics").$type<{
+    metrics: Array<{
+      name: string;
+      target: string;
+      priority: "high" | "medium" | "low";
+    }>;
+  }>().notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  isDefault: boolean("is_default").default(false),
+});
+
+// Insert schema for lab templates
+export const insertLabTemplateSchema = createInsertSchema(labTemplates)
+  .pick({
+    name: true,
+    description: true,
+    category: true,
+    experimentType: true,
+    goals: true,
+    successMetrics: true,
+    isDefault: true,
+  });
+
+// Select type for lab templates
+export type LabTemplate = typeof labTemplates.$inferSelect;
+export type InsertLabTemplate = z.infer<typeof insertLabTemplateSchema>;
+
 export const insertLabCircleSchema = createInsertSchema(labCircles)
   .pick({
     labId: true,
@@ -557,8 +597,49 @@ export const insertLabCircleSchema = createInsertSchema(labCircles)
     role: true,
   });
 
+// Table for storing lab analysis results
+export const labAnalysisResults = pgTable("lab_analysis_results", {
+  id: serial("id").primaryKey(),
+  labId: integer("lab_id").references(() => labs.id).notNull(),
+  metricResults: json("metric_results").$type<Array<{
+    name: string;
+    target: string | number;
+    priority: "high" | "medium" | "low";
+    actual: string;
+    status: "success" | "warning" | "fail";
+    confidence: number;
+    difference: string;
+    analysis?: string;
+  }>>().notNull(),
+  recommendation: json("recommendation").$type<{
+    decision: "go" | "wait" | "rethink";
+    confidence: number;
+    reasoning: string;
+  }>(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Relationships for lab analysis results
+export const labAnalysisResultsRelations = relations(labAnalysisResults, ({ one }) => ({
+  lab: one(labs, {
+    fields: [labAnalysisResults.labId],
+    references: [labs.id],
+  }),
+}));
+
+// Insert schema for lab analysis results
+export const insertLabAnalysisResultSchema = createInsertSchema(labAnalysisResults)
+  .pick({
+    labId: true,
+    metricResults: true,
+    recommendation: true,
+  });
+
 // Type definitions for labs
 export type Lab = typeof labs.$inferSelect;
 export type LabCircle = typeof labCircles.$inferSelect;
+export type LabAnalysisResult = typeof labAnalysisResults.$inferSelect;
 export type InsertLab = z.infer<typeof insertLabSchema>;
 export type InsertLabCircle = z.infer<typeof insertLabCircleSchema>;
+export type InsertLabAnalysisResult = z.infer<typeof insertLabAnalysisResultSchema>;

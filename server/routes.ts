@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { ResponseScheduler } from "./response-scheduler";
 import { requireAuth, hasCirclePermission } from "./routes/middleware";
 import nftRoutes from "./blockchain/routes";
+import { initializeWebSocketServer } from "./websocket";
 
 // Import modularized routes
 import userRoutes from "./routes/userRoutes";
@@ -18,10 +19,15 @@ import directChatRoutes from "./routes/directChatRoutes";
 import toolRoutes from "./routes/toolRoutes";
 import labRoutes from "./routes/labRoutes";
 import healthRoutes from "./routes/healthRoutes";
+import metricsAnalysisRoutes from "./routes/metricsAnalysisRoutes";
+import openaiTestRoute from "./routes/openaiTestRoute";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
   const httpServer = createServer(app);
+  
+  // Initialize WebSocket server
+  initializeWebSocketServer(httpServer, app);
 
   // Start the response scheduler
   const scheduler = ResponseScheduler.getInstance();
@@ -294,6 +300,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/labs', labRoutes);
   app.use('/api/nft', nftRoutes);
   app.use('/api/health', healthRoutes);
+  app.use('/api', openaiTestRoute);  // Register this before metricsAnalysisRoutes
+  app.use('/api', metricsAnalysisRoutes);
   
   // Register circle-related routes
   app.use('/api/circles', circleRoutes);

@@ -6,12 +6,12 @@ import {
   Notification, InsertNotification, DirectChat, InsertDirectChat,
   AiFollowerCollective, InsertAiFollowerCollective, 
   AiFollowerCollectiveMember, InsertAiFollowerCollectiveMember,
-  Lab, InsertLab, LabCircle, InsertLabCircle,
+  Lab, InsertLab, LabCircle, InsertLabCircle, LabAnalysisResult, InsertLabAnalysisResult,
   // Add table imports
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
   notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers,
-  circleCollectives, labs, labCircles
+  circleCollectives, labs, labCircles, labAnalysisResults
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
@@ -141,6 +141,7 @@ export interface IStorage {
     addedAt: Date
   })[]>;
   getCircleLabs(circleId: number): Promise<(Lab & { role: "control" | "treatment" | "observation" })[]>;
+  getLabsForCircle(circleId: number): Promise<Lab[]>; // Alias for getCircleLabs for API compatibility
   removeCircleFromLab(labId: number, circleId: number): Promise<void>;
   updateLabCircleRole(labId: number, circleId: number, role: "control" | "treatment" | "observation"): Promise<LabCircle>;
   
@@ -151,6 +152,11 @@ export interface IStorage {
   getLabPosts(labId: number, targetRole?: "control" | "treatment" | "observation" | "all"): Promise<Post[]>;
   getCircleRoleInLab(labId: number, circleId: number): Promise<"control" | "treatment" | "observation" | undefined>;
   getLabCirclesByRole(labId: number, role: "control" | "treatment" | "observation"): Promise<Circle[]>;
+  
+  // Lab Analysis Results methods
+  getLabAnalysisResult(labId: number): Promise<LabAnalysisResult | undefined>;
+  saveLabAnalysisResult(labId: number, metricResults: any[], recommendation: any): Promise<LabAnalysisResult>;
+  deleteLabAnalysisResult(labId: number): Promise<void>;
   
   // Circle Stats methods
   getCirclePostCount(circleId: number): Promise<number>;
@@ -2107,6 +2113,18 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  async getLabsForCircle(circleId: number): Promise<Lab[]> {
+    try {
+      console.log("[Storage] Getting labs for circle (alias method):", circleId);
+      // This is just an alias for getCircleLabs for API compatibility
+      const labsWithRoles = await this.getCircleLabs(circleId);
+      return labsWithRoles;
+    } catch (error) {
+      console.error("[Storage] Error getting labs for circle:", error);
+      throw error;
+    }
+  }
+  
   async removeCircleFromLab(labId: number, circleId: number): Promise<void> {
     try {
       console.log("[Storage] Removing circle from lab:", {
@@ -2343,6 +2361,85 @@ export class DatabaseStorage implements IStorage {
       return result;
     } catch (error) {
       console.error(`[Storage] Error getting lab circles with role ${role}:`, error);
+      throw error;
+    }
+  }
+
+  // Lab Analysis Results methods implementation
+  async getLabAnalysisResult(labId: number): Promise<LabAnalysisResult | undefined> {
+    console.log(`[Storage] Getting lab analysis result for lab ${labId}`);
+    
+    try {
+      const [result] = await db
+        .select()
+        .from(labAnalysisResults)
+        .where(eq(labAnalysisResults.labId, labId));
+      
+      if (result) {
+        console.log(`[Storage] Found analysis result for lab ${labId}`);
+      } else {
+        console.log(`[Storage] No analysis result found for lab ${labId}`);
+      }
+      
+      return result as LabAnalysisResult | undefined;
+    } catch (error) {
+      console.error(`[Storage] Error getting lab analysis result:`, error);
+      return undefined;
+    }
+  }
+  
+  async saveLabAnalysisResult(labId: number, metricResults: any[], recommendation: any): Promise<LabAnalysisResult> {
+    console.log(`[Storage] Saving lab analysis result for lab ${labId}`);
+    
+    try {
+      // Check if there's an existing result
+      const existingResult = await this.getLabAnalysisResult(labId);
+      
+      if (existingResult) {
+        // Update existing record
+        console.log(`[Storage] Updating existing analysis result for lab ${labId}`);
+        const [updatedResult] = (await db
+          .update(labAnalysisResults)
+          .set({
+            metricResults,
+            recommendation,
+            updatedAt: new Date()
+          })
+          .where(eq(labAnalysisResults.labId, labId))
+          .returning()) as LabAnalysisResult[];
+        
+        return updatedResult;
+      } else {
+        // Create new record
+        console.log(`[Storage] Creating new analysis result for lab ${labId}`);
+        const [newResult] = (await db
+          .insert(labAnalysisResults)
+          .values({
+            labId,
+            metricResults,
+            recommendation
+          })
+          .returning()) as LabAnalysisResult[];
+        
+        return newResult;
+      }
+    } catch (error) {
+      console.error(`[Storage] Error saving lab analysis result:`, error);
+      throw error;
+    }
+  }
+  
+  async deleteLabAnalysisResult(labId: number): Promise<void> {
+    console.log(`[Storage] Deleting lab analysis result for lab ${labId}`);
+    
+    try {
+      await db
+        .delete(labAnalysisResults)
+        .where(eq(labAnalysisResults.labId, labId));
+      
+      console.log(`[Storage] Successfully deleted analysis result for lab ${labId}`);
+    } catch (error) {
+      console.error(`[Storage] Error deleting lab analysis result:`, error);
       throw error;
     }
   }

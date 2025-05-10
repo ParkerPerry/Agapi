@@ -1,6 +1,56 @@
-node_modules
-dist
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
 .DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
+*.sublime-*
+
+# Debug logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+.tmp/
+.temp/
+*.tmp
+*.temp
+
+# Database
+*.sqlite
+*.db
+
+# Compiled output
+*.js.map
+*.d.ts.map
+
+# Project specific
+.cache/
+.drizzle/
+.data/

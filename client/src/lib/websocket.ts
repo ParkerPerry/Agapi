@@ -5,22 +5,41 @@ let ws: WebSocket | null = null;
 let reconnectAttempts = 0;
 let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 const MAX_RECONNECT_ATTEMPTS = 5;
+let authToken: string | null = null;
 
 // Map to store message type listeners
 const LISTENERS = new Map<string, Set<(data: any) => void>>();
 
+// Set the authentication token for WebSocket connections
+export function setWebSocketAuthToken(token: string | null) {
+  authToken = token;
+  
+  // If we have an active connection and the token changes, authenticate
+  if (ws && ws.readyState === WebSocket.OPEN && authToken) {
+    sendWebSocketMessage({
+      type: 'authenticate',
+      token: authToken
+    });
+  }
+}
+
 function getWebSocketUrl(): string {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const hostname = window.location.hostname;
-  const port = window.location.port || '5000';
-  const wsUrl = `${protocol}//${hostname}:${port}/ws`;
-  console.log('Constructing WebSocket URL:', {
-    protocol,
-    hostname,
-    port,
-    finalUrl: wsUrl
-  });
-  return wsUrl;
+  try {
+    // Use the relative URL approach to bypass potential proxy issues
+    // This is the most compatible approach across all environments
+    // The server will handle the path regardless of the protocol
+    const wsUrl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + 
+                  '//' + window.location.host + '/ws';
+    
+    console.log('Using WebSocket URL:', wsUrl);
+    return wsUrl;
+  } catch (error) {
+    // Fallback URL if anything goes wrong
+    console.error('Error constructing WebSocket URL:', error);
+    const fallbackUrl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + 
+                        '//' + window.location.host + '/ws';
+    return fallbackUrl;
+  }
 }
 
 export function createWebSocket(): WebSocket | null {
@@ -36,11 +55,27 @@ export function createWebSocket(): WebSocket | null {
   }
 
   try {
-    const socket = new WebSocket(getWebSocketUrl());
-    console.log('Creating new WebSocket connection');
+    // Get the WebSocket URL
+    const wsUrl = getWebSocketUrl();
+    
+    // Setting additional timeout for the connection
+    const timeoutId = setTimeout(() => {
+      // If socket exists but hasn't connected yet, close it
+      if (ws && ws.readyState === WebSocket.CONNECTING) {
+        console.log('WebSocket connection timeout, closing');
+        ws.close();
+        // Clear the state and dispatch event
+        clearWebSocketState();
+        window.dispatchEvent(new CustomEvent('websocket-connection-failed'));
+      }
+    }, 10000); // 10 second timeout
+    
+    const socket = new WebSocket(wsUrl);
+    console.log('Creating new WebSocket connection to', wsUrl);
 
     socket.onopen = () => {
       console.log('WebSocket connection established');
+      clearTimeout(timeoutId); // Clear the timeout
       reconnectAttempts = 0;
 
       // Set up ping to keep connection alive
@@ -115,6 +150,9 @@ export function createWebSocket(): WebSocket | null {
       } else {
         console.log('Maximum reconnection attempts reached');
         clearWebSocketState();
+        
+        // Dispatch a custom event to notify the app about the connection failure
+        window.dispatchEvent(new CustomEvent('websocket-connection-failed'));
       }
     };
 

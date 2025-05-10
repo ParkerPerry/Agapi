@@ -43,7 +43,7 @@ export async function setupAuth(app: Express) {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: isProduction ? 'strict' : 'lax'
     },
-    name: 'sid'
+    name: 'connect.sid' // Changed from 'sid' to match the default used by express-session
   };
 
   // Only set trust proxy in production

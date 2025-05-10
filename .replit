@@ -46,42 +46,6 @@ args = "npm run dev"
 waitForPort = 5000
 
 [[workflows.workflow]]
-name = "Start with MemoryStore"
-author = 18570664
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development npm run dev"
-
-[[workflows.workflow]]
-name = "Start App with ES Modules"
-author = 18570664
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development npm run dev"
-
-[[workflows.workflow]]
-name = "Start Fixed App"
-author = 18570664
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development npm run dev"
-
-[[workflows.workflow]]
-name = "Fixed Session Store"
-author = 18570664
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development npm run dev"
-
-[[workflows.workflow]]
 name = "Fixed WebSocket"
 author = 18570664
 mode = "sequential"

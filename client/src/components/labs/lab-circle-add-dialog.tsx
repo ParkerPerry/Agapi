@@ -262,13 +262,11 @@ const LabCircleAddDialog = ({
               <SelectContent>
                 <SelectItem value="control">Control</SelectItem>
                 <SelectItem value="treatment">Treatment</SelectItem>
-                <SelectItem value="observation">Observation</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
               <span className="font-medium">Control:</span> Baseline group with standard content<br />
-              <span className="font-medium">Treatment:</span> Experimental group with modified content<br />
-              <span className="font-medium">Observation:</span> Circle members can view but not participate
+              <span className="font-medium">Treatment:</span> Experimental group with modified content
             </p>
           </div>
         </div>

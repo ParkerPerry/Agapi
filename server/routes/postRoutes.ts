@@ -120,7 +120,8 @@ router.get('/:id', requireAuth, async (req, res) => {
           const follower = await storage.getAiFollower(interaction.authorId);
           return {
             ...interaction,
-            author: follower
+            author: follower,
+            aiFollower: follower // Add aiFollower property for Comment component compatibility
           };
         } else {
           const user = await storage.getUser(interaction.authorId);
@@ -343,7 +344,8 @@ router.get('/circle/:circleId', requireAuth, async (req, res) => {
               const follower = await storage.getAiFollower(interaction.authorId);
               return {
                 ...interaction,
-                author: follower
+                author: follower,
+                aiFollower: follower // Add aiFollower property for Comment component compatibility
               };
             } else {
               const user = await storage.getUser(interaction.authorId);
@@ -455,7 +457,8 @@ router.get('/user/:userId', requireAuth, async (req, res) => {
                 const follower = await storage.getAiFollower(interaction.authorId);
                 return {
                   ...interaction,
-                  author: follower
+                  author: follower,
+                  aiFollower: follower // Add aiFollower property for Comment component compatibility
                 };
               } else {
                 const user = await storage.getUser(interaction.authorId);

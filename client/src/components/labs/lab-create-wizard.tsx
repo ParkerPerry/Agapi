@@ -3,7 +3,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import type { Circle } from "@shared/schema";
+import type { Circle, InsertLabTemplate } from "@shared/schema";
+import { LabTemplateData } from "./lab-template-selector";
+
+// Define a type for metrics to avoid casting issues
+type MetricItem = {
+  name: string;
+  target: string | number;
+  priority: "high" | "medium" | "low";
+};
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -50,7 +58,7 @@ import {
 } from "@/components/ui/table";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Beaker, Plus, Trash, Check, X } from "lucide-react";
+import { Beaker, Plus, Trash, Check, X, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -64,6 +72,8 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
+import LabTemplateSelector from "@/components/labs/lab-template-selector";
+import LabCircleSelector from "@/components/labs/lab-circle-selector";
 
 interface LabCreateWizardProps {
   open: boolean;
@@ -121,33 +131,14 @@ const LabCreateWizard = ({
   
   const steps = [
     { title: "Basic Information", description: "Enter lab name and type" },
-    { title: "Goals & Description", description: "Define lab purpose and goals" },
+    { title: "Goals", description: "Define lab purpose and goals" },
     { title: "Success Metrics", description: "Set metrics to measure success" },
     { title: "Content", description: "Create content for testing" },
   ];
 
   // Set up form with default values
-  // Fetch user's circles
-  const { data: circlesData, isLoading: isLoadingCircles } = useQuery({
-    queryKey: ['/api/circles'],
-    refetchOnWindowFocus: false,
-  });
-  
-  // Extract all circles from response (API returns object with 'private' and 'shared' properties)
-  const circles = React.useMemo(() => {
-    if (!circlesData) return [];
-    
-    const allCircles: Circle[] = [];
-    if (circlesData && typeof circlesData === 'object') {
-      if ('private' in circlesData && Array.isArray(circlesData.private)) {
-        allCircles.push(...circlesData.private);
-      }
-      if ('shared' in circlesData && Array.isArray(circlesData.shared)) {
-        allCircles.push(...circlesData.shared);
-      }
-    }
-    return allCircles;
-  }, [circlesData]);
+  // We'll use the Lab Circle Selector component instead of fetching circles here
+  // The component itself handles data fetching
 
   const form = useForm<LabFormValues>({
     resolver: zodResolver(labSchema),
@@ -165,6 +156,37 @@ const LabCreateWizard = ({
   });
 
   const { watch, setValue, getValues } = form;
+  
+  const applyTemplate = (template: LabTemplateData) => {
+    // Apply the template values to the form
+    setValue("goals", template.goals);
+    
+    // Convert template metrics (if any) to the form format
+    if (template.successMetrics && template.successMetrics.metrics) {
+      // Convert metrics with proper typing to avoid type issues
+      const typedMetrics = (template.successMetrics.metrics as MetricItem[]).map(metric => ({
+        name: metric.name,
+        target: typeof metric.target === 'number' ? metric.target : parseFloat(metric.target) || 0,
+        priority: metric.priority
+      }));
+      
+      setValue("successMetrics.metrics", typedMetrics);
+    }
+    
+    // Also update experiment type if it matches one of our valid types
+    if (template.experimentType && (
+      template.experimentType === "a_b_test" || 
+      template.experimentType === "multivariate" || 
+      template.experimentType === "exploration"
+    )) {
+      setValue("experimentType", template.experimentType);
+    }
+    
+    toast({
+      title: "Template applied",
+      description: `The "${template.name}" template has been applied.`,
+    });
+  };
   const metrics = watch("successMetrics.metrics") || [];
   const labContent = watch("labContent") || [];
 
@@ -200,7 +222,12 @@ const LabCreateWizard = ({
     );
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e?: React.MouseEvent) => {
+    // If an event is passed, prevent default behavior
+    if (e) {
+      e.preventDefault();
+    }
+    
     const currentValues = getValues();
     let isValid = false;
 
@@ -208,7 +235,7 @@ const LabCreateWizard = ({
       const { name, experimentType, circles } = currentValues;
       isValid = !!(name && name.length >= 3 && experimentType && circles && circles.length > 0);
     } else if (currentStep === 1) {
-      // Description and goals are optional, so we can always proceed
+      // Goals are optional, so we can always proceed
       isValid = true;
     } else if (currentStep === 2) {
       // Metrics are optional
@@ -220,9 +247,10 @@ const LabCreateWizard = ({
 
     if (isValid) {
       if (currentStep < steps.length - 1) {
+        // Move to the next step
         setCurrentStep((prev) => prev + 1);
       } else {
-        // Submit the form
+        // This is the last step, submit the form manually
         await onSubmit(currentValues);
       }
     } else {
@@ -243,7 +271,8 @@ const LabCreateWizard = ({
       // Extract the circles data from the form
       const { circles, labContent, ...labData } = data;
       
-      let createdLab;
+      // Define type for the created lab
+      let createdLab: { id: number; [key: string]: any };
       
       // Check if we have circles selected
       if (circles && circles.length > 0) {
@@ -261,23 +290,32 @@ const LabCreateWizard = ({
         
         // If there are additional circles beyond the first one, add them separately
         if (circles.length > 1) {
-          // Add each additional circle to the lab with its role
-          const promises = circles.slice(1).map(circleObj => 
-            apiRequest("/api/labs/circles", "POST", {
-              labId: createdLab.id,
-              circleId: circleObj.id,
-              role: circleObj.role
-            })
-          );
-          
-          await Promise.all(promises);
+          try {
+            // Add each additional circle to the lab with its role
+            const promises = circles.slice(1).map(circleObj => 
+              apiRequest(`/api/labs/${createdLab.id}/circles`, "POST", {
+                circleId: circleObj.id,
+                role: circleObj.role
+              })
+            );
+            
+            await Promise.all(promises);
+          } catch (circleError) {
+            console.warn("Some circles may not have been added to the lab:", circleError);
+            // Continue with lab creation even if some circles failed to be added
+          }
         }
         
         // Also update the role of the first circle if it's not the default
         if (firstCircle.role !== "treatment") {
-          await apiRequest(`/api/labs/${createdLab.id}/circles/${firstCircle.id}`, "PATCH", {
-            role: firstCircle.role
-          });
+          try {
+            await apiRequest(`/api/labs/${createdLab.id}/circles/${firstCircle.id}`, "PATCH", {
+              role: firstCircle.role
+            });
+          } catch (roleError) {
+            console.warn("Could not update circle role:", roleError);
+            // Continue with lab creation even if role update fails
+          }
         }
       } else {
         // No circles selected, create lab without circle association
@@ -286,17 +324,22 @@ const LabCreateWizard = ({
       
       // If lab content was created, create posts for the lab
       if (labContent && labContent.length > 0 && createdLab) {
-        // Create each piece of content as a post associated with the lab
-        const postPromises = labContent.map(content => 
-          apiRequest("/api/posts", "POST", {
-            content: content.content,
-            labId: createdLab.id,
-            labExperiment: true,
-            targetRole: content.targetRole
-          })
-        );
-        
-        await Promise.all(postPromises);
+        try {
+          // Create each piece of content as a post associated with the lab
+          const postPromises = labContent.map(content => 
+            apiRequest("/api/posts", "POST", {
+              content: content.content,
+              labId: createdLab.id,
+              labExperiment: true,
+              targetRole: content.targetRole
+            })
+          );
+          
+          await Promise.all(postPromises);
+        } catch (contentError) {
+          console.warn("Some lab content posts could not be created:", contentError);
+          // Continue with lab creation even if content creation fails
+        }
       }
       
       toast({
@@ -310,13 +353,36 @@ const LabCreateWizard = ({
       // Reset form
       form.reset();
       setCurrentStep(0);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating lab:", error);
-      toast({
-        title: "Failed to create lab",
-        description: "There was an error creating the lab. Please try again.",
-        variant: "destructive",
-      });
+      
+      // Check if we have a successful lab creation response despite the error
+      // This can happen if the main lab creation succeeds but adding circles or content fails
+      const errorResponseData = error?.response?.data;
+      const hasLabId = typeof error?.labId === 'number' || (errorResponseData && typeof errorResponseData.id === 'number');
+      
+      if (hasLabId) {
+        toast({
+          title: "Lab created with issues",
+          description: "Your lab was created, but some secondary operations may have failed. You can still use the lab.",
+          variant: "default",
+        });
+        
+        // Close the wizard and refresh the labs list
+        onOpenChange(false);
+        onCreateSuccess();
+        
+        // Reset form
+        form.reset();
+        setCurrentStep(0);
+      } else {
+        // Complete failure - lab wasn't created
+        toast({
+          title: "Failed to create lab",
+          description: "There was an error creating the lab. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -373,7 +439,19 @@ const LabCreateWizard = ({
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* 
+  IMPORTANT: We must use the expanded form with e.preventDefault() instead of 
+  simply passing form.handleSubmit(onSubmit) directly.
+
+  This prevents events from template application (Apply Template button)
+  or other buttons from accidentally triggering form submission.
+  
+  Without this, applying a template in the wizard would immediately submit the form.
+*/}
+          <form onSubmit={(e) => { 
+            e.preventDefault(); 
+            form.handleSubmit(onSubmit)(e); 
+          }} className="space-y-4">
             {/* Step 1: Basic Information */}
             {currentStep === 0 && (
               <Card>
@@ -403,105 +481,37 @@ const LabCreateWizard = ({
 
                   <FormField
                     control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Describe the purpose and context of this experiment..."
+                            className="min-h-[120px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Provide context for other team members.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="circles"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Circle Selection</FormLabel>
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap gap-2 p-2 border rounded-md">
-                            {field.value && field.value.length > 0 ? (
-                              field.value.map((circleObj) => {
-                                const selectedCircle = circles.find(c => c.id === circleObj.id);
-                                return (
-                                  <div 
-                                    key={circleObj.id} 
-                                    className="flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-sm"
-                                  >
-                                    <span>{selectedCircle?.name || `Circle ${circleObj.id}`}</span>
-                                    <Badge variant="secondary" className="ml-1 text-xs">
-                                      {circleObj.role === 'control' ? 'Control' : 
-                                       circleObj.role === 'treatment' ? 'Treatment' : 'Observation'}
-                                    </Badge>
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-4 w-4 rounded-full ml-1"
-                                      onClick={() => {
-                                        const newCircles = field.value.filter(
-                                          (item) => item.id !== circleObj.id
-                                        );
-                                        field.onChange(newCircles);
-                                      }}
-                                    >
-                                      <X className="h-3 w-3" />
-                                    </Button>
-                                  </div>
-                                );
-                              })
-                            ) : (
-                              <div className="text-sm text-muted-foreground py-2 text-center w-full">
-                                No circles selected yet
-                              </div>
-                            )}
-                          </div>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button 
-                                type="button" 
-                                variant="outline" 
-                                size="sm" 
-                                className="w-full"
-                                disabled={isLoadingCircles || circles.length === 0}
-                              >
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add Circle
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[250px] p-0" align="start">
-                              <Command>
-                                <CommandInput placeholder="Search circles..." />
-                                <CommandEmpty>No circles found.</CommandEmpty>
-                                <CommandGroup heading="Available Circles">
-                                  {Array.isArray(circles) && circles.map((circle) => {
-                                    const isSelected = field.value?.some(
-                                      (c) => c.id === circle.id
-                                    );
-                                    return (
-                                      <CommandItem
-                                        key={circle.id}
-                                        onSelect={() => {
-                                          if (isSelected) {
-                                            // Remove if already selected
-                                            const newCircles = field.value.filter(
-                                              (item) => item.id !== circle.id
-                                            );
-                                            field.onChange(newCircles);
-                                          } else {
-                                            // Add with default role 'treatment'
-                                            const newCircles = [
-                                              ...(field.value || []),
-                                              { id: circle.id, role: "treatment" as const },
-                                            ];
-                                            field.onChange(newCircles);
-                                          }
-                                        }}
-                                      >
-                                        <Check
-                                          className={cn(
-                                            "mr-2 h-4 w-4",
-                                            isSelected ? "opacity-100" : "opacity-0"
-                                          )}
-                                        />
-                                        <span>{circle.name}</span>
-                                      </CommandItem>
-                                    );
-                                  })}
-                                </CommandGroup>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
-                        </div>
+                        <FormControl>
+                          <LabCircleSelector 
+                            selectedCircles={field.value || []} 
+                            onCirclesChange={field.onChange}
+                          />
+                        </FormControl>
                         <FormDescription>
                           Select one or more circles to include in this lab experiment.
                         </FormDescription>
@@ -542,36 +552,26 @@ const LabCreateWizard = ({
               </Card>
             )}
 
-            {/* Step 2: Goals & Description */}
+            {/* Step 2: Goals */}
             {currentStep === 1 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Goals & Description</CardTitle>
+                  <CardTitle>Goals</CardTitle>
                   <CardDescription>
                     Define what you want to achieve with this experiment.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Describe the purpose and context of this experiment..."
-                            className="min-h-[120px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Provide context for other team members.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="border rounded-md p-4 bg-muted/20 mb-6">
+                    <h3 className="text-sm font-medium flex items-center gap-2 mb-3">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      Lab Templates
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Save time by selecting a pre-defined template for common experiment types. Templates include recommended goals and metrics.
+                    </p>
+                    <LabTemplateSelector onSelectTemplate={applyTemplate} isWizardMode={true} />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -859,7 +859,7 @@ const LabCreateWizard = ({
             </Button>
             <Button
               type="button"
-              onClick={handleNext}
+              onClick={(e) => handleNext(e)}
               disabled={isSubmitting}
             >
               {currentStep < steps.length - 1
