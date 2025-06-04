@@ -201,6 +201,18 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     
     // Update lab status
     const updatedLab = await storage.updateLab(labId, updateData);
+    
+    // If activating the lab, also publish lab content as posts
+    if (status === 'active') {
+      try {
+        await storage.publishLabContent(labId);
+        console.log(`[Lab Activation] Successfully published content for lab ${labId}`);
+      } catch (contentError) {
+        console.warn(`[Lab Activation] Failed to publish content for lab ${labId}:`, contentError);
+        // Continue with the response even if content publishing fails
+      }
+    }
+    
     res.json(updatedLab);
   } catch (error) {
     console.error("Error updating lab status:", error);
