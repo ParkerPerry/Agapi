@@ -1946,14 +1946,21 @@ export class DatabaseStorage implements IStorage {
     try {
       console.log("[Storage] Deleting lab:", id);
       
-      // First delete all circle associations
+      // First delete all posts associated with this lab
+      await db
+        .delete(posts)
+        .where(eq(posts.labId, id));
+      
+      console.log("[Storage] Deleted lab posts");
+      
+      // Then delete all circle associations
       await db
         .delete(labCircles)
         .where(eq(labCircles.labId, id));
       
       console.log("[Storage] Deleted lab circles associations");
       
-      // Then delete the lab itself
+      // Finally delete the lab itself
       await db
         .delete(labs)
         .where(eq(labs.id, id));

@@ -1,0 +1,84 @@
+[Storage] Getting lab posts for lab 208
+[Storage] Getting interactions for post: 323
+[Storage] Getting interactions for post: 322
+[Storage] Getting interactions for post: 321
+[Storage] Getting interactions for post: 320
+[Storage] Retrieved interactions count: 7
+[Storage] Getting pending responses for post: 323
+[Storage] Retrieved interactions count: 12
+[Storage] Getting pending responses for post: 322
+[Storage] Found pending responses for post 323 : []
+[Storage] Getting circle by ID: 59
+[Storage] Found pending responses for post 322 : []
+[Storage] Getting circle by ID: 59
+[Storage] Getting circle role for circle 59 in lab 208
+[Storage] Getting circle role for circle 59 in lab 208
+[Storage] Circle has role: treatment
+[Storage] Circle has role: treatment
+[Storage] Retrieved interactions count: 4
+[Storage] Getting pending responses for post: 320
+[Storage] Retrieved interactions count: 2
+[Storage] Getting pending responses for post: 321
+[Storage] Found pending responses for post 320 : []
+[Storage] Getting circle by ID: 59
+[Storage] Found pending responses for post 321 : []
+[Storage] Getting circle by ID: 59
+[Storage] Getting circle role for circle 59 in lab 208
+[Storage] Getting circle role for circle 59 in lab 208
+[Storage] Circle has role: treatment
+[Storage] Circle has role: treatment
+[Storage] Retrieved and enriched 4 lab posts
+1:37:01 AM [express] GET /api/labs/208/posts 304 in 757ms :: [{"id":323,"userId":1,"circleId":59,"la…
+[Storage] Getting lab by ID: 208
+[Storage] Retrieved lab: { id: 208, name: 'Polenta Chain Launch', status: 'active' }
+[Storage] Deleting lab: 208
+[Storage] Deleted lab circles associations
+[Storage] Error deleting lab: error: update or delete on table "labs" violates foreign key constraint "posts_lab_id_fkey" on table "posts"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DatabaseStorage.deleteLab (/home/runner/workspace/server/storage.ts:1957:7)
+    at async <anonymous> (/home/runner/workspace/server/routes/labRoutes.ts:146:5) {
+  length: 260,
+  severity: 'ERROR',
+  code: '23503',
+  detail: 'Key (id)=(208) is still referenced from table "posts".',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'posts',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'posts_lab_id_fkey',
+  file: 'ri_triggers.c',
+  line: '2621',
+  routine: 'ri_ReportViolation'
+}
+Error deleting lab: error: update or delete on table "labs" violates foreign key constraint "posts_lab_id_fkey" on table "posts"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DatabaseStorage.deleteLab (/home/runner/workspace/server/storage.ts:1957:7)
+    at async <anonymous> (/home/runner/workspace/server/routes/labRoutes.ts:146:5) {
+  length: 260,
+  severity: 'ERROR',
+  code: '23503',
+  detail: 'Key (id)=(208) is still referenced from table "posts".',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'posts',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'posts_lab_id_fkey',
+  file: 'ri_triggers.c',
+  line: '2621',
+  routine: 'ri_ReportViolation'
+}
+1:37:16 AM [express] DELETE /api/labs/208 500 in 326ms :: {"message":"Failed to delete lab"}
+[WebSocket] Received message: ping
+[WebSocket] Received message: ping

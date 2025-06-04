@@ -518,6 +518,17 @@ export const labCircles = pgTable("lab_circles", {
   addedAt: timestamp("added_at").defaultNow(),
 });
 
+// Table for lab content templates (stored with lab, posted when activated)
+export const labContent = pgTable("lab_content", {
+  id: serial("id").primaryKey(),
+  labId: integer("lab_id").references(() => labs.id).notNull(),
+  content: text("content").notNull(),
+  targetRole: text("target_role", { 
+    enum: ["all", "control", "treatment", "observation"] 
+  }).default("all").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relationships for labs
 export const labsRelations = relations(labs, ({ one, many }) => ({
   owner: one(users, {
@@ -526,6 +537,7 @@ export const labsRelations = relations(labs, ({ one, many }) => ({
   }),
   circles: many(labCircles),
   posts: many(posts),
+  content: many(labContent),
 }));
 
 // Relationships for lab circles
