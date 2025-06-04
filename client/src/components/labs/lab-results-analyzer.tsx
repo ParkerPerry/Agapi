@@ -254,10 +254,47 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       return;
     }
 
-    // Make sure we have the data we need
+    // Data validation: Check if we have sufficient data for meaningful analysis
     if (!labCirclesData || !circlePostsData || labCirclesData.length === 0) {
       console.log("Missing or empty circle or post data for analysis");
       return;
+    }
+
+    // Additional validation: Check if we have actual posts to analyze
+    if (circlePostsData.length === 0) {
+      console.log("No posts found for analysis - lab may not be activated yet");
+      setMetricResults([]);
+      setRecommendation({
+        decision: "wait",
+        confidence: 0.9,
+        reasoning: "No experimental data available yet. Lab content needs to be published before analysis can begin."
+      });
+      setIsAnalyzing(false);
+      return;
+    }
+
+    // Check if we have posts in both control and treatment groups for comparative analysis
+    const controlCircleIds = labCirclesData.filter(item => item.role === 'control').map(item => item.circle?.id);
+    const treatmentCircleIds = labCirclesData.filter(item => item.role === 'treatment').map(item => item.circle?.id);
+    
+    const controlPosts = circlePostsData.filter(post => controlCircleIds.includes(post.circleId));
+    const treatmentPosts = circlePostsData.filter(post => treatmentCircleIds.includes(post.circleId));
+
+    if (controlPosts.length === 0 && treatmentPosts.length === 0) {
+      console.log("No posts found in control or treatment groups - insufficient data for analysis");
+      setMetricResults([]);
+      setRecommendation({
+        decision: "wait",
+        confidence: 0.95,
+        reasoning: "Insufficient experimental data. Both control and treatment groups need content before meaningful analysis can be performed."
+      });
+      setIsAnalyzing(false);
+      return;
+    }
+
+    // Warn if we only have one group
+    if (controlPosts.length === 0 || treatmentPosts.length === 0) {
+      console.warn(`Analysis proceeding with limited data: ${controlPosts.length} control posts, ${treatmentPosts.length} treatment posts`);
     }
 
     // Set analyzing state
