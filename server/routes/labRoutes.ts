@@ -466,4 +466,27 @@ router.patch('/:labId/circles/:circleId', requireAuth, async (req, res) => {
   }
 });
 
+/**
+ * GET /api/labs/:id/pending-responses - Get pending responses for lab posts
+ */
+router.get('/:id/pending-responses', requireAuth, async (req, res) => {
+  const labId = parseInt(req.params.id);
+
+  try {
+    // Verify lab exists
+    const lab = await storage.getLab(labId);
+    if (!lab) {
+      return res.status(404).json({ message: "Lab not found" });
+    }
+
+    // Get pending response statistics for this lab
+    const pendingStats = await storage.getLabPendingResponses(labId);
+    
+    res.json(pendingStats);
+  } catch (error) {
+    console.error("Error getting lab pending responses:", error);
+    res.status(500).json({ message: "Failed to get lab pending responses" });
+  }
+});
+
 export default router;

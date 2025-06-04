@@ -11,6 +11,7 @@ import {
   analyzeMetricWithCache,
   generateRecommendationWithCache
 } from "@/lib/metricsApi";
+import { LabResponseProgressIndicator } from "./lab-response-progress-indicator";
 
 // Type definitions for metric results
 export interface MetricResult {
@@ -70,6 +71,39 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     processingData: false,
     generatingAnalysis: false
   });
+
+  // State for pending response management
+  const [showProgressIndicator, setShowProgressIndicator] = useState(false);
+  const [hasPendingResponses, setHasPendingResponses] = useState(false);
+
+  // Check for pending responses before running analysis
+  const checkPendingResponses = async () => {
+    if (!lab?.id) return false;
+    
+    try {
+      const response = await fetch(`/api/labs/${lab.id}/pending-responses`);
+      if (!response.ok) {
+        console.warn("Could not check pending responses, proceeding with analysis");
+        return false;
+      }
+      
+      const pendingStats = await response.json();
+      const hasPending = pendingStats.pending > 0;
+      
+      setHasPendingResponses(hasPending);
+      
+      if (hasPending) {
+        console.log(`[Lab ${lab.id}] Found ${pendingStats.pending} pending responses (${pendingStats.completionPercentage}% complete)`);
+        setShowProgressIndicator(true);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error("Error checking pending responses:", error);
+      return false;
+    }
+  };
 
   // Check for cached analysis results
   const checkCachedResults = async () => {
