@@ -169,7 +169,7 @@ export const predefinedLabTemplates: Omit<InsertLabTemplate, "isDefault">[] = [
     name: "Topic Interest Analysis",
     description: "Test different content topics to identify what your audience finds most valuable",
     category: "content",
-    experimentType: "exploration",
+    experimentType: "single_variant",
     goals: "Discover which content topics generate the most interest, engagement, and sharing behavior. Map topic preferences to different audience segments for future content strategy.",
     successMetrics: {
       metrics: [
