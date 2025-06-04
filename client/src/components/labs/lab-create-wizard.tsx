@@ -106,7 +106,7 @@ const labSchema = z.object({
       id: z.number(),
       role: z.enum(["control", "treatment", "observation"]).default("treatment"),
     })
-  ).min(1, "Please select at least one circle"),
+  ).optional(),
   // Content created during lab setup
   labContent: z
     .array(
@@ -240,8 +240,8 @@ const LabCreateWizard = ({
     let isValid = false;
 
     if (currentStep === 0) {
-      const { name, experimentType, circles } = currentValues;
-      isValid = !!(name && name.length >= 3 && experimentType && circles && circles.length > 0);
+      const { name, experimentType } = currentValues;
+      isValid = !!(name && name.length >= 3 && experimentType);
     } else if (currentStep === 1) {
       // Goals are optional, so we can always proceed
       isValid = true;
@@ -473,26 +473,6 @@ const LabCreateWizard = ({
                         </FormControl>
                         <FormDescription>
                           Provide context for other team members.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="circles"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Circle Selection</FormLabel>
-                        <FormControl>
-                          <LabCircleSelector 
-                            selectedCircles={field.value || []} 
-                            onCirclesChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Select one or more circles to include in this lab experiment.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
