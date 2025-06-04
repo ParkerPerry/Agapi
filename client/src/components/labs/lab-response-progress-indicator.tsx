@@ -9,9 +9,7 @@ import { Badge } from "@/components/ui/badge";
 
 interface LabResponseProgressIndicatorProps {
   labId: number;
-  onProceedAnyway: () => void;
-  onWaitForCompletion: () => void;
-  isVisible: boolean;
+  onProceed: () => void;
 }
 
 interface PendingResponseStats {
@@ -35,9 +33,7 @@ interface PendingResponseStats {
 
 export function LabResponseProgressIndicator({
   labId,
-  onProceedAnyway,
-  onWaitForCompletion,
-  isVisible
+  onProceed
 }: LabResponseProgressIndicatorProps) {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -48,11 +44,11 @@ export function LabResponseProgressIndicator({
     refetch
   } = useQuery<PendingResponseStats>({
     queryKey: [`/api/labs/${labId}/pending-responses`],
-    enabled: isVisible && !!labId,
+    enabled: !!labId,
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 
-  if (!isVisible || isLoading) {
+  if (isLoading) {
     return null;
   }
 
@@ -139,16 +135,16 @@ export function LabResponseProgressIndicator({
 
         <div className="flex gap-2 flex-wrap">
           <Button 
-            onClick={onWaitForCompletion}
+            onClick={() => refetch()}
             variant="outline"
             size="sm"
             className="flex items-center gap-2"
           >
             <CheckCircle className="h-4 w-4" />
-            Wait for completion
+            Refresh Status
           </Button>
           <Button 
-            onClick={onProceedAnyway}
+            onClick={onProceed}
             variant="secondary"
             size="sm"
             className="flex items-center gap-2"

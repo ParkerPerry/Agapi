@@ -274,52 +274,25 @@ const LabCreateWizard = ({
       // Define type for the created lab
       let createdLab: { id: number; [key: string]: any };
       
-      // Check if we have circles selected
+      // Create the lab first without any circle association
+      createdLab = await apiRequest("/api/labs", "POST", labData);
+      
+      // If circles are selected, add them to the lab after creation
       if (circles && circles.length > 0) {
-        // If circles are selected, pass the first one directly in the lab creation
-        const firstCircle = circles[0];
-        
-        // Include the first circle's ID directly with the lab
-        const updatedLabData = {
-          ...labData,
-          circleId: firstCircle.id
-        };
-        
-        // Create the lab with the first circle associated
-        createdLab = await apiRequest("/api/labs", "POST", updatedLabData);
-        
-        // If there are additional circles beyond the first one, add them separately
-        if (circles.length > 1) {
-          try {
-            // Add each additional circle to the lab with its role
-            const promises = circles.slice(1).map(circleObj => 
-              apiRequest(`/api/labs/${createdLab.id}/circles`, "POST", {
-                circleId: circleObj.id,
-                role: circleObj.role
-              })
-            );
-            
-            await Promise.all(promises);
-          } catch (circleError) {
-            console.warn("Some circles may not have been added to the lab:", circleError);
-            // Continue with lab creation even if some circles failed to be added
-          }
+        try {
+          // Add each circle to the lab with its role
+          const circlePromises = circles.map(circleObj => 
+            apiRequest(`/api/labs/${createdLab.id}/circles`, "POST", {
+              circleId: circleObj.id,
+              role: circleObj.role
+            })
+          );
+          
+          await Promise.all(circlePromises);
+        } catch (circleError) {
+          console.warn("Some circles may not have been added to the lab:", circleError);
+          // Continue with lab creation even if some circles failed to be added
         }
-        
-        // Also update the role of the first circle if it's not the default
-        if (firstCircle.role !== "treatment") {
-          try {
-            await apiRequest(`/api/labs/${createdLab.id}/circles/${firstCircle.id}`, "PATCH", {
-              role: firstCircle.role
-            });
-          } catch (roleError) {
-            console.warn("Could not update circle role:", roleError);
-            // Continue with lab creation even if role update fails
-          }
-        }
-      } else {
-        // No circles selected, create lab without circle association
-        createdLab = await apiRequest("/api/labs", "POST", labData);
       }
       
       // If lab content was created, create posts for the lab
