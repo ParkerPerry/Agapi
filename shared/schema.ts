@@ -523,6 +523,7 @@ export const labContent = pgTable("lab_content", {
   id: serial("id").primaryKey(),
   labId: integer("lab_id").references(() => labs.id).notNull(),
   content: text("content").notNull(),
+  circleId: integer("circle_id").references(() => circles.id), // Direct circle assignment for content variants
   targetRole: text("target_role", { 
     enum: ["all", "control", "treatment", "observation"] 
   }).default("all").notNull(),
@@ -623,6 +624,7 @@ export const insertLabContentSchema = createInsertSchema(labContent)
   .pick({
     labId: true,
     content: true,
+    circleId: true,
     targetRole: true,
   });
 
