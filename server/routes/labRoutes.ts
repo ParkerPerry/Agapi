@@ -212,43 +212,41 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
         try {
           console.log(`[Lab Activation] Starting background content publishing for lab ${labId}`);
           
-          // Import WebSocket manager
-          const { getWebSocketManager } = await import('../websocket');
-          const wsManager = getWebSocketManager();
+          // Import WebSocket broadcast function
+          const { broadcastWebSocketMessage } = await import('../websocket');
           
           // Notify user that content publishing is starting
-          wsManager.broadcastToUser(req.user!.id, {
+          broadcastWebSocketMessage({
             type: 'lab_activation_started',
             labId,
             message: 'Publishing lab content to circles...'
-          });
+          }, [req.user!.id]);
           
           await storage.publishLabContent(labId);
           
           // Notify user that content publishing completed successfully
-          wsManager.broadcastToUser(req.user!.id, {
+          broadcastWebSocketMessage({
             type: 'lab_activation_completed',
             labId,
             success: true,
             message: 'Lab content successfully published to circles with AI responses scheduled'
-          });
+          }, [req.user!.id]);
           
           console.log(`[Lab Activation] Successfully published content for lab ${labId}`);
         } catch (contentError) {
           console.error(`[Lab Activation] Failed to publish content for lab ${labId}:`, contentError);
           
-          // Import WebSocket manager for error notification
-          const { getWebSocketManager } = await import('../websocket');
-          const wsManager = getWebSocketManager();
+          // Import WebSocket broadcast function for error notification
+          const { broadcastWebSocketMessage: broadcastError } = await import('../websocket');
           
           // Notify user of the error
-          wsManager.broadcastToUser(req.user!.id, {
+          broadcastError({
             type: 'lab_activation_completed',
             labId,
             success: false,
             error: 'Failed to publish some lab content. Please check the lab status.',
             message: 'Lab activation encountered an issue'
-          });
+          }, [req.user!.id]);
         }
       });
     }
