@@ -13,7 +13,7 @@ import {
   notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers,
   circleCollectives, labs, labCircles, labContent, labAnalysisResults
 } from "@shared/schema";
-import { eq, and, asc, or, desc } from "drizzle-orm";
+import { eq, and, asc, or, desc, inArray } from "drizzle-orm";
 import { db } from "./db";
 import { defaultTomConfig } from "./config/default-ai-follower";
 import { sql } from 'drizzle-orm/sql';
@@ -1951,7 +1951,31 @@ export class DatabaseStorage implements IStorage {
     try {
       console.log("[Storage] Deleting lab:", id);
       
-      // First delete all posts associated with this lab
+      // First get all posts associated with this lab
+      const labPosts = await db
+        .select({ id: posts.id })
+        .from(posts)
+        .where(eq(posts.labId, id));
+      
+      const postIds = labPosts.map(post => post.id);
+      console.log("[Storage] Found lab posts to delete:", postIds.length);
+      
+      // Delete AI interactions that reference these posts
+      if (postIds.length > 0) {
+        for (const postId of postIds) {
+          await db
+            .delete(aiInteractions)
+            .where(eq(aiInteractions.postId, postId));
+          
+          await db
+            .delete(pendingResponses)
+            .where(eq(pendingResponses.postId, postId));
+        }
+        
+        console.log("[Storage] Deleted AI interactions and pending responses for lab posts");
+      }
+      
+      // Now delete all posts associated with this lab
       await db
         .delete(posts)
         .where(eq(posts.labId, id));
@@ -1987,6 +2011,30 @@ export class DatabaseStorage implements IStorage {
       console.log("[Storage] Successfully deleted lab");
     } catch (error) {
       console.error("[Storage] Error deleting lab:", error);
+      throw error;
+    }
+  }
+
+  async deleteAllUserLabs(userId: number): Promise<void> {
+    try {
+      console.log("[Storage] Deleting all labs for user:", userId);
+      
+      // Get all labs for this user
+      const userLabs = await db
+        .select({ id: labs.id })
+        .from(labs)
+        .where(eq(labs.userId, userId));
+      
+      console.log("[Storage] Found user labs to delete:", userLabs.length);
+      
+      // Delete each lab individually using the existing deleteLab function
+      for (const lab of userLabs) {
+        await this.deleteLab(lab.id);
+      }
+      
+      console.log("[Storage] Successfully deleted all user labs");
+    } catch (error) {
+      console.error("[Storage] Error deleting user labs:", error);
       throw error;
     }
   }
