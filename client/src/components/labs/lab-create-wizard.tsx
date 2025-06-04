@@ -112,7 +112,7 @@ const labSchema = z.object({
     .array(
       z.object({
         content: z.string().min(1, "Post content is required"),
-        targetRole: z.enum(["control", "treatment", "observation", "all"]).default("all"),
+        circleId: z.number().optional(),
       })
     )
     .default([]),
@@ -128,6 +128,14 @@ const LabCreateWizard = ({
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch circles for content targeting
+  const { data: circles } = useQuery<{
+    private: Circle[];
+    public: Circle[];
+  }>({
+    queryKey: ["/api/circles"],
+  });
   
   const steps = [
     { title: "Basic Information", description: "Enter lab name and type" },
@@ -210,7 +218,7 @@ const LabCreateWizard = ({
     const currentContent = getValues("labContent") || [];
     setValue("labContent", [
       ...currentContent,
-      { content: "", targetRole: "all" as const },
+      { content: "", circleId: undefined },
     ]);
   };
 
@@ -790,33 +798,33 @@ const LabCreateWizard = ({
                               </div>
                               
                               <div>
-                                <label className="text-sm font-medium mb-1 block">Target Audience</label>
+                                <label className="text-sm font-medium mb-1 block">Target Circle</label>
                                 <Select
-                                  value={content.targetRole}
+                                  value={content.circleId?.toString() || ""}
                                   onValueChange={(value) => {
                                     const updated = [...labContent];
-                                    updated[index].targetRole = value as any;
+                                    updated[index].circleId = value ? parseInt(value) : undefined;
                                     setValue("labContent", updated);
                                   }}
                                 >
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select audience" />
+                                    <SelectValue placeholder="Select a circle" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="all">All Circles</SelectItem>
-                                    <SelectItem value="control">Control Group</SelectItem>
-                                    <SelectItem value="treatment">Treatment Group</SelectItem>
-                                    <SelectItem value="observation">Observation Group</SelectItem>
+                                    {circles?.private?.map((circle) => (
+                                      <SelectItem key={circle.id} value={circle.id.toString()}>
+                                        {circle.name}
+                                      </SelectItem>
+                                    ))}
+                                    {circles?.public?.map((circle) => (
+                                      <SelectItem key={circle.id} value={circle.id.toString()}>
+                                        {circle.name} (Public)
+                                      </SelectItem>
+                                    ))}
                                   </SelectContent>
                                 </Select>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  {content.targetRole === "all" 
-                                    ? "Content will be shown to all circles in the experiment"
-                                    : content.targetRole === "control"
-                                    ? "Content will only be shown to control groups"
-                                    : content.targetRole === "treatment"
-                                    ? "Content will only be shown to treatment groups"
-                                    : "Content will only be shown to observation groups"}
+                                  This content will be posted to the selected circle for testing
                                 </p>
                               </div>
                             </div>
