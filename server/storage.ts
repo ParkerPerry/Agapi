@@ -2640,52 +2640,48 @@ export class DatabaseStorage implements IStorage {
       // Get all content for this lab
       const labContentItems = await this.getLabContent(labId);
       
-      // Get all circles associated with this lab
-      const labCircles = await this.getLabCircles(labId);
-      
-      console.log(`[Storage] Publishing ${labContentItems.length} content items to ${labCircles.length} circles`);
+      console.log(`[Storage] Publishing ${labContentItems.length} content items`);
 
       // Import ResponseScheduler here to avoid circular dependency
       const { ResponseScheduler } = await import('./response-scheduler');
       const scheduler = ResponseScheduler.getInstance();
 
-      // For each content item, create posts in appropriate circles
+      // For each content item, create posts in their assigned circles
       for (const contentItem of labContentItems) {
-        const targetCircles = contentItem.targetRole === 'all' 
-          ? labCircles 
-          : labCircles.filter(circle => circle.role === contentItem.targetRole);
+        // Each content item now has a specific circleId assigned
+        if (!contentItem.circleId) {
+          console.warn(`[Storage] Content item ${contentItem.id} has no circleId assigned, skipping`);
+          continue;
+        }
 
-        // Create posts in each target circle
-        for (const circle of targetCircles) {
-          const post = await this.createPostInCircle(
-            lab.userId,
-            circle.id,
-            contentItem.content,
-            labId,
-            true, // labExperiment = true
-            contentItem.targetRole
-          );
+        const post = await this.createPostInCircle(
+          lab.userId,
+          contentItem.circleId,
+          contentItem.content,
+          labId,
+          true, // labExperiment = true
+          contentItem.targetRole
+        );
 
-          // Schedule AI follower responses for this published post
-          try {
-            console.log(`[Storage] Scheduling AI responses for lab post ${post.id} in circle ${circle.id}`);
-            const followers = await this.getCircleFollowers(circle.id);
-            
-            for (const follower of followers) {
-              // Skip muted followers
-              if (follower.muted) {
-                console.log(`[Storage] Skipping muted follower ${follower.id} (${follower.name}) for lab post`);
-                continue;
-              }
-
-              // Schedule response
-              console.log(`[Storage] Scheduling response from follower ${follower.id} (${follower.name}) for lab post ${post.id}`);
-              await scheduler.scheduleResponse(post.id, follower);
+        // Schedule AI follower responses for this published post
+        try {
+          console.log(`[Storage] Scheduling AI responses for lab post ${post.id} in circle ${contentItem.circleId}`);
+          const followers = await this.getCircleFollowers(contentItem.circleId);
+          
+          for (const follower of followers) {
+            // Skip muted followers
+            if (follower.muted) {
+              console.log(`[Storage] Skipping muted follower ${follower.id} (${follower.name}) for lab post`);
+              continue;
             }
-          } catch (schedulingError) {
-            console.error(`[Storage] Error scheduling AI responses for lab post ${post.id}:`, schedulingError);
-            // Continue with other posts even if scheduling fails for this one
+
+            // Schedule response
+            console.log(`[Storage] Scheduling response from follower ${follower.id} (${follower.name}) for lab post ${post.id}`);
+            await scheduler.scheduleResponse(post.id, follower);
           }
+        } catch (schedulingError) {
+          console.error(`[Storage] Error scheduling AI responses for lab post ${post.id}:`, schedulingError);
+          // Continue with other posts even if scheduling fails for this one
         }
       }
       
