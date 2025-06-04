@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { storage } from '../storage';
 import { requireAuth, hasCirclePermission } from './middleware';
-import { insertLabSchema, insertLabCircleSchema } from '@shared/schema';
+import { insertLabSchema, insertLabCircleSchema, insertLabContentSchema } from '@shared/schema';
 
 const router = Router();
 
@@ -486,6 +486,131 @@ router.get('/:id/pending-responses', requireAuth, async (req, res) => {
   } catch (error) {
     console.error("Error getting lab pending responses:", error);
     res.status(500).json({ message: "Failed to get lab pending responses" });
+  }
+});
+
+/**
+ * GET /api/labs/:id/content - Get lab content
+ */
+router.get('/:id/content', requireAuth, async (req, res) => {
+  const labId = parseInt(req.params.id);
+
+  try {
+    // Verify lab exists and user owns it
+    const lab = await storage.getLab(labId);
+    if (!lab || lab.userId !== req.user!.id) {
+      return res.status(404).json({ message: "Lab not found or you don't have permission" });
+    }
+
+    const content = await storage.getLabContent(labId);
+    res.json(content);
+  } catch (error) {
+    console.error("Error getting lab content:", error);
+    res.status(500).json({ message: "Failed to get lab content" });
+  }
+});
+
+/**
+ * POST /api/labs/:id/content - Create lab content
+ */
+router.post('/:id/content', requireAuth, async (req, res) => {
+  const labId = parseInt(req.params.id);
+
+  try {
+    // Verify lab exists and user owns it
+    const lab = await storage.getLab(labId);
+    if (!lab || lab.userId !== req.user!.id) {
+      return res.status(404).json({ message: "Lab not found or you don't have permission" });
+    }
+
+    // Parse and validate content data
+    const parsedData = insertLabContentSchema.safeParse({ ...req.body, labId });
+    
+    if (!parsedData.success) {
+      return res.status(400).json({ 
+        message: "Invalid content data", 
+        errors: parsedData.error.errors 
+      });
+    }
+
+    const content = await storage.createLabContent(labId, parsedData.data);
+    res.status(201).json(content);
+  } catch (error) {
+    console.error("Error creating lab content:", error);
+    res.status(500).json({ message: "Failed to create lab content" });
+  }
+});
+
+/**
+ * PUT /api/labs/:id/content/:contentId - Update lab content
+ */
+router.put('/:id/content/:contentId', requireAuth, async (req, res) => {
+  const labId = parseInt(req.params.id);
+  const contentId = parseInt(req.params.contentId);
+
+  try {
+    // Verify lab exists and user owns it
+    const lab = await storage.getLab(labId);
+    if (!lab || lab.userId !== req.user!.id) {
+      return res.status(404).json({ message: "Lab not found or you don't have permission" });
+    }
+
+    const content = await storage.updateLabContent(contentId, req.body);
+    res.json(content);
+  } catch (error) {
+    console.error("Error updating lab content:", error);
+    res.status(500).json({ message: "Failed to update lab content" });
+  }
+});
+
+/**
+ * DELETE /api/labs/:id/content/:contentId - Delete lab content
+ */
+router.delete('/:id/content/:contentId', requireAuth, async (req, res) => {
+  const labId = parseInt(req.params.id);
+  const contentId = parseInt(req.params.contentId);
+
+  try {
+    // Verify lab exists and user owns it
+    const lab = await storage.getLab(labId);
+    if (!lab || lab.userId !== req.user!.id) {
+      return res.status(404).json({ message: "Lab not found or you don't have permission" });
+    }
+
+    await storage.deleteLabContent(contentId);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error deleting lab content:", error);
+    res.status(500).json({ message: "Failed to delete lab content" });
+  }
+});
+
+/**
+ * POST /api/labs/:id/activate - Activate lab and publish content
+ */
+router.post('/:id/activate', requireAuth, async (req, res) => {
+  const labId = parseInt(req.params.id);
+
+  try {
+    // Verify lab exists and user owns it
+    const lab = await storage.getLab(labId);
+    if (!lab || lab.userId !== req.user!.id) {
+      return res.status(404).json({ message: "Lab not found or you don't have permission" });
+    }
+
+    // Update lab status to active
+    const updatedLab = await storage.updateLab(labId, { 
+      status: "active", 
+      launchedAt: new Date() 
+    });
+
+    // Publish lab content as posts
+    await storage.publishLabContent(labId);
+
+    res.json(updatedLab);
+  } catch (error) {
+    console.error("Error activating lab:", error);
+    res.status(500).json({ message: "Failed to activate lab" });
   }
 });
 

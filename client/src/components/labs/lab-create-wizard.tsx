@@ -295,23 +295,21 @@ const LabCreateWizard = ({
         }
       }
       
-      // If lab content was created, create posts for the lab
+      // If lab content was created, store it with the lab
       if (labContent && labContent.length > 0 && createdLab) {
         try {
-          // Create each piece of content as a post associated with the lab
-          const postPromises = labContent.map(content => 
-            apiRequest("/api/posts", "POST", {
+          // Store each piece of content with the lab (not as posts yet)
+          const contentPromises = labContent.map(content => 
+            apiRequest(`/api/labs/${createdLab.id}/content`, "POST", {
               content: content.content,
-              labId: createdLab.id,
-              labExperiment: true,
               targetRole: content.targetRole
             })
           );
           
-          await Promise.all(postPromises);
+          await Promise.all(contentPromises);
         } catch (contentError) {
-          console.warn("Some lab content posts could not be created:", contentError);
-          // Continue with lab creation even if content creation fails
+          console.warn("Some lab content could not be stored:", contentError);
+          // Continue with lab creation even if content storage fails
         }
       }
       

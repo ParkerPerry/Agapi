@@ -6,12 +6,12 @@ import {
   Notification, InsertNotification, DirectChat, InsertDirectChat,
   AiFollowerCollective, InsertAiFollowerCollective, 
   AiFollowerCollectiveMember, InsertAiFollowerCollectiveMember,
-  Lab, InsertLab, LabCircle, InsertLabCircle, LabAnalysisResult, InsertLabAnalysisResult,
+  Lab, InsertLab, LabCircle, InsertLabCircle, LabContent, InsertLabContent, LabAnalysisResult, InsertLabAnalysisResult,
   // Add table imports
   users, posts, ai_followers, aiInteractions, pendingResponses,
   circles, circleFollowers, circleMembers, circleInvitations,
   notifications, directChats, aiFollowerCollectives, aiFollowerCollectiveMembers,
-  circleCollectives, labs, labCircles, labAnalysisResults
+  circleCollectives, labs, labCircles, labContent, labAnalysisResults
 } from "@shared/schema";
 import { eq, and, asc, or, desc } from "drizzle-orm";
 import { db } from "./db";
