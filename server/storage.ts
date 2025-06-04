@@ -2645,6 +2645,10 @@ export class DatabaseStorage implements IStorage {
       
       console.log(`[Storage] Publishing ${labContentItems.length} content items to ${labCircles.length} circles`);
 
+      // Import ResponseScheduler here to avoid circular dependency
+      const { ResponseScheduler } = await import('./response-scheduler');
+      const scheduler = ResponseScheduler.getInstance();
+
       // For each content item, create posts in appropriate circles
       for (const contentItem of labContentItems) {
         const targetCircles = contentItem.targetRole === 'all' 
@@ -2653,7 +2657,7 @@ export class DatabaseStorage implements IStorage {
 
         // Create posts in each target circle
         for (const circle of targetCircles) {
-          await this.createPostInCircle(
+          const post = await this.createPostInCircle(
             lab.userId,
             circle.id,
             contentItem.content,
@@ -2661,6 +2665,27 @@ export class DatabaseStorage implements IStorage {
             true, // labExperiment = true
             contentItem.targetRole
           );
+
+          // Schedule AI follower responses for this published post
+          try {
+            console.log(`[Storage] Scheduling AI responses for lab post ${post.id} in circle ${circle.id}`);
+            const followers = await this.getCircleFollowers(circle.id);
+            
+            for (const follower of followers) {
+              // Skip muted followers
+              if (follower.muted) {
+                console.log(`[Storage] Skipping muted follower ${follower.id} (${follower.name}) for lab post`);
+                continue;
+              }
+
+              // Schedule response
+              console.log(`[Storage] Scheduling response from follower ${follower.id} (${follower.name}) for lab post ${post.id}`);
+              await scheduler.scheduleResponse(post.id, follower);
+            }
+          } catch (schedulingError) {
+            console.error(`[Storage] Error scheduling AI responses for lab post ${post.id}:`, schedulingError);
+            // Continue with other posts even if scheduling fails for this one
+          }
         }
       }
       
