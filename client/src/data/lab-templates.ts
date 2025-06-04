@@ -10,7 +10,7 @@ export const predefinedLabTemplates: Omit<InsertLabTemplate, "isDefault">[] = [
     name: "Feature Adoption Test",
     description: "Test adoption and usability of a new feature to determine if it should be fully deployed",
     category: "product",
-    experimentType: "a_b_test",
+    experimentType: "single_variant",
     goals: "Determine if the new feature improves user engagement and satisfaction without negatively impacting existing workflows. Identify any usability issues and gather feedback for improvements.",
     successMetrics: {
       metrics: [
@@ -74,7 +74,7 @@ export const predefinedLabTemplates: Omit<InsertLabTemplate, "isDefault">[] = [
     name: "Messaging Effectiveness",
     description: "Test different messaging approaches to determine which resonates best with target audience",
     category: "marketing",
-    experimentType: "multivariate",
+    experimentType: "a_b_test",
     goals: "Identify the messaging style, tone, and content that generates the highest engagement and conversion rates. Understand which value propositions resonate most with different audience segments.",
     successMetrics: {
       metrics: [
@@ -105,7 +105,7 @@ export const predefinedLabTemplates: Omit<InsertLabTemplate, "isDefault">[] = [
     name: "Call-to-Action Optimization",
     description: "Test variations of CTA buttons, text, and placement to maximize conversion",
     category: "marketing",
-    experimentType: "multivariate",
+    experimentType: "a_b_test",
     goals: "Determine the optimal combination of CTA elements (color, text, size, position) that maximizes click-through and conversion rates. Identify if different CTAs perform better for different user segments.",
     successMetrics: {
       metrics: [
@@ -202,7 +202,7 @@ export const predefinedLabTemplates: Omit<InsertLabTemplate, "isDefault">[] = [
     name: "Community Interaction Pattern",
     description: "Test different community interaction formats to increase member engagement",
     category: "engagement",
-    experimentType: "multivariate",
+    experimentType: "a_b_test",
     goals: "Identify which interaction formats and mechanisms drive the highest quality engagement and peer-to-peer connections. Determine optimal frequency and types of prompts to sustain engagement.",
     successMetrics: {
       metrics: [
@@ -233,7 +233,7 @@ export const predefinedLabTemplates: Omit<InsertLabTemplate, "isDefault">[] = [
     name: "Gamification Elements Test",
     description: "Test the impact of different gamification elements on user engagement and retention",
     category: "engagement",
-    experimentType: "multivariate",
+    experimentType: "a_b_test",
     goals: "Evaluate which gamification elements (points, badges, leaderboards, challenges) most effectively drive user engagement, repeat visits, and desired behaviors. Determine which elements appeal to different collectives.",
     successMetrics: {
       metrics: [

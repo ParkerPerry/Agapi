@@ -512,7 +512,15 @@ const LabCreateWizard = ({
                           </SelectContent>
                         </Select>
                         <FormDescription>
-                          The type of experiment determines how circles will be used.
+                          {form.watch("experimentType") === "a_b_test" && 
+                            "A/B Test: Create different content variants for different circles to compare performance."
+                          }
+                          {form.watch("experimentType") === "single_variant" && 
+                            "Single Variant: Test one content variant against baseline (no content) to measure effectiveness."
+                          }
+                          {!form.watch("experimentType") && 
+                            "Choose how you want to test your content with different audiences."
+                          }
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -700,15 +708,33 @@ const LabCreateWizard = ({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Show experiment type guidance */}
+                  {form.watch("experimentType") && (
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                      <p className="text-sm font-medium text-blue-900 mb-1">
+                        {form.watch("experimentType") === "a_b_test" ? "A/B Test Setup" : "Single Variant Test Setup"}
+                      </p>
+                      <p className="text-xs text-blue-700">
+                        {form.watch("experimentType") === "a_b_test" 
+                          ? "Create different content variants for different circles. Each variant will be compared against the others."
+                          : "Create one content variant that will be tested against a baseline (no content) control group."
+                        }
+                      </p>
+                    </div>
+                  )}
+                  
                   <div className="flex flex-col gap-2">
                     <div className="flex justify-between items-center">
-                      <p className="text-sm font-medium">Test Content</p>
+                      <p className="text-sm font-medium">
+                        {form.watch("experimentType") === "a_b_test" ? "Content Variants" : "Test Content"}
+                      </p>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={addLabContent}
                         className="text-xs"
+                        disabled={form.watch("experimentType") === "single_variant" && labContent.length >= 1}
                       >
                         <Plus className="h-3 w-3 mr-1" />
                         Add Content
