@@ -19,7 +19,8 @@
  *   --help         Show this help message
  */
 
-import { Pool } from 'pg';
+import pkg from 'pg';
+const { Pool } = pkg;
 import dotenv from 'dotenv';
 import readline from 'readline';
 
@@ -360,9 +361,7 @@ async function main() {
 }
 
 // Run the script
-if (require.main === module) {
-  main().catch(error => {
-    console.error('Unhandled error:', error);
-    process.exit(1);
-  });
-}
+main().catch(error => {
+  console.error('Unhandled error:', error);
+  process.exit(1);
+});
