@@ -63,12 +63,30 @@ interface LabContentViewProps {
 export function LabContentView({ labId }: LabContentViewProps) {
   const [activeRole, setActiveRole] = useState<"all" | "control" | "treatment">("all");
   
-  // Fetch lab posts with the selected role filter
+  // Fetch stored lab content (created during wizard, not yet published)
+  const {
+    data: labContent,
+    isLoading: isContentLoading,
+    error: contentError,
+    refetch: refetchContent
+  } = useQuery<any[]>({
+    queryKey: [`/api/labs/${labId}/content`],
+    queryFn: async () => {
+      const res = await fetch(`/api/labs/${labId}/content`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch lab content");
+      }
+      return res.json();
+    },
+    enabled: !!labId,
+  });
+  
+  // Fetch lab posts (published content after activation)
   const {
     data: posts,
-    isLoading,
-    error,
-    refetch
+    isLoading: isPostsLoading,
+    error: postsError,
+    refetch: refetchPosts
   } = useQuery<(Post & { interactions: any[], pendingResponses: any[], circle: {id: number, name: string, role: string} | null })[]>({
     queryKey: [`/api/labs/${labId}/posts`, activeRole],
     queryFn: async () => {
@@ -81,55 +99,41 @@ export function LabContentView({ labId }: LabContentViewProps) {
     enabled: !!labId,
   });
 
-  // Add debugging so we can see what's happening
-  console.log("Lab posts data for lab " + labId + " (" + activeRole + " tab):", {
-    postCount: posts?.length || 0,
-    posts: posts?.map(post => ({
-      id: post.id,
-      targetRole: post.targetRole,
-      circleId: post.circleId,
-      circleName: post.circle?.name,
-      circleRole: post.circle?.role
-    }))
-  });
-  
-  // Important debugging information
-  console.log("Lab posts data for lab " + labId + " (" + activeRole + " tab):", {
-    totalPostCount: posts?.length || 0,
-    activeRole,
-    posts: posts?.map(post => ({
-      id: post.id,
-      targetRole: post.targetRole,
-      circleRole: post.circle?.role
-    }))
-  });
-  
-  // SIMPLER SOLUTION: Just maintain the post count for the current active tab
-  // and preserve the counts for the other tabs
-  
-  const postCounts = {
-    // All tab always shows all posts received from the current query
-    all: posts?.length || 0,
-    
-    // For control and treatment, keep it simple:
-    // If we're on that tab, use the posts length
-    // If we're on "all" tab, count by circle role
-    // If we're on the other tab, use a minimum value (1) to avoid showing 0
-    control: activeRole === "control" ? 
-              posts?.length || 0 : 
-              (activeRole === "all" ? 
-                (posts?.filter(post => post.circle?.role === "control").length || 0) : 
-                1),
-    
-    treatment: activeRole === "treatment" ? 
-                posts?.length || 0 : 
-                (activeRole === "all" ? 
-                  (posts?.filter(post => post.circle?.role === "treatment").length || 0) : 
-                  1)
+  const isLoading = isContentLoading || isPostsLoading;
+  const error = contentError || postsError;
+  const refetch = () => {
+    refetchContent();
+    refetchPosts();
   };
-  
-  // Log the post counts we're using
-  console.log("Post counts for display:", postCounts);
+
+  // Filter stored lab content by role
+  const filteredLabContent = labContent?.filter(content => 
+    activeRole === "all" || content.targetRole === activeRole || content.targetRole === "all"
+  ) || [];
+
+  // Filter published posts by role 
+  const filteredPosts = posts?.filter(post => 
+    activeRole === "all" || post.circle?.role === activeRole
+  ) || [];
+
+  // Calculate counts for tabs
+  const postCounts = {
+    all: (labContent?.length || 0) + (posts?.length || 0),
+    control: (labContent?.filter(c => c.targetRole === "control" || c.targetRole === "all").length || 0) + 
+             (posts?.filter(p => p.circle?.role === "control").length || 0),
+    treatment: (labContent?.filter(c => c.targetRole === "treatment" || c.targetRole === "all").length || 0) + 
+               (posts?.filter(p => p.circle?.role === "treatment").length || 0)
+  };
+
+  // Debug information
+  console.log("Lab content and posts for lab " + labId + ":", {
+    storedContent: labContent?.length || 0,
+    publishedPosts: posts?.length || 0,
+    filteredContent: filteredLabContent.length,
+    filteredPosts: filteredPosts.length,
+    activeRole,
+    postCounts
+  });
 
   return (
     <Card>
@@ -201,45 +205,92 @@ export function LabContentView({ labId }: LabContentViewProps) {
                   Retry
                 </Button>
               </div>
-            ) : posts?.length === 0 ? (
-              // No posts state
+            ) : filteredLabContent.length === 0 && filteredPosts.length === 0 ? (
+              // No content state
               <div className="text-center py-12 border rounded-lg bg-muted/20">
                 <FilterX className="h-10 w-10 mx-auto text-muted-foreground mb-2" />
-                <h3 className="text-lg font-medium mb-1">No posts found</h3>
+                <h3 className="text-lg font-medium mb-1">No content found</h3>
                 <p className="text-muted-foreground">
                   {activeRole === "all"
-                    ? "This lab doesn't have any experimental posts yet."
-                    : `No ${activeRole} group posts found in this lab.`}
+                    ? "This lab doesn't have any content yet. Add content during lab creation or activate to publish existing content."
+                    : `No ${activeRole} group content found in this lab.`}
                 </p>
               </div>
             ) : (
-              // Display posts
-              <div className="space-y-4">
-                {posts?.map((post) => (
-                  <div key={post.id} className="relative">
-                    {/* Role indicator */}
-                    <div className="absolute top-0 right-0 z-10 mt-2 mr-2">
-                      <Badge 
-                        variant="outline" 
-                        className={`${roleInfo[post.targetRole as keyof typeof roleInfo]?.bgClass || roleInfo.all.bgClass} flex items-center gap-1`}
-                      >
-                        {roleInfo[post.targetRole as keyof typeof roleInfo]?.icon || roleInfo.all.icon}
-                        <span>{post.targetRole ? `${post.targetRole.charAt(0).toUpperCase()}${post.targetRole.slice(1)}` : "All"}</span>
-                      </Badge>
+              // Display content
+              <div className="space-y-6">
+                {/* Stored Lab Content (before activation) */}
+                {filteredLabContent.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 pb-2 border-b">
+                      <div className="h-2 w-2 bg-blue-500 rounded-full" />
+                      <h4 className="text-sm font-medium text-muted-foreground">
+                        Stored Content ({filteredLabContent.length}) - Not yet published
+                      </h4>
                     </div>
-                    
-                    {/* Circle indicator if available */}
-                    {post.circle && (
-                      <div className="absolute top-0 left-0 z-10 mt-2 ml-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Circle: {post.circle.name}
-                        </Badge>
+                    {filteredLabContent.map((content, index) => (
+                      <div key={`content-${content.id || index}`} className="relative border rounded-lg p-4 bg-blue-50/50">
+                        {/* Role indicator */}
+                        <div className="absolute top-0 right-0 z-10 mt-2 mr-2">
+                          <Badge 
+                            variant="outline" 
+                            className={`${roleInfo[content.targetRole as keyof typeof roleInfo]?.bgClass || roleInfo.all.bgClass} flex items-center gap-1`}
+                          >
+                            {roleInfo[content.targetRole as keyof typeof roleInfo]?.icon || roleInfo.all.icon}
+                            <span>{content.targetRole ? `${content.targetRole.charAt(0).toUpperCase()}${content.targetRole.slice(1)}` : "All"}</span>
+                          </Badge>
+                        </div>
+                        
+                        {/* Content display */}
+                        <div className="pr-20">
+                          <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">
+                              Content #{index + 1} • Created {content.createdAt ? new Date(content.createdAt).toLocaleDateString() : 'Unknown'}
+                            </p>
+                            <p className="text-sm leading-relaxed">{content.content}</p>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                    
-                    <PostCard post={post} />
+                    ))}
                   </div>
-                ))}
+                )}
+
+                {/* Published Posts (after activation) */}
+                {filteredPosts.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 pb-2 border-b">
+                      <div className="h-2 w-2 bg-green-500 rounded-full" />
+                      <h4 className="text-sm font-medium text-muted-foreground">
+                        Published Posts ({filteredPosts.length}) - Live experiment content
+                      </h4>
+                    </div>
+                    {filteredPosts.map((post) => (
+                      <div key={`post-${post.id}`} className="relative">
+                        {/* Role indicator */}
+                        <div className="absolute top-0 right-0 z-10 mt-2 mr-2">
+                          <Badge 
+                            variant="outline" 
+                            className={`${roleInfo[post.targetRole as keyof typeof roleInfo]?.bgClass || roleInfo.all.bgClass} flex items-center gap-1`}
+                          >
+                            {roleInfo[post.targetRole as keyof typeof roleInfo]?.icon || roleInfo.all.icon}
+                            <span>{post.targetRole ? `${post.targetRole.charAt(0).toUpperCase()}${post.targetRole.slice(1)}` : "All"}</span>
+                          </Badge>
+                        </div>
+                        
+                        {/* Circle indicator if available */}
+                        {post.circle && (
+                          <div className="absolute top-0 left-0 z-10 mt-2 ml-2">
+                            <Badge variant="secondary" className="text-xs">
+                              Circle: {post.circle.name}
+                            </Badge>
+                          </div>
+                        )}
+                        
+                        <PostCard post={post} />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </TabsContent>
