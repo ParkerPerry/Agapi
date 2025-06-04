@@ -1958,6 +1958,20 @@ export class DatabaseStorage implements IStorage {
       
       console.log("[Storage] Deleted lab posts");
       
+      // Delete lab content
+      await db
+        .delete(labContent)
+        .where(eq(labContent.labId, id));
+      
+      console.log("[Storage] Deleted lab content");
+      
+      // Delete lab analysis results
+      await db
+        .delete(labAnalysisResults)
+        .where(eq(labAnalysisResults.labId, id));
+      
+      console.log("[Storage] Deleted lab analysis results");
+      
       // Then delete all circle associations
       await db
         .delete(labCircles)

@@ -1,0 +1,52 @@
+2:14:52 AM [express] DELETE /api/labs/4 500 in 377ms :: {"message":"Failed to delete lab"}
+[Storage] Getting lab by ID: 4
+[Storage] Retrieved lab: { id: 4, name: 'test', status: 'active' }
+[Storage] Deleting lab: 4
+[Storage] Deleted lab posts
+[Storage] Deleted lab circles associations
+[Storage] Error deleting lab: error: update or delete on table "labs" violates foreign key constraint "lab_analysis_results_lab_id_fkey" on table "lab_analysis_results"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DatabaseStorage.deleteLab (/home/runner/workspace/server/storage.ts:1969:7)
+    at async <anonymous> (/home/runner/workspace/server/routes/labRoutes.ts:146:5) {
+  length: 333,
+  severity: 'ERROR',
+  code: '23503',
+  detail: 'Key (id)=(4) is still referenced from table "lab_analysis_results".',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'lab_analysis_results',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'lab_analysis_results_lab_id_fkey',
+  file: 'ri_triggers.c',
+  line: '2621',
+  routine: 'ri_ReportViolation'
+}
+Error deleting lab: error: update or delete on table "labs" violates foreign key constraint "lab_analysis_results_lab_id_fkey" on table "lab_analysis_results"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DatabaseStorage.deleteLab (/home/runner/workspace/server/storage.ts:1969:7)
+    at async <anonymous> (/home/runner/workspace/server/routes/labRoutes.ts:146:5) {
+  length: 333,
+  severity: 'ERROR',
+  code: '23503',
+  detail: 'Key (id)=(4) is still referenced from table "lab_analysis_results".',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'lab_analysis_results',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'lab_analysis_results_lab_id_fkey',
+  file: 'ri_triggers.c',
+  line: '2621',
+  routine: 'ri_ReportViolation'
+}
