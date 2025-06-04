@@ -269,16 +269,25 @@ router.get('/:id/circles', requireAuth, async (req, res) => {
       return res.status(404).json({ message: "Lab not found" });
     }
     
-    // Get lab circles
-    const labCircles = await storage.getLabCircles(labId);
+    // Get circles from lab content variants instead of lab_circles table
+    const labContent = await storage.getLabContent(labId);
     
-    // Get full circle data
+    // Extract unique circles from content variants
+    const circleIds = [...new Set(labContent.map(content => content.circleId).filter(Boolean))];
+    
+    // Get full circle data with content info
     const circles = await Promise.all(
-      labCircles.map(async (lc) => {
-        const circle = await storage.getCircle(lc.circleId);
+      circleIds.map(async (circleId) => {
+        const circle = await storage.getCircle(circleId);
+        const contentForCircle = labContent.filter(content => content.circleId === circleId);
+        
         return {
-          ...lc,
-          circle
+          id: circleId,
+          circleId: circleId,
+          role: "treatment", // Default role since we're using direct assignment now
+          addedAt: contentForCircle[0]?.createdAt || new Date(),
+          circle: circle,
+          contentCount: contentForCircle.length
         };
       })
     );
@@ -303,45 +312,29 @@ router.get('/:id/circles/stats', requireAuth, async (req, res) => {
       return res.status(404).json({ message: "Lab not found" });
     }
     
-    // Get lab circles
-    const labCircles = await storage.getLabCircles(labId);
+    // Get circles from lab content variants instead of lab_circles table
+    const labContent = await storage.getLabContent(labId);
+    
+    // Extract unique circles from content variants
+    const circleIds = [...new Set(labContent.map(content => content.circleId).filter(Boolean))];
     
     // Get stats for each circle
     const stats = await Promise.all(
-      labCircles.map(async (lc) => {
-        // Make sure we have a valid circleId
-        if (!lc.circleId) {
-          console.error("Invalid circleId found in lab circle:", lc);
-          return {
-            labCircle: {
-              id: lc.id || 0,
-              role: lc.role || "observation",
-              circleId: 0,
-              addedAt: lc.addedAt || new Date()
-            },
-            circle: null,
-            stats: {
-              postCount: 0,
-              followerCount: 0,
-              memberCount: 0
-            }
-          };
-        }
-        
-        // Keep the circle data separate in the response to maintain the expected structure
-        const circle = await storage.getCircle(lc.circleId);
-        const postCount = await storage.getCirclePostCount(lc.circleId);
-        const followerCount = await storage.getCircleFollowerCount(lc.circleId);
-        const memberCount = await storage.getCircleMemberCount(lc.circleId);
+      circleIds.map(async (circleId) => {
+        const circle = await storage.getCircle(circleId);
+        const contentForCircle = labContent.filter(content => content.circleId === circleId);
+        const postCount = await storage.getCirclePostCount(circleId);
+        const followerCount = await storage.getCircleFollowerCount(circleId);
+        const memberCount = await storage.getCircleMemberCount(circleId);
         
         return {
           labCircle: {
-            id: lc.id,
-            role: lc.role,
-            circleId: lc.circleId,
-            addedAt: lc.addedAt || new Date()
+            id: circleId,
+            role: "treatment", // Default role since we're using direct assignment now
+            circleId: circleId,
+            addedAt: contentForCircle[0]?.createdAt || new Date()
           },
-          circle, // This keeps the circle object separate from the labCircle
+          circle,
           stats: {
             postCount,
             followerCount,
