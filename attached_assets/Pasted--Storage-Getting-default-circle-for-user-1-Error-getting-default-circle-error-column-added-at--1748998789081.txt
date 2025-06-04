@@ -1,0 +1,440 @@
+[Storage] Getting default circle for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:38 AM [express] GET /api/default-circle 500 in 204ms :: {"message":"Failed to get default circl…
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[WebSocket] Received message: authenticate
+[WebSocket] User authenticated with custom token, extracted userId: 1
+[WebSocket] User authenticated: 1
+[Storage] Getting default circle for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:39 AM [express] GET /api/default-circle 500 in 384ms :: {"message":"Failed to get default circl…
+[Storage] Getting default circle for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:39 AM [express] GET /api/default-circle 500 in 370ms :: {"message":"Failed to get default circl…
+12:58:39 AM [express] GET /api/notifications 200 in 386ms :: []
+12:58:39 AM [express] GET /api/notifications/unread/count 200 in 401ms :: {"count":0}
+[Permissions] Checking permissions: { circleId: 1, userId: 1, requiredRole: 'viewer' }
+[Storage] Getting circle by ID: 1
+Error getting post: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getCircle (/home/runner/workspace/server/storage.ts:698:22)
+    at async hasCirclePermission (/home/runner/workspace/server/routes/middleware.ts:25:18)
+    at async <anonymous> (/home/runner/workspace/server/routes/postRoutes.ts:108:27) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:39 AM [express] GET /api/posts/1 500 in 478ms :: {"message":"Failed to get post"}
+[ResponseScheduler] Processing 0 pending responses
+[WebSocket] Connection closed
+[Storage] Getting default circle for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:46 AM [express] GET /api/default-circle 500 in 148ms :: {"message":"Failed to get default circl…
+Error getting circles: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async Promise.all (index 0)
+    at async DatabaseStorage.getUserCircles (/home/runner/workspace/server/storage.ts:707:42)
+    at async <anonymous> (/home/runner/workspace/server/routes/circleRoutes.ts:52:21) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:46 AM [express] GET /api/circles 500 in 151ms :: {"message":"Failed to get circles"}
+12:58:46 AM [express] GET /api/circles/invitations/pending 200 in 151ms :: []
+[WebSocket] Received upgrade request for path: /ws
+[WebSocket] Processing WebSocket upgrade for /ws path
+[WebSocket] Upgrade successful, emitting connection event
+[WebSocket] New connection established
+[Storage] Getting labs for user: 1
+[Storage] Retrieved labs count: 29
+12:58:48 AM [express] GET /api/labs 200 in 229ms :: [{"id":217,"userId":1,"name":"Near Maxi 59","desc…
+[Storage] Getting default circle for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:48 AM [express] GET /api/default-circle 500 in 377ms :: {"message":"Failed to get default circl…
+Error getting circles: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async Promise.all (index 0)
+    at async DatabaseStorage.getUserCircles (/home/runner/workspace/server/storage.ts:707:42)
+    at async <anonymous> (/home/runner/workspace/server/routes/circleRoutes.ts:52:21) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:49 AM [express] GET /api/circles 500 in 150ms :: {"message":"Failed to get circles"}
+[Storage] Getting default circle for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:50 AM [express] GET /api/default-circle 500 in 387ms :: {"message":"Failed to get default circl…
+[Storage] Getting default circle for user: 1
+[API] Getting AI followers for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:51 AM [express] GET /api/default-circle 500 in 376ms :: {"message":"Failed to get default circl…
+12:58:52 AM [express] GET /api/followers 200 in 1058ms :: [{"id":1,"userId":1,"name":"Tom","personali…
+[Storage] Getting default circle for user: 1
+Error getting circles: error: column circles.added_at does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async Promise.all (index 1)
+    at async DatabaseStorage.getUserCircles (/home/runner/workspace/server/storage.ts:707:42)
+    at async <anonymous> (/home/runner/workspace/server/routes/circleRoutes.ts:52:21) {
+  length: 115,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '197',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:53 AM [express] GET /api/circles 500 in 150ms :: {"message":"Failed to get circles"}
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:53 AM [express] GET /api/default-circle 500 in 155ms :: {"message":"Failed to get default circl…
+[Storage] Getting default circle for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:55 AM [express] GET /api/default-circle 500 in 153ms :: {"message":"Failed to get default circl…
+[Storage] Getting default circle for user: 1
+Error getting default circle: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.getDefaultCircle (/home/runner/workspace/server/storage.ts:783:27)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:272:29) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:57 AM [express] GET /api/default-circle 500 in 150ms :: {"message":"Failed to get default circl…
+Error getting circles: error: column "added_at" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async Promise.all (index 0)
+    at async DatabaseStorage.getUserCircles (/home/runner/workspace/server/storage.ts:707:42)
+    at async <anonymous> (/home/runner/workspace/server/routes/circleRoutes.ts:52:21) {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '107',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3722',
+  routine: 'errorMissingColumn'
+}
+12:58:57 AM [express] GET /api/circles 500 in 148ms :: {"message":"Failed to get circles"}
+Error creating circle: error: column "added_at" of relation "circles" does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async DatabaseStorage.createCircle (/home/runner/workspace/server/storage.ts:685:26)
+    at async <anonymous> (/home/runner/workspace/server/routes/circleRoutes.ts:216:20) {
+  length: 129,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '123',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_target.c',
+  line: '1066',
+  routine: 'checkInsertTargets'
+}
+12:59:11 AM [express] POST /api/circles 500 in 152ms :: {"message":"Failed to create circle"}
+[WebSocket] Received message: ping
+[ResponseScheduler] Processing 0 pending responses
