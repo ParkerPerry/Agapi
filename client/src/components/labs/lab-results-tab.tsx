@@ -11,6 +11,7 @@ import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { useLabResultsAnalysis } from "./lab-results-analyzer";
 import { MetricAnalysisCard } from "./metric-analysis-card";
 import { ResultsSummaryCard } from "./results-summary-card";
+import { LabResponseProgressIndicator } from "./lab-response-progress-indicator";
 
 interface LabResultsTabProps {
   lab: Lab;
@@ -39,8 +40,21 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                 refreshAnalysis,
                 fromCache,
                 lastAnalysisTime,
-                analysisState
+                analysisState,
+                showProgressIndicator,
+                hasPendingResponses,
+                handleProceedWithAnalysis
               } = useLabResultsAnalysis(lab);
+              
+              // Show progress indicator if there are pending responses
+              if (showProgressIndicator && hasPendingResponses) {
+                return (
+                  <LabResponseProgressIndicator
+                    labId={lab.id}
+                    onProceed={handleProceedWithAnalysis}
+                  />
+                );
+              }
               
               // Show loading state during analysis
               if (isAnalyzing) {

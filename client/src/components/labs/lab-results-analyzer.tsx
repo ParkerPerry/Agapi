@@ -160,8 +160,15 @@ export const useLabResultsAnalysis = (lab: Lab) => {
         try {
           const foundCache = await checkCachedResults();
           if (!foundCache) {
-            // If no cache found, set flag to load data for analysis
-            setShouldLoadData(true);
+            // Check for pending responses before proceeding with fresh analysis
+            const hasPending = await checkPendingResponses();
+            if (!hasPending) {
+              // No pending responses, safe to proceed with analysis
+              setShouldLoadData(true);
+            } else {
+              // Has pending responses, show progress indicator
+              setIsAnalyzing(false);
+            }
           } else {
             setIsAnalyzing(false);
           }
@@ -689,6 +696,12 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     analyzeLabMetrics(false);
   };
 
+  // Callback for when user chooses to proceed despite pending responses
+  const handleProceedWithAnalysis = () => {
+    setShowProgressIndicator(false);
+    setShouldLoadData(true);
+  };
+
   return { 
     metricResults, 
     recommendation, 
@@ -698,6 +711,9 @@ export const useLabResultsAnalysis = (lab: Lab) => {
     refreshAnalysis,
     fromCache,
     lastAnalysisTime,
-    analysisState  // Include the analysis stage state
+    analysisState,  // Include the analysis stage state
+    showProgressIndicator,
+    hasPendingResponses,
+    handleProceedWithAnalysis
   };
 };
