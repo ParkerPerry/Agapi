@@ -552,6 +552,14 @@ export const labCirclesRelations = relations(labCircles, ({ one }) => ({
   }),
 }));
 
+// Relationships for lab content
+export const labContentRelations = relations(labContent, ({ one }) => ({
+  lab: one(labs, {
+    fields: [labContent.labId],
+    references: [labs.id],
+  }),
+}));
+
 // Insert schemas for labs
 export const insertLabSchema = createInsertSchema(labs)
   .pick({
@@ -610,6 +618,14 @@ export const insertLabCircleSchema = createInsertSchema(labCircles)
     role: true,
   });
 
+// Insert schema for lab content
+export const insertLabContentSchema = createInsertSchema(labContent)
+  .pick({
+    labId: true,
+    content: true,
+    targetRole: true,
+  });
+
 // Table for storing lab analysis results
 export const labAnalysisResults = pgTable("lab_analysis_results", {
   id: serial("id").primaryKey(),
@@ -652,7 +668,9 @@ export const insertLabAnalysisResultSchema = createInsertSchema(labAnalysisResul
 // Type definitions for labs
 export type Lab = typeof labs.$inferSelect;
 export type LabCircle = typeof labCircles.$inferSelect;
+export type LabContent = typeof labContent.$inferSelect;
 export type LabAnalysisResult = typeof labAnalysisResults.$inferSelect;
 export type InsertLab = z.infer<typeof insertLabSchema>;
 export type InsertLabCircle = z.infer<typeof insertLabCircleSchema>;
+export type InsertLabContent = z.infer<typeof insertLabContentSchema>;
 export type InsertLabAnalysisResult = z.infer<typeof insertLabAnalysisResultSchema>;

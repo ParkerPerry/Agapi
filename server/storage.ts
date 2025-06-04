@@ -156,6 +156,11 @@ export interface IStorage {
   grantCircleAccessToUser(userId: number, circleId: number, role: "collaborator" | "viewer"): Promise<CircleMember>;
   
   // Lab Content methods
+  createLabContent(labId: number, content: InsertLabContent): Promise<LabContent>;
+  getLabContent(labId: number): Promise<LabContent[]>;
+  updateLabContent(id: number, updates: Partial<LabContent>): Promise<LabContent>;
+  deleteLabContent(id: number): Promise<void>;
+  publishLabContent(labId: number): Promise<void>; // Convert lab content to posts when lab is activated
   getLabPosts(labId: number, targetRole?: "control" | "treatment" | "observation" | "all"): Promise<Post[]>;
   getCircleRoleInLab(labId: number, circleId: number): Promise<"control" | "treatment" | "observation" | undefined>;
   getLabCirclesByRole(labId: number, role: "control" | "treatment" | "observation"): Promise<Circle[]>;
@@ -2532,6 +2537,122 @@ export class DatabaseStorage implements IStorage {
       console.log(`[Storage] Successfully deleted analysis result for lab ${labId}`);
     } catch (error) {
       console.error(`[Storage] Error deleting lab analysis result:`, error);
+      throw error;
+    }
+  }
+
+  // Lab Content methods implementation
+  async createLabContent(labId: number, content: InsertLabContent): Promise<LabContent> {
+    console.log(`[Storage] Creating lab content for lab ${labId}`);
+    
+    try {
+      const [newContent] = (await db
+        .insert(labContent)
+        .values({
+          labId,
+          ...content
+        })
+        .returning()) as LabContent[];
+      
+      console.log(`[Storage] Successfully created lab content with ID ${newContent.id}`);
+      return newContent;
+    } catch (error) {
+      console.error(`[Storage] Error creating lab content:`, error);
+      throw error;
+    }
+  }
+
+  async getLabContent(labId: number): Promise<LabContent[]> {
+    console.log(`[Storage] Getting lab content for lab ${labId}`);
+    
+    try {
+      const content = (await db
+        .select()
+        .from(labContent)
+        .where(eq(labContent.labId, labId))
+        .orderBy(labContent.createdAt)) as LabContent[];
+      
+      console.log(`[Storage] Found ${content.length} content items for lab ${labId}`);
+      return content;
+    } catch (error) {
+      console.error(`[Storage] Error getting lab content:`, error);
+      throw error;
+    }
+  }
+
+  async updateLabContent(id: number, updates: Partial<LabContent>): Promise<LabContent> {
+    console.log(`[Storage] Updating lab content ${id}`);
+    
+    try {
+      const [updatedContent] = (await db
+        .update(labContent)
+        .set(updates)
+        .where(eq(labContent.id, id))
+        .returning()) as LabContent[];
+      
+      console.log(`[Storage] Successfully updated lab content ${id}`);
+      return updatedContent;
+    } catch (error) {
+      console.error(`[Storage] Error updating lab content:`, error);
+      throw error;
+    }
+  }
+
+  async deleteLabContent(id: number): Promise<void> {
+    console.log(`[Storage] Deleting lab content ${id}`);
+    
+    try {
+      await db
+        .delete(labContent)
+        .where(eq(labContent.id, id));
+      
+      console.log(`[Storage] Successfully deleted lab content ${id}`);
+    } catch (error) {
+      console.error(`[Storage] Error deleting lab content:`, error);
+      throw error;
+    }
+  }
+
+  async publishLabContent(labId: number): Promise<void> {
+    console.log(`[Storage] Publishing lab content for lab ${labId}`);
+    
+    try {
+      // Get the lab to ensure it exists and get lab info
+      const lab = await this.getLab(labId);
+      if (!lab) {
+        throw new Error(`Lab ${labId} not found`);
+      }
+
+      // Get all content for this lab
+      const labContentItems = await this.getLabContent(labId);
+      
+      // Get all circles associated with this lab
+      const labCircles = await this.getLabCircles(labId);
+      
+      console.log(`[Storage] Publishing ${labContentItems.length} content items to ${labCircles.length} circles`);
+
+      // For each content item, create posts in appropriate circles
+      for (const contentItem of labContentItems) {
+        const targetCircles = contentItem.targetRole === 'all' 
+          ? labCircles 
+          : labCircles.filter(circle => circle.role === contentItem.targetRole);
+
+        // Create posts in each target circle
+        for (const circle of targetCircles) {
+          await this.createPostInCircle(
+            lab.userId,
+            circle.id,
+            contentItem.content,
+            labId,
+            true, // labExperiment = true
+            contentItem.targetRole
+          );
+        }
+      }
+      
+      console.log(`[Storage] Successfully published lab content for lab ${labId}`);
+    } catch (error) {
+      console.error(`[Storage] Error publishing lab content:`, error);
       throw error;
     }
   }
