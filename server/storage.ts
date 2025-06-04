@@ -42,6 +42,13 @@ export interface IStorage {
   deactivateAiFollower(id: number): Promise<AiFollower>;
   reactivateAiFollower(id: number): Promise<AiFollower>;
   getPostPendingResponses(postId: number): Promise<PendingResponse[]>;
+  getLabPendingResponses(labId: number): Promise<{
+    total: number;
+    pending: number;
+    completed: number;
+    completionPercentage: number;
+    pendingResponses: (PendingResponse & { aiFollower: AiFollower; post: Post })[];
+  }>;
   
   // AI Follower Collective methods
   createAiFollowerCollective(userId: number, collective: InsertAiFollowerCollective): Promise<AiFollowerCollective>;
@@ -404,6 +411,83 @@ export class DatabaseStorage implements IStorage {
         .where(eq(pendingResponses.id, id));
     } catch (error) {
       console.error("[Storage] Error marking pending response as processed:", error);
+      throw error;
+    }
+  }
+
+  async getLabPendingResponses(labId: number): Promise<{
+    total: number;
+    pending: number;
+    completed: number;
+    completionPercentage: number;
+    pendingResponses: (PendingResponse & { aiFollower: AiFollower; post: Post })[];
+  }> {
+    try {
+      console.log(`[Storage] Getting pending responses for lab ${labId}`);
+      
+      // Get all posts that belong to this lab
+      const labPosts = await this.getLabPosts(labId);
+      const labPostIds = labPosts.map(post => post.id);
+      
+      if (labPostIds.length === 0) {
+        return {
+          total: 0,
+          pending: 0,
+          completed: 0,
+          completionPercentage: 100,
+          pendingResponses: []
+        };
+      }
+
+      // Get all pending responses for lab posts
+      const pendingResponsesWithDetails = await db
+        .select({
+          pendingResponse: pendingResponses,
+          aiFollower: ai_followers,
+          post: posts
+        })
+        .from(pendingResponses)
+        .innerJoin(ai_followers, eq(pendingResponses.aiFollowerId, ai_followers.id))
+        .innerJoin(posts, eq(pendingResponses.postId, posts.id))
+        .where(
+          and(
+            sql`${pendingResponses.postId} IN (${sql.join(labPostIds.map(id => sql`${id}`), sql`, `)})`,
+            eq(pendingResponses.processed, false)
+          )
+        )
+        .orderBy(pendingResponses.scheduledFor);
+
+      // Get count of all responses (including processed) for these lab posts
+      const totalResponsesResult = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(pendingResponses)
+        .where(
+          sql`${pendingResponses.postId} IN (${sql.join(labPostIds.map(id => sql`${id}`), sql`, `)})`
+        );
+
+      const totalResponses = Number(totalResponsesResult[0].count) || 0;
+      const pendingCount = pendingResponsesWithDetails.length;
+      const completedCount = totalResponses - pendingCount;
+      const completionPercentage = totalResponses > 0 ? Math.round((completedCount / totalResponses) * 100) : 100;
+
+      // Transform the results to match the expected format
+      const transformedPendingResponses = pendingResponsesWithDetails.map(row => ({
+        ...row.pendingResponse,
+        aiFollower: row.aiFollower,
+        post: row.post
+      }));
+
+      console.log(`[Storage] Lab ${labId} pending responses: ${pendingCount} pending, ${completedCount} completed, ${completionPercentage}% complete`);
+
+      return {
+        total: totalResponses,
+        pending: pendingCount,
+        completed: completedCount,
+        completionPercentage,
+        pendingResponses: transformedPendingResponses
+      };
+    } catch (error) {
+      console.error("[Storage] Error getting lab pending responses:", error);
       throw error;
     }
   }
