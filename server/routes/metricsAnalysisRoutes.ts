@@ -123,6 +123,25 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
       });
     }
     
+    // Check for single-variant experiment (common case that shows "unknown")
+    const totalControlPosts = controlCircles.reduce((sum, circle) => sum + circle.posts.length, 0);
+    const totalTreatmentPosts = treatmentCircles.reduce((sum, circle) => sum + circle.posts.length, 0);
+    const totalCircles = controlCircles.length + treatmentCircles.length;
+    
+    // Handle single-variant experiments (no proper A/B test setup)
+    if (totalControlPosts === 0 && totalTreatmentPosts > 0 && totalCircles === 1) {
+      console.log(`[MetricsAnalysis] Single-variant experiment detected - no control group for comparison`);
+      return res.status(200).json({
+        actual: "insufficient data",
+        status: "fail",
+        confidence: 20,
+        difference: "N/A",
+        analysis: `This experiment has only one content variant sent to one circle. For meaningful A/B testing, you need either: (1) Different content variants sent to different circles, or (2) The same content sent to multiple audience segments for comparison. Current setup: ${totalTreatmentPosts} posts in ${treatmentCircles.length} treatment circle(s), no control group.`,
+        fromCache: false,
+        updatedAt: new Date().toISOString()
+      });
+    }
+    
     try {
       console.log(`[MetricsAnalysis] Preparing OpenAI request for metric analysis: ${metric.name}`);
       
