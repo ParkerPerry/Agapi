@@ -84,7 +84,7 @@ interface LabCreateWizardProps {
 // Define validation schema
 const labSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters").max(100),
-  experimentType: z.enum(["a_b_test", "multivariate", "exploration"]),
+  experimentType: z.enum(["a_b_test", "single_variant"]),
   description: z.string().optional(),
   goals: z.string().optional(),
   successMetrics: z
@@ -507,9 +507,8 @@ const LabCreateWizard = ({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="a_b_test">A/B Test</SelectItem>
-                            <SelectItem value="multivariate">Multivariate Test</SelectItem>
-                            <SelectItem value="exploration">Exploration</SelectItem>
+                            <SelectItem value="a_b_test">A/B Test - Compare different content variants</SelectItem>
+                            <SelectItem value="single_variant">Single Variant - Test content effectiveness vs baseline</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>

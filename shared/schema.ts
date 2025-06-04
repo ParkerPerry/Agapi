@@ -488,7 +488,7 @@ export const labs = pgTable("labs", {
   // Added circleId field to match the existing database schema, but make it nullable
   circleId: integer("circle_id").references(() => circles.id),
   experimentType: text("experiment_type", { 
-    enum: ["a_b_test", "multivariate", "exploration"] 
+    enum: ["a_b_test", "single_variant"] 
   }).notNull(),
   status: text("status", { 
     enum: ["draft", "active", "completed", "archived"] 
@@ -580,7 +580,7 @@ export const labTemplates = pgTable("lab_templates", {
     enum: ["product", "marketing", "content", "engagement"] 
   }).notNull(),
   experimentType: text("experiment_type", { 
-    enum: ["a_b_test", "multivariate", "exploration"] 
+    enum: ["a_b_test", "single_variant"] 
   }).notNull(),
   goals: text("goals").notNull(),
   successMetrics: json("success_metrics").$type<{
