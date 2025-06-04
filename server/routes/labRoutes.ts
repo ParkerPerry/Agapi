@@ -202,18 +202,56 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     // Update lab status
     const updatedLab = await storage.updateLab(labId, updateData);
     
-    // If activating the lab, also publish lab content as posts
-    if (status === 'active') {
-      try {
-        await storage.publishLabContent(labId);
-        console.log(`[Lab Activation] Successfully published content for lab ${labId}`);
-      } catch (contentError) {
-        console.warn(`[Lab Activation] Failed to publish content for lab ${labId}:`, contentError);
-        // Continue with the response even if content publishing fails
-      }
-    }
-    
+    // Return immediately to avoid blocking the UI
     res.json(updatedLab);
+    
+    // If activating the lab, publish lab content in the background
+    if (status === 'active') {
+      // Run content publishing asynchronously
+      setImmediate(async () => {
+        try {
+          console.log(`[Lab Activation] Starting background content publishing for lab ${labId}`);
+          
+          // Import WebSocket manager
+          const { getWebSocketManager } = await import('../websocket');
+          const wsManager = getWebSocketManager();
+          
+          // Notify user that content publishing is starting
+          wsManager.broadcastToUser(req.user!.id, {
+            type: 'lab_activation_started',
+            labId,
+            message: 'Publishing lab content to circles...'
+          });
+          
+          await storage.publishLabContent(labId);
+          
+          // Notify user that content publishing completed successfully
+          wsManager.broadcastToUser(req.user!.id, {
+            type: 'lab_activation_completed',
+            labId,
+            success: true,
+            message: 'Lab content successfully published to circles with AI responses scheduled'
+          });
+          
+          console.log(`[Lab Activation] Successfully published content for lab ${labId}`);
+        } catch (contentError) {
+          console.error(`[Lab Activation] Failed to publish content for lab ${labId}:`, contentError);
+          
+          // Import WebSocket manager for error notification
+          const { getWebSocketManager } = await import('../websocket');
+          const wsManager = getWebSocketManager();
+          
+          // Notify user of the error
+          wsManager.broadcastToUser(req.user!.id, {
+            type: 'lab_activation_completed',
+            labId,
+            success: false,
+            error: 'Failed to publish some lab content. Please check the lab status.',
+            message: 'Lab activation encountered an issue'
+          });
+        }
+      });
+    }
   } catch (error) {
     console.error("Error updating lab status:", error);
     res.status(500).json({ message: "Failed to update lab status" });
