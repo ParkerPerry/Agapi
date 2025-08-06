@@ -46,6 +46,26 @@ async function setupDatabase() {
           added_at TIMESTAMP
         );
         
+        CREATE TABLE IF NOT EXISTS circle_members (
+          id SERIAL PRIMARY KEY,
+          circle_id INTEGER REFERENCES circles(id) NOT NULL,
+          user_id INTEGER REFERENCES users(id) NOT NULL,
+          role TEXT NOT NULL,
+          status TEXT DEFAULT 'active' NOT NULL,
+          joined_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS circle_invitations (
+          id SERIAL PRIMARY KEY,
+          circle_id INTEGER REFERENCES circles(id) NOT NULL,
+          inviter_id INTEGER REFERENCES users(id) NOT NULL,
+          invitee_id INTEGER REFERENCES users(id) NOT NULL,
+          role TEXT NOT NULL,
+          status TEXT DEFAULT 'pending' NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW(),
+          responded_at TIMESTAMP
+        );
+        
         CREATE TABLE IF NOT EXISTS posts (
           id SERIAL PRIMARY KEY,
           user_id INTEGER REFERENCES users(id),
@@ -72,6 +92,36 @@ async function setupDatabase() {
           created_at TIMESTAMP DEFAULT NOW()
         );
         
+        CREATE TABLE IF NOT EXISTS circle_followers (
+          id SERIAL PRIMARY KEY,
+          circle_id INTEGER REFERENCES circles(id) NOT NULL,
+          ai_follower_id INTEGER REFERENCES ai_followers(id) NOT NULL,
+          added_at TIMESTAMP DEFAULT NOW(),
+          muted BOOLEAN DEFAULT FALSE NOT NULL
+        );
+        
+        CREATE TABLE IF NOT EXISTS ai_follower_collectives (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER REFERENCES users(id) NOT NULL,
+          name TEXT NOT NULL,
+          description TEXT,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS ai_follower_collective_members (
+          id SERIAL PRIMARY KEY,
+          collective_id INTEGER REFERENCES ai_follower_collectives(id) NOT NULL,
+          ai_follower_id INTEGER REFERENCES ai_followers(id) NOT NULL,
+          added_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS circle_collectives (
+          id SERIAL PRIMARY KEY,
+          circle_id INTEGER REFERENCES circles(id) NOT NULL,
+          collective_id INTEGER REFERENCES ai_follower_collectives(id) NOT NULL,
+          added_at TIMESTAMP DEFAULT NOW()
+        );
+        
         CREATE TABLE IF NOT EXISTS pending_responses (
           id SERIAL PRIMARY KEY,
           post_id INTEGER REFERENCES posts(id) NOT NULL,
@@ -79,6 +129,26 @@ async function setupDatabase() {
           status TEXT DEFAULT 'pending' NOT NULL,
           created_at TIMESTAMP DEFAULT NOW(),
           completed_at TIMESTAMP
+        );
+        
+        CREATE TABLE IF NOT EXISTS ai_interactions (
+          id SERIAL PRIMARY KEY,
+          post_id INTEGER REFERENCES posts(id) NOT NULL,
+          ai_follower_id INTEGER REFERENCES ai_followers(id) NOT NULL,
+          content TEXT NOT NULL,
+          parent_id INTEGER REFERENCES ai_interactions(id),
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS notifications (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER REFERENCES users(id) NOT NULL,
+          type TEXT NOT NULL,
+          title TEXT NOT NULL,
+          message TEXT,
+          data JSON,
+          read BOOLEAN DEFAULT FALSE NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW()
         );
         
         CREATE TABLE IF NOT EXISTS labs (
@@ -120,6 +190,21 @@ async function setupDatabase() {
           difference TEXT,
           analysis TEXT,
           recommendation TEXT,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS direct_chats (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER REFERENCES users(id) NOT NULL,
+          ai_follower_id INTEGER REFERENCES ai_followers(id) NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS direct_chat_messages (
+          id SERIAL PRIMARY KEY,
+          chat_id INTEGER REFERENCES direct_chats(id) NOT NULL,
+          sender_type TEXT NOT NULL,
+          content TEXT NOT NULL,
           created_at TIMESTAMP DEFAULT NOW()
         );
       `);
