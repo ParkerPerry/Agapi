@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -73,7 +76,7 @@ process.on('unhandledRejection', (reason, promise) => {
       serveStatic(app);
     }
 
-    const port = 5000;
+    const port = process.env.PORT || 5000;
 
     // Handle server errors
     server.on('error', (error: any) => {
@@ -81,11 +84,9 @@ process.on('unhandledRejection', (reason, promise) => {
         console.error(`Port ${port} is already in use. Using a different port...`);
         
         // Try with a different port
-        const newPort = 5001;
+        const newPort = process.env.PORT ? parseInt(process.env.PORT) + 1 : 5001;
         server.listen({
           port: newPort,
-          host: "0.0.0.0",
-          reusePort: true,
         }, () => {
           log(`serving on port ${newPort} (fallback)`);
         });
@@ -97,8 +98,6 @@ process.on('unhandledRejection', (reason, promise) => {
 
     server.listen({
       port,
-      host: "0.0.0.0",
-      reusePort: true,
     }, () => {
       log(`serving on port ${port}`);
     });

@@ -162,14 +162,18 @@ export const useLabResultsAnalysis = (lab: Lab) => {
           if (!foundCache) {
             // Check for pending responses before proceeding with fresh analysis
             const hasPending = await checkPendingResponses();
+            console.log(`[DEBUG] Cache check result: ${foundCache}, Pending responses: ${hasPending}`);
             if (!hasPending) {
               // No pending responses, safe to proceed with analysis
+              console.log(`[DEBUG] Setting shouldLoadData to true to trigger analysis`);
               setShouldLoadData(true);
             } else {
               // Has pending responses, show progress indicator
+              console.log(`[DEBUG] Has pending responses, not proceeding with analysis`);
               setIsAnalyzing(false);
             }
           } else {
+            console.log(`[DEBUG] Found cached results, not proceeding with fresh analysis`);
             setIsAnalyzing(false);
           }
         } catch (error) {
@@ -180,6 +184,15 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       };
       
       checkInitialCache();
+      
+      // Add a timeout to force analysis if it gets stuck
+      const timeoutId = setTimeout(() => {
+        console.log(`[DEBUG] Analysis timeout reached, forcing shouldLoadData to true`);
+        setShouldLoadData(true);
+        setIsAnalyzing(false);
+      }, 10000); // 10 second timeout
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [lab?.id, lab?.status]);
 
@@ -693,6 +706,17 @@ export const useLabResultsAnalysis = (lab: Lab) => {
   
   // Trigger analysis when data loading completes (only if shouldLoadData is true)
   useEffect(() => {
+    console.log(`[DEBUG] Data loading effect triggered:`, {
+      shouldLoadData,
+      isCirclesLoading,
+      isPostsLoading,
+      hasLabCirclesData: !!labCirclesData,
+      hasCirclePostsData: !!circlePostsData,
+      isAnalyzing,
+      circlesError: !!circlesError,
+      postsError: !!postsError
+    });
+    
     if (circlesError || postsError) {
       console.error("Circle or post errors:", { circlesError, postsError });
       setAnalyzeError(
@@ -703,29 +727,50 @@ export const useLabResultsAnalysis = (lab: Lab) => {
       return;
     }
     
-    // Only run analysis when data is fully loaded and we've determined we need a fresh analysis
-    if (shouldLoadData && !isCirclesLoading && !isPostsLoading && labCirclesData && circlePostsData && !isAnalyzing) {
-      // Log performance data when posts load completes
-      if (loadStartTime) {
-        const loadEndTime = performance.now();
-        const loadDuration = loadEndTime - loadStartTime;
-        console.log(`[PERFORMANCE] Lab data loaded in ${loadDuration.toFixed(2)}ms (Posts: ${circlePostsData.length}, Circles: ${labCirclesData.length})`);
-        setLoadStartTime(null); // Reset for next time
-      }
+    // More aggressive condition: if we have data and we're not analyzing, start analysis
+    if (labCirclesData && circlePostsData && !isAnalyzing && !isCirclesLoading && !isPostsLoading) {
+      console.log(`[DEBUG] Data available, checking if analysis should start`);
       
-      // Use a stable string representation to avoid reference issues
-      const dataSignature = `${lab?.id}-${labCirclesData.length}-${circlePostsData.length}`;
-      
-      // Use state to avoid re-running unnecessarily
-      if (lastAnalysisSignature !== dataSignature) {
-        // Update the signature state
-        setLastAnalysisSignature(dataSignature);
+      // If shouldLoadData is true OR if we have no results yet, start analysis
+      if (shouldLoadData || (!metricResults || metricResults.length === 0)) {
+        console.log(`[DEBUG] All conditions met for analysis, proceeding with analyzeLabMetrics`);
         
-        // Run the analysis - we already know we need fresh results because shouldLoadData is true
-        analyzeLabMetrics(false);
+        // Log performance data when posts load completes
+        if (loadStartTime) {
+          const loadEndTime = performance.now();
+          const loadDuration = loadEndTime - loadStartTime;
+          console.log(`[PERFORMANCE] Lab data loaded in ${loadDuration.toFixed(2)}ms (Posts: ${circlePostsData.length}, Circles: ${labCirclesData.length})`);
+          setLoadStartTime(null); // Reset for next time
+        }
+        
+        // Use a stable string representation to avoid reference issues
+        const dataSignature = `${lab?.id}-${labCirclesData.length}-${circlePostsData.length}`;
+        
+        // Use state to avoid re-running unnecessarily
+        if (lastAnalysisSignature !== dataSignature) {
+          console.log(`[DEBUG] Data signature changed, updating and running analysis`);
+          // Update the signature state
+          setLastAnalysisSignature(dataSignature);
+          
+          // Run the analysis - we already know we need fresh results because shouldLoadData is true
+          analyzeLabMetrics(false);
+        } else {
+          console.log(`[DEBUG] Data signature unchanged, skipping analysis`);
+        }
+      } else {
+        console.log(`[DEBUG] Data available but shouldLoadData is false and we have results, not starting analysis`);
       }
+    } else {
+      console.log(`[DEBUG] Conditions not met for analysis:`, {
+        shouldLoadData,
+        isCirclesLoading,
+        isPostsLoading,
+        hasLabCirclesData: !!labCirclesData,
+        hasCirclePostsData: !!circlePostsData,
+        isAnalyzing
+      });
     }
-  }, [lab?.id, shouldLoadData, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing, lastAnalysisSignature, loadStartTime]);
+  }, [lab?.id, shouldLoadData, isCirclesLoading, isPostsLoading, circlesError, postsError, isAnalyzing, lastAnalysisSignature, loadStartTime, labCirclesData, circlePostsData, metricResults]);
   
   // Function to retry analysis if it fails
   const retryAnalysis = () => {

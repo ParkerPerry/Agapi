@@ -27,7 +27,7 @@ router.get("/test-openai", async (req, res) => {
       
       // Create the simplest possible API request
       const apiRequestPromise = openai.chat.completions.create({
-        model: "gpt-4.1-mini-2025-04-14", // Using the smaller model for faster response
+        model: "gpt-4o-mini", // Using the correct model for faster response
         messages: [
           { role: "system", content: "You are a simple test assistant." },
           { role: "user", content: "Reply with JSON: {\"status\": \"success\"}" }

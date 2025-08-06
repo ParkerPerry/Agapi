@@ -269,28 +269,18 @@ router.get('/:id/circles', requireAuth, async (req, res) => {
       return res.status(404).json({ message: "Lab not found" });
     }
     
-    // Get circles from lab content variants instead of lab_circles table
-    const labContent = await storage.getLabContent(labId);
+    // Get circles from the lab_circles table
+    const labCircles = await storage.getLabCircles(labId);
     
-    // Extract unique circles from content variants
-    const circleIds = [...new Set(labContent.map(content => content.circleId).filter(Boolean))];
-    
-    // Get full circle data with content info
-    const circles = await Promise.all(
-      circleIds.map(async (circleId) => {
-        const circle = await storage.getCircle(circleId);
-        const contentForCircle = labContent.filter(content => content.circleId === circleId);
-        
-        return {
-          id: circleId,
-          circleId: circleId,
-          role: "treatment", // Default role since we're using direct assignment now
-          addedAt: contentForCircle[0]?.createdAt || new Date(),
-          circle: circle,
-          contentCount: contentForCircle.length
-        };
-      })
-    );
+    // Format the response to match the expected structure
+    const circles = labCircles.map(labCircle => ({
+      id: labCircle.id,
+      circleId: labCircle.circleId,
+      role: labCircle.role,
+      addedAt: labCircle.addedAt,
+      circle: labCircle,
+      contentCount: 0 // This will be calculated separately if needed
+    }));
     
     res.json(circles);
   } catch (error) {
@@ -312,37 +302,24 @@ router.get('/:id/circles/stats', requireAuth, async (req, res) => {
       return res.status(404).json({ message: "Lab not found" });
     }
     
-    // Get circles from lab content variants instead of lab_circles table
-    const labContent = await storage.getLabContent(labId);
+    // Get circles with stats from the lab_circles table
+    const circlesWithStats = await storage.getLabCirclesWithStats(labId);
     
-    // Extract unique circles from content variants
-    const circleIds = [...new Set(labContent.map(content => content.circleId).filter(Boolean))];
-    
-    // Get stats for each circle
-    const stats = await Promise.all(
-      circleIds.map(async (circleId) => {
-        const circle = await storage.getCircle(circleId);
-        const contentForCircle = labContent.filter(content => content.circleId === circleId);
-        const postCount = await storage.getCirclePostCount(circleId);
-        const followerCount = await storage.getCircleFollowerCount(circleId);
-        const memberCount = await storage.getCircleMemberCount(circleId);
-        
-        return {
-          labCircle: {
-            id: circleId,
-            role: "treatment", // Default role since we're using direct assignment now
-            circleId: circleId,
-            addedAt: contentForCircle[0]?.createdAt || new Date()
-          },
-          circle,
-          stats: {
-            postCount,
-            followerCount,
-            memberCount
-          }
-        };
-      })
-    );
+    // Format the response to match the expected structure
+    const stats = circlesWithStats.map(labCircle => ({
+      labCircle: {
+        id: labCircle.id,
+        role: labCircle.role,
+        circleId: labCircle.circleId,
+        addedAt: labCircle.addedAt
+      },
+      circle: labCircle,
+      stats: {
+        postCount: labCircle.postCount || 0,
+        followerCount: labCircle.followerCount || 0,
+        memberCount: labCircle.memberCount || 0
+      }
+    }));
     
     res.json(stats);
   } catch (error) {

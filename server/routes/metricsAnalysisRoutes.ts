@@ -222,7 +222,7 @@ router.post("/analyze-metric", requireAuth, async (req, res) => {
       console.log("[MetricsAnalysis] Sending request to OpenAI");
       
       const response = await openai.chat.completions.create({
-        model: "gpt-4.1-mini-2025-04-14", // Using mini model for metrics analysis
+        model: "gpt-4o-mini", // Using correct model name for metrics analysis
         messages: [
           {
             role: "system", 
@@ -463,7 +463,7 @@ Difference: ${metric.difference}`;
       console.log("[MetricsAnalysis] Sending recommendation request to OpenAI");
       
       const response = await openai.chat.completions.create({
-        model: "gpt-4.1-mini-2025-04-14",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system", 

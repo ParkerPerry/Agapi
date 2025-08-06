@@ -126,6 +126,41 @@ export function LabResultsTab({ lab }: LabResultsTabProps) {
                       <p className="text-xs text-muted-foreground mt-3">
                         This may take 15-30 seconds for fresh analysis
                       </p>
+                      
+                      {/* Manual trigger button if stuck */}
+                      <div className="mt-4 pt-4 border-t">
+                        <p className="text-xs text-muted-foreground mb-2">
+                          If analysis seems stuck, try:
+                        </p>
+                        <Button 
+                          onClick={refreshAnalysis} 
+                          variant="outline" 
+                          size="sm"
+                          className="text-xs"
+                        >
+                          Force Start Analysis
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              
+              // Show manual trigger if no analysis has started and no results
+              if (!isAnalyzing && (!metricResults || metricResults.length === 0) && !analyzeError) {
+                return (
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <AlertCircle className="h-8 w-8 text-amber-500 mb-4" />
+                    <p className="text-sm text-muted-foreground mb-4 max-w-md text-center">
+                      Analysis hasn't started automatically. This might be due to pending responses or data loading issues.
+                    </p>
+                    <div className="flex gap-2">
+                      <Button onClick={refreshAnalysis} variant="default">
+                        Start Analysis Now
+                      </Button>
+                      <Button onClick={handleProceedWithAnalysis} variant="outline">
+                        Proceed Anyway
+                      </Button>
                     </div>
                   </div>
                 );

@@ -94,7 +94,7 @@ export async function generateAIBackground(
       }
       
       const response = await openai.chat.completions.create({
-        model: "gpt-4.1-mini-2025-04-14", // Using mini model for simpler AI background generation
+        model: "gpt-4o-mini", // Using correct model for AI background generation
         messages: [
           {
             role: "system",
@@ -246,7 +246,7 @@ export async function generateAIResponse(
     const toolsPrompt = generateToolsPrompt(follower);
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4.1-mini-2025-04-14", // Using mini model for simpler AI conversation
+              model: "gpt-4o-mini", // Using correct model for AI conversation
       messages: [
         {
           role: "system",

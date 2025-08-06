@@ -1,16 +1,9 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+import dotenv from 'dotenv';
+dotenv.config();
+
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
-
-// Configure Neon to use WebSockets
-neonConfig.webSocketConstructor = ws;
-
-// Additional configuration (these are custom properties)
-// Note: We're extending the neonConfig object with additional properties
-// even though they're not in the type definition
-(neonConfig as any).retryCount = 5;
-(neonConfig as any).retryDelay = 1000;
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
