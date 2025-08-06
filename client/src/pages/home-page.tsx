@@ -17,7 +17,7 @@ export default function HomePage() {
   // Fetch default circle
   const { data: defaultCircle } = useQuery<Circle>({
     queryKey: ["/api/default-circle"],
-    enabled: !!user && !circleId,
+    enabled: !!user,
   });
 
   // Redirect to default circle if no circle is specified
