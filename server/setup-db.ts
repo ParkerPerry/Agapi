@@ -2,34 +2,133 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { db } from './db';
-import * as schema from '@shared/schema';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { Pool } from 'pg';
+import { sql } from 'drizzle-orm';
 
 async function setupDatabase() {
   try {
     console.log('Setting up database tables...');
     
-    // Create all tables
-    await db.execute(schema.users);
-    await db.execute(schema.circles);
-    await db.execute(schema.posts);
-    await db.execute(schema.labs);
-    await db.execute(schema.labContent);
-    await db.execute(schema.labCircles);
-    await db.execute(schema.followers);
-    await db.execute(schema.collectives);
-    await db.execute(schema.circleCollectives);
-    await db.execute(schema.circleFollowers);
-    await db.execute(schema.circleInvitations);
-    await db.execute(schema.pendingResponses);
-    await db.execute(schema.interactions);
-    await db.execute(schema.notifications);
-    await db.execute(schema.labAnalysisResults);
+    // Create tables using Drizzle's migrate function
+    // This will create all tables defined in the schema
+    await migrate(db, { migrationsFolder: './migrations' });
     
     console.log('Database tables created successfully!');
     process.exit(0);
   } catch (error) {
     console.error('Error setting up database:', error);
-    process.exit(1);
+    
+    // Fallback: try to create tables manually using SQL
+    try {
+      console.log('Trying fallback method...');
+      const client = await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          username TEXT NOT NULL UNIQUE,
+          password TEXT NOT NULL,
+          avatar_url TEXT,
+          bio TEXT,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS circles (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT,
+          icon TEXT,
+          color TEXT,
+          created_at TIMESTAMP DEFAULT NOW(),
+          user_id INTEGER REFERENCES users(id) NOT NULL,
+          is_default BOOLEAN DEFAULT FALSE NOT NULL,
+          visibility TEXT DEFAULT 'private' NOT NULL,
+          added_at TIMESTAMP
+        );
+        
+        CREATE TABLE IF NOT EXISTS posts (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER REFERENCES users(id),
+          circle_id INTEGER REFERENCES circles(id),
+          lab_id INTEGER,
+          lab_experiment BOOLEAN DEFAULT FALSE,
+          target_role TEXT,
+          content TEXT NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS ai_followers (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER REFERENCES users(id),
+          name TEXT NOT NULL,
+          personality TEXT NOT NULL,
+          avatar_url TEXT NOT NULL,
+          background TEXT,
+          interests TEXT[],
+          communication_style TEXT,
+          interaction_preferences JSON,
+          active BOOLEAN NOT NULL DEFAULT TRUE,
+          responsiveness TEXT,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS pending_responses (
+          id SERIAL PRIMARY KEY,
+          post_id INTEGER REFERENCES posts(id) NOT NULL,
+          ai_follower_id INTEGER REFERENCES ai_followers(id) NOT NULL,
+          status TEXT DEFAULT 'pending' NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW(),
+          completed_at TIMESTAMP
+        );
+        
+        CREATE TABLE IF NOT EXISTS labs (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT,
+          goals TEXT,
+          status TEXT DEFAULT 'draft' NOT NULL,
+          user_id INTEGER REFERENCES users(id) NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW(),
+          started_at TIMESTAMP,
+          completed_at TIMESTAMP
+        );
+        
+        CREATE TABLE IF NOT EXISTS lab_circles (
+          id SERIAL PRIMARY KEY,
+          lab_id INTEGER REFERENCES labs(id) NOT NULL,
+          circle_id INTEGER REFERENCES circles(id) NOT NULL,
+          role TEXT NOT NULL,
+          added_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS lab_content (
+          id SERIAL PRIMARY KEY,
+          lab_id INTEGER REFERENCES labs(id) NOT NULL,
+          circle_id INTEGER REFERENCES circles(id) NOT NULL,
+          content TEXT NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        
+        CREATE TABLE IF NOT EXISTS lab_analysis_results (
+          id SERIAL PRIMARY KEY,
+          lab_id INTEGER REFERENCES labs(id) NOT NULL,
+          metric_name TEXT NOT NULL,
+          actual TEXT,
+          target TEXT,
+          status TEXT,
+          confidence INTEGER,
+          difference TEXT,
+          analysis TEXT,
+          recommendation TEXT,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+      `);
+      console.log('Database tables created successfully using fallback method!');
+      process.exit(0);
+    } catch (fallbackError) {
+      console.error('Fallback method also failed:', fallbackError);
+      process.exit(1);
+    }
   }
 }
 
