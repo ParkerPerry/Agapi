@@ -48,7 +48,8 @@ async function fixDatabase() {
       
       -- Add missing columns to ai_follower_collectives table
       ALTER TABLE ai_follower_collectives 
-      ADD COLUMN IF NOT EXISTS personality TEXT;
+      ADD COLUMN IF NOT EXISTS personality TEXT,
+      ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE;
       
       -- Add missing columns to circle_members table
       ALTER TABLE circle_members 
