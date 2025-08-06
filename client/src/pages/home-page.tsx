@@ -15,9 +15,23 @@ export default function HomePage() {
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
   
   // Fetch default circle
-  const { data: defaultCircle } = useQuery<Circle>({
+  const { data: defaultCircle, error: defaultCircleError, isLoading: defaultCircleLoading } = useQuery<Circle>({
     queryKey: ["/api/default-circle"],
     enabled: !!user,
+    onSuccess: (data) => {
+      console.log("Default circle query success:", data);
+    },
+    onError: (error) => {
+      console.error("Default circle query error:", error);
+    },
+  });
+
+  console.log("Default circle debug:", {
+    user,
+    defaultCircle,
+    defaultCircleError,
+    defaultCircleLoading,
+    enabled: !!user
   });
 
   // Redirect to default circle if no circle is specified
