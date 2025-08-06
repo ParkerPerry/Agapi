@@ -23,6 +23,7 @@ async function fixDatabase() {
       -- Add missing columns to pending_responses table
       ALTER TABLE pending_responses 
       ADD COLUMN IF NOT EXISTS scheduled_for TIMESTAMP NOT NULL DEFAULT NOW(),
+      ADD COLUMN IF NOT EXISTS processed BOOLEAN NOT NULL DEFAULT FALSE,
       ADD COLUMN IF NOT EXISTS metadata TEXT;
       
       -- Add missing columns to notifications table
