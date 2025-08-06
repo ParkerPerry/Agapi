@@ -88,7 +88,11 @@ async function setupDatabase() {
           communication_style TEXT,
           interaction_preferences JSON,
           active BOOLEAN NOT NULL DEFAULT TRUE,
-          responsiveness TEXT,
+          responsiveness TEXT NOT NULL DEFAULT 'active',
+          response_delay JSON NOT NULL DEFAULT '{"min": 1, "max": 60}',
+          response_chance INTEGER NOT NULL DEFAULT 80,
+          tools JSON,
+          parent_id INTEGER REFERENCES ai_followers(id),
           created_at TIMESTAMP DEFAULT NOW()
         );
         
@@ -126,9 +130,10 @@ async function setupDatabase() {
           id SERIAL PRIMARY KEY,
           post_id INTEGER REFERENCES posts(id) NOT NULL,
           ai_follower_id INTEGER REFERENCES ai_followers(id) NOT NULL,
-          status TEXT DEFAULT 'pending' NOT NULL,
-          created_at TIMESTAMP DEFAULT NOW(),
-          completed_at TIMESTAMP
+          scheduled_for TIMESTAMP NOT NULL,
+          processed BOOLEAN NOT NULL DEFAULT FALSE,
+          metadata TEXT,
+          created_at TIMESTAMP DEFAULT NOW()
         );
         
         CREATE TABLE IF NOT EXISTS ai_interactions (
