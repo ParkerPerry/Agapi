@@ -5,13 +5,14 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx server/index.ts",
-    "build": "vite build && esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && esbuild server/setup-db.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && esbuild server/fix-db.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "build": "vite build && esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && esbuild server/setup-db.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && esbuild server/fix-db.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && esbuild server/sync-schema.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "heroku-postbuild": "npm run build",
     "start": "NODE_ENV=production node dist/production.js",
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "setup-db": "NODE_ENV=production node dist/setup-db.js",
-    "fix-db": "NODE_ENV=production node dist/fix-db.js"
+    "fix-db": "NODE_ENV=production node dist/fix-db.js",
+    "sync-schema": "NODE_ENV=production node dist/sync-schema.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
