@@ -48,6 +48,10 @@ async function fixDatabase() {
       -- Add missing columns to ai_follower_collectives table
       ALTER TABLE ai_follower_collectives 
       ADD COLUMN IF NOT EXISTS personality TEXT;
+      
+      -- Add missing columns to circle_members table
+      ALTER TABLE circle_members 
+      ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active' NOT NULL;
     `);
     
     console.log('Database tables fixed successfully!');
