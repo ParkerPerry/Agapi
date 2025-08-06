@@ -122,13 +122,21 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       <NavBar />
       <div className="flex h-[calc(100vh-4rem)]"> 
-        {(circleId || defaultCircle?.id) && (
-          <CirclePanel 
-            circleId={circleId || defaultCircle?.id!} 
-            isCollapsed={isPanelCollapsed}
-            onCollapse={setIsPanelCollapsed} 
-          />
-        )}
+        {(() => {
+          console.log("Sidebar rendering debug:", {
+            circleId,
+            defaultCircleId: defaultCircle?.id,
+            shouldShowSidebar: !!(circleId || defaultCircle?.id),
+            defaultCircle: defaultCircle
+          });
+          return (circleId || defaultCircle?.id) && (
+            <CirclePanel 
+              circleId={circleId || defaultCircle?.id!} 
+              isCollapsed={isPanelCollapsed}
+              onCollapse={setIsPanelCollapsed} 
+            />
+          );
+        })()}
         
         <main className="flex-1 overflow-auto py-6 px-4">
           <div className="max-w-2xl mx-auto space-y-6">
