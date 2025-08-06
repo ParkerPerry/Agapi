@@ -11,9 +11,16 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Create connection pool with additional settings for better resilience
+// Parse the DATABASE_URL to extract SSL configuration
+const databaseUrl = process.env.DATABASE_URL;
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Create connection pool with SSL configuration for Heroku
 export const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
+  connectionString: databaseUrl,
+  ssl: isProduction ? {
+    rejectUnauthorized: false
+  } : false,
   max: 20, // Maximum number of clients
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
   connectionTimeoutMillis: 5000, // Return an error after 5 seconds if connection could not be established
