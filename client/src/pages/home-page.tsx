@@ -122,9 +122,9 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       <NavBar />
       <div className="flex h-[calc(100vh-4rem)]"> 
-        {circleId && (
+        {(circleId || defaultCircle?.id) && (
           <CirclePanel 
-            circleId={circleId} 
+            circleId={circleId || defaultCircle?.id!} 
             isCollapsed={isPanelCollapsed}
             onCollapse={setIsPanelCollapsed} 
           />
@@ -132,17 +132,17 @@ export default function HomePage() {
         
         <main className="flex-1 overflow-auto py-6 px-4">
           <div className="max-w-2xl mx-auto space-y-6">
-            <PostForm defaultCircleId={circleId || undefined} />
+            <PostForm defaultCircleId={circleId || defaultCircle?.id} />
             
-            {circleDetails && (
+            {(circleDetails || defaultCircle) && (
               <div className="flex items-center space-x-2 mb-4">
                 <div 
                   className="w-8 h-8 rounded-full flex items-center justify-center text-lg"
-                  style={{ backgroundColor: circleDetails.color + '20' }}
+                  style={{ backgroundColor: (circleDetails || defaultCircle)?.color + '20' }}
                 >
-                  {circleDetails.icon}
+                  {(circleDetails || defaultCircle)?.icon}
                 </div>
-                <h1 className="text-2xl font-bold">{circleDetails.name}</h1>
+                <h1 className="text-2xl font-bold">{(circleDetails || defaultCircle)?.name}</h1>
               </div>
             )}
 
