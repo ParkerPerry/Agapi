@@ -3,7 +3,6 @@ dotenv.config();
 
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
 import { testDbConnection } from "./db";
 
 const app = express();
@@ -33,7 +32,7 @@ app.use((req, res, next) => {
         logLine = logLine.slice(0, 79) + "…";
       }
 
-      log(logLine);
+      console.log(logLine);
     }
   });
 
@@ -71,8 +70,10 @@ process.on('unhandledRejection', (reason, promise) => {
     });
 
     if (app.get("env") === "development") {
+      const { setupVite } = await import("./vite");
       await setupVite(app, server);
     } else {
+      const { serveStatic } = await import("./vite");
       serveStatic(app);
     }
 
@@ -88,7 +89,7 @@ process.on('unhandledRejection', (reason, promise) => {
         server.listen({
           port: newPort,
         }, () => {
-          log(`serving on port ${newPort} (fallback)`);
+          console.log(`serving on port ${newPort} (fallback)`);
         });
       } else {
         console.error('Server error:', error);
@@ -99,7 +100,7 @@ process.on('unhandledRejection', (reason, promise) => {
     server.listen({
       port,
     }, () => {
-      log(`serving on port ${port}`);
+      console.log(`serving on port ${port}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
